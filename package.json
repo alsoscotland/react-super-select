@@ -15,6 +15,7 @@
   "dependencies": {
     "gulp-jshint": "^1.9.2",
     "jshint-stylish": "^1.0.0",
+    "lodash": "^3.1.0",
     "react": "^0.12.2",
     "reactify": "^0.17.1"
   },
@@ -42,7 +43,7 @@
     "react": "global:React"
   },
   "scripts": {
-    "test": "echo \"no tests yet\" && exit 0"
+    "test": "$(npm bin)/jest"
   },
   "readmeFilename": "README.md",
   "keywords": [
