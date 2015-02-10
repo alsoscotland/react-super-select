@@ -1,0 +1,14 @@
+1) template-support for options
+2) aria-accessibile
+3) keyboard navigation
+4) tagging support
+5) lazy-loaded xhr data sources
+6) backing to real select element
+
+Props:
+-placeholder
+-no results localized string
+-changeHandler
+-searchable
+-remoteData
+-

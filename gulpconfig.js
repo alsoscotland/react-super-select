@@ -15,7 +15,7 @@ Object.keys(pkg.dependencies).forEach(function(i) {
 });
 
 module.exports = {
-	
+
 	component: {
 		// This is the source (entry) file for the component
 		file: COMPONENT_NAME + '.js',
@@ -34,7 +34,7 @@ module.exports = {
 		// package build.
 		dependencies: dependencies
 	},
-	
+
 	example: {
 		// This is the directory to load the source files from
 		src: 'example/src',
@@ -49,10 +49,10 @@ module.exports = {
 		scripts: [
 			'app.js'
 		],
-		// Stylesheets will be built by less 
+		// Stylesheets will be plain css
 		stylesheets: [
-			'app.less'
+			'app.css'
 		]
 	}
-	
+
 };

@@ -1,6 +1,7 @@
 # react-super-select
 
-__COMPONENT DESCRIPTION GOES HERE__
+React Super Select aims to be a replacement for html select form elements.
+This project is in nascent development stages.
 
 
 ## Demo & Examples
