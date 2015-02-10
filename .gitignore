@@ -27,4 +27,5 @@ example/dist
 *.iws
 *.sublime-*
 .idea/
+tmp/
 *.DS_Store

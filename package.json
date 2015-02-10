@@ -23,6 +23,9 @@
     "scriptPreprocessor": "./preprocessor.js",
     "unmockedModulePathPatterns": [
       "./node_modules/react"
+    ],
+    "testPathDirs": [
+      "./src/"
     ]
   },
   "devDependencies": {

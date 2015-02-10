@@ -2,7 +2,7 @@
  * This file controls the behaviour of the build tasks in gulpfile.js
  */
 
-var COMPONENT_NAME = 'ReactSuperSelect';
+var COMPONENT_NAME = 'react-super-select';
 
 // Read the package.json to detect the package name and dependencies
 var pkg = JSON.parse(require('fs').readFileSync('./package.json'));
