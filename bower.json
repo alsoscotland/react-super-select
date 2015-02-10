@@ -1,0 +1,29 @@
+{
+  "name": "react-super-select",
+  "version": "0.0.0",
+  "description": "react-super-select",
+  "main": "dist/react-super-select.min.js",
+  "homepage": "https://github.com/alsoscotland/react-super-select",
+  "authors": [
+    "Scotland Stephenson"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "react",
+    "react-component"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".editorconfig",
+    ".gitignore",
+    "package.json",
+    "src",
+    "node_modules",
+    "example",
+    "test"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "react-super-select",
+  "version": "0.0.0",
+  "description": "react-super-select",
+  "main": "src/ReactSuperSelect.js",
+  "author": "Scotland Stephenson",
+  "homepage": "https://github.com/alsoscotland/react-super-select",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alsoscotland/react-super-select.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alsoscotland/react-super-select/issues"
+  },
+  "dependencies": {
+    "react": "^0.12.2",
+    "reactify": "^0.17.1"
+  },
+  "devDependencies": {
+    "react-component-gulp-tasks": "^0.1.1",
+    "gulp": "^3.8.10"
+  },
+  "browser": "src/ReactSuperSelect.js",
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
+  },
+  "browserify-shim": {
+    "react": "global:React"
+  },
+  "scripts": {
+    "test": "echo \"no tests yet\" && exit 0"
+  },
+  "readmeFilename": "README.md",
+  "keywords": [
+    "react",
+    "react-component"
+  ]
+}
