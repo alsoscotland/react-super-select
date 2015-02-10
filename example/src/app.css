@@ -55,3 +55,17 @@ label {
   font-style: italic;
   color: #999;
 }
+
+.r-ss-button {
+  background: none;
+  background-color: none;
+  border: none;
+}
+
+.r-ss-magnifier {
+  text-indent: -9999px;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQBJREFUeNrUVIENgyAQVLsAI3SDukEdgREYwW7ABoxguoEbkE6gGziCI9g3eZILiQioaXrJBQLPPf8PXxZpEMSGWBOfvPYhjsS+OAhNnInLBme2ScZ66wGEJqIhSqLi+QT7ls9EY4AbqoBdCxHalLQ48TrCvgYnOiY1zlglRNzCpYJQkPNUuJrIKmD04PGd4aCHlG3C8i2aDAfSFbsqLkbIwchjTgT4y3eLPBwpcuwzlQniCp6p+OlHW3GHcOedSBSIR6W18xrcAoc1F7/hub8vUsQXjuS0du2LG6/wrkVbpuE1kSPenfnp/ldcXymOXfMS8Rux5Bew9v3X2Q6+AgwAgN17LQ6qJHMAAAAASUVORK5CYII=');
+}
