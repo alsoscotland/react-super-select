@@ -9,7 +9,7 @@ var ReactSuperSelect = React.createClass({
     searchPlaceholder: React.PropTypes.string,
     noResultsString: React.PropTypes.string,
     onChange: React.PropTypes.func,
-    externalMagnifierIconClasses: React.PropTypes.string,
+    externalSearchIconClass: React.PropTypes.string,
     searchable: React.PropTypes.bool,
 
     remoteDataSourceFetchFunction: React.PropTypes.object,
@@ -76,10 +76,13 @@ var ReactSuperSelect = React.createClass({
     if (!this.props.searchable) {
       return null;
     }
+
+    var magnifierClass = this.props.externalSearchIconClass ? this.props.externalSearchIconClass : "r-ss-magnifier";
+
     return(
       <div className="r-ss-search-wrap">
         <input ref="searchInput" placeholder={this.props.searchPlaceholder} />
-        <button className="r-ss-button"><i className="r-ss-magnifier">search</i></button>
+        <button className="r-ss-button"><i className={magnifierClass}>search</i></button>
       </div>
     );
   },

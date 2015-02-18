@@ -168,6 +168,27 @@ describe('ReactSuperSelect', function() {
       expect(el.refs.searchInput).toBeTruthy();
     });
 
+
+    it('renders the default magnifier if a custom magnifier is not set', function() {
+      el.setProps({
+        searchable: true
+      });
+      var anchor = TestUtils.findRenderedDOMComponentWithClass(el, 'r-ss-magnifier');
+
+      expect(anchor).toBeTruthy();
+    });
+
+    it('renders the user specified magnifier class if prop is set', function() {
+      el.setProps({
+        searchable: true,
+        'externalSearchIconClass': 'boo-yahhhhhh'
+      });
+
+      var customAnchor = TestUtils.findRenderedDOMComponentWithClass(el, 'boo-yahhhhhh');
+
+      expect(customAnchor).toBeTruthy();
+    });
+
     it('renders searchInput placeholer when prop is provided', function() {
       el.setProps({
         searchable: true,
