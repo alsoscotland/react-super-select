@@ -37,7 +37,7 @@ module.exports = {
 
 	example: {
 		// This is the directory to load the source files from
-		src: 'example/src',
+		src: 'src',
 		// This is the directory to build the distribution to
 		dist: 'example/dist',
 		// Files will be copied as-is into the example dist folder
@@ -49,9 +49,9 @@ module.exports = {
 		scripts: [
 			'app.js'
 		],
-		// Stylesheets will be plain css
+		// Stylesheets will be generated with less
 		stylesheets: [
-			'app.css'
+			'app.less'
 		]
 	}
 
