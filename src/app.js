@@ -1,5 +1,5 @@
 var React = require('react'),
-  ReactSuperSelect = require('react-super-select');
+    ReactSuperSelect = require('react-super-select');
 
 var App = React.createClass({
   render: function() {

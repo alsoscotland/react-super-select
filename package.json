@@ -13,8 +13,7 @@
     "url": "https://github.com/alsoscotland/react-super-select/issues"
   },
   "dependencies": {
-    "gulp-jshint": "^1.9.2",
-    "jshint-stylish": "^1.0.0",
+    "classnames": "^1.1.4",
     "lodash": "^3.1.0",
     "react": "^0.12.2",
     "reactify": "^0.17.1"
@@ -30,10 +29,12 @@
   },
   "devDependencies": {
     "gulp": "^3.8.10",
+    "gulp-jshint": "^1.9.2",
     "gulp-shell": "^0.3.0",
     "jest": "^0.1.37",
     "jest-cli": "^0.2.2",
-    "react-component-gulp-tasks": "^0.1.1",
+    "jshint-stylish": "^1.0.0",
+    "react-component-gulp-tasks": "^0.2.0",
     "react-tools": "^0.12.2"
   },
   "browser": "src/ReactSuperSelect.js",

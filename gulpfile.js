@@ -3,7 +3,6 @@ var gulp = require('gulp'),
     shell = require('gulp-shell'),
     initGulpTasks = require('react-component-gulp-tasks');
 
-
 var paths = {
   js: ['./src/**/*.js'],
   lint: {
