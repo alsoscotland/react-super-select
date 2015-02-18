@@ -40,16 +40,15 @@ var ReactSuperSelect = require('react-super-select');
 ```
 
 ### Properties
-
-* __DOCUMENT PROPERTIES HERE__
+TBD 
 
 ### Notes
 
-__ADDITIONAL USAGE NOTES__
+TBD
 
 ### License
 
-__PUT LICENSE HERE__
+TBD
 
 Copyright (c) 2015 Scotland Stephenson.
 
