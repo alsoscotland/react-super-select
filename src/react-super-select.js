@@ -92,8 +92,10 @@ var ReactSuperSelect = React.createClass({
 
     return(
       <div className="r-ss-search-wrap">
-        <input ref="searchInput" placeholder={this.props.searchPlaceholder} />
-        <button className="r-ss-button"><i className={magnifierClass}>search</i></button>
+        <div className="r-ss-search-inner">
+          <input ref="searchInput" placeholder={this.props.searchPlaceholder} />
+          <button className="r-ss-button"><i className={magnifierClass}>search</i></button>
+        </div>
       </div>
     );
   },

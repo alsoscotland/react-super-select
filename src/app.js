@@ -5,7 +5,7 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <ReactSuperSelect placeholder="Make a Selection" />
+        <ReactSuperSelect placeholder="Make a Selection" searchable="true" searchPlaceholder="search" />
       </div>
     );
   }

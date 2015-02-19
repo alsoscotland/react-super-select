@@ -136,16 +136,11 @@ label {
     .r-ss-value-display {
       display: block;
       padding: .25rem @inputWithIconPadding .25rem .25rem;
-    }
-  }
 
-  .r-ss-magnifier {
-    text-indent: -9999px;
-    display: inline-block;
-    width: 30px;
-    height: 24px;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQBJREFUeNrUVIENgyAQVLsAI3SDukEdgREYwW7ABoxguoEbkE6gGziCI9g3eZILiQioaXrJBQLPPf8PXxZpEMSGWBOfvPYhjsS+OAhNnInLBme2ScZ66wGEJqIhSqLi+QT7ls9EY4AbqoBdCxHalLQ48TrCvgYnOiY1zlglRNzCpYJQkPNUuJrIKmD04PGd4aCHlG3C8i2aDAfSFbsqLkbIwchjTgT4y3eLPBwpcuwzlQniCp6p+OlHW3GHcOedSBSIR6W18xrcAoc1F7/hub8vUsQXjuS0du2LG6/wrkVbpuE1kSPenfnp/ldcXymOXfMS8Rux5Bew9v3X2Q6+AgwAgN17LQ6qJHMAAAAASUVORK5CYII=');
-    cursor: pointer;
+      &.r-ss-placeholder {
+        color: @paleGrey;
+      }
+    }
   }
 
   .carat {
@@ -169,10 +164,42 @@ label {
 
 }
 
+
+.r-ss-search-inner {
+  position: relative;
+  width: 96%;
+  margin: 0 auto;
+
+  input {
+    border-color: @paleGreyFallback;
+    border: 1px solid @paleGrey;
+    text-decoration: none;
+    color: @paleGreyFallback;
+    .border-radius(.25rem, .25rem, .25rem, .25rem);
+    outline: none;
+    width: 100%;
+    height: 30px;
+    padding: .25rem @inputWithIconPadding .25rem .25rem;
+  }
+
+  .r-ss-magnifier {
+    position: absolute;
+    top: 7px;
+    right: .25rem;
+    text-indent: -9999px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAK5JREFUeNpiZMAPHIDYH4gNoPwLQLwQShME84H4PxCfB+IGIO6Hsv9D2QQ1vwfiACxyCVC5fnzO/o9DM7Ih/5G8hgJgTiUEQGr6mbBIgEzdSIQBB0BqmRjIBx9BBDYDHkCjjhDwxxWdxARiAFSNAznRGACVm49NowA0dN9jSUgNSAkJr+b/SNHoAFW8H4r7cTkbXbMAKdFBkWYQWE+JZmYg1gTiD0AcCKVJAgABBgCVaTZGiswDxwAAAABJRU5ErkJggg==');
+    cursor: pointer;
+  }
+
+}
+
 .r-ss-dropdown {
   position: absolute;
   top: 98%;
-  padding-top: 2%;
+  padding-top: .25rem;
   .border-radius(0, .25rem, .25rem, 0);
   background-color: #FFF;
   border-color: @paleGreyFallback;

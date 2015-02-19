@@ -1,3 +1,8 @@
+TASKS
+1) Do up arrow handler for searchable (focus search), and not searchable, wire to first li item
+
+
+
 1) template-support for options
 2) aria-accessibile
 3) keyboard navigation
