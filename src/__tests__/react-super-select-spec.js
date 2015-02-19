@@ -5,7 +5,15 @@ describe('ReactSuperSelect', function() {
   var React = require('react/addons'),
       _ = require('lodash'),
       ReactSuperSelect = require('../react-super-select.js'),
-      TestUtils = React.addons.TestUtils;
+      TestUtils = React.addons.TestUtils,
+      keymap;
+
+  keymap = {
+    'down': 40,
+    'up': 38,
+    'esc': 27,
+    'enter': 13
+  };
 
   var renderComponent = function(userProps) {
     var props = _.extend({}, userProps);
@@ -59,16 +67,31 @@ describe('ReactSuperSelect', function() {
       expect(carat.props.className.indexOf('up')).toBeGreaterThan(-1);
     });
 
-    it('will render the readonly value display input', function() {
-      var input = el.refs.valueDisplay
+    it('will render the mockInput value display anchor', function() {
+      var mockInput = el.refs.valueDisplay;
 
-      expect(input.getDOMNode()).toBeTruthy();
+      expect(mockInput.getDOMNode()).toBeTruthy();
     });
 
-    it('readonly value display will show placeholder if provided', function() {
-      var input = el.refs.valueDisplay
+    it('trigger value display will show placeholder if provided', function() {
+      var valueDisplay = el.refs.valueDisplay;
 
-      expect(input.props.placeholder).toBe('I am a placeholder');
+      expect(valueDisplay.props.children).toBe('I am a placeholder');
+    });
+
+    it('adds placeholder display class when value unset', function() {
+      var valueDisplay = el.refs.valueDisplay;
+
+      expect(valueDisplay.props.className.indexOf('r-ss-placeholder')).toBeGreaterThan(-1);
+    });
+
+    it('does not add placeholder display class when value set', function() {
+      var valueDisplay = el.refs.valueDisplay;
+      el.setState({
+        value: 'blah'
+      });
+
+      expect(valueDisplay.props.className.indexOf('r-ss-placeholder')).toBe(-1);
     });
 
     it('does not render dropdown when isOpen is false', function() {
@@ -93,6 +116,14 @@ describe('ReactSuperSelect', function() {
       TestUtils.Simulate.click(el.refs.triggerDiv.getDOMNode(), {});
 
       expect(el.state.isOpen).toBe(false);
+    });
+
+    it('toggles dropdown on keypress of down and up arrows', function() {
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: keymap.down
+      });
+
+      expect(el.state.isOpen).toBe(true);
     });
 
   });

@@ -5,9 +5,9 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <ReactSuperSelect />
+        <ReactSuperSelect placeholder="Make a Selection" />
       </div>
-    )
+    );
   }
 });
 
