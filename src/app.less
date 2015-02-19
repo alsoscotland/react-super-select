@@ -89,7 +89,7 @@ label {
 /* vars */
 @paleGreyFallback: #333;
 @paleGrey: rgba(51, 51, 51, .45);
-@inputWithIconPadding: .5rem 16px .5rem .5rem;
+@inputWithIconPadding: 16px;
 
 /* control */
 .r-ss-wrap {
@@ -117,35 +117,42 @@ label {
   position: relative;
   cursor: pointer;
 
-  input {
-    width: 100%;
-    height: 100%;
-    padding: @inputWithIconPadding;
+  a.r-ss-mock-input {
+    display: block;
+    line-height: 30px;
+    padding: 0 @inputWithIconPadding 0 0;
     border-color: @paleGreyFallback;
     border: 1px solid @paleGrey;
+    text-decoration: none;
+    color: @paleGreyFallback;
     .border-radius(.25rem, .25rem, .25rem, .25rem);
     cursor: pointer;
-  }
+    outline: none;
 
-  .r-ss-magnifier {
-    text-indent: -9999px;
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQBJREFUeNrUVIENgyAQVLsAI3SDukEdgREYwW7ABoxguoEbkE6gGziCI9g3eZILiQioaXrJBQLPPf8PXxZpEMSGWBOfvPYhjsS+OAhNnInLBme2ScZ66wGEJqIhSqLi+QT7ls9EY4AbqoBdCxHalLQ48TrCvgYnOiY1zlglRNzCpYJQkPNUuJrIKmD04PGd4aCHlG3C8i2aDAfSFbsqLkbIwchjTgT4y3eLPBwpcuwzlQniCp6p+OlHW3GHcOedSBSIR6W18xrcAoc1F7/hub8vUsQXjuS0du2LG6/wrkVbpuE1kSPenfnp/ldcXymOXfMS8Rux5Bew9v3X2Q6+AgwAgN17LQ6qJHMAAAAASUVORK5CYII=');
-    cursor: pointer;
+    &:focus {
+    border-color: black;
+    }
+
+    .r-ss-value-display {
+      display: block;
+      padding: .25rem @inputWithIconPadding .25rem .25rem;
+
+      &.r-ss-placeholder {
+        color: @paleGrey;
+      }
+    }
   }
 
   .carat {
     position: absolute;
     right: .25rem;
-    top: 50%;
+    top: 40%;
     height: 0;
     width: 0;
     border: 8px solid transparent;
 
     &.up {
-      top: 10%;
+      top: 20%;
       border-color: transparent transparent @paleGreyFallback transparent;
     }
 
@@ -157,11 +164,43 @@ label {
 
 }
 
+
+.r-ss-search-inner {
+  position: relative;
+  width: 96%;
+  height: 30px;
+  margin: 0 auto;
+
+  input {
+    border-color: @paleGreyFallback;
+    border: 1px solid @paleGrey;
+    text-decoration: none;
+    color: @paleGreyFallback;
+    .border-radius(.25rem, .25rem, .25rem, .25rem);
+    outline: none;
+    width: 100%;
+    height: 30px;
+    padding: .25rem @inputWithIconPadding .25rem .25rem;
+  }
+
+  .r-ss-magnifier {
+    position: absolute;
+    top: 7px;
+    right: .25rem;
+    text-indent: -9999px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAK5JREFUeNpiZMAPHIDYH4gNoPwLQLwQShME84H4PxCfB+IGIO6Hsv9D2QQ1vwfiACxyCVC5fnzO/o9DM7Ih/5G8hgJgTiUEQGr6mbBIgEzdSIQBB0BqmRjIBx9BBDYDHkCjjhDwxxWdxARiAFSNAznRGACVm49NowA0dN9jSUgNSAkJr+b/SNHoAFW8H4r7cTkbXbMAKdFBkWYQWE+JZmYg1gTiD0AcCKVJAgABBgCVaTZGiswDxwAAAABJRU5ErkJggg==');
+    cursor: pointer;
+  }
+
+}
+
 .r-ss-dropdown {
-  positio
-  n: absolute;
+  position: absolute;
   top: 98%;
-  padding-top: 2%;
+  padding-top: .25rem;
   .border-radius(0, .25rem, .25rem, 0);
   background-color: #FFF;
   border-color: @paleGreyFallback;

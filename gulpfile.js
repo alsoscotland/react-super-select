@@ -7,9 +7,8 @@ var paths = {
   js: ['./src/**/*.js'],
   lint: {
     js: [
-      '!./src/**/*.js',
       './src/**/*-spec.js',
-      'tmp/jsx/**/*.js',
+      './tmp/jsx/**/*.js',
       'gulpfile.js'
     ]
   }
@@ -25,10 +24,6 @@ gulp.task('lint-js-watch', ['jsx'], function() {
   return gulp.src(paths.lint.js)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
-});
-
-gulp.task('watch', function() {
-  gulp.watch(paths.js, ['jsx', 'lint-js-watch']);
 });
 
 /**
@@ -51,3 +46,21 @@ var config = require('./gulpconfig');
  */
 
 initGulpTasks(gulp, config);
+
+gulp.task('watch:examples-lint', [
+  'jsx',
+  'lint-js-watch',
+  'build:example:files',
+  'build:example:css',
+  'watch:example:scripts'
+], function() {
+  gulp.watch(config.example.files.map(function(i) { return config.example.src + '/' + i; }), ['build:example:files']);
+  gulp.watch([config.example.src + '/' + config.example.stylesheets], ['build:example:css']);
+});
+
+gulp.task('devlint', [
+  'dev:server',
+  'build:example:css',
+  'watch:examples-lint'
+]);
+
