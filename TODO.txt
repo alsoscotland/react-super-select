@@ -1,6 +1,6 @@
 TASKS
 1) Do up arrow handler for searchable (focus search), and not searchable, wire to first li item
-
+2) get test file auto linting on devlint task
 
 
 1) template-support for options

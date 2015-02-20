@@ -231,4 +231,30 @@ describe('ReactSuperSelect', function() {
 
   });
 
+  describe('dropdown template content', function() {
+
+    var mockData;
+
+    beforeEach(function() {
+      mockData = [
+        {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
+        {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'}
+      ];
+    });
+
+    it('renders the default list item content when no template is provided', function() {
+      var el = renderComponent({
+        'dataSource': mockData
+      });
+      el.setState({
+        'isOpen': true
+      });
+
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
+
+      expect(optionElements.length).toBe(mockData.length);
+    });
+
+  });
+
 });

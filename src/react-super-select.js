@@ -25,7 +25,7 @@ var ReactSuperSelect = React.createClass({
     optionLabelKey: React.PropTypes.string,
 
     isMultiSelect: React.PropTypes.bool,
-    optionsTemplate: React.PropTypes.object,
+    optionTemplate: React.PropTypes.object,
   },
 
   getInitialState: function() {
@@ -43,7 +43,7 @@ var ReactSuperSelect = React.createClass({
   },
 
   _getHiddenSelectElement: function() {
-    var optionsMarkup = this._mapDataToOptions();
+    var optionsMarkup = this._mapDataToHiddenSelectOptions();
 
     return(
       <select ref="hiddenSelect" className="r-ss-hidden" onChange={this.props.onChange}>
@@ -52,8 +52,7 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
-
-  _mapDataToOptions: function() {
+  _mapDataToHiddenSelectOptions: function() {
     var labelKey = this.props.optionLabelKey || 'name',
         valueKey = this.props.optionValueKey || 'id',
         data = this.props.dataSource || [];
@@ -65,20 +64,41 @@ var ReactSuperSelect = React.createClass({
           {dataOption[labelKey]}
         </option>);
     });
-
   },
 
+  _mapDataToDefaultOptionMarkup: function() {
+    var labelKey = this.props.optionLabelKey || 'name',
+        valueKey = this.props.optionValueKey || 'id',
+        data = this.props.dataSource || [],
+        self = this;
+
+    return _.map(data, function(dataOption) {
+      //TODO stream icons, template-capable select control needed
+      var itemKey = "drop_li_" + dataOption[valueKey];
+      return (
+        <li className="r-ss-dropdown-option" key={itemKey} onClick={self._selectItem}>
+          {dataOption[labelKey]}
+        </li>);
+    });
+  },
+
+  _selectItem: function(event) {
+    debugger;
+  },
 
   _getDropdownContent: function() {
     if (!this.state.isOpen) {
       return null;
     }
 
-    var searchContent = this._getSearchContent();
-
+    var searchContent = this._getSearchContent(),
+        optionContent = this._mapDataToDefaultOptionMarkup();
     return(
       <div ref="dropdownContent" className="r-ss-dropdown">
         {searchContent}
+        <ul className="r-ss-dropdown-options" ref="dropdownOptionsList">
+          {optionContent}
+        </ul>
       </div>
     );
   },
