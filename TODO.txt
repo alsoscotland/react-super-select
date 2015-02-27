@@ -2,13 +2,15 @@ TASKS
 1) Do up arrow handler for searchable (focus search), and not searchable, wire to first li item
 2) get test file auto linting on devlint task
 
-
-1) template-support for options
+1) move search into fixed element outside of dropdown
 2) aria-accessibile
 3) keyboard navigation
 4) tagging support
 5) lazy-loaded xhr data sources
 6) backing to real select element
+7) clear selected indices on search change
+
+
 
 Props:
 -placeholder

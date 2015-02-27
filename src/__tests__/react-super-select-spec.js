@@ -5,15 +5,7 @@ describe('ReactSuperSelect', function() {
   var React = require('react/addons'),
       _ = require('lodash'),
       ReactSuperSelect = require('../react-super-select.js'),
-      TestUtils = React.addons.TestUtils,
-      keymap;
-
-  keymap = {
-    'down': 40,
-    'up': 38,
-    'esc': 27,
-    'enter': 13
-  };
+      TestUtils = React.addons.TestUtils;
 
   var renderComponent = function(userProps) {
     var props = _.extend({}, userProps);
@@ -118,15 +110,76 @@ describe('ReactSuperSelect', function() {
       expect(el.state.isOpen).toBe(false);
     });
 
-    it('toggles dropdown on keypress of down and up arrows', function() {
+    it('toggles dropdown on keypress of down arrow', function() {
       TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
-        which: keymap.down
+        which: el.keymap.down
       });
 
       expect(el.state.isOpen).toBe(true);
     });
 
+    it('toggles dropdown on keypress of space bar', function() {
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.space
+      });
+
+      expect(el.state.isOpen).toBe(true);
+    });
+
+    it('toggles dropdown on keypress of enter key', function() {
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.enter
+      });
+
+      expect(el.state.isOpen).toBe(true);
+    });
+
+    it('closes dropdown on keypress of esc key', function() {
+      el.setState({
+        isOpen: true
+      });
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.esc
+      });
+
+      expect(el.state.isOpen).toBe(false);
+    });
+
   });
+
+  describe('focus handling', function() {
+
+    it('focuses searchbox when searchable and expanded by keypress', function() {
+      var el = renderComponent({
+        searchable: true
+      });
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.down
+      });
+
+      expect(document.activeElement).toBe(el.refs.searchInput.getDOMNode());
+    });
+
+    // TODO - why does JEST choke here despite this working in actual DOM?
+    //        it does not seem to respect tabIndex focus on aTypical focus elements
+    // it('focuses first options when not searchable and expanded by keypress', function() {
+    //   var mockData = [
+    //     {'id': 1, 'name': 'option one', 'blah': 'blah one'},
+    //     {'id': 2, 'name': 'option two', 'blah': 'blah two'}
+    //   ];
+    //   el = renderComponent({
+    //     searchable: false,
+    //     'dataSource': mockData
+    //   });
+    //   TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+    //     which: el.keymap.down
+    //   });
+
+    //   expect(document.activeElement).toBe(el.refs.option_0.getDOMNode());
+    // });
+
+  });
+
 
   describe('hidden select element', function() {
 
@@ -253,6 +306,67 @@ describe('ReactSuperSelect', function() {
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
 
       expect(optionElements.length).toBe(mockData.length);
+    });
+
+    it('renders custom list item content when a mapper function is provided', function() {
+      var el = renderComponent({
+        'dataSource': mockData,
+        'customOptionsMapper': function(option) {
+          var text = option.name;
+          return React.createElement("aside", {className: "custom-option"}, text);
+        }
+      });
+      el.setState({
+        'isOpen': true
+      });
+
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'custom-option');
+
+      expect(optionElements.length).toBe(mockData.length);
+    });
+  });
+
+  describe('search results filter', function() {
+
+    var mockData;
+
+    beforeEach(function() {
+      mockData = [
+        {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
+        {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'},
+        {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three'}
+      ];
+    });
+
+    it('filters the default option list by label', function() {
+      var el = renderComponent({
+        'dataSource': mockData
+      });
+      el.setState({
+        'isOpen': true,
+        'searchString': 'two'
+      });
+
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
+
+      expect(optionElements.length).toBe(1);
+    });
+
+    it('filters by custom filter function', function() {
+      var el = renderComponent({
+        'dataSource': mockData,
+        'customFilterFunction': function(option) {
+          return (option.name.indexOf('option t') === 0);
+        }
+      });
+      el.setState({
+        'isOpen': true,
+        'searchString': 'three'
+      });
+
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
+
+      expect(optionElements.length).toBe(2);
     });
 
   });

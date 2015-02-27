@@ -1,7 +1,24 @@
+
 /*
 // Examples Stylesheet
 // -------------------
 */
+/* vars */
+@paleGreyFallback: #333;
+@paleGrey: rgba(51, 51, 51, .45);
+@palerGrey: rgba(51, 51, 51, .20);
+@palestGrey: rgba(51, 51, 51, .10);
+@black: #000000;
+@focusBlue: rgba(0, 136, 204, .1);
+
+@activeBackground: @palerGrey;
+@hoverBackground: @palestGrey;
+@borderFallback: @paleGreyFallback;
+@border: @paleGrey;
+@borderSelected: @black;
+@slightBorder: @palestGrey;
+@inputWithIconPadding: 16px;
+
 
 body {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -9,6 +26,17 @@ body {
   color: #333;
   margin: 0;
   padding: 0;
+
+  .r-ss-example-section {
+    display: block;
+    float: left;
+    width: 49%;
+    margin-right: 1%;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }
 
 a {
@@ -86,17 +114,11 @@ label {
   box-sizing: @sizing;
 }
 
-/* vars */
-@paleGreyFallback: #333;
-@paleGrey: rgba(51, 51, 51, .45);
-@inputWithIconPadding: 16px;
-
 /* control */
 .r-ss-wrap {
   position: relative;
   width: 100%;
   .box-sizing;
-  z-index: 1;
 }
 
 .r-ss-wrap * {
@@ -117,20 +139,30 @@ label {
   position: relative;
   cursor: pointer;
 
+  &.r-ss-open {
+    a.r-ss-mock-input {
+      .border-radius(.25rem, 0, 0, .25rem);
+
+      &:focus {
+        border-color: @border;
+      }
+    }
+  }
+
   a.r-ss-mock-input {
     display: block;
     line-height: 30px;
     padding: 0 @inputWithIconPadding 0 0;
-    border-color: @paleGreyFallback;
-    border: 1px solid @paleGrey;
+    border-color: @borderFallback;
+    border: 1px solid @border;
     text-decoration: none;
-    color: @paleGreyFallback;
+    color: @borderFallback;
     .border-radius(.25rem, .25rem, .25rem, .25rem);
     cursor: pointer;
     outline: none;
 
     &:focus {
-    border-color: black;
+      border-color: black;
     }
 
     .r-ss-value-display {
@@ -138,7 +170,7 @@ label {
       padding: .25rem @inputWithIconPadding .25rem .25rem;
 
       &.r-ss-placeholder {
-        color: @paleGrey;
+        color: @border;
       }
     }
   }
@@ -153,29 +185,29 @@ label {
 
     &.up {
       top: 20%;
-      border-color: transparent transparent @paleGreyFallback transparent;
+      border-color: transparent transparent @borderFallback transparent;
     }
 
     &.down {
       top: 40%;
-      border-color: @paleGreyFallback transparent transparent transparent;
+      border-color: @borderFallback transparent transparent transparent;
     }
   }
 
 }
 
-
 .r-ss-search-inner {
   position: relative;
   width: 96%;
-  height: 30px;
+  height: 34px;
+  padding: 2px 0;
   margin: 0 auto;
 
   input {
-    border-color: @paleGreyFallback;
-    border: 1px solid @paleGrey;
+    border-color: @borderFallback;
+    border: 1px solid @border;
     text-decoration: none;
-    color: @paleGreyFallback;
+    color: @borderFallback;
     .border-radius(.25rem, .25rem, .25rem, .25rem);
     outline: none;
     width: 100%;
@@ -194,20 +226,59 @@ label {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAK5JREFUeNpiZMAPHIDYH4gNoPwLQLwQShME84H4PxCfB+IGIO6Hsv9D2QQ1vwfiACxyCVC5fnzO/o9DM7Ih/5G8hgJgTiUEQGr6mbBIgEzdSIQBB0BqmRjIBx9BBDYDHkCjjhDwxxWdxARiAFSNAznRGACVm49NowA0dN9jSUgNSAkJr+b/SNHoAFW8H4r7cTkbXbMAKdFBkWYQWE+JZmYg1gTiD0AcCKVJAgABBgCVaTZGiswDxwAAAABJRU5ErkJggg==');
     cursor: pointer;
   }
-
 }
 
 .r-ss-dropdown {
   position: absolute;
-  top: 98%;
-  padding-top: .25rem;
+  top: 99%;
   .border-radius(0, .25rem, .25rem, 0);
   background-color: #FFF;
-  border-color: @paleGreyFallback;
-  border: 1px solid @paleGrey;
+  border-color: @borderFallback;
+  border: 1px solid @border;
   border-top: none;
   height: 350px;
   width: 100%;
-  overflow-y: auto;
-  z-index: -1;
+  z-index: 1;
+
+  .r-ss-options-wrap {
+    position: relative;
+    height: 316px;
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .r-ss-dropdown-options {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .r-ss-dropdown-option {
+    width: 100%;
+    word-wrap: break-word;
+    padding: .25rem;
+    border-bottom: 1px solid @slightBorder;
+    cursor: pointer;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: @hoverBackground;
+    }
+
+    &.active {
+      background-color: @activeBackground;
+    }
+
+    &:focus,
+    &::selection,
+    &.focused {
+      outline: none;
+      background-color: @focusBlue;
+      border-color: 2px solid @borderSelected;
+    }
+
+  }
 }
