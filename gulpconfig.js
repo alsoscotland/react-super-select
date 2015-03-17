@@ -2,7 +2,7 @@
  * This file controls the behaviour of the build tasks in gulpfile.js
  */
 
-var COMPONENT_NAME = 'ReactSuperSelect';
+var COMPONENT_NAME = 'react-super-select';
 
 // Read the package.json to detect the package name and dependencies
 var pkg = JSON.parse(require('fs').readFileSync('./package.json'));
@@ -11,48 +11,33 @@ var pkg = JSON.parse(require('fs').readFileSync('./package.json'));
 // the build). Dependencies can be customised by hard-coding this array.
 var dependencies = [];
 Object.keys(pkg.dependencies).forEach(function(i) {
-	if (i !== 'reactify') dependencies.push(i);
+  if (i !== 'reactify') dependencies.push(i);
 });
 
 module.exports = {
 
-	component: {
-		// This is the source (entry) file for the component
-		file: COMPONENT_NAME + '.js',
-		// The component name controls the standalone module name
-		name: COMPONENT_NAME,
-		// This is the directory to load the source file from
-		src: 'src',
-		// This is the directory to build the distribution to
-		dist: 'dist',
-		// This is the name of the package that will be exported
-		// by the component file. It must match the name of your
-		// package on npm
-		pkgName: pkg.name,
-		// The package dependencies are automatically build into
-		// a common bundle for the examples and excluded from the
-		// package build.
-		dependencies: dependencies
-	},
+  component: {
+    file: COMPONENT_NAME + '.js',
+    name: COMPONENT_NAME,
+    src: 'src',
+    dist: 'dist',
+    pkgName: pkg.name,
+    dependencies: dependencies
+  },
 
-	example: {
-		// This is the directory to load the source files from
-		src: 'example/src',
-		// This is the directory to build the distribution to
-		dist: 'example/dist',
-		// Files will be copied as-is into the example dist folder
-		files: [
-			'index.html',
-			'standalone.html'
-		],
-		// Scripts will be bundled by browserify and reactify
-		scripts: [
-			'app.js'
-		],
-		// Stylesheets will be plain css
-		stylesheets: [
-			'app.css'
-		]
-	}
+  example: {
+    src: 'src',
+    dist: 'example/dist',
+    files: [
+      'index.html',
+      'standalone.html'
+    ],
+    scripts: [
+      'app.js'
+    ],
+    stylesheets: [
+      'app.less'
+    ]
+  }
 
 };

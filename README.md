@@ -41,15 +41,23 @@ var ReactSuperSelect = require('react-super-select');
 
 ### Properties
 
-* __DOCUMENT PROPERTIES HERE__
+**externalSearchIconClass** (String)*optional*  - if you want to override the default magnifier icon in the search/filter input.  add a custom class here
+
+**onChange** (Function) - the provided function in this prop will be triggered anytime a change event fires from the control
+
+**placeholder** (String) - value serves as the html5 placeholder for the control's display input.  Useful if your site is localized
+
+**searchPlaceholder** (String) - value serves as the html5 placeholder for the control's search field for filtering (requires that searchable is true). Useful if your site is localized
+
+**searchable** (Boolean) - whether or not to allow search filtering on options, a search input with a magnifier icon will appear in the dropdown element when true
 
 ### Notes
 
-__ADDITIONAL USAGE NOTES__
+TBD
 
 ### License
 
-__PUT LICENSE HERE__
+TBD
 
 Copyright (c) 2015 Scotland Stephenson.
 

@@ -18,6 +18,7 @@ node_modules
 
 # Example build directory
 example/dist
+dist/
 
 # Editor and other tmp files
 *.swp
@@ -27,4 +28,5 @@ example/dist
 *.iws
 *.sublime-*
 .idea/
+tmp/
 *.DS_Store

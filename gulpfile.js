@@ -1,17 +1,19 @@
 var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     shell = require('gulp-shell'),
-    initGulpTasks = require('react-component-gulp-tasks');
-
+    initGulpTasks = require('react-component-gulp-tasks'),
+    recess = require('gulp-recess');
 
 var paths = {
   js: ['./src/**/*.js'],
   lint: {
     js: [
-      '!./src/**/*.js',
       './src/**/*-spec.js',
-      'tmp/jsx/**/*.js',
+      './tmp/jsx/**/*.js',
       'gulpfile.js'
+    ],
+    css: [
+      './src/app.less'
     ]
   }
 };
@@ -28,9 +30,22 @@ gulp.task('lint-js-watch', ['jsx'], function() {
     .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('watch', function() {
-  gulp.watch(paths.js, ['jsx', 'lint-js-watch']);
+gulp.task('lint-less', function () {
+    return gulp.src(paths.lint.css)
+        .pipe(recess({
+          strictPropertyOrder: false,
+          noIDs: true,
+          noJSPrefix: true,
+          noOverqualifying: false,
+          noUnderscores: true,
+          noUniversalSelectors: false
+        }))
+        .pipe(recess.reporter({
+          fail: false
+        }))
+        .pipe(gulp.dest('dist'));
 });
+
 
 /**
  * Task configuration is loaded from config.js
@@ -52,3 +67,22 @@ var config = require('./gulpconfig');
  */
 
 initGulpTasks(gulp, config);
+
+gulp.task('watch:examples-lint', [
+  'jsx',
+  'lint-js-watch',
+  'build:example:files',
+  'lint-less',
+  'build:example:css',
+  'watch:example:scripts'
+], function() {
+  gulp.watch(config.example.files.map(function(i) { return config.example.src + '/' + i; }), ['build:example:files']);
+  gulp.watch([config.example.src + '/' + config.example.stylesheets], ['build:example:css']);
+});
+
+gulp.task('devlint', [
+  'dev:server',
+  'build:example:css',
+  'watch:examples-lint'
+]);
+
