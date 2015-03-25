@@ -6,6 +6,9 @@ var testData = require('./test-data.js');
 
 var App = React.createClass({
 
+  handlerExample: function(newValue) {
+    console.log(newValue);
+  },
 
   _customMarkupMapper: function(item) {
     return(
@@ -17,11 +20,11 @@ var App = React.createClass({
       <div>
         <section className="r-ss-example-section">
           <h1>Basic Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" dataSource={testData} />
+          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" dataSource={testData} onChange={this.handlerExample} />
         </section>
         <section className="r-ss-example-section">
           <h1>Custom Template Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" customOptionsMapper={this._customMarkupMapper} dataSource={testData} />
+          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionsMapper={this._customMarkupMapper} dataSource={testData} />
         </section>
       </div>
     );

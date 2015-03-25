@@ -1,14 +1,17 @@
 TASKS
-1) Do up arrow handler for searchable (focus search), and not searchable, wire to first li item
-2) get test file auto linting on devlint task
 
-1) move search into fixed element outside of dropdown
-2) aria-accessibile
-3) keyboard navigation
-4) tagging support
-5) lazy-loaded xhr data sources
-6) backing to real select element
-7) clear selected indices on search change
+1) Single -selection works needs spec
+2) select from enter key works, need spec
+3) custom markup display in closed display works. need spec
+
+4) tagging selection support
+5) Do I need header grouping or is sort sufficient with custom template?
+
+2) aria-accessibile - ongoing
+3) keyboard navigation - ongoing
+4) tagging support NEEDED
+5) lazy-loaded xhr data sources NEEDED
+6) backing to real select element ???  is this needed?
 
 
 

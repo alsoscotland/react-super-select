@@ -35,7 +35,7 @@ module.exports = {
     scripts: [
       'app.js'
     ],
-    stylesheets: [
+    less: [
       'app.less'
     ]
   }

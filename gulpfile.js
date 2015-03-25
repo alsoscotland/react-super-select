@@ -73,16 +73,14 @@ gulp.task('watch:examples-lint', [
   'lint-js-watch',
   'build:example:files',
   'lint-less',
-  'build:example:css',
   'watch:example:scripts'
 ], function() {
   gulp.watch(config.example.files.map(function(i) { return config.example.src + '/' + i; }), ['build:example:files']);
-  gulp.watch([config.example.src + '/' + config.example.stylesheets], ['build:example:css']);
+  gulp.watch([paths.lint.css], ['lint-less', 'build:example:css']);
 });
 
 gulp.task('devlint', [
   'dev:server',
-  'build:example:css',
   'watch:examples-lint'
 ]);
 

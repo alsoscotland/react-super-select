@@ -10,12 +10,14 @@
 @palestGrey: rgba(51, 51, 51, .10);
 @black: #000000;
 @focusBlue: rgba(0, 136, 204, .1);
+@yellow: #FFD;
 
 @activeBackground: @palerGrey;
 @hoverBackground: @palestGrey;
 @borderFallback: @paleGreyFallback;
 @border: @paleGrey;
 @borderSelected: @black;
+@selectedBackground: @yellow;
 @slightBorder: @palestGrey;
 @inputWithIconPadding: 16px;
 
@@ -270,6 +272,10 @@ label {
 
     &.active {
       background-color: @activeBackground;
+    }
+
+    &.selected {
+      background-color: @selectedBackground;
     }
 
     &:focus,
