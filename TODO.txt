@@ -1,7 +1,9 @@
 TASKS
 
-1) Single -selection works needs spec
-2) select from enter key works, need spec
+1) Single -selection keyup enter and click spec
+    -logic to map to single value if not multiple
+    -why is click not respecting passed event from Simulate?
+
 3) custom markup display in closed display works. need spec
 
 4) tagging selection support

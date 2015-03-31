@@ -24,7 +24,7 @@ var App = React.createClass({
         </section>
         <section className="r-ss-example-section">
           <h1>Custom Template Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionsMapper={this._customMarkupMapper} dataSource={testData} />
+          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionTemplateFunction={this._customMarkupMapper} dataSource={testData} />
         </section>
       </div>
     );

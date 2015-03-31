@@ -8,7 +8,9 @@ describe('ReactSuperSelect', function() {
       TestUtils = React.addons.TestUtils;
 
   var renderComponent = function(userProps) {
-    var props = _.extend({}, userProps);
+    var props = _.extend({}, {
+      onChange: jest.genMockFunction()
+    }, userProps);
     var reactComponent = React.createElement(ReactSuperSelect, props);
     return TestUtils.renderIntoDocument(reactComponent);
   };
@@ -180,7 +182,6 @@ describe('ReactSuperSelect', function() {
 
   });
 
-
   describe('hidden select element', function() {
 
     var mockData;
@@ -227,34 +228,38 @@ describe('ReactSuperSelect', function() {
 
   describe('dropdownContent', function() {
 
-    var el;
-
-    beforeEach(function() {
-      el = renderComponent();
+    var renderAndOpen = function(props) {
+      var el = renderComponent(props);
       el.setState({
-        'isOpen': true
+        isOpen: true
       });
-    });
+      return el;
+    };
 
     it('renders dropdown when isOpen is true', function() {
+      var el = renderAndOpen();
+
       expect(el.refs.dropdownContent).toBeTruthy();
     });
 
     it('does not render searchInput if searchable prop is false', function() {
+      var el = renderAndOpen({
+        searchable: false
+      });
+
       expect(el.refs.searchInput).toBeFalsy();
     });
 
     it('renders searchInput if searchable prop is true', function() {
-      el.setProps({
+      var el = renderAndOpen({
         searchable: true
       });
 
       expect(el.refs.searchInput).toBeTruthy();
     });
 
-
     it('renders the default magnifier if a custom magnifier is not set', function() {
-      el.setProps({
+      var el = renderAndOpen({
         searchable: true
       });
       var anchor = TestUtils.findRenderedDOMComponentWithClass(el, 'r-ss-magnifier');
@@ -263,7 +268,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('renders the user specified magnifier class if prop is set', function() {
-      el.setProps({
+      var el = renderAndOpen({
         searchable: true,
         'externalSearchIconClass': 'boo-yahhhhhh'
       });
@@ -274,12 +279,26 @@ describe('ReactSuperSelect', function() {
     });
 
     it('renders searchInput placeholer when prop is provided', function() {
-      el.setProps({
+      var el = renderAndOpen({
         searchable: true,
         searchPlaceholder: 'search placeholder'
       });
 
       expect(el.refs.searchInput.props.placeholder).toBe('search placeholder');
+    });
+
+    it('shows no results content when dataSource empty', function() {
+      var el = renderAndOpen();
+
+      expect(el.refs.noResults).toBeTruthy();
+    });
+
+    it('shows no results content with custom string when provided', function() {
+      var el = renderAndOpen({
+        noResultsString: 'blah'
+      });
+
+      expect(el.refs.noResults.props.children).toBe('blah');
     });
 
   });
@@ -297,10 +316,10 @@ describe('ReactSuperSelect', function() {
 
     it('renders the default list item content when no template is provided', function() {
       var el = renderComponent({
-        'dataSource': mockData
+        dataSource: mockData
       });
       el.setState({
-        'isOpen': true
+        isOpen: true
       });
 
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
@@ -310,20 +329,21 @@ describe('ReactSuperSelect', function() {
 
     it('renders custom list item content when a mapper function is provided', function() {
       var el = renderComponent({
-        'dataSource': mockData,
-        'customOptionsMapper': function(option) {
+        dataSource: mockData,
+        customOptionTemplateFunction: function(option) {
           var text = option.name;
           return React.createElement("aside", {className: "custom-option"}, text);
         }
       });
       el.setState({
-        'isOpen': true
+        isOpen: true
       });
 
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'custom-option');
 
       expect(optionElements.length).toBe(mockData.length);
     });
+
   });
 
   describe('search results filter', function() {
@@ -367,6 +387,45 @@ describe('ReactSuperSelect', function() {
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
 
       expect(optionElements.length).toBe(2);
+    });
+
+  });
+
+  describe('single item selection', function() {
+
+    var mockData = [
+          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
+          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'}
+        ],
+        renderAndOpen = function(props) {
+          var el = renderComponent(props);
+          el.setState({
+            isOpen: true
+          });
+          return el;
+        };
+
+    it('selects item by click', function() {
+      var el = renderAndOpen({
+        dataSource: mockData
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1], {});
+    });
+
+    it.only('selects item by keyup', function() {
+      var el = renderAndOpen({
+        dataSource: mockData
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      el._updateFocusedId(0);
+
+      TestUtils.Simulate.keyUp(options[0], {
+        which: el.keymap.enter
+      });
+
+      expect(el.state.value).toBe(mockData[0]);
     });
 
   });

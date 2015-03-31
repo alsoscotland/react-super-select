@@ -8,27 +8,25 @@ var _ = require('lodash'),
 var ReactSuperSelect = React.createClass({
 
   propTypes: {
-    placeholder: React.PropTypes.string,
-    searchPlaceholder: React.PropTypes.string,
+
+    customFilterFunction: React.PropTypes.func,
+
+    // custom mapping function
+    customOptionTemplateFunction: React.PropTypes.func,
+    dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
+    externalSearchIconClass: React.PropTypes.string,
+    isMultiSelect: React.PropTypes.bool,
     noResultsString: React.PropTypes.string,
     onChange: React.PropTypes.func.isRequired,
-    externalSearchIconClass: React.PropTypes.string,
-    searchable: React.PropTypes.bool,
-
-    remoteDataSourceFetchFunction: React.PropTypes.object,
-    remoteDataSourceIsMultiPage: React.PropTypes.bool,
-
-    dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
+    optionLabelKey: React.PropTypes.string,
 
     // simple option element props for hidden select
     optionValueKey: React.PropTypes.string,
-    optionLabelKey: React.PropTypes.string,
-    customFilterFunction: React.PropTypes.func,
-    // custom mapping function
-    customOptionsMapper: React.PropTypes.func,
-
-    isMultiSelect: React.PropTypes.bool,
-    optionTemplate: React.PropTypes.object,
+    placeholder: React.PropTypes.string,
+    // remoteDataSourceFetchFunction: React.PropTypes.object,// TODO
+    remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
+    searchable: React.PropTypes.bool,
+    searchPlaceholder: React.PropTypes.string
   },
 
   // do not use state because we do not want re-render when focusing
@@ -91,7 +89,7 @@ var ReactSuperSelect = React.createClass({
 
   _findOptionDataObjectsByValue: function(value) {
     var valueKey = this.props.optionValueKey || 'id';
-
+    // TODO return single value if not multiple
     value = _.isArray(value) ? _.pluck(value, valueKey) : [value];
     return _.reject(this.props.dataSource, function(item) {
       return !_.contains(value, item[valueKey]);
@@ -99,22 +97,25 @@ var ReactSuperSelect = React.createClass({
   },
 
   _generateValueDiplay: function() {
-    // if showing a single value
-    if (_.isArray(this.state.value) && (this.state.value.length === 1)) {
+    if (!_.isArray(this.state.value)) {
       return this._getSingleValueDisplayMarkup();
     } else {
-      // TODO - Tags mapping
+      this._getMultipleValueDisplayMarkup();
     }
   },
 
   _getSingleValueDisplayMarkup: function() {
-    if (this.props.customOptionsMapper) {
+    if (this.props.customOptionTemplateFunction) {
       // render custom template if provided with a rendering function
-      return this.props.customOptionsMapper(this.state.value[0]);
+      return this.props.customOptionTemplateFunction(this.state.value);
     } else {
       var labelKey = this.props.optionLabelKey || 'name';
-      return this.state.value[0][labelKey];
+      return this.state.value[labelKey];
     }
+  },
+
+  _getMultipleValueDisplayMarkup: function() {
+
   },
 
   _getDataSource: function() {
@@ -154,8 +155,18 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
+  _getNoResultsMarkup: function() {
+    var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
+    return (<li className="r-ss-dropdown-option"><i ref="noResults">{noResultsString}</i></li>);
+  },
+
   _getOptionsMarkup: function() {
-    var options = _.isFunction(this.props.customOptionsMapper) ? this._mapDataToCustomOptionMarkup() : this._mapDataToDefaultOptionMarkup();
+    var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup() : this._mapDataToDefaultTemplateMarkup();
+
+    if (options.length === 0) {
+      options = this._getNoResultsMarkup();
+    }
+
     return options;
   },
 
@@ -229,7 +240,7 @@ var ReactSuperSelect = React.createClass({
     return !!(_.findWhere(this.state.value, dataItem));
   },
 
-  _mapDataToCustomOptionMarkup: function() {
+  _mapDataToCustomTemplateMarkup: function() {
     var valueKey = this.props.optionValueKey || 'id',
         data = this._getDataSource(),
         self = this;
@@ -237,7 +248,7 @@ var ReactSuperSelect = React.createClass({
     return _.map(data, function(dataOption, index) {
       var itemKey = "drop_li_" + dataOption[valueKey],
           indexRef = 'option_' + index,
-          customOptionMarkup = self.props.customOptionsMapper(dataOption),
+          customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
           classes = classNames('r-ss-dropdown-option', {
             'selected': self._isCurrentlySelected(dataOption)
           });
@@ -248,14 +259,13 @@ var ReactSuperSelect = React.createClass({
     });
   },
 
-  _mapDataToDefaultOptionMarkup: function() {
+  _mapDataToDefaultTemplateMarkup: function() {
     var labelKey = this.props.optionLabelKey || 'name',
         valueKey = this.props.optionValueKey || 'id',
         data = this._getDataSource(),
         self = this;
 
     return _.map(data, function(dataOption, index) {
-      //TODO stream icons, template-capable select control needed
       var itemKey = "drop_li_" + dataOption[valueKey],
           indexRef = 'option_' + index,
           classes = classNames('r-ss-dropdown-option', {
@@ -274,7 +284,6 @@ var ReactSuperSelect = React.createClass({
         data = this.props.dataSource || [];
 
     return _.map(data, function(dataOption) {
-      //TODO stream icons, template-capable select control needed
       return (
         <option key={dataOption[valueKey]} value={dataOption[valueKey]}>
           {dataOption[labelKey]}
@@ -315,7 +324,9 @@ var ReactSuperSelect = React.createClass({
   _focusDOMOption: function() {
     var optionRef = this._getFocusedOptionKey();
     if (this.refs[optionRef]) {
-      this.refs[optionRef].getDOMNode().focus();
+      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
+        this.refs[optionRef].getDOMNode().focus();
+      }
     }
   },
 
@@ -364,7 +375,7 @@ var ReactSuperSelect = React.createClass({
       var focusedOptionKey = this._getFocusedOptionKey();
       if (this.refs[focusedOptionKey]) {
         // TODO if tags, append to state.value array
-        var optionValue = this.refs[focusedOptionKey].getDOMNode().dataset.optionValue;
+        var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
         this._selectItemByValues(optionValue);
       }
     }
@@ -392,6 +403,7 @@ var ReactSuperSelect = React.createClass({
 
   // TODO _selectItemOnOptionClick test
   _selectItemOnOptionClick: function(event) {
+    console.log('WTF?', event);
     var value = event.currentTarget.dataset.optionValue;
     this._selectItemByValues(value);
   },
@@ -401,7 +413,11 @@ var ReactSuperSelect = React.createClass({
         select = this.refs.hiddenSelect;
     select.getDOMNode().value = value;
     objectValues = this._findOptionDataObjectsByValue(value);
+
+    // if not a multiple select, we just want one value
+    objectValues = this.props.multiple ? objectValues : objectValues.pop();
     this.props.onChange(objectValues);
+
     this.setState({
       value: objectValues
     }, this._closedOnKeypress);
