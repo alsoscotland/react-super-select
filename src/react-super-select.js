@@ -226,7 +226,7 @@ var ReactSuperSelect = React.createClass({
         this._onDownKey();
         break;
       case this.keymap.space:
-        this._onSpaceKey();
+        this._onEnterKey(event); // delegate to enter
         break;
       case this.keymap.tab: // delegate to down handler if not at top level of UI DOM
         if (typeof this.focusedId !== 'undefined') {

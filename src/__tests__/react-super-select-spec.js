@@ -136,6 +136,14 @@ describe('ReactSuperSelect', function() {
       expect(el.state.isOpen).toBe(true);
     });
 
+    it('toggles dropdown on keypress of space key', function() {
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.space
+      });
+
+      expect(el.state.isOpen).toBe(true);
+    });
+
     it('closes dropdown on keypress of esc key', function() {
       el.setState({
         isOpen: true
@@ -375,7 +383,7 @@ describe('ReactSuperSelect', function() {
       TestUtils.Simulate.click(options[1]);
     });
 
-    it('selects item by keyup', function() {
+    it('selects item by keyup for enter', function() {
       var el = renderAndOpen({
         dataSource: mockData
       });
@@ -384,6 +392,20 @@ describe('ReactSuperSelect', function() {
 
       TestUtils.Simulate.keyUp(options[0], {
         which: el.keymap.enter
+      });
+
+      expect(el.state.value).toBe(mockData[0]);
+    });
+
+    it('selects item by keyup for space bar', function() {
+      var el = renderAndOpen({
+        dataSource: mockData
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      el._updateFocusedId(0);
+
+      TestUtils.Simulate.keyUp(options[0], {
+        which: el.keymap.space
       });
 
       expect(el.state.value).toBe(mockData[0]);
