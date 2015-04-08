@@ -172,7 +172,7 @@ describe('ReactSuperSelect', function() {
 
     // TODO - why does JEST choke here despite this working in actual DOM?
            // it does not seem to respect tabIndex focus on aTypical focus elements
-    it('focuses first options when not searchable and expanded by keypress', function() {
+    it('focuses first option when not searchable and expanded by keypress', function() {
       var mockData = [
         {'id': 1, 'name': 'option one', 'blah': 'blah one'},
         {'id': 2, 'name': 'option two', 'blah': 'blah two'}
@@ -192,6 +192,47 @@ describe('ReactSuperSelect', function() {
       expect(focusSpy).toHaveBeenCalled();
       expect(el.state.focusedId).toBe(0);
     });
+
+    it('focuses first option on home key keypress', function() {
+      var mockData = [
+        {'id': 1, 'name': 'option one', 'blah': 'blah one'},
+        {'id': 2, 'name': 'option two', 'blah': 'blah two'}
+      ];
+      var el = renderComponent({
+        'dataSource': mockData
+      });
+      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.home,
+        preventDefault: _.noop,
+        stopPropagation: _.noop
+      });
+
+      expect(focusSpy).toHaveBeenCalled();
+      expect(el.state.focusedId).toBe(0);
+    });
+
+    it('focuses last option on end key keypress', function() {
+      var mockData = [
+        {'id': 1, 'name': 'option one', 'blah': 'blah one'},
+        {'id': 2, 'name': 'option two', 'blah': 'blah two'}
+      ];
+      var el = renderComponent({
+        'dataSource': mockData
+      });
+      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.end,
+        preventDefault: _.noop,
+        stopPropagation: _.noop
+      });
+
+      expect(focusSpy).toHaveBeenCalled();
+      expect(el.state.focusedId).toBe(mockData.length - 1);
+    });
+
 
   });
 
@@ -430,7 +471,7 @@ describe('ReactSuperSelect', function() {
           return el;
         };
 
-    it.only('selects multiple items by ctrl or meta-key click', function() {
+    it('selects multiple items by ctrl or meta-key click', function() {
       var el = renderAndOpen({
         multiple: true
       });

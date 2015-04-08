@@ -34,10 +34,11 @@ var ReactSuperSelect = React.createClass({
   SEARCH_FOCUS_ID: -1,
 
   getInitialState: function() {
+    var data = this.props.dataSource || [];
     return {
       isOpen: false,
       focusedId: undefined,
-      lastOptionId: undefined,
+      lastOptionId: (data.length > 0) ? data.length - 1 : undefined,
       searchString: undefined,
       value: undefined
     };
@@ -57,7 +58,6 @@ var ReactSuperSelect = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    // need to update focus tracking if dataSource changes
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
       var data = nextProps.dataSource || [];
       this.setState({
@@ -163,16 +163,6 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
-  // _getHiddenSelectElement: function() {
-  //   var optionsMarkup = this._mapDataToHiddenSelectOptions();
-
-  //   return(
-  //     <select ref="hiddenSelect" className="r-ss-hidden">
-  //       {optionsMarkup}
-  //     </select>
-  //   );
-  // },
-
   _getNoResultsMarkup: function() {
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
     return (<li className="r-ss-dropdown-option"><i ref="noResults">{noResultsString}</i></li>);
@@ -213,11 +203,17 @@ var ReactSuperSelect = React.createClass({
       case this.keymap.down:
         this._onDownKey();
         break;
+      case this.keymap.end:
+        this._onEndKey();
+        break;
       case this.keymap.enter:
         this._onEnterKey(event);
         break;
       case this.keymap.esc:
         this._onEscKey();
+        break;
+      case this.keymap.home:
+        this._onHomeKey();
         break;
       case this.keymap.left: // delegate to up handler
         this._onUpKey();
@@ -242,7 +238,6 @@ var ReactSuperSelect = React.createClass({
   _handleSearch: function(event) {
     var searchString = event.target.value;
     this._handleSearchDebounced.call(this, searchString);
-    // need to get keyup events to top level of control DOM
     this._handleKeyUp(event);
   },
 
@@ -254,7 +249,6 @@ var ReactSuperSelect = React.createClass({
 
   _isCurrentlySelected: function(dataItem) {
     if (!_.isArray(this.state.value)) {
-      // TODO - this misses one of multi-select options? why?
       return _.isEqual(this.state.value, dataItem);
     }
     return !!(_.findWhere(this.state.value, dataItem));
@@ -381,29 +375,36 @@ var ReactSuperSelect = React.createClass({
   },
 
   /* END FOCUS Logic */
-
   _onDownKey: function() {
     this._openedOnKeypress();
     this._moveFocusDown();
-    // if (!this._openedOnKeypress()) {
-    //   // move through selections if not just opening
+  },
 
-    // }
+  _onEndKey: function() {
+    if (this.state.lastOptionId) {
+      this._updateFocusedId(this.state.lastOptionId);
+    }
   },
 
   _onEnterKey: function(event) {
     if (!this._openedOnKeypress()) {
+
       var focusedOptionKey = this._getFocusedOptionKey();
+
       if (this.refs[focusedOptionKey]) {
-        // TODO if tags, append to state.value array
-        var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
-        this._selectItemByValues(optionValue);
+        var optionValue = this.refs[focusedOptionKey].props['data-option-value'],
+            isAdditionalOption = (this.props.multiple && (event.ctrlKey || event.metaKey));
+        this._selectItemByValues(optionValue, isAdditionalOption);
       }
     }
   },
 
   _onEscKey: function() {
     this._closeOnKeypress();
+  },
+
+  _onHomeKey: function() {
+    this._updateFocusedId(0);
   },
 
   _onSpaceKey: function() {
@@ -463,7 +464,6 @@ var ReactSuperSelect = React.createClass({
   },
 
   render: function() {
-    // var hiddenSelect = this._getHiddenSelectElement(),
     var dropdownContent = this._getDropdownContent(),
         valueDisplayClass,
         triggerDisplayContent,
