@@ -4,6 +4,8 @@ TASKS
     -logic to map to single value if not multiple
     -why is click not respecting passed event from Simulate?
 
+2) Select multiple with keyboard (shift key support)
+
 3) custom markup display in closed display works. need spec
 
 4) tagging selection support
@@ -14,8 +16,6 @@ TASKS
 4) tagging support NEEDED
 5) lazy-loaded xhr data sources NEEDED
 6) backing to real select element ???  is this needed?
-
-
 
 Props:
 -placeholder

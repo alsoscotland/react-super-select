@@ -13,9 +13,10 @@ var ReactSuperSelect = React.createClass({
 
     // custom mapping function
     customOptionTemplateFunction: React.PropTypes.func,
+    customTagTemplateFunction: React.PropTypes.func,
     dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
     externalSearchIconClass: React.PropTypes.string,
-    isMultiSelect: React.PropTypes.bool,
+    multiple: React.PropTypes.bool,
     noResultsString: React.PropTypes.string,
     onChange: React.PropTypes.func.isRequired,
     optionLabelKey: React.PropTypes.string,
@@ -24,19 +25,19 @@ var ReactSuperSelect = React.createClass({
     optionValueKey: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     // remoteDataSourceFetchFunction: React.PropTypes.object,// TODO
-    remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
+    // remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
     searchable: React.PropTypes.bool,
     searchPlaceholder: React.PropTypes.string
   },
 
   // do not use state because we do not want re-render when focusing
   SEARCH_FOCUS_ID: -1,
-  focusedId: undefined,
-  lastOptionId: undefined,
 
   getInitialState: function() {
     return {
       isOpen: false,
+      focusedId: undefined,
+      lastOptionId: undefined,
       searchString: undefined,
       value: undefined
     };
@@ -59,19 +60,37 @@ var ReactSuperSelect = React.createClass({
     // need to update focus tracking if dataSource changes
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
       var data = nextProps.dataSource || [];
-      this.lastOptionId = (data.length > 0) ? data.length - 1 : undefined;
-      this.focusedId = undefined;
+      this.setState({
+        focusedId: undefined,
+        lastOptionId: (data.length > 0) ? data.length - 1 : undefined
+      });
     }
   },
 
-  _closedOnKeypress: function() {
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevState.focusedId === this.state.focusedId) {
+      return;
+    }
+    this._focusCurrentFocusedId();
+  },
+
+  _focusCurrentFocusedId: function() {
+    if (this.state.focusedId < 0) {
+      this._focusSearch();
+      return;
+    }
+
+    this._focusDOMOption();
+  },
+
+  _closeOnKeypress: function() {
     if (this.state.isOpen) {
-      this.focusedId = undefined;
-      this.toggleDropdown();
-      this._focusTrigger();
+      this.setState({
+        isOpen: false,
+        focusedId: undefined
+      }, this._focusTrigger);
       return true;
     }
-    return false;
   },
 
   _defaultSearchFilter: function(option) {
@@ -87,9 +106,8 @@ var ReactSuperSelect = React.createClass({
     return _.filter(data, filterFunction);
   },
 
-  _findOptionDataObjectsByValue: function(value) {
+  _findArrayOfOptionDataObjectsByValue: function(value) {
     var valueKey = this.props.optionValueKey || 'id';
-    // TODO return single value if not multiple
     value = _.isArray(value) ? _.pluck(value, valueKey) : [value];
     return _.reject(this.props.dataSource, function(item) {
       return !_.contains(value, item[valueKey]);
@@ -145,15 +163,15 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
-  _getHiddenSelectElement: function() {
-    var optionsMarkup = this._mapDataToHiddenSelectOptions();
+  // _getHiddenSelectElement: function() {
+  //   var optionsMarkup = this._mapDataToHiddenSelectOptions();
 
-    return(
-      <select ref="hiddenSelect" className="r-ss-hidden">
-        {optionsMarkup}
-      </select>
-    );
-  },
+  //   return(
+  //     <select ref="hiddenSelect" className="r-ss-hidden">
+  //       {optionsMarkup}
+  //     </select>
+  //   );
+  // },
 
   _getNoResultsMarkup: function() {
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
@@ -188,6 +206,7 @@ var ReactSuperSelect = React.createClass({
   },
 
   _handleKeyUp: function(event) {
+
     event.preventDefault();
     event.stopPropagation();
     switch(event.which) {
@@ -195,7 +214,7 @@ var ReactSuperSelect = React.createClass({
         this._onDownKey();
         break;
       case this.keymap.enter:
-        this._onEnterKey();
+        this._onEnterKey(event);
         break;
       case this.keymap.esc:
         this._onEscKey();
@@ -235,7 +254,8 @@ var ReactSuperSelect = React.createClass({
 
   _isCurrentlySelected: function(dataItem) {
     if (!_.isArray(this.state.value)) {
-      return false;
+      // TODO - this misses one of multi-select options? why?
+      return _.isEqual(this.state.value, dataItem);
     }
     return !!(_.findWhere(this.state.value, dataItem));
   },
@@ -252,8 +272,9 @@ var ReactSuperSelect = React.createClass({
           classes = classNames('r-ss-dropdown-option', {
             'selected': self._isCurrentlySelected(dataOption)
           });
+
       return (
-        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItemOnOptionClick} role="menuitem">
+        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[valueKey])} role="menuitem">
           {customOptionMarkup}
         </li>);
     });
@@ -272,7 +293,7 @@ var ReactSuperSelect = React.createClass({
             'selected': self._isCurrentlySelected(dataOption)
           });
       return (
-        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItemOnOptionClick} role="menuitem">
+        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[valueKey])} role="menuitem">
           {dataOption[labelKey]}
         </li>);
     });
@@ -294,14 +315,14 @@ var ReactSuperSelect = React.createClass({
   /* FOCUS Logic */
   _moveFocusDown: function() {
     var nextId;
-    if (_.isUndefined(this.focusedId)) {
+    if (_.isUndefined(this.state.focusedId)) {
       if (this.props.searchable) {
         nextId = this.SEARCH_FOCUS_ID;
       } else {
         nextId = 0;
       }
     } else {
-      nextId = (this.lastOptionId === this.focusedId) ? this.lastOptionId : this.focusedId + 1;
+      nextId = (this.lastOptionId === this.state.focusedId) ? this.lastOptionId : this.state.focusedId + 1;
     }
     this._updateFocusedId(nextId);
   },
@@ -309,13 +330,13 @@ var ReactSuperSelect = React.createClass({
   _moveFocusUp: function() {
     var previousId;
 
-    if (!_.isUndefined(this.focusedId) && (this.focusedId !== this.SEARCH_FOCUS_ID)) {
-      if (this.focusedId === 0) {
+    if (!_.isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
+      if (this.state.focusedId === 0) {
         if (this.props.searchable) {
           previousId = this.SEARCH_FOCUS_ID;
         }
       } else {
-        previousId = this.focusedId - 1;
+        previousId = this.state.focusedId - 1;
       }
     }
     this._updateFocusedId(previousId);
@@ -343,34 +364,34 @@ var ReactSuperSelect = React.createClass({
   },
 
   _getFocusedOptionKey: function() {
-    return 'option_' + this.focusedId;
+    return 'option_' + this.state.focusedId;
   },
 
   _updateFocusedId: function(id) {
-    this.focusedId = id;
-    if (_.isUndefined(id)) {
-      this._closedOnKeypress();
-      return;
-    }
+    var self = this;
 
-    if (id < 0) {
-      this._focusSearch();
-      return;
-    }
-
-    this._focusDOMOption();
+    this.setState({
+      focusedId: id
+    }, function() {
+      if (_.isUndefined(id)) {
+        self._closeOnKeypress();
+        return;
+      }
+    });
   },
 
   /* END FOCUS Logic */
 
   _onDownKey: function() {
-    if (!this._openedOnKeypress()) {
-      // move through selections if not just opening
-      this._moveFocusDown();
-    }
+    this._openedOnKeypress();
+    this._moveFocusDown();
+    // if (!this._openedOnKeypress()) {
+    //   // move through selections if not just opening
+
+    // }
   },
 
-  _onEnterKey: function() {
+  _onEnterKey: function(event) {
     if (!this._openedOnKeypress()) {
       var focusedOptionKey = this._getFocusedOptionKey();
       if (this.refs[focusedOptionKey]) {
@@ -382,7 +403,7 @@ var ReactSuperSelect = React.createClass({
   },
 
   _onEscKey: function() {
-    this._closedOnKeypress();
+    this._closeOnKeypress();
   },
 
   _onSpaceKey: function() {
@@ -396,50 +417,54 @@ var ReactSuperSelect = React.createClass({
   _openedOnKeypress: function() {
     if (!this.state.isOpen) {
       this.toggleDropdown();
+
       return true;
     }
     return false;
   },
 
   // TODO _selectItemOnOptionClick test
-  _selectItemOnOptionClick: function(event) {
-    console.log('WTF?', event);
-    var value = event.currentTarget.dataset.optionValue;
-    this._selectItemByValues(value);
+  _selectItemOnOptionClick: function(value, event) {
+    var isAdditionalOption = (this.props.multiple && (event.ctrlKey || event.metaKey));
+    this._selectItemByValues(value, isAdditionalOption);
   },
 
-  _selectItemByValues: function(value) {
-    var objectValues,
-        select = this.refs.hiddenSelect;
-    select.getDOMNode().value = value;
-    objectValues = this._findOptionDataObjectsByValue(value);
+  _selectItemByValues: function(value, isAdditionalOption) {
+   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    // if not a multiple select, we just want one value
-    objectValues = this.props.multiple ? objectValues : objectValues.pop();
+    if (isAdditionalOption && this.state.value) {
+      if (!_.isArray(this.state.value)) {
+        objectValues = [this.state.value].concat(objectValues);
+      } else {
+        objectValues = this.state.value.concat(objectValues);
+      }
+    } else {
+      // return only option from array
+      objectValues = objectValues.pop();
+    }
+
     this.props.onChange(objectValues);
 
     this.setState({
       value: objectValues
-    }, this._closedOnKeypress);
+    }, this._closeOnKeypress);
   },
 
   _setFocusIdToSearch: function() {
-    this.focusedId = this.SEARCH_FOCUS_ID;
+    this.setState({
+      focusedId: this.SEARCH_FOCUS_ID
+    });
   },
 
   toggleDropdown: function() {
     this.setState({
       'isOpen': !this.state.isOpen
-    }, function() {
-      if (this.state.isOpen) {
-        this._moveFocusDown();
-      }
     });
   },
 
   render: function() {
-    var hiddenSelect = this._getHiddenSelectElement(),
-        dropdownContent = this._getDropdownContent(),
+    // var hiddenSelect = this._getHiddenSelectElement(),
+    var dropdownContent = this._getDropdownContent(),
         valueDisplayClass,
         triggerDisplayContent,
         triggerClasses,
@@ -463,7 +488,6 @@ var ReactSuperSelect = React.createClass({
             <span ref="carat" className={caratClass}> </span>
           </a>
         </div>
-        {hiddenSelect}
         {dropdownContent}
       </div>);
   }

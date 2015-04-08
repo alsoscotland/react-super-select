@@ -163,65 +163,26 @@ describe('ReactSuperSelect', function() {
     });
 
     // TODO - why does JEST choke here despite this working in actual DOM?
-    //        it does not seem to respect tabIndex focus on aTypical focus elements
-    // it('focuses first options when not searchable and expanded by keypress', function() {
-    //   var mockData = [
-    //     {'id': 1, 'name': 'option one', 'blah': 'blah one'},
-    //     {'id': 2, 'name': 'option two', 'blah': 'blah two'}
-    //   ];
-    //   el = renderComponent({
-    //     searchable: false,
-    //     'dataSource': mockData
-    //   });
-    //   TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
-    //     which: el.keymap.down
-    //   });
-
-    //   expect(document.activeElement).toBe(el.refs.option_0.getDOMNode());
-    // });
-
-  });
-
-  describe('hidden select element', function() {
-
-    var mockData;
-
-    beforeEach(function() {
-      mockData = [
+           // it does not seem to respect tabIndex focus on aTypical focus elements
+    it('focuses first options when not searchable and expanded by keypress', function() {
+      var mockData = [
         {'id': 1, 'name': 'option one', 'blah': 'blah one'},
         {'id': 2, 'name': 'option two', 'blah': 'blah two'}
       ];
-    });
+      var el = renderComponent({
+        searchable: false,
+        'dataSource': mockData
+      });
+      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-    it('renders a hidden select element', function() {
-      var el = renderComponent({});
-      expect(el.refs.hiddenSelect).toBeTruthy();
-    });
+      TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
+        which: el.keymap.down,
+        preventDefault: _.noop,
+        stopPropagation: _.noop
+      });
 
-    it('renders options mapped from data source by name and id properties', function() {
-      var optionElements,
-          el = renderComponent({
-            'dataSource': mockData
-          });
-      optionElements = TestUtils.scryRenderedDOMComponentsWithTag(el, 'option');
-
-      expect(optionElements.length).toBe(mockData.length);
-      expect(optionElements[0].props.value).toBe(1);
-      expect(optionElements[0].props.children).toBe('option one');
-    });
-
-    it('renders options mapped from data source by user supplied properties properties', function() {
-      var optionElements,
-          el = renderComponent({
-            'dataSource': mockData,
-            'optionValueKey': 'blah',
-            'optionLabelKey': 'id'
-          });
-      optionElements = TestUtils.scryRenderedDOMComponentsWithTag(el, 'option');
-
-      expect(optionElements.length).toBe(mockData.length);
-      expect(optionElements[0].props.value).toBe('blah one');
-      expect(optionElements[0].props.children).toBe(1);
+      expect(focusSpy).toHaveBeenCalled();
+      expect(el.state.focusedId).toBe(0);
     });
 
   });
@@ -411,10 +372,10 @@ describe('ReactSuperSelect', function() {
       });
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
-      TestUtils.Simulate.click(options[1], {});
+      TestUtils.Simulate.click(options[1]);
     });
 
-    it.only('selects item by keyup', function() {
+    it('selects item by keyup', function() {
       var el = renderAndOpen({
         dataSource: mockData
       });
@@ -429,5 +390,47 @@ describe('ReactSuperSelect', function() {
     });
 
   });
+
+  describe('multiple item selection', function() {
+
+    var mockData = [
+          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
+          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'},
+          {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three'},
+          {'id': 4, 'name': 'option four', 'blah': 'blah four', 'fancyprop': 'I am a fancy four'},
+          {'id': 5, 'name': 'option five', 'blah': 'blah five', 'fancyprop': 'I am a fancy five'}
+        ],
+        renderAndOpen = function(props) {
+          var el = renderComponent(_.extend({}, {
+            dataSource: mockData
+          }, props));
+          el.toggleDropdown();
+          return el;
+        };
+
+    it.only('selects multiple items by ctrl or meta-key click', function() {
+      var el = renderAndOpen({
+        multiple: true
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1], options[1].id);
+      // re-open after first click closes
+      el.setState({
+        isOpen: true
+      });
+
+      // re-select options after re-open
+      options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[3], {
+        metaKey: true
+      }, options[3].id);
+
+      expect(_.isEqual(el.state.value, [mockData[1], mockData[3]])).toBe(true);
+    });
+
+  });
+
 
 });
