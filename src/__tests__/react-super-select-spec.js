@@ -435,7 +435,8 @@ describe('ReactSuperSelect', function() {
         which: el.keymap.enter
       });
 
-      expect(el.state.value).toBe(mockData[0]);
+      expect(el.state.value[0]).toBe(mockData[0]);
+      expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
 
     it('selects item by keyup for space bar', function() {
@@ -449,7 +450,8 @@ describe('ReactSuperSelect', function() {
         which: el.keymap.space
       });
 
-      expect(el.state.value).toBe(mockData[0]);
+      expect(el.state.value[0]).toBe(mockData[0]);
+      expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
 
   });
@@ -491,6 +493,7 @@ describe('ReactSuperSelect', function() {
       }, options[3].id);
 
       expect(_.isEqual(el.state.value, [mockData[1], mockData[3]])).toBe(true);
+      expect(_.isEqual(el.props.onChange.mock.calls[1][0], [mockData[1], mockData[3]])).toBe(true);
     });
 
   });

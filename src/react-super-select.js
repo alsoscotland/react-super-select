@@ -40,7 +40,7 @@ var ReactSuperSelect = React.createClass({
       focusedId: undefined,
       lastOptionId: (data.length > 0) ? data.length - 1 : undefined,
       searchString: undefined,
-      value: undefined
+      value: []
     };
   },
 
@@ -115,24 +115,28 @@ var ReactSuperSelect = React.createClass({
   },
 
   _generateValueDiplay: function() {
-    if (!_.isArray(this.state.value)) {
-      return this._getSingleValueDisplayMarkup();
+    if (!this.props.tags) {
+      return this._getNormalDisplayMarkup();
     } else {
-      this._getMultipleValueDisplayMarkup();
+      this._getTagDisplayMarkup();
     }
   },
 
-  _getSingleValueDisplayMarkup: function() {
-    if (this.props.customOptionTemplateFunction) {
-      // render custom template if provided with a rendering function
-      return this.props.customOptionTemplateFunction(this.state.value);
-    } else {
-      var labelKey = this.props.optionLabelKey || 'name';
-      return this.state.value[labelKey];
-    }
+  _getNormalDisplayMarkup: function() {
+    var self = this;
+    var markup = _.map(this.state.value, function(value) {
+      if (self.props.customOptionTemplateFunction) {
+        // render custom template if provided with a rendering function
+        return self.props.customOptionTemplateFunction(value);
+      } else {
+        var labelKey = self.props.optionLabelKey || 'name';
+        return value[labelKey];
+      }
+    });
+    return markup;
   },
 
-  _getMultipleValueDisplayMarkup: function() {
+  _getTagDisplayMarkup: function() {
 
   },
 
@@ -434,17 +438,11 @@ var ReactSuperSelect = React.createClass({
    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
     if (isAdditionalOption && this.state.value) {
-      if (!_.isArray(this.state.value)) {
-        objectValues = [this.state.value].concat(objectValues);
-      } else {
-        objectValues = this.state.value.concat(objectValues);
-      }
-    } else {
-      // return only option from array
-      objectValues = objectValues.pop();
+      objectValues = this.state.value.concat(objectValues);
     }
 
-    this.props.onChange(objectValues);
+    var outputValue = this.props.multiple ? objectValues : _.first(objectValues);
+    this.props.onChange(outputValue);
 
     this.setState({
       value: objectValues
@@ -475,9 +473,9 @@ var ReactSuperSelect = React.createClass({
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen
     });
-    triggerDisplayContent = this.state.value ? this._generateValueDiplay() : this.props.placeholder;
+    triggerDisplayContent = this.state.value.length ? this._generateValueDiplay() : this.props.placeholder;
     valueDisplayClass = classNames('r-ss-value-display', {
-      'r-ss-placeholder': !this.state.value,
+      'r-ss-placeholder': this.state.value.length < 1,
     });
 
     return (
