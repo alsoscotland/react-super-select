@@ -9,25 +9,35 @@ var ReactSuperSelect = React.createClass({
 
   propTypes: {
 
-    customFilterFunction: React.PropTypes.func,
-
-    // custom mapping function
-    customOptionTemplateFunction: React.PropTypes.func,
-    customTagTemplateFunction: React.PropTypes.func,
-    dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
-    externalSearchIconClass: React.PropTypes.string,
+    // BOOLEAN OPTIONS
     multiple: React.PropTypes.bool,
-    noResultsString: React.PropTypes.string,
-    onChange: React.PropTypes.func.isRequired,
-    optionLabelKey: React.PropTypes.string,
+    searchable: React.PropTypes.bool,
+    tags: React.PropTypes.bool,
 
-    // simple option element props for hidden select
+    // CSS CLASS / STYLING SUPPORT
+    externalSearchIconClass: React.PropTypes.string,
+    // customClass: React.PropTypes.string, // TODO
+
+    // MAIN onChange HANDLER
+    onChange: React.PropTypes.func.isRequired,
+
+    // DROPDOWN DATA-related PROPS
+    dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
+    optionLabelKey: React.PropTypes.string,
     optionValueKey: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
+
+    // AJAX-RELATED FUNCTION HANDLERS
     // remoteDataSourceFetchFunction: React.PropTypes.object,// TODO
     // remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
-    searchable: React.PropTypes.bool,
-    searchPlaceholder: React.PropTypes.string
+
+    // RENDERING (ITERATOR) FUNCTIONS
+    customFilterFunction: React.PropTypes.func,
+    customOptionTemplateFunction: React.PropTypes.func,
+
+    // LOCALIZATION STRINGS
+    noResultsString: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    searchPlaceholder: React.PropTypes.string,
   },
 
   // do not use state because we do not want re-render when focusing

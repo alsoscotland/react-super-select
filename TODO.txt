@@ -1,33 +1,14 @@
 TASKS
 
-1) Single -selection keyup enter and click spec
-    -logic to map to single value if not multiple
-    -why is click not respecting passed event from Simulate?
+1) Select multiple with keyboard (shift key support)
+2) tag display and logic for clearing tags
+3) option to style custom
+4) ajax-able data...
+5) paginating data
 
-2) Select multiple with keyboard (shift key support)
+6) Do I need header grouping or is sort sufficient with custom template?
 
-3) custom markup display in closed display works. need spec
-
-4) tagging selection support
-5) Do I need header grouping or is sort sufficient with custom template?
-
-2) aria-accessibile - ongoing
-3) keyboard navigation - ongoing
-4) tagging support NEEDED
-5) lazy-loaded xhr data sources NEEDED
-6) backing to real select element ???  is this needed?
-
-Props:
--placeholder
--no results localized string
--changeHandler
--searchable
--remoteData
--handler keymap {
-    up: 38
-    down: 40
-    backspace: 8 (delete on mac)
-    escape: 27
-    enter: 13
-    tab: 9
-}
+ONGOING
+• aria-accessibile - ongoing
+• keyboard navigation - ongoing
+• backing to real select element ???  is this needed?
