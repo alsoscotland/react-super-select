@@ -8,6 +8,7 @@ var ExampleOptionTemplate = React.createClass({
 
   render: function() {
     var name = this.props.option.name;
+
     return (
       <div className="r-ss-example-option">
         <img src="//sitesbyscotland.com/images/monkeyTorso.png" height="30" />

@@ -12,7 +12,7 @@ var App = React.createClass({
 
   _customMarkupMapper: function(item) {
     return(
-    <ExampleOptionTemplate option={item} />);
+    <ExampleOptionTemplate key={item.id} option={item} />);
   },
 
   render: function() {

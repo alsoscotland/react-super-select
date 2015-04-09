@@ -37,7 +37,7 @@ var ReactSuperSelect = React.createClass({
     // LOCALIZATION STRINGS
     noResultsString: React.PropTypes.string,
     placeholder: React.PropTypes.string,
-    searchPlaceholder: React.PropTypes.string,
+    searchPlaceholder: React.PropTypes.string
   },
 
   // do not use state because we do not want re-render when focusing
@@ -84,14 +84,44 @@ var ReactSuperSelect = React.createClass({
     this._focusCurrentFocusedId();
   },
 
-  _focusCurrentFocusedId: function() {
-    if (this.state.focusedId < 0) {
-      this._focusSearch();
-      return;
-    }
+  render: function() {
+    var dropdownContent = this._getDropdownContent(),
+        valueDisplayClass,
+        triggerDisplayContent,
+        triggerClasses,
+        caratClass = classNames('carat', {
+          'down': !this.state.isOpen,
+          'up': this.state.isOpen
+        });
+    triggerClasses = classNames('r-ss-trigger', {
+      'r-ss-open': this.state.isOpen
+    });
+    triggerDisplayContent = this.state.value.length ? this._generateValueDiplay() : this.props.placeholder;
+    valueDisplayClass = classNames('r-ss-value-display', {
+      'r-ss-placeholder': this.state.value.length < 1,
+    });
 
-    this._focusDOMOption();
+    return (
+      <div className="r-ss-wrap">
+        <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
+          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
+            <span className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</span>
+            <span ref="carat" className={caratClass}> </span>
+          </a>
+        </div>
+        {dropdownContent}
+      </div>);
   },
+
+  toggleDropdown: function() {
+    this.setState({
+      'isOpen': !this.state.isOpen
+    });
+  },
+
+
+
+
 
   _closeOnKeypress: function() {
     if (this.state.isOpen) {
@@ -124,30 +154,42 @@ var ReactSuperSelect = React.createClass({
     });
   },
 
+  _focusCurrentFocusedId: function() {
+    if (this.state.focusedId < 0) {
+      this._focusSearch();
+      return;
+    }
+
+    this._focusDOMOption();
+  },
+
+  _focusDOMOption: function() {
+    var optionRef = this._getFocusedOptionKey();
+    if (this.refs[optionRef]) {
+      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
+        this.refs[optionRef].getDOMNode().focus();
+      }
+    }
+  },
+
+  _focusSearch: function() {
+    if (this.refs.searchInput) {
+      this.refs.searchInput.getDOMNode().focus();
+    }
+  },
+
+  _focusTrigger: function() {
+    if (this.refs.triggerAnchor) {
+      this.refs.triggerAnchor.getDOMNode().focus();
+    }
+  },
+
   _generateValueDiplay: function() {
     if (!this.props.tags) {
       return this._getNormalDisplayMarkup();
     } else {
       this._getTagDisplayMarkup();
     }
-  },
-
-  _getNormalDisplayMarkup: function() {
-    var self = this;
-    var markup = _.map(this.state.value, function(value) {
-      if (self.props.customOptionTemplateFunction) {
-        // render custom template if provided with a rendering function
-        return self.props.customOptionTemplateFunction(value);
-      } else {
-        var labelKey = self.props.optionLabelKey || 'name';
-        return value[labelKey];
-      }
-    });
-    return markup;
-  },
-
-  _getTagDisplayMarkup: function() {
-
   },
 
   _getDataSource: function() {
@@ -177,9 +219,27 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
+  _getFocusedOptionKey: function() {
+    return 'option_' + this.state.focusedId;
+  },
+
   _getNoResultsMarkup: function() {
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
     return (<li className="r-ss-dropdown-option"><i ref="noResults">{noResultsString}</i></li>);
+  },
+
+  _getNormalDisplayMarkup: function() {
+    var self = this;
+    var markup = _.map(this.state.value, function(value) {
+      if (self.props.customOptionTemplateFunction) {
+        // render custom template if provided with a rendering function
+        return self.props.customOptionTemplateFunction(value);
+      } else {
+        var labelKey = self.props.optionLabelKey || 'name';
+        return value[labelKey];
+      }
+    });
+    return markup;
   },
 
   _getOptionsMarkup: function() {
@@ -209,10 +269,14 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
-  _handleKeyUp: function(event) {
+  _getTagDisplayMarkup: function() {
 
+  },
+
+  _handleKeyUp: function(event) {
     event.preventDefault();
     event.stopPropagation();
+
     switch(event.which) {
       case this.keymap.down:
         this._onDownKey();
@@ -307,20 +371,6 @@ var ReactSuperSelect = React.createClass({
     });
   },
 
-  _mapDataToHiddenSelectOptions: function() {
-    var labelKey = this.props.optionLabelKey || 'name',
-        valueKey = this.props.optionValueKey || 'id',
-        data = this.props.dataSource || [];
-
-    return _.map(data, function(dataOption) {
-      return (
-        <option key={dataOption[valueKey]} value={dataOption[valueKey]}>
-          {dataOption[labelKey]}
-        </option>);
-    });
-  },
-
-  /* FOCUS Logic */
   _moveFocusDown: function() {
     var nextId;
     if (_.isUndefined(this.state.focusedId)) {
@@ -350,45 +400,6 @@ var ReactSuperSelect = React.createClass({
     this._updateFocusedId(previousId);
   },
 
-  _focusDOMOption: function() {
-    var optionRef = this._getFocusedOptionKey();
-    if (this.refs[optionRef]) {
-      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
-        this.refs[optionRef].getDOMNode().focus();
-      }
-    }
-  },
-
-  _focusSearch: function() {
-    if (this.refs.searchInput) {
-      this.refs.searchInput.getDOMNode().focus();
-    }
-  },
-
-  _focusTrigger: function() {
-    if (this.refs.triggerAnchor) {
-      this.refs.triggerAnchor.getDOMNode().focus();
-    }
-  },
-
-  _getFocusedOptionKey: function() {
-    return 'option_' + this.state.focusedId;
-  },
-
-  _updateFocusedId: function(id) {
-    var self = this;
-
-    this.setState({
-      focusedId: id
-    }, function() {
-      if (_.isUndefined(id)) {
-        self._closeOnKeypress();
-        return;
-      }
-    });
-  },
-
-  /* END FOCUS Logic */
   _onDownKey: function() {
     this._openedOnKeypress();
     this._moveFocusDown();
@@ -432,16 +443,9 @@ var ReactSuperSelect = React.createClass({
   _openedOnKeypress: function() {
     if (!this.state.isOpen) {
       this.toggleDropdown();
-
       return true;
     }
     return false;
-  },
-
-  // TODO _selectItemOnOptionClick test
-  _selectItemOnOptionClick: function(value, event) {
-    var isAdditionalOption = (this.props.multiple && (event.ctrlKey || event.metaKey));
-    this._selectItemByValues(value, isAdditionalOption);
   },
 
   _selectItemByValues: function(value, isAdditionalOption) {
@@ -459,45 +463,28 @@ var ReactSuperSelect = React.createClass({
     }, this._closeOnKeypress);
   },
 
+  _selectItemOnOptionClick: function(value, event) {
+    var isAdditionalOption = (this.props.multiple && (event.ctrlKey || event.metaKey));
+    this._selectItemByValues(value, isAdditionalOption);
+  },
+
   _setFocusIdToSearch: function() {
     this.setState({
       focusedId: this.SEARCH_FOCUS_ID
     });
   },
 
-  toggleDropdown: function() {
+  _updateFocusedId: function(id) {
+    var self = this;
+
     this.setState({
-      'isOpen': !this.state.isOpen
+      focusedId: id
+    }, function() {
+      if (_.isUndefined(id)) {
+        self._closeOnKeypress();
+        return;
+      }
     });
-  },
-
-  render: function() {
-    var dropdownContent = this._getDropdownContent(),
-        valueDisplayClass,
-        triggerDisplayContent,
-        triggerClasses,
-        caratClass = classNames('carat', {
-          'down': !this.state.isOpen,
-          'up': this.state.isOpen
-        });
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen
-    });
-    triggerDisplayContent = this.state.value.length ? this._generateValueDiplay() : this.props.placeholder;
-    valueDisplayClass = classNames('r-ss-value-display', {
-      'r-ss-placeholder': this.state.value.length < 1,
-    });
-
-    return (
-      <div className="r-ss-wrap">
-        <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
-          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
-            <span className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</span>
-            <span ref="carat" className={caratClass}> </span>
-          </a>
-        </div>
-        {dropdownContent}
-      </div>);
   }
 
 });
