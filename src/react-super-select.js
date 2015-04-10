@@ -75,7 +75,9 @@ var ReactSuperSelect = React.createClass({
       var data = nextProps.dataSource || [];
       this.setState({
         focusedId: undefined,
-        lastOptionId: (data.length > 0) ? data.length - 1 : undefined
+        labelKey: nextProps.optionLabelKey || 'name',
+        lastOptionId: (data.length > 0) ? data.length - 1 : undefined,
+        valueKey: nextProps.optionValueKey || 'id'
       });
     }
   },
