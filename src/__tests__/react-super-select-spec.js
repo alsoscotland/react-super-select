@@ -471,6 +471,40 @@ describe('ReactSuperSelect', function() {
           }, props));
           el.toggleDropdown();
           return el;
+        },
+        getElWithThreeTags = function() {
+          var el = renderAndOpen({
+            multiple: true,
+            tags: true
+          });
+          var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+          TestUtils.Simulate.click(options[1], options[1].id);
+          // re-open after first click closes
+          el.setState({
+            isOpen: true
+          });
+
+          // re-select options after re-open
+          options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+          TestUtils.Simulate.click(options[3], {
+            metaKey: true
+          }, options[3].id);
+
+          // re-open after second click closes
+          el.setState({
+            isOpen: true
+          });
+
+          // re-select options after re-open
+          options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+          TestUtils.Simulate.click(options[4], {
+            metaKey: true
+          }, options[4].id);
+
+          return el;
         };
 
     it('selects multiple items by ctrl or meta-key click', function() {
@@ -494,6 +528,53 @@ describe('ReactSuperSelect', function() {
 
       expect(_.isEqual(el.state.value, [mockData[1], mockData[3]])).toBe(true);
       expect(_.isEqual(el.props.onChange.mock.calls[1][0], [mockData[1], mockData[3]])).toBe(true);
+    });
+
+    it('will render multiple items as tags', function() {
+      var el = getElWithThreeTags();
+
+      var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+      expect(tags.length).toBe(3);
+      expect(el.state.value.length).toBe(3);
+    });
+
+    it('will delete tag when remove tag button is clicked', function() {
+      var el = getElWithThreeTags();
+
+      var removeTagButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');
+      TestUtils.Simulate.click(removeTagButtons[0]);
+
+      var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+      expect(tags.length).toBe(2);
+      expect(el.state.value.length).toBe(2);
+    });
+
+    it('tag deletion works via enter key', function() {
+      var el = getElWithThreeTags();
+
+      var removeTagButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');
+      TestUtils.Simulate.keyUp(removeTagButtons[0], {
+        which: el.keymap.enter,
+        preventDefault: jest.genMockFunction(),
+        stopPropagation: jest.genMockFunction()
+      });
+
+      var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+      expect(tags.length).toBe(2);
+    });
+
+    it('tag deletion works via space bar key', function() {
+      var el = getElWithThreeTags();
+
+      var removeTagButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');
+      TestUtils.Simulate.keyUp(removeTagButtons[0], {
+        which: el.keymap.space,
+        preventDefault: jest.genMockFunction(),
+        stopPropagation: jest.genMockFunction()
+      });
+
+      var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+      expect(tags.length).toBe(2);
     });
 
   });

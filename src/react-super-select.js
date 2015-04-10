@@ -17,6 +17,7 @@ var ReactSuperSelect = React.createClass({
     // CSS CLASS / STYLING SUPPORT
     externalSearchIconClass: React.PropTypes.string,
     // customClass: React.PropTypes.string, // TODO
+    // customTagClass: React.PropTypes.string // TODO
 
     // MAIN onChange HANDLER
     onChange: React.PropTypes.func.isRequired,
@@ -24,7 +25,7 @@ var ReactSuperSelect = React.createClass({
     // DROPDOWN DATA-related PROPS
     dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
     optionLabelKey: React.PropTypes.string,
-    optionValueKey: React.PropTypes.string,
+    optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
 
     // AJAX-RELATED FUNCTION HANDLERS
     // remoteDataSourceFetchFunction: React.PropTypes.object,// TODO
@@ -105,7 +106,7 @@ var ReactSuperSelect = React.createClass({
       <div className="r-ss-wrap">
         <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
           <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
-            <span className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</span>
+            <div className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</div>
             <span ref="carat" className={caratClass}> </span>
           </a>
         </div>
@@ -118,10 +119,6 @@ var ReactSuperSelect = React.createClass({
       'isOpen': !this.state.isOpen
     });
   },
-
-
-
-
 
   _closeOnKeypress: function() {
     if (this.state.isOpen) {
@@ -188,7 +185,7 @@ var ReactSuperSelect = React.createClass({
     if (!this.props.tags) {
       return this._getNormalDisplayMarkup();
     } else {
-      this._getTagDisplayMarkup();
+      return this._getTagsDisplayMarkup();
     }
   },
 
@@ -269,8 +266,27 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
-  _getTagDisplayMarkup: function() {
+  _getTagsDisplayMarkup: function() {
+    var self = this;
+    var markup = _.map(this.state.value, function(value) {
+      return self._getTagMarkup(value);
+    });
+    return markup;
+  },
 
+  _getTagMarkup: function(value) {
+    var labelKey = this.props.optionLabelKey || 'name',
+        label = value[labelKey],
+        valueKey = this.props.optionValueKey || 'id',
+        displayValue = value[valueKey],
+        tagKey = 'tag_' + displayValue,
+        buttonName = "RemoveTag_" + displayValue;
+
+    return (
+      <span className="r-ss-tag" key={tagKey}>
+        <span className="r-ss-tag-label">{label}</span>
+        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTag.bind(null, value)} onKeyUp={this._removeTag.bind(null, value)}>X</button>
+      </span>);
   },
 
   _handleKeyUp: function(event) {
@@ -446,6 +462,17 @@ var ReactSuperSelect = React.createClass({
       return true;
     }
     return false;
+  },
+
+  _removeTag: function(value, event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var valueKey = this.props.optionValueKey || 'id';
+    this.setState({
+      value: _.reject(this.state.value, function(tag) {
+              return tag[valueKey] === value[valueKey];
+            })
+    });
   },
 
   _selectItemByValues: function(value, isAdditionalOption) {

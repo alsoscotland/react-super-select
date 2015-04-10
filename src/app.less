@@ -8,9 +8,13 @@
 @paleGrey: rgba(51, 51, 51, .45);
 @palerGrey: rgba(51, 51, 51, .20);
 @palestGrey: rgba(51, 51, 51, .10);
-@black: #000000;
+@lightGreyBackground: #EDEDED;
+@black: #000;
 @focusBlue: rgba(0, 136, 204, .1);
 @yellow: #FFD;
+@white: #FFF;
+@red: #F00;
+
 
 @activeBackground: @palerGrey;
 @hoverBackground: @palestGrey;
@@ -21,6 +25,16 @@
 @slightBorder: @palestGrey;
 @inputWithIconPadding: 16px;
 
+@tagBackgroundColor: @lightGreyBackground;
+@tagColor: @paleGreyFallback;
+@tagShadowColor: @paleGreyFallback;
+@tagRemoveBackground: @white;
+@tagRemoveColor: @paleGreyFallback;
+@tagRemoveHoverBackground: @red;
+@tagRemoveHoverColor: @white;
+@tagRemoveBorderColor: @black;
+@tagBorderRadius: 4px;
+@tagRemoveBorderRadius: 2px;
 
 body {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -285,5 +299,75 @@ label {
       border-color: 2px solid @borderSelected;
     }
 
+  }
+}
+
+.r-ss-tag {
+  display: inline-block;
+  position: relative;
+  padding: 0 20px 0 7px;
+  margin-bottom: .25rem;
+  background-color: @tagBackgroundColor;
+  color: @tagColor;
+  margin-left: 1rem;
+  max-width: 100%;
+  height: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 26px;
+  .border-radius(@tagBorderRadius, @tagBorderRadius, @tagBorderRadius, @tagBorderRadius);
+  box-shadow: 1px 1px 1px @tagShadowColor;
+
+  &.r-ss-tag-label {
+    white-space: nowrap;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    left: -.2rem;
+    top: 35%;
+    height: 5px;
+    width: 5px;
+    background-color: #FFF;
+    border: 1px solid #999;
+    .border-radius(5px, 5px, 5px, 5px);
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: -23px;
+    top: 0;
+    height: 0;
+    width: 0;
+    border-top: 12px solid transparent;
+    border-left: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-right: 12px solid @tagBackgroundColor;
+  }
+
+  .r-ss-tag-remove {
+    opacity: .25;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    padding: 0;
+    color: @tagRemoveColor;
+    background-color: @tagRemoveBackground;
+    font-size: 10px;
+    border: 1px solid @tagRemoveColor;
+    cursor: pointer;
+    .border-radius(@tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius);
+
+    &:hover,
+    &:focus {
+      opacity: 1;
+      color: @tagRemoveHoverColor;
+      background-color: @tagRemoveHoverBackground;
+    }
   }
 }

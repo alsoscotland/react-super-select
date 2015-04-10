@@ -1,10 +1,14 @@
 TASKS
 
 1) Select multiple with keyboard (shift key support)
-2) tag display and logic for clearing tags
-3) option to style custom
-4) ajax-able data...
-5) paginating data
+2) option to style custom
+3) ajax-able data...
+4) paginating data
+5) docco annotated source docs?
+6) documentation for examples pages/readme
+
+7) move valueKey, optionKey to state & componentDidReceiveProps?
+8) Need vendor prefixes for css opacity?
 
 6) Do I need header grouping or is sort sufficient with custom template?
 
