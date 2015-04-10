@@ -49,9 +49,11 @@ var ReactSuperSelect = React.createClass({
     return {
       isOpen: false,
       focusedId: undefined,
+      labelKey: this.props.optionLabelKey || 'name',
       lastOptionId: (data.length > 0) ? data.length - 1 : undefined,
       searchString: undefined,
-      value: []
+      value: [],
+      valueKey: this.props.optionValueKey || 'id'
     };
   },
 
@@ -144,10 +146,10 @@ var ReactSuperSelect = React.createClass({
   },
 
   _findArrayOfOptionDataObjectsByValue: function(value) {
-    var valueKey = this.props.optionValueKey || 'id';
-    value = _.isArray(value) ? _.pluck(value, valueKey) : [value];
+    var self = this,
+        valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
     return _.reject(this.props.dataSource, function(item) {
-      return !_.contains(value, item[valueKey]);
+      return !_.contains(valuesArray, item[self.state.valueKey]);
     });
   },
 
@@ -232,8 +234,7 @@ var ReactSuperSelect = React.createClass({
         // render custom template if provided with a rendering function
         return self.props.customOptionTemplateFunction(value);
       } else {
-        var labelKey = self.props.optionLabelKey || 'name';
-        return value[labelKey];
+        return value[self.state.labelKey];
       }
     });
     return markup;
@@ -275,10 +276,8 @@ var ReactSuperSelect = React.createClass({
   },
 
   _getTagMarkup: function(value) {
-    var labelKey = this.props.optionLabelKey || 'name',
-        label = value[labelKey],
-        valueKey = this.props.optionValueKey || 'id',
-        displayValue = value[valueKey],
+    var label = value[this.state.labelKey],
+        displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
         buttonName = "RemoveTag_" + displayValue;
 
@@ -349,12 +348,11 @@ var ReactSuperSelect = React.createClass({
   },
 
   _mapDataToCustomTemplateMarkup: function() {
-    var valueKey = this.props.optionValueKey || 'id',
-        data = this._getDataSource(),
+    var data = this._getDataSource(),
         self = this;
 
     return _.map(data, function(dataOption, index) {
-      var itemKey = "drop_li_" + dataOption[valueKey],
+      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
           indexRef = 'option_' + index,
           customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
           classes = classNames('r-ss-dropdown-option', {
@@ -362,27 +360,25 @@ var ReactSuperSelect = React.createClass({
           });
 
       return (
-        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[valueKey])} role="menuitem">
+        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
           {customOptionMarkup}
         </li>);
     });
   },
 
   _mapDataToDefaultTemplateMarkup: function() {
-    var labelKey = this.props.optionLabelKey || 'name',
-        valueKey = this.props.optionValueKey || 'id',
-        data = this._getDataSource(),
+    var data = this._getDataSource(),
         self = this;
 
     return _.map(data, function(dataOption, index) {
-      var itemKey = "drop_li_" + dataOption[valueKey],
+      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
           indexRef = 'option_' + index,
           classes = classNames('r-ss-dropdown-option', {
             'selected': self._isCurrentlySelected(dataOption)
           });
       return (
-        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[valueKey])} role="menuitem">
-          {dataOption[labelKey]}
+        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
+          {dataOption[self.state.labelKey]}
         </li>);
     });
   },
@@ -467,10 +463,10 @@ var ReactSuperSelect = React.createClass({
   _removeTag: function(value, event) {
     event.preventDefault();
     event.stopPropagation();
-    var valueKey = this.props.optionValueKey || 'id';
+    var self = this;
     this.setState({
       value: _.reject(this.state.value, function(tag) {
-              return tag[valueKey] === value[valueKey];
+              return tag[self.state.valueKey] === value[self.state.valueKey];
             })
     });
   },
@@ -478,7 +474,7 @@ var ReactSuperSelect = React.createClass({
   _selectItemByValues: function(value, isAdditionalOption) {
    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (isAdditionalOption && this.state.value) {
+    if (this.props.tags || (isAdditionalOption && this.state.value)) {
       objectValues = this.state.value.concat(objectValues);
     }
 
