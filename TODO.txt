@@ -1,16 +1,12 @@
 TASKS
 
-1) Select multiple with keyboard (shift key support)
-2) option to style custom
-3) ajax-able data...
-4) paginating data
-5) docco annotated source docs?
-6) documentation for examples pages/readme
-
-7) move valueKey, optionKey to state & componentDidReceiveProps?
-8) Need vendor prefixes for css opacity?
-
+1) option to style custom
+2) ajax-able data...
+3) paginating data
+4) docco annotated source docs?
+5) documentation for examples pages/readme
 6) Do I need header grouping or is sort sufficient with custom template?
+    - I suppose a groupd heading could be in custom template and have click handlers arrested, but that might be a stretch
 
 ONGOING
 • aria-accessibile - ongoing

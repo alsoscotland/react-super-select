@@ -479,26 +479,13 @@ describe('ReactSuperSelect', function() {
           });
           var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
-          TestUtils.Simulate.click(options[1], options[1].id);
-          // re-open after first click closes
-          el.setState({
-            isOpen: true
-          });
-
-          // re-select options after re-open
-          options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+          TestUtils.Simulate.click(options[1], {
+            metaKey: true
+          }, options[1].id);
 
           TestUtils.Simulate.click(options[3], {
             metaKey: true
           }, options[3].id);
-
-          // re-open after second click closes
-          el.setState({
-            isOpen: true
-          });
-
-          // re-select options after re-open
-          options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
           TestUtils.Simulate.click(options[4], {
             metaKey: true
@@ -577,7 +564,93 @@ describe('ReactSuperSelect', function() {
       expect(tags.length).toBe(2);
     });
 
+    describe('shift-key multi-selection', function() {
+
+      it('selects multiple sequential options on shift-click', function() {
+        var el = renderAndOpen({
+          tags: true
+        });
+
+        var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+        TestUtils.Simulate.click(options[0], {
+          metaKey: true,
+          currentTarget: {
+            attributes: {
+              'data-option-index': 0
+            }
+          }
+        }, options[0].id);
+
+        TestUtils.Simulate.click(options[3], {
+          shiftKey: true,
+          currentTarget: {
+            attributes: {
+              'data-option-index': 2
+            }
+          }
+        }, options[3].id);
+
+        var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+        expect(tags.length).toBe(4);
+      });
+
+      it('selects multiple sequential options on shift-keypress of enter', function() {
+        var el = renderAndOpen({
+          tags: true
+        });
+
+        var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+        TestUtils.Simulate.click(options[0], {
+          metaKey: true,
+          currentTarget: {
+            attributes: {
+              'data-option-index': 0
+            }
+          }
+        }, options[0].id);
+
+        el._updateFocusedId(3);
+
+        TestUtils.Simulate.keyUp(options[3], {
+          shiftKey: true,
+          which: el.keymap.enter
+        }, options[3].id);
+
+        var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+        expect(tags.length).toBe(4);
+      });
+
+      it('selects multiple sequential options on shift-keypress of space bar', function() {
+        var el = renderAndOpen({
+          tags: true
+        });
+
+        var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+        TestUtils.Simulate.click(options[0], {
+          metaKey: true,
+          currentTarget: {
+            attributes: {
+              'data-option-index': 0
+            }
+          }
+        }, options[0].id);
+
+        el._updateFocusedId(3);
+
+        TestUtils.Simulate.keyUp(options[3], {
+          shiftKey: true,
+          which: el.keymap.space
+        }, options[3].id);
+
+        var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+        expect(tags.length).toBe(4);
+      });
+
+    });
+
   });
+
+
 
 
 });

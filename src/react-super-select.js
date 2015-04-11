@@ -302,7 +302,11 @@ var ReactSuperSelect = React.createClass({
         this._onEndKey();
         break;
       case this.keymap.enter:
-        this._onEnterKey(event);
+        if (event.shiftKey) {
+          this._handleShiftKeyUpSelect();
+        } else {
+          this._onEnterKey(event);
+        }
         break;
       case this.keymap.esc:
         this._onEscKey();
@@ -317,7 +321,11 @@ var ReactSuperSelect = React.createClass({
         this._onDownKey();
         break;
       case this.keymap.space:
-        this._onEnterKey(event); // delegate to enter
+        if (event.shiftKey) {
+          this._handleShiftKeyUpSelect();
+        } else {
+          this._onEnterKey(event); // delegate to enter
+        }
         break;
       case this.keymap.tab: // delegate to down handler if not at top level of UI DOM
         if (typeof this.focusedId !== 'undefined') {
@@ -342,11 +350,31 @@ var ReactSuperSelect = React.createClass({
     });
   }, 300),
 
+  _handleShiftSelect: function(value, event) {
+    var optionIndex = parseInt(event.currentTarget.getAttribute('data-option-index'), 10);
+    if (optionIndex === 0) {
+      return;
+    }
+    this._selectAllFromOptionRefToLastSelected(optionIndex);
+  },
+
+  _handleShiftKeyUpSelect: function() {
+    var focusedOptionKey = this._getFocusedOptionKey();
+
+    if (this.refs[focusedOptionKey]) {
+      this._selectAllFromOptionRefToLastSelected(this.refs[focusedOptionKey].props['data-option-index']);
+    }
+  },
+
   _isCurrentlySelected: function(dataItem) {
     if (!_.isArray(this.state.value)) {
       return _.isEqual(this.state.value, dataItem);
     }
     return !!(_.findWhere(this.state.value, dataItem));
+  },
+
+  _isMultiSelect: function() {
+    return this.props.multiple || this.props.tags;
   },
 
   _mapDataToCustomTemplateMarkup: function() {
@@ -362,7 +390,7 @@ var ReactSuperSelect = React.createClass({
           });
 
       return (
-        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
+        <li ref={indexRef} tabIndex="0" data-option-index={index} className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
           {customOptionMarkup}
         </li>);
     });
@@ -379,7 +407,7 @@ var ReactSuperSelect = React.createClass({
             'selected': self._isCurrentlySelected(dataOption)
           });
       return (
-        <li ref={indexRef} tabIndex="0" className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
+        <li ref={indexRef} tabIndex="0" data-option-index={index} className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
           {dataOption[self.state.labelKey]}
         </li>);
     });
@@ -432,7 +460,7 @@ var ReactSuperSelect = React.createClass({
 
       if (this.refs[focusedOptionKey]) {
         var optionValue = this.refs[focusedOptionKey].props['data-option-value'],
-            isAdditionalOption = (this.props.multiple && (event.ctrlKey || event.metaKey));
+            isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
         this._selectItemByValues(optionValue, isAdditionalOption);
       }
     }
@@ -473,6 +501,30 @@ var ReactSuperSelect = React.createClass({
     });
   },
 
+  _selectAllFromOptionRefToLastSelected: function(optionIndex) {
+    var self = this,
+        optionsToSelect = [],
+        valuesToSelect;
+
+    for (var i = (optionIndex); i >= 0; i--) {
+      var refString = 'option_' + i,
+          option = this.refs[refString];
+
+      if (option.props.className.match(/selected/)) {
+        break;
+      } else {
+        optionsToSelect.push(option.props['data-option-value']);
+      }
+
+    }
+
+    valuesToSelect = _.reject(this.props.dataSource, function(item) {
+                       return optionsToSelect.indexOf(item[self.state.valueKey]) === -1;
+                     });
+
+    this._selectItemByValues(valuesToSelect);
+  },
+
   _selectItemByValues: function(value, isAdditionalOption) {
    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
@@ -480,16 +532,26 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    var outputValue = this.props.multiple ? objectValues : _.first(objectValues);
+    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
     this.props.onChange(outputValue);
 
-    this.setState({
-      value: objectValues
-    }, this._closeOnKeypress);
+    if (isAdditionalOption) {
+      this.setState({
+        value: objectValues
+      });
+    } else {
+      this.setState({
+        value: objectValues
+      }, this._closeOnKeypress);
+    }
   },
 
   _selectItemOnOptionClick: function(value, event) {
-    var isAdditionalOption = (this.props.multiple && (event.ctrlKey || event.metaKey));
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._handleShiftSelect(value, event);
+      return;
+    }
+    var isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
     this._selectItemByValues(value, isAdditionalOption);
   },
 
