@@ -46,7 +46,6 @@ gulp.task('lint-less', function () {
         .pipe(gulp.dest('dist'));
 });
 
-
 /**
  * Task configuration is loaded from config.js
  *

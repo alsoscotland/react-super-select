@@ -9,11 +9,28 @@ describe('ReactSuperSelect', function() {
 
   var renderComponent = function(userProps) {
     var props = _.extend({}, {
-      onChange: jest.genMockFunction()
+      onChange: jest.genMockFunction(),
+      dataSource: mockData
     }, userProps);
     var reactComponent = React.createElement(ReactSuperSelect, props);
     return TestUtils.renderIntoDocument(reactComponent);
   };
+
+  var renderAndOpen = function(props) {
+    var el = renderComponent(props);
+    el.setState({
+      isOpen: true
+    });
+    return el;
+  };
+
+  var mockData = [
+          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
+          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'},
+          {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three'},
+          {'id': 4, 'name': 'option four', 'blah': 'blah four', 'fancyprop': 'I am a fancy four'},
+          {'id': 5, 'name': 'option five', 'blah': 'blah five', 'fancyprop': 'I am a fancy five'}
+        ];
 
   describe('render', function() {
 
@@ -173,13 +190,8 @@ describe('ReactSuperSelect', function() {
     // TODO - why does JEST choke here despite this working in actual DOM?
            // it does not seem to respect tabIndex focus on aTypical focus elements
     it('focuses first option when not searchable and expanded by keypress', function() {
-      var mockData = [
-        {'id': 1, 'name': 'option one', 'blah': 'blah one'},
-        {'id': 2, 'name': 'option two', 'blah': 'blah two'}
-      ];
       var el = renderComponent({
-        searchable: false,
-        'dataSource': mockData
+        searchable: false
       });
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
@@ -194,13 +206,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('focuses first option on home key keypress', function() {
-      var mockData = [
-        {'id': 1, 'name': 'option one', 'blah': 'blah one'},
-        {'id': 2, 'name': 'option two', 'blah': 'blah two'}
-      ];
-      var el = renderComponent({
-        'dataSource': mockData
-      });
+      var el = renderComponent();
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
       TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
@@ -214,13 +220,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('focuses last option on end key keypress', function() {
-      var mockData = [
-        {'id': 1, 'name': 'option one', 'blah': 'blah one'},
-        {'id': 2, 'name': 'option two', 'blah': 'blah two'}
-      ];
-      var el = renderComponent({
-        'dataSource': mockData
-      });
+      var el = renderComponent();
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
       TestUtils.Simulate.keyUp(el.refs.triggerDiv.getDOMNode(), {
@@ -237,14 +237,6 @@ describe('ReactSuperSelect', function() {
   });
 
   describe('dropdownContent', function() {
-
-    var renderAndOpen = function(props) {
-      var el = renderComponent(props);
-      el.setState({
-        isOpen: true
-      });
-      return el;
-    };
 
     it('renders dropdown when isOpen is true', function() {
       var el = renderAndOpen();
@@ -298,14 +290,17 @@ describe('ReactSuperSelect', function() {
     });
 
     it('shows no results content when dataSource empty', function() {
-      var el = renderAndOpen();
+      var el = renderAndOpen({
+        dataSource: []
+      });
 
       expect(el.refs.noResults).toBeTruthy();
     });
 
     it('shows no results content with custom string when provided', function() {
       var el = renderAndOpen({
-        noResultsString: 'blah'
+        noResultsString: 'blah',
+        dataSource: []
       });
 
       expect(el.refs.noResults.props.children).toBe('blah');
@@ -315,22 +310,8 @@ describe('ReactSuperSelect', function() {
 
   describe('dropdown template content', function() {
 
-    var mockData;
-
-    beforeEach(function() {
-      mockData = [
-        {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
-        {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'}
-      ];
-    });
-
     it('renders the default list item content when no template is provided', function() {
-      var el = renderComponent({
-        dataSource: mockData
-      });
-      el.setState({
-        isOpen: true
-      });
+      var el = renderAndOpen();
 
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
 
@@ -339,7 +320,6 @@ describe('ReactSuperSelect', function() {
 
     it('renders custom list item content when a mapper function is provided', function() {
       var el = renderComponent({
-        dataSource: mockData,
         customOptionTemplateFunction: function(option) {
           var text = option.name;
           return React.createElement("aside", {className: "custom-option"}, text);
@@ -358,22 +338,9 @@ describe('ReactSuperSelect', function() {
 
   describe('search results filter', function() {
 
-    var mockData;
-
-    beforeEach(function() {
-      mockData = [
-        {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
-        {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'},
-        {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three'}
-      ];
-    });
-
     it('filters the default option list by label', function() {
-      var el = renderComponent({
-        'dataSource': mockData
-      });
+      var el = renderAndOpen();
       el.setState({
-        'isOpen': true,
         'searchString': 'two'
       });
 
@@ -384,8 +351,7 @@ describe('ReactSuperSelect', function() {
 
     it('filters by custom filter function', function() {
       var el = renderComponent({
-        'dataSource': mockData,
-        'customFilterFunction': function(option) {
+        customFilterFunction: function(option) {
           return (option.name.indexOf('option t') === 0);
         }
       });
@@ -403,31 +369,15 @@ describe('ReactSuperSelect', function() {
 
   describe('single item selection', function() {
 
-    var mockData = [
-          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
-          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'}
-        ],
-        renderAndOpen = function(props) {
-          var el = renderComponent(props);
-          el.setState({
-            isOpen: true
-          });
-          return el;
-        };
-
     it('selects item by click', function() {
-      var el = renderAndOpen({
-        dataSource: mockData
-      });
+      var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
       TestUtils.Simulate.click(options[1]);
     });
 
     it('selects item by keyup for enter', function() {
-      var el = renderAndOpen({
-        dataSource: mockData
-      });
+      var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
       el._updateFocusedId(0);
 
@@ -440,9 +390,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('selects item by keyup for space bar', function() {
-      var el = renderAndOpen({
-        dataSource: mockData
-      });
+      var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
       el._updateFocusedId(0);
 
@@ -458,23 +406,8 @@ describe('ReactSuperSelect', function() {
 
   describe('multiple item selection', function() {
 
-    var mockData = [
-          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
-          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'},
-          {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three'},
-          {'id': 4, 'name': 'option four', 'blah': 'blah four', 'fancyprop': 'I am a fancy four'},
-          {'id': 5, 'name': 'option five', 'blah': 'blah five', 'fancyprop': 'I am a fancy five'}
-        ],
-        renderAndOpen = function(props) {
-          var el = renderComponent(_.extend({}, {
-            dataSource: mockData
-          }, props));
-          el.toggleDropdown();
-          return el;
-        },
-        getElWithThreeTags = function() {
+    var getElWithThreeTags = function() {
           var el = renderAndOpen({
-            multiple: true,
             tags: true
           });
           var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
@@ -500,14 +433,9 @@ describe('ReactSuperSelect', function() {
       });
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
-      TestUtils.Simulate.click(options[1], options[1].id);
-      // re-open after first click closes
-      el.setState({
-        isOpen: true
-      });
-
-      // re-select options after re-open
-      options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      TestUtils.Simulate.click(options[1], {
+        metaKey: true
+      }, options[1].id);
 
       TestUtils.Simulate.click(options[3], {
         metaKey: true
@@ -650,7 +578,32 @@ describe('ReactSuperSelect', function() {
 
   });
 
+  describe('Custom Class Options', function() {
 
+    it('renders with customClass when provided', function() {
+      var el = renderAndOpen({
+        customClassName: 'yoClass'
+      });
+
+      expect(el.refs.rssControl.props.className).toMatch(/yoClass/);
+    });
+
+    it('renders tags with custom wrapper class when provided', function() {
+      var el = renderAndOpen({
+        tags: true,
+        customTagClass: 'yoTagClass'
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1], {
+        metaKey: true
+      }, options[1].id);
+
+      var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+      expect(tags[0].props.className).toMatch(/yoTagClass/);
+    });
+
+  });
 
 
 });

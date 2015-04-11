@@ -16,8 +16,8 @@ var ReactSuperSelect = React.createClass({
 
     // CSS CLASS / STYLING SUPPORT
     externalSearchIconClass: React.PropTypes.string,
-    // customClass: React.PropTypes.string, // TODO
-    // customTagClass: React.PropTypes.string // TODO
+    customClassName: React.PropTypes.string,
+    customTagClass: React.PropTypes.string,
 
     // MAIN onChange HANDLER
     onChange: React.PropTypes.func.isRequired,
@@ -97,7 +97,8 @@ var ReactSuperSelect = React.createClass({
         caratClass = classNames('carat', {
           'down': !this.state.isOpen,
           'up': this.state.isOpen
-        });
+        }),
+        wrapClasses = this.props.customClassName ? "r-ss-wrap " + this.props.customClassName : "r-ss-wrap";
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen
     });
@@ -107,7 +108,7 @@ var ReactSuperSelect = React.createClass({
     });
 
     return (
-      <div className="r-ss-wrap">
+      <div ref="rssControl" className={wrapClasses}>
         <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
           <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
             <div className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</div>
@@ -281,10 +282,11 @@ var ReactSuperSelect = React.createClass({
     var label = value[this.state.labelKey],
         displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
-        buttonName = "RemoveTag_" + displayValue;
+        buttonName = "RemoveTag_" + displayValue,
+        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
     return (
-      <span className="r-ss-tag" key={tagKey}>
+      <span className={tagWrapClass} key={tagKey}>
         <span className="r-ss-tag-label">{label}</span>
         <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTag.bind(null, value)} onKeyUp={this._removeTag.bind(null, value)}>X</button>
       </span>);
