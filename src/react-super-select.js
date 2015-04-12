@@ -8,38 +8,54 @@ var _ = require('lodash'),
 var ReactSuperSelect = React.createClass({
 
   propTypes: {
-    placeholder: React.PropTypes.string,
-    searchPlaceholder: React.PropTypes.string,
-    noResultsString: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    externalSearchIconClass: React.PropTypes.string,
+
+    // BOOLEAN OPTIONS
+    multiple: React.PropTypes.bool,
     searchable: React.PropTypes.bool,
+    tags: React.PropTypes.bool,
 
-    remoteDataSourceFetchFunction: React.PropTypes.object,
-    remoteDataSourceIsMultiPage: React.PropTypes.bool,
+    // CSS CLASS / STYLING SUPPORT
+    customClassName: React.PropTypes.string,
+    customSearchIconClass: React.PropTypes.string,
+    customLoaderClass: React.PropTypes.string,
+    customTagClass: React.PropTypes.string,
 
+    // MAIN onChange HANDLER
+    onChange: React.PropTypes.func.isRequired,
+
+    // DROPDOWN DATA-related PROPS
+    ajaxDataSource: React.PropTypes.func,
     dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
-
-    // simple option element props for hidden select
-    optionValueKey: React.PropTypes.string,
     optionLabelKey: React.PropTypes.string,
-    customFilterFunction: React.PropTypes.func,
-    // custom mapping function
-    customOptionsMapper: React.PropTypes.func,
+    optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
 
-    isMultiSelect: React.PropTypes.bool,
-    optionTemplate: React.PropTypes.object,
+    // AJAX-RELATED FUNCTION HANDLERS
+    // remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
+
+    // RENDERING (ITERATOR) FUNCTIONS
+    customFilterFunction: React.PropTypes.func,
+    customOptionTemplateFunction: React.PropTypes.func,
+
+    // LOCALIZATION STRINGS
+    noResultsString: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    searchPlaceholder: React.PropTypes.string
   },
 
   // do not use state because we do not want re-render when focusing
-  focusedId: undefined,
-  lastOptionId: undefined,
+  SEARCH_FOCUS_ID: -1,
 
   getInitialState: function() {
     return {
+      data: this.props.dataSource,
+      isLoadingData: false,
       isOpen: false,
+      focusedId: undefined,
+      labelKey: this.props.optionLabelKey || 'name',
+      lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
       searchString: undefined,
-      value: undefined
+      value: [],
+      valueKey: this.props.optionValueKey || 'id'
     };
   },
 
@@ -57,21 +73,73 @@ var ReactSuperSelect = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    // need to update focus tracking if dataSource changes
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
-      var data = nextProps.dataSource || [];
-      this.lastOptionId = (data.length > 0) ? data.length - 1 : undefined;
-      this.focusedId = undefined;
+      this.setState({
+        data: nextProps.dataSource,
+        focusedId: undefined,
+        labelKey: nextProps.optionLabelKey || 'name',
+        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
+        valueKey: nextProps.optionValueKey || 'id'
+      });
     }
   },
 
-  _closedOnKeypress: function() {
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevState.focusedId === this.state.focusedId) {
+      return;
+    }
+    this._focusCurrentFocusedId();
+  },
+
+  render: function() {
+    var dropdownContent = this._getDropdownContent(),
+        valueDisplayClass,
+        triggerDisplayContent,
+        triggerClasses,
+        caratClass = classNames('carat', {
+          'down': !this.state.isOpen,
+          'up': this.state.isOpen
+        }),
+        wrapClasses;
+
+    wrapClasses = classNames("r-ss-wrap", this.props.customClassName, {
+      'r-ss-expanded': this.state.isOpen
+    });
+
+    triggerClasses = classNames('r-ss-trigger', {
+      'r-ss-open': this.state.isOpen
+    });
+    triggerDisplayContent = this.state.value.length ? this._generateValueDiplay() : this.props.placeholder;
+    valueDisplayClass = classNames('r-ss-value-display', {
+      'r-ss-placeholder': this.state.value.length < 1,
+    });
+
+    return (
+      <div ref="rssControl" className={wrapClasses}>
+        <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
+          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
+            <div className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</div>
+            <span ref="carat" className={caratClass}> </span>
+          </a>
+        </div>
+        {dropdownContent}
+      </div>);
+  },
+
+  toggleDropdown: function() {
+    this.setState({
+      'isOpen': !this.state.isOpen
+    });
+  },
+
+  _closeOnKeypress: function() {
     if (this.state.isOpen) {
-      this.toggleDropdown();
-      this._focusTrigger();
+      this.setState({
+        isOpen: false,
+        focusedId: undefined
+      }, this._focusTrigger);
       return true;
     }
-    return false;
   },
 
   _defaultSearchFilter: function(option) {
@@ -82,192 +150,45 @@ var ReactSuperSelect = React.createClass({
     return option.name.toLowerCase().indexOf(search) > -1;
   },
 
+  _fetchDataViaAjax: function() {
+    var self = this;
+    this.props.ajaxDataSource().then(function(optionDataFromAjax) {
+      var data = _.isArray(optionDataFromAjax) ? optionDataFromAjax : [];
+      self.setState({
+        isLoadingData: false,
+        data: data
+      });
+    });
+  },
+
   _filterDataBySearchString: function(data) {
     var filterFunction = _.isFunction(this.props.customFilterFunction) ? this.props.customFilterFunction : this._defaultSearchFilter;
     return _.filter(data, filterFunction);
   },
 
-  _getDataSource: function() {
-    var data = this.props.dataSource || [];
-    if (_.isString(this.state.searchString)) {
-      data = this._filterDataBySearchString(data);
-    }
-    return data;
-  },
-
-  _getDropdownContent: function() {
-    if (!this.state.isOpen) {
-      return null;
-    }
-
-    var searchContent = this._getSearchContent(),
-        optionContent = this._getOptionsMarkup();
-    return(
-      <div ref="dropdownContent" className="r-ss-dropdown" onKeyUp={this._handleKeyUp}>
-        {searchContent}
-        <div className="r-ss-options-wrap">
-          <ul className="r-ss-dropdown-options" ref="dropdownOptionsList" aria-hidden={!this.state.isOpen} role="menubar">
-            {optionContent}
-          </ul>
-        </div>
-      </div>
-    );
-  },
-
-  _getHiddenSelectElement: function() {
-    var optionsMarkup = this._mapDataToHiddenSelectOptions();
-
-    return(
-      <select ref="hiddenSelect" className="r-ss-hidden" onChange={this.props.onChange}>
-        {optionsMarkup}
-      </select>
-    );
-  },
-
-  _getOptionsMarkup: function() {
-    var options = _.isFunction(this.props.customOptionsMapper) ? this._mapDataToCustomOptionMarkup() : this._mapDataToDefaultOptionMarkup();
-    return options;
-  },
-
-  _getSearchContent: function() {
-    if (!this.props.searchable) {
-      return null;
-    }
-
-    var magnifierClass = this.props.externalSearchIconClass ? this.props.externalSearchIconClass : "r-ss-magnifier";
-
-    return(
-      <div className="r-ss-search-wrap">
-        <div className="r-ss-search-inner">
-          <input ref="searchInput" placeholder={this.props.searchPlaceholder} onKeyUp={this._handleSearch} defaultValue={this.state.searchString} />
-          <i className={magnifierClass}>search</i>
-        </div>
-      </div>
-    );
-  },
-
-  _handleKeyUp: function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    switch(event.which) {
-      case this.keymap.down:
-        this._onDownKey();
-        break;
-      case this.keymap.enter:
-        this._onEnterKey();
-        break;
-      case this.keymap.esc:
-        this._onEscKey();
-        break;
-      case this.keymap.left: // delegate to up handler
-        this._onUpKey();
-        break;
-      case this.keymap.right: // delegate to down handler
-        this._onDownKey();
-        break;
-      case this.keymap.space:
-        this._onSpaceKey();
-        break;
-      case this.keymap.up:
-        this._onUpKey();
-        break;
-    }
-  },
-
-  _handleSearch: function(event) {
-    var searchString = event.target.value;
-    this._handleSearchDebounced.call(this, searchString);
-    // need to get keyup events to top level of control DOM
-    this._handleKeyUp(event);
-  },
-
-  _handleSearchDebounced: _.debounce(function(search) {
-    this.setState({
-      searchString: search
-    });
-  }, 300),
-
-  _mapDataToCustomOptionMarkup: function() {
-    var valueKey = this.props.optionValueKey || 'id',
-        data = this._getDataSource(),
-        self = this;
-
-    return _.map(data, function(dataOption, index) {
-      var itemKey = "drop_li_" + dataOption[valueKey],
-          indexRef = 'option_' + index,
-          customOptionMarkup = self.props.customOptionsMapper(dataOption);
-      return (
-        <li ref={indexRef} tabIndex="0" className="r-ss-dropdown-option" key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItem} role="menuitem">
-          {customOptionMarkup}
-        </li>);
+  _findArrayOfOptionDataObjectsByValue: function(value) {
+    var self = this,
+        valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
+    return _.reject(this.state.data, function(item) {
+      return !_.contains(valuesArray, item[self.state.valueKey]);
     });
   },
 
-  _mapDataToDefaultOptionMarkup: function() {
-    var labelKey = this.props.optionLabelKey || 'name',
-        valueKey = this.props.optionValueKey || 'id',
-        data = this._getDataSource(),
-        self = this;
-
-    return _.map(data, function(dataOption, index) {
-      //TODO stream icons, template-capable select control needed
-      var itemKey = "drop_li_" + dataOption[valueKey],
-          indexRef = 'option_' + index;
-      return (
-        <li ref={indexRef} tabIndex="0" className="r-ss-dropdown-option" key={itemKey} data-option-value={dataOption[valueKey]} onClick={self._selectItem} role="menuitem">
-          {dataOption[labelKey]}
-        </li>);
-    });
-  },
-
-  _mapDataToHiddenSelectOptions: function() {
-    var labelKey = this.props.optionLabelKey || 'name',
-        valueKey = this.props.optionValueKey || 'id',
-        data = this.props.dataSource || [];
-
-    return _.map(data, function(dataOption) {
-      //TODO stream icons, template-capable select control needed
-      return (
-        <option key={dataOption[valueKey]} value={dataOption[valueKey]}>
-          {dataOption[labelKey]}
-        </option>);
-    });
-  },
-
-  /* FOCUS Logic */
-  _moveFocusDown: function() {
-    var nextId;
-    if (_.isUndefined(this.focusedId)) {
-      if (this.props.searchable) {
-        nextId = -1;
-      } else {
-        nextId = 0;
-      }
-    } else {
-      nextId = (this.lastOptionId === this.focusedId) ? this.lastOptionId : this.focusedId + 1;
+  _focusCurrentFocusedId: function() {
+    if (this.state.focusedId < 0) {
+      this._focusSearch();
+      return;
     }
-    this._updateFocusedId(nextId);
-  },
 
-  _moveFocusUp: function() {
-    var previousId;
-
-    if (!_.isUndefined(this.focusedId) && (this.focusedId !== -1)) {
-      if (this.focusedId === 0) {
-        if (this.props.searchable) {
-          previousId = -1;
-        }
-      } else {
-        previousId = this.focusedId - 1;
-      }
-    }
-    this._updateFocusedId(previousId);
+    this._focusDOMOption();
   },
 
   _focusDOMOption: function() {
-    var optionRef = 'option_' + this.focusedId;
+    var optionRef = this._getFocusedOptionKey();
     if (this.refs[optionRef]) {
-      this.refs[optionRef].getDOMNode().focus();
+      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
+        this.refs[optionRef].getDOMNode().focus();
+      }
     }
   },
 
@@ -283,39 +204,312 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
-  _updateFocusedId: function(id) {
-    this.focusedId = id;
-    if (_.isUndefined(id)) {
-      this._closedOnKeypress();
-      return;
+  _generateValueDiplay: function() {
+    if (!this.props.tags) {
+      return this._getNormalDisplayMarkup();
+    } else {
+      return this._getTagsDisplayMarkup();
     }
-
-    if (id < 0) {
-      this._focusSearch();
-      return;
-    }
-
-    this._focusDOMOption();
   },
 
-  /* END FOCUS Logic */
+  _getDataSource: function() {
+    var data = _.isArray(this.state.data) ? this.state.data : [];
+    if (_.isString(this.state.searchString)) {
+      data = this._filterDataBySearchString(data);
+    }
+
+    return data;
+  },
+
+  _getDropdownContent: function() {
+    if (!this.state.isOpen) {
+      return null;
+    }
+
+    var dropdownContent,
+        searchContent = this._getSearchContent();
+
+    if (this._needsAjaxFetch()) {
+      this._fetchDataViaAjax();
+      dropdownContent = this._getLoadingMarkup();
+    } else {
+      dropdownContent = this._getOptionsMarkup();
+    }
+
+    return(
+      <div ref="dropdownContent" className="r-ss-dropdown" onKeyUp={this._handleKeyUp}>
+        {searchContent}
+        <div className="r-ss-options-wrap">
+          <ul className="r-ss-dropdown-options" ref="dropdownOptionsList" aria-hidden={!this.state.isOpen} role="menubar">
+            {dropdownContent}
+          </ul>
+        </div>
+      </div>
+    );
+  },
+
+  _getFocusedOptionKey: function() {
+    return 'option_' + this.state.focusedId;
+  },
+
+  _getNoResultsMarkup: function() {
+    var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
+    return (<li className="r-ss-dropdown-option"><i ref="noResults">{noResultsString}</i></li>);
+  },
+
+  _getNormalDisplayMarkup: function() {
+    var self = this;
+    var markup = _.map(this.state.value, function(value) {
+      if (self.props.customOptionTemplateFunction) {
+        // render custom template if provided with a rendering function
+        return self.props.customOptionTemplateFunction(value);
+      } else {
+        return value[self.state.labelKey];
+      }
+    });
+    return markup;
+  },
+
+  _getLoadingMarkup: function() {
+    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
+    return (<span ref="loader" className={loaderClasses}></span>);
+  },
+
+  _getOptionsMarkup: function() {
+    var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup() : this._mapDataToDefaultTemplateMarkup();
+
+    if (options.length === 0) {
+      options = this._getNoResultsMarkup();
+    }
+
+    return options;
+  },
+
+  _getSearchContent: function() {
+    if (!this.props.searchable) {
+      return null;
+    }
+
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier";
+
+    return(
+      <div className="r-ss-search-wrap">
+        <div className="r-ss-search-inner">
+          <input ref="searchInput" placeholder={this.props.searchPlaceholder} onKeyUp={this._handleSearch} onClick={this._setFocusIdToSearch} defaultValue={this.state.searchString} />
+          <i className={magnifierClass}>search</i>
+        </div>
+      </div>
+    );
+  },
+
+  _getTagsDisplayMarkup: function() {
+    var self = this;
+    var markup = _.map(this.state.value, function(value) {
+      return self._getTagMarkup(value);
+    });
+    return markup;
+  },
+
+  _getTagMarkup: function(value) {
+    var label = value[this.state.labelKey],
+        displayValue = value[this.state.valueKey],
+        tagKey = 'tag_' + displayValue,
+        buttonName = "RemoveTag_" + displayValue,
+        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+
+    return (
+      <span className={tagWrapClass} key={tagKey}>
+        <span className="r-ss-tag-label">{label}</span>
+        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyUp={this._removeTagKeyPress.bind(null, value)}>X</button>
+      </span>);
+  },
+
+  _handleKeyUp: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    switch(event.which) {
+      case this.keymap.down:
+        this._onDownKey();
+        break;
+      case this.keymap.end:
+        this._onEndKey();
+        break;
+      case this.keymap.enter:
+        if (event.shiftKey) {
+          this._handleShiftKeyUpSelect();
+        } else {
+          this._onEnterKey(event);
+        }
+        break;
+      case this.keymap.esc:
+        this._onEscKey();
+        break;
+      case this.keymap.home:
+        this._onHomeKey();
+        break;
+      case this.keymap.left: // delegate to up handler
+        this._onUpKey();
+        break;
+      case this.keymap.right: // delegate to down handler
+        this._onDownKey();
+        break;
+      case this.keymap.space:
+        if (event.shiftKey) {
+          this._handleShiftKeyUpSelect();
+        } else {
+          this._onEnterKey(event); // delegate to enter
+        }
+        break;
+      case this.keymap.tab: // delegate to down handler if not at top level of UI DOM
+        if (typeof this.focusedId !== 'undefined') {
+          this._onDownKey();
+        }
+        break;
+      case this.keymap.up:
+        this._onUpKey();
+        break;
+    }
+  },
+
+  _handleSearch: function(event) {
+    var searchString = event.target.value;
+    this._handleSearchDebounced.call(this, searchString);
+    this._handleKeyUp(event);
+  },
+
+  _handleSearchDebounced: _.debounce(function(search) {
+    this.setState({
+      searchString: search
+    });
+  }, 300),
+
+  _handleShiftSelect: function(value, event) {
+    var optionIndex = parseInt(event.currentTarget.getAttribute('data-option-index'), 10);
+    if (optionIndex === 0) {
+      return;
+    }
+    this._selectAllFromOptionRefToLastSelected(optionIndex);
+  },
+
+  _handleShiftKeyUpSelect: function() {
+    var focusedOptionKey = this._getFocusedOptionKey();
+
+    if (this.refs[focusedOptionKey]) {
+      this._selectAllFromOptionRefToLastSelected(this.refs[focusedOptionKey].props['data-option-index']);
+    }
+  },
+
+  _isCurrentlySelected: function(dataItem) {
+    if (!_.isArray(this.state.value)) {
+      return _.isEqual(this.state.value, dataItem);
+    }
+    return !!(_.findWhere(this.state.value, dataItem));
+  },
+
+  _isMultiSelect: function() {
+    return this.props.multiple || this.props.tags;
+  },
+
+  _mapDataToCustomTemplateMarkup: function() {
+    var data = this._getDataSource(),
+        self = this;
+
+    return _.map(data, function(dataOption, index) {
+      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
+          indexRef = 'option_' + index,
+          customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
+          classes = classNames('r-ss-dropdown-option', {
+            'selected': self._isCurrentlySelected(dataOption)
+          });
+
+      return (
+        <li ref={indexRef} tabIndex="0" data-option-index={index} className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
+          {customOptionMarkup}
+        </li>);
+    });
+  },
+
+  _mapDataToDefaultTemplateMarkup: function() {
+    var data = this._getDataSource(),
+        self = this;
+
+    return _.map(data, function(dataOption, index) {
+      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
+          indexRef = 'option_' + index,
+          classes = classNames('r-ss-dropdown-option', {
+            'selected': self._isCurrentlySelected(dataOption)
+          });
+      return (
+        <li ref={indexRef} tabIndex="0" data-option-index={index} className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
+          {dataOption[self.state.labelKey]}
+        </li>);
+    });
+  },
+
+  _moveFocusDown: function() {
+    var nextId;
+    if (_.isUndefined(this.state.focusedId)) {
+      if (this.props.searchable) {
+        nextId = this.SEARCH_FOCUS_ID;
+      } else {
+        nextId = 0;
+      }
+    } else {
+      nextId = (this.lastOptionId === this.state.focusedId) ? this.lastOptionId : this.state.focusedId + 1;
+    }
+    this._updateFocusedId(nextId);
+  },
+
+  _moveFocusUp: function() {
+    var previousId;
+
+    if (!_.isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
+      if (this.state.focusedId === 0) {
+        if (this.props.searchable) {
+          previousId = this.SEARCH_FOCUS_ID;
+        }
+      } else {
+        previousId = this.state.focusedId - 1;
+      }
+    }
+    this._updateFocusedId(previousId);
+  },
+
+  _needsAjaxFetch: function() {
+    return !_.isArray(this.state.data) && this.props.ajaxDataSource;
+  },
 
   _onDownKey: function() {
-    if (!this._openedOnKeypress()) {
-      // move through selections if not just opening
-      this._moveFocusDown();
+    this._openedOnKeypress();
+    this._moveFocusDown();
+  },
+
+  _onEndKey: function() {
+    if (this.state.lastOptionId) {
+      this._updateFocusedId(this.state.lastOptionId);
     }
   },
 
-  _onEnterKey: function() {
+  _onEnterKey: function(event) {
     if (!this._openedOnKeypress()) {
-      // select current if already open
-      console.log('pressin enter!');
+
+      var focusedOptionKey = this._getFocusedOptionKey();
+
+      if (this.refs[focusedOptionKey]) {
+        var optionValue = this.refs[focusedOptionKey].props['data-option-value'],
+            isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
+        this._selectItemByValues(optionValue, isAdditionalOption);
+      }
     }
   },
 
   _onEscKey: function() {
-    this._closedOnKeypress();
+    this._closeOnKeypress();
+  },
+
+  _onHomeKey: function() {
+    this._updateFocusedId(0);
   },
 
   _onSpaceKey: function() {
@@ -323,8 +517,6 @@ var ReactSuperSelect = React.createClass({
   },
 
   _onUpKey: function() {
-    // TODO - close if on first option
-    // otherwise select previous
     this._moveFocusUp();
   },
 
@@ -336,49 +528,98 @@ var ReactSuperSelect = React.createClass({
     return false;
   },
 
-  _selectItem: function(event) {
-    debugger;
+  _removeTagKeyPress: function(value, event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    var isEnterKey = event.which === this.keymap.enter,
+        isSpaceKey = event.which === this.keymap.space;
+
+    if (isEnterKey || isSpaceKey) {
+      this._removeTagClick(value); // delegate to click handler
+    }
   },
 
-  toggleDropdown: function() {
+  _removeTagClick: function(value) {
+    var self = this;
     this.setState({
-      'isOpen': !this.state.isOpen
+      value: _.reject(this.state.value, function(tag) {
+              return tag[self.state.valueKey] === value[self.state.valueKey];
+            })
+    });
+  },
+
+  _selectAllFromOptionRefToLastSelected: function(optionIndex) {
+    var self = this,
+        optionsToSelect = [],
+        valuesToSelect;
+
+    for (var i = (optionIndex); i >= 0; i--) {
+      var refString = 'option_' + i,
+          option = this.refs[refString];
+
+      if (option.props.className.match(/selected/)) {
+        break;
+      } else {
+        optionsToSelect.push(option.props['data-option-value']);
+      }
+
+    }
+
+    valuesToSelect = _.reject(this.state.data, function(item) {
+                       return optionsToSelect.indexOf(item[self.state.valueKey]) === -1;
+                     });
+
+    this._selectItemByValues(valuesToSelect);
+  },
+
+  _selectItemByValues: function(value, isAdditionalOption) {
+   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+
+    if (this.props.tags || (isAdditionalOption && this.state.value)) {
+      objectValues = this.state.value.concat(objectValues);
+    }
+
+    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
+    this.props.onChange(outputValue);
+
+    if (isAdditionalOption) {
+      this.setState({
+        value: objectValues
+      });
+    } else {
+      this.setState({
+        value: objectValues
+      }, this._closeOnKeypress);
+    }
+  },
+
+  _selectItemOnOptionClick: function(value, event) {
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._handleShiftSelect(value, event);
+      return;
+    }
+    var isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
+    this._selectItemByValues(value, isAdditionalOption);
+  },
+
+  _setFocusIdToSearch: function() {
+    this.setState({
+      focusedId: this.SEARCH_FOCUS_ID
+    });
+  },
+
+  _updateFocusedId: function(id) {
+    var self = this;
+
+    this.setState({
+      focusedId: id
     }, function() {
-      if (this.state.isOpen) {
-        this._moveFocusDown();
+      if (_.isUndefined(id)) {
+        self._closeOnKeypress();
+        return;
       }
     });
-  },
-
-  render: function() {
-    var hiddenSelect = this._getHiddenSelectElement(),
-        dropdownContent = this._getDropdownContent(),
-        valueDisplayClass,
-        triggerDisplayContent,
-        triggerClasses,
-        caratClass = classNames('carat', {
-          'down': !this.state.isOpen,
-          'up': this.state.isOpen
-        });
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen
-    });
-    triggerDisplayContent = this.state.value ? this.state.value : this.props.placeholder;
-    valueDisplayClass = classNames('r-ss-value-display', {
-      'r-ss-placeholder': !this.state.value,
-    });
-
-    return (
-      <div className="r-ss-wrap">
-        <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
-          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
-            <span className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</span>
-            <span ref="carat" className={caratClass}> </span>
-          </a>
-        </div>
-        {hiddenSelect}
-        {dropdownContent}
-      </div>);
   }
 
 });

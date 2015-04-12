@@ -24,7 +24,7 @@ gulp.task('jsx', function() {
 });
 
 // lint-js-watch mimics lint-js but will not stop watch process on error
-gulp.task('lint-js-watch', ['jsx'], function() {
+gulp.task('lint-js', ['jsx'], function() {
   return gulp.src(paths.lint.js)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
@@ -45,7 +45,6 @@ gulp.task('lint-less', function () {
         }))
         .pipe(gulp.dest('dist'));
 });
-
 
 /**
  * Task configuration is loaded from config.js
@@ -70,19 +69,18 @@ initGulpTasks(gulp, config);
 
 gulp.task('watch:examples-lint', [
   'jsx',
-  'lint-js-watch',
+  'lint-js',
   'build:example:files',
   'lint-less',
-  'build:example:css',
   'watch:example:scripts'
 ], function() {
+  gulp.watch([paths.lint.js], ['lint-js']);
+  gulp.watch([paths.lint.css], ['lint-less', 'build:example:css']);
   gulp.watch(config.example.files.map(function(i) { return config.example.src + '/' + i; }), ['build:example:files']);
-  gulp.watch([config.example.src + '/' + config.example.stylesheets], ['build:example:css']);
 });
 
-gulp.task('devlint', [
+gulp.task('rssdev', [
   'dev:server',
-  'build:example:css',
   'watch:examples-lint'
 ]);
 
