@@ -100,7 +100,12 @@ var ReactSuperSelect = React.createClass({
           'down': !this.state.isOpen,
           'up': this.state.isOpen
         }),
-        wrapClasses = this.props.customClassName ? "r-ss-wrap " + this.props.customClassName : "r-ss-wrap";
+        wrapClasses;
+
+    wrapClasses = classNames("r-ss-wrap", this.props.customClassName, {
+      'r-ss-expanded': this.state.isOpen
+    });
+
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen
     });
