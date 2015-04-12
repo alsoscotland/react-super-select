@@ -187,8 +187,6 @@ describe('ReactSuperSelect', function() {
       expect(document.activeElement).toBe(el.refs.searchInput.getDOMNode());
     });
 
-    // TODO - why does JEST choke here despite this working in actual DOM?
-           // it does not seem to respect tabIndex focus on aTypical focus elements
     it('focuses first option when not searchable and expanded by keypress', function() {
       var el = renderComponent({
         searchable: false
@@ -233,7 +231,6 @@ describe('ReactSuperSelect', function() {
       expect(el.state.focusedId).toBe(mockData.length - 1);
     });
 
-
   });
 
   describe('dropdownContent', function() {
@@ -272,7 +269,7 @@ describe('ReactSuperSelect', function() {
     it('renders the user specified magnifier class if prop is set', function() {
       var el = renderAndOpen({
         searchable: true,
-        'externalSearchIconClass': 'boo-yahhhhhh'
+        'customSearchIconClass': 'boo-yahhhhhh'
       });
 
       var customAnchor = TestUtils.findRenderedDOMComponentWithClass(el, 'boo-yahhhhhh');
@@ -605,5 +602,43 @@ describe('ReactSuperSelect', function() {
 
   });
 
+  describe('Populating data source from ajax', function() {
+
+    var el,
+        mockAjaxThen;
+
+    beforeEach(function() {
+      mockAjaxThen = jest.genMockFunction();
+      el = renderComponent({
+        dataSource: undefined,
+        customLoaderClass: "loaditUp",
+        ajaxDataSource: jest.genMockFunction().mockReturnValue({
+          then: mockAjaxThen
+        })
+      });
+    });
+
+    it('renders spinner when fetching ajax data', function() {
+      el.toggleDropdown();
+
+      expect(el.refs.loader.getDOMNode()).toBeTruthy();
+    });
+
+    it('renders spinner with custom class', function() {
+      el.toggleDropdown();
+
+      expect(el.refs.loader.props.className).toMatch(/loaditUp/);
+    });
+
+    it('renders ajax data', function() {
+      el.toggleDropdown();
+      var promiseCallback = mockAjaxThen.mock.calls[0][0];
+      promiseCallback(mockData);
+
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      expect(options.length).toBe(5);
+    });
+
+  });
 
 });

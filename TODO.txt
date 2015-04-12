@@ -1,11 +1,9 @@
 TASKS
 
-1) option to style custom
-2) ajax-able data...
-3) paginating data
-4) docco annotated source docs?
-5) documentation for examples pages/readme
-6) Do I need header grouping or is sort sufficient with custom template?
+1) paginating data ?
+2) docco annotated source docs?
+3) documentation for examples pages/readme
+4) Do I need header grouping or is sort sufficient with custom template?
     - I suppose a groupd heading could be in custom template and have click handlers arrested, but that might be a stretch
 
 ONGOING

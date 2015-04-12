@@ -15,20 +15,21 @@ var ReactSuperSelect = React.createClass({
     tags: React.PropTypes.bool,
 
     // CSS CLASS / STYLING SUPPORT
-    externalSearchIconClass: React.PropTypes.string,
     customClassName: React.PropTypes.string,
+    customSearchIconClass: React.PropTypes.string,
+    customLoaderClass: React.PropTypes.string,
     customTagClass: React.PropTypes.string,
 
     // MAIN onChange HANDLER
     onChange: React.PropTypes.func.isRequired,
 
     // DROPDOWN DATA-related PROPS
+    ajaxDataSource: React.PropTypes.func,
     dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
     optionLabelKey: React.PropTypes.string,
     optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
 
     // AJAX-RELATED FUNCTION HANDLERS
-    // remoteDataSourceFetchFunction: React.PropTypes.object,// TODO
     // remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
 
     // RENDERING (ITERATOR) FUNCTIONS
@@ -45,12 +46,13 @@ var ReactSuperSelect = React.createClass({
   SEARCH_FOCUS_ID: -1,
 
   getInitialState: function() {
-    var data = this.props.dataSource || [];
     return {
+      data: this.props.dataSource,
+      isLoadingData: false,
       isOpen: false,
       focusedId: undefined,
       labelKey: this.props.optionLabelKey || 'name',
-      lastOptionId: (data.length > 0) ? data.length - 1 : undefined,
+      lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
       searchString: undefined,
       value: [],
       valueKey: this.props.optionValueKey || 'id'
@@ -72,11 +74,11 @@ var ReactSuperSelect = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
-      var data = nextProps.dataSource || [];
       this.setState({
+        data: nextProps.dataSource,
         focusedId: undefined,
         labelKey: nextProps.optionLabelKey || 'name',
-        lastOptionId: (data.length > 0) ? data.length - 1 : undefined,
+        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
         valueKey: nextProps.optionValueKey || 'id'
       });
     }
@@ -143,6 +145,17 @@ var ReactSuperSelect = React.createClass({
     return option.name.toLowerCase().indexOf(search) > -1;
   },
 
+  _fetchDataViaAjax: function() {
+    var self = this;
+    this.props.ajaxDataSource().then(function(optionDataFromAjax) {
+      var data = _.isArray(optionDataFromAjax) ? optionDataFromAjax : [];
+      self.setState({
+        isLoadingData: false,
+        data: data
+      });
+    });
+  },
+
   _filterDataBySearchString: function(data) {
     var filterFunction = _.isFunction(this.props.customFilterFunction) ? this.props.customFilterFunction : this._defaultSearchFilter;
     return _.filter(data, filterFunction);
@@ -151,7 +164,7 @@ var ReactSuperSelect = React.createClass({
   _findArrayOfOptionDataObjectsByValue: function(value) {
     var self = this,
         valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
-    return _.reject(this.props.dataSource, function(item) {
+    return _.reject(this.state.data, function(item) {
       return !_.contains(valuesArray, item[self.state.valueKey]);
     });
   },
@@ -195,10 +208,11 @@ var ReactSuperSelect = React.createClass({
   },
 
   _getDataSource: function() {
-    var data = this.props.dataSource || [];
+    var data = _.isArray(this.state.data) ? this.state.data : [];
     if (_.isString(this.state.searchString)) {
       data = this._filterDataBySearchString(data);
     }
+
     return data;
   },
 
@@ -207,14 +221,22 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var searchContent = this._getSearchContent(),
-        optionContent = this._getOptionsMarkup();
+    var dropdownContent,
+        searchContent = this._getSearchContent();
+
+    if (this._needsAjaxFetch()) {
+      this._fetchDataViaAjax();
+      dropdownContent = this._getLoadingMarkup();
+    } else {
+      dropdownContent = this._getOptionsMarkup();
+    }
+
     return(
       <div ref="dropdownContent" className="r-ss-dropdown" onKeyUp={this._handleKeyUp}>
         {searchContent}
         <div className="r-ss-options-wrap">
           <ul className="r-ss-dropdown-options" ref="dropdownOptionsList" aria-hidden={!this.state.isOpen} role="menubar">
-            {optionContent}
+            {dropdownContent}
           </ul>
         </div>
       </div>
@@ -243,6 +265,11 @@ var ReactSuperSelect = React.createClass({
     return markup;
   },
 
+  _getLoadingMarkup: function() {
+    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
+    return (<span ref="loader" className={loaderClasses}></span>);
+  },
+
   _getOptionsMarkup: function() {
     var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup() : this._mapDataToDefaultTemplateMarkup();
 
@@ -258,7 +285,7 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var magnifierClass = this.props.externalSearchIconClass ? this.props.externalSearchIconClass : "r-ss-magnifier";
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier";
 
     return(
       <div className="r-ss-search-wrap">
@@ -288,7 +315,7 @@ var ReactSuperSelect = React.createClass({
     return (
       <span className={tagWrapClass} key={tagKey}>
         <span className="r-ss-tag-label">{label}</span>
-        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTag.bind(null, value)} onKeyUp={this._removeTag.bind(null, value)}>X</button>
+        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyUp={this._removeTagKeyPress.bind(null, value)}>X</button>
       </span>);
   },
 
@@ -444,6 +471,10 @@ var ReactSuperSelect = React.createClass({
     this._updateFocusedId(previousId);
   },
 
+  _needsAjaxFetch: function() {
+    return !_.isArray(this.state.data) && this.props.ajaxDataSource;
+  },
+
   _onDownKey: function() {
     this._openedOnKeypress();
     this._moveFocusDown();
@@ -492,9 +523,19 @@ var ReactSuperSelect = React.createClass({
     return false;
   },
 
-  _removeTag: function(value, event) {
+  _removeTagKeyPress: function(value, event) {
     event.preventDefault();
     event.stopPropagation();
+
+    var isEnterKey = event.which === this.keymap.enter,
+        isSpaceKey = event.which === this.keymap.space;
+
+    if (isEnterKey || isSpaceKey) {
+      this._removeTagClick(value); // delegate to click handler
+    }
+  },
+
+  _removeTagClick: function(value) {
     var self = this;
     this.setState({
       value: _.reject(this.state.value, function(tag) {
@@ -520,7 +561,7 @@ var ReactSuperSelect = React.createClass({
 
     }
 
-    valuesToSelect = _.reject(this.props.dataSource, function(item) {
+    valuesToSelect = _.reject(this.state.data, function(item) {
                        return optionsToSelect.indexOf(item[self.state.valueKey]) === -1;
                      });
 
