@@ -29,6 +29,7 @@ var ReactSuperSelect = React.createClass({
     dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
     optionLabelKey: React.PropTypes.string,
     optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
+    pageFetch: React.PropTypes.func,
 
     // Grouping functionality
     groupBy: React.PropTypes.oneOfType([
@@ -37,9 +38,6 @@ var ReactSuperSelect = React.createClass({
             React.PropTypes.object
           ]),
     customGroupHeadingTemplateFunction: React.PropTypes.func,
-
-    // AJAX-RELATED FUNCTION HANDLERS
-    // remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
 
     // RENDERING (ITERATOR) FUNCTIONS
     customFilterFunction: React.PropTypes.func,
@@ -57,7 +55,6 @@ var ReactSuperSelect = React.createClass({
   getInitialState: function() {
     return {
       data: this.props.dataSource,
-      isLoadingData: false,
       isOpen: false,
       focusedId: undefined,
       labelKey: this.props.optionLabelKey || 'name',
@@ -86,6 +83,7 @@ var ReactSuperSelect = React.createClass({
       this.setState({
         data: nextProps.dataSource,
         focusedId: undefined,
+        pageFetchingComplete: undefined,
         labelKey: nextProps.optionLabelKey || 'name',
         lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
         valueKey: nextProps.optionValueKey || 'id'
@@ -164,7 +162,20 @@ var ReactSuperSelect = React.createClass({
     this.props.ajaxDataSource().then(function(optionDataFromAjax) {
       var data = _.isArray(optionDataFromAjax) ? optionDataFromAjax : [];
       self.setState({
-        isLoadingData: false,
+        data: data
+      });
+    });
+  },
+
+  _fetchNextPage: function() {
+    var self = this,
+        currentData = this.state.data || [];
+    this.props.pageFetch(currentData).then(function(dataFromPageFetch) {
+      dataFromPageFetch = dataFromPageFetch || {};
+      var data = _.isArray(dataFromPageFetch.collection) ? dataFromPageFetch.collection: [];
+      self.setState({
+        pageFetchingComplete: dataFromPageFetch.complete,
+        isFetchingPage: false,
         data: data
       });
     });
@@ -247,7 +258,9 @@ var ReactSuperSelect = React.createClass({
     }
 
     var dropdownContent,
-        searchContent = this._getSearchContent();
+        searchContent = this._getSearchContent(),
+        mouseMoveHandler,
+        pagingLi;
 
     if (this._needsAjaxFetch()) {
       this._fetchDataViaAjax();
@@ -256,13 +269,17 @@ var ReactSuperSelect = React.createClass({
       dropdownContent = this._getOptionsMarkup();
     }
 
+    mouseMoveHandler = (this.props.pageFetch) ? this._onMouseMove : null;
+    pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
+
     return(
       <div ref="dropdownContent" className="r-ss-dropdown" onKeyUp={this._handleKeyUp}>
         {searchContent}
-        <div className="r-ss-options-wrap">
+        <div ref="scrollWrap" className="r-ss-options-wrap" onMouseMove={mouseMoveHandler}>
           <ul className="r-ss-dropdown-options" ref="dropdownOptionsList" aria-hidden={!this.state.isOpen} role="menubar">
             {dropdownContent}
           </ul>
+          {pagingLi}
         </div>
       </div>
     );
@@ -327,6 +344,12 @@ var ReactSuperSelect = React.createClass({
     }
 
     return options;
+  },
+
+  _getPagingLi: function() {
+    return(<li key="page_loading" className="r-ss-page-fetch-indicator" tabIndex="-1">
+            {this._getLoadingMarkup()}
+          </li>);
   },
 
   _getSearchContent: function() {
@@ -566,6 +589,22 @@ var ReactSuperSelect = React.createClass({
 
   _onHomeKey: function() {
     this._updateFocusedId(0);
+  },
+
+  _onMouseMove: function() {
+    // do not fetch page if searching or already loading data
+    if (this.refs.loader || this.state.searchString || this.state.pageFetchingComplete) {
+      return;
+    }
+
+    var wrap = this.refs.scrollWrap.getDOMNode();
+
+    if ((wrap.scrollTop + wrap.offsetHeight) >= wrap.scrollHeight) {
+      this.setState({
+        isFetchingPage: true
+      }, this._fetchNextPage);
+    }
+
   },
 
   _onSpaceKey: function() {

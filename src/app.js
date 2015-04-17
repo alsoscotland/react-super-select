@@ -3,7 +3,9 @@ var _ = require('lodash'),
     ReactSuperSelect = require('react-super-select'),
     ExampleOptionTemplate = require('./example-option-template');
 
-var testData = require('./test-data.js');
+var testData = require('./test-data.js'),
+    mockAjaxPerPage = 10,
+    lastPage = 0;
 
 var App = React.createClass({
 
@@ -17,7 +19,7 @@ var App = React.createClass({
   },
 
   _simulatedAjaxFetch: function() {
-    var data = _.take(testData, 4);
+    var data = _.take(testData, mockAjaxPerPage);
     // simulate a 2.5 second ajax fetch for collection data
     return {
       then: function(callback) {
@@ -29,6 +31,36 @@ var App = React.createClass({
   },
 
   _groupBy: 'size',
+
+  _simulatedPageFetch: function(collection) {
+    lastPage = lastPage + 1;
+    var sliceLocation = lastPage * mockAjaxPerPage,
+        data;
+    if (sliceLocation < testData.length) {
+      data = [];
+
+      for (var i = sliceLocation; i < (sliceLocation + mockAjaxPerPage); i++) {
+        if (testData[i]) {
+          data.push(testData[i]);
+        }
+      }
+    } else {
+      data = testData;
+    }
+
+    return {
+      then: function(callback) {
+        var complete = ((collection.length + data.length) >= testData.length),
+            pagingData = {
+              collection: complete ? testData : collection.concat(data),
+              complete: complete
+            };
+        setTimeout(function() {
+          callback(pagingData);
+        }, 1500);
+      }
+    };
+  },
 
   render: function() {
     return (
@@ -43,7 +75,7 @@ var App = React.createClass({
         </section>
         <section className="r-ss-example-section">
           <h1>Ajax Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" tags={true} searchable={true} searchPlaceholder="filter" onChange={this.handlerExample} ajaxDataSource={this._simulatedAjaxFetch} />
+          <ReactSuperSelect placeholder="Make a Selection" tags={true} searchable={true} searchPlaceholder="filter" onChange={this.handlerExample} ajaxDataSource={this._simulatedAjaxFetch} pageFetch={this._simulatedPageFetch} />
         </section>
       </div>
     );

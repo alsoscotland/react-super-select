@@ -641,6 +641,56 @@ describe('ReactSuperSelect', function() {
 
   });
 
+  describe('page Fetching functionality', function() {
+
+    var el,
+        scrollNode,
+        mockAjaxThen;
+
+    beforeEach(function() {
+      mockAjaxThen = jest.genMockFunction();
+      el = renderAndOpen({
+        dataSource: undefined,
+        pageFetch: jest.genMockFunction().mockReturnValue({
+          then: mockAjaxThen
+        })
+      });
+      scrollNode = el.refs.scrollWrap.getDOMNode();
+      scrollNode.scrollHeight = 100;
+      scrollNode.offsetHeight = 55;
+      scrollNode.scrollTop = 50;
+    });
+
+    it('calls the pageFetch handler after scroll threshold is reached', function() {
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+
+      expect(el.props.pageFetch.mock.calls.length).toBe(1);
+    });
+
+    it('renders a loader during pageFetch', function() {
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+
+      expect(el.refs.loader).toBeTruthy();
+    });
+
+    it('does not call the pageFetch handler if loader present', function() {
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+
+      expect(el.props.pageFetch.mock.calls.length).toBe(1);
+    });
+
+    it('does not call the pageFetch handler pageFetchingComplete', function() {
+      el.setState({
+        pageFetchingComplete: true
+      });
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+
+      expect(el.props.pageFetch.mock.calls.length).toBe(0);
+    });
+
+  });
+
   describe('GroupBy Functionality', function() {
 
     it('renders items in groups when groupBy option is a string', function() {

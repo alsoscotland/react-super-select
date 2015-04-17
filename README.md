@@ -95,6 +95,12 @@ var exampleSelectHandler = function(selections) {
 
 **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html <select> element
 
+**pageFetch** (Function) *optional* - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the current data array.  It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with an object with two properties.
+  -collection (Array of Objects) the array of data to be used as described by the **dataSource** option documentation.  The array should be the collection value passed into this function augmented with the data from the new page.
+  -complete (Boolean) indicates whether all pages have been fetched (i.e. do not fetch more pages)
+The pageFetch function will be called based upon the user's scroll position in the dropdown.  It will not be called when loading ajax data, or when filtering results in a **searchable** dropdown
+
+
 #### Grouping (by Heading) Functionality
  **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options in groups by leveraging Lodash's groupBy function.  Please reference Lodash documentation for behavior of *groupBy* when passed different argument types
 

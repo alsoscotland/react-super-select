@@ -1,12 +1,13 @@
 TASKS
 
-1) paginating data ?
-2) docco annotated source docs?
-3) documentation for examples pages/readme
-4) Do I need header grouping or is sort sufficient with custom template?
-    - I suppose a groupd heading could be in custom template and have click handlers arrested, but that might be a stretch
+1) should I offer Typeahead functionality from the main elem?
+
+2) why is tagRemove toggling drop?
+
+3) docco annotated source docs?
+4) documentation for examples pages/readme
+
 
 ONGOING
 • aria-accessibile - ongoing
 • keyboard navigation - ongoing
-• backing to real select element ???  is this needed?
