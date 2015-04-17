@@ -16,6 +16,7 @@ var ReactSuperSelect = React.createClass({
 
     // CSS CLASS / STYLING SUPPORT
     customClassName: React.PropTypes.string,
+    customGroupHeadingClass: React.PropTypes.string,
     customSearchIconClass: React.PropTypes.string,
     customLoaderClass: React.PropTypes.string,
     customTagClass: React.PropTypes.string,
@@ -28,6 +29,14 @@ var ReactSuperSelect = React.createClass({
     dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
     optionLabelKey: React.PropTypes.string,
     optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
+
+    // Grouping functionality
+    groupBy: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.func,
+            React.PropTypes.object
+          ]),
+    customGroupHeadingTemplateFunction: React.PropTypes.func,
 
     // AJAX-RELATED FUNCTION HANDLERS
     // remoteDataSourceIsMultiPage: React.PropTypes.bool, // TODO ?
@@ -218,6 +227,17 @@ var ReactSuperSelect = React.createClass({
       data = this._filterDataBySearchString(data);
     }
 
+    if (this.props.groupBy) {
+      data = _.groupBy(data, this.props.groupBy);
+      // enable simple sorting of groupBy keys below?
+      // var sortedData = {},
+      //     sortedKeys = _.keys(data).sort();
+      // _.each(sortedKeys, function(key) {
+      //   sortedData[key] = data[key];
+      // });
+      // data = sortedData;
+    }
+
     return data;
   },
 
@@ -252,6 +272,21 @@ var ReactSuperSelect = React.createClass({
     return 'option_' + this.state.focusedId;
   },
 
+  _getGroupHeadingMarkup: function(heading) {
+    if (!heading) {
+      return null;
+    }
+
+    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
+        headingKey = "heading_" + heading,
+        headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
+
+    return(
+      <li tabIndex="-1" className={headingClasses} key={headingKey} role="separator">
+        {headingMarkup}
+      </li>);
+  },
+
   _getNoResultsMarkup: function() {
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
     return (<li className="r-ss-dropdown-option"><i ref="noResults">{noResultsString}</i></li>);
@@ -276,10 +311,19 @@ var ReactSuperSelect = React.createClass({
   },
 
   _getOptionsMarkup: function() {
-    var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup() : this._mapDataToDefaultTemplateMarkup();
+    var data = this._getDataSource(),
+        self = this,
+        options = [],
+        optionsCount = 0;
 
-    if (options.length === 0) {
-      options = this._getNoResultsMarkup();
+    if (!_.isArray(data)) {
+      _.forIn(data, function(groupedOptions, heading) {
+        options.push(self._getGroupHeadingMarkup(heading));
+        options = options.concat(self._getTemplatedOptions(groupedOptions, optionsCount));
+        optionsCount = optionsCount + groupedOptions.length;
+      });
+    } else {
+      options = this._getTemplatedOptions(data);
     }
 
     return options;
@@ -322,6 +366,17 @@ var ReactSuperSelect = React.createClass({
         <span className="r-ss-tag-label">{label}</span>
         <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyUp={this._removeTagKeyPress.bind(null, value)}>X</button>
       </span>);
+  },
+
+  _getTemplatedOptions: function(data, indexStart) {
+    indexStart = indexStart || 0;
+    var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup(data, indexStart) : this._mapDataToDefaultTemplateMarkup(data, indexStart);
+
+    if (options.length === 0) {
+      options = this._getNoResultsMarkup();
+    }
+
+    return options;
   },
 
   _handleKeyUp: function(event) {
@@ -411,11 +466,12 @@ var ReactSuperSelect = React.createClass({
     return this.props.multiple || this.props.tags;
   },
 
-  _mapDataToCustomTemplateMarkup: function() {
-    var data = this._getDataSource(),
-        self = this;
+  _mapDataToCustomTemplateMarkup: function(data, indexStart) {
+    var self = this;
 
     return _.map(data, function(dataOption, index) {
+      index = indexStart + index;
+
       var itemKey = "drop_li_" + dataOption[self.state.valueKey],
           indexRef = 'option_' + index,
           customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
@@ -430,11 +486,11 @@ var ReactSuperSelect = React.createClass({
     });
   },
 
-  _mapDataToDefaultTemplateMarkup: function() {
-    var data = this._getDataSource(),
-        self = this;
+  _mapDataToDefaultTemplateMarkup: function(data, indexStart) {
+    var self = this;
 
     return _.map(data, function(dataOption, index) {
+      index = indexStart + index;
       var itemKey = "drop_li_" + dataOption[self.state.valueKey],
           indexRef = 'option_' + index,
           classes = classNames('r-ss-dropdown-option', {

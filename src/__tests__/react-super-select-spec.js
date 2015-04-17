@@ -25,11 +25,11 @@ describe('ReactSuperSelect', function() {
   };
 
   var mockData = [
-          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one'},
-          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two'},
-          {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three'},
-          {'id': 4, 'name': 'option four', 'blah': 'blah four', 'fancyprop': 'I am a fancy four'},
-          {'id': 5, 'name': 'option five', 'blah': 'blah five', 'fancyprop': 'I am a fancy five'}
+          {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one', 'type': 'widget'},
+          {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two', 'type': 'whatzit'},
+          {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three', 'type': 'thingamajig'},
+          {'id': 4, 'name': 'option four', 'blah': 'blah four', 'fancyprop': 'I am a fancy four', 'type': 'whatzit'},
+          {'id': 5, 'name': 'option five', 'blah': 'blah five', 'fancyprop': 'I am a fancy five', 'type': 'widget'}
         ];
 
   describe('render', function() {
@@ -640,5 +640,69 @@ describe('ReactSuperSelect', function() {
     });
 
   });
+
+  describe('GroupBy Functionality', function() {
+
+    it('renders items in groups when groupBy option is a string', function() {
+      var el = renderAndOpen({
+        groupBy: 'type'
+      });
+
+      var headings = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-option-group-heading');
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      expect(headings.length).toBe(3);
+      expect(options.length).toBe(mockData.length);
+    });
+
+    it('renders items in groups when groupBy option is an object', function() {
+      var el = renderAndOpen({
+        groupBy: {'name': 'option three'}
+      });
+
+      var headings = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-option-group-heading');
+
+      expect(headings.length).toBe(2);
+    });
+
+    it('renders items in groups when groupBy option is a function', function() {
+      var el = renderAndOpen({
+        groupBy: function(item) {
+          return item.type !== 'whatzit';
+        }
+      });
+
+      var headings = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-option-group-heading');
+
+      expect(headings.length).toBe(2);
+    });
+
+    it('renders custom group heading content when group heading template function is provided', function() {
+      var el = renderAndOpen({
+        groupBy: 'type',
+        customGroupHeadingTemplateFunction: function(option) {
+          var text = option.type;
+          return React.createElement("aside", {className: "custom-heading"}, text);
+        }
+      });
+
+      var customHeadings = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, "custom-heading");
+
+      expect(customHeadings.length).toBe(3);
+    });
+
+    it('renders items in groups with customHeadingClass', function() {
+      var el = renderAndOpen({
+        groupBy: 'type',
+        customGroupHeadingClass: 'my-group'
+      });
+
+      var headings = TestUtils.scryRenderedDOMComponentsWithClass(el, 'my-group');
+
+      expect(headings.length).toBe(3);
+    });
+
+  });
+
 
 });

@@ -68,6 +68,7 @@ var exampleSelectHandler = function(selections) {
 .r-ss-wrap.{customClassName}
 ```
 
+**customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  Will add a custom css class to the group headings which are rendered into the dropdown
 
 **customSearchIconClass** (String) *optional* - This class name will be added to the icon in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
 
@@ -94,6 +95,11 @@ var exampleSelectHandler = function(selections) {
 
 **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html <select> element
 
+#### Grouping (by Heading) Functionality
+ **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options in groups by leveraging Lodash's groupBy function.  Please reference Lodash documentation for behavior of *groupBy* when passed different argument types
+
+ **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option)- This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
+
 #### Rendering (Iterator) Function properties
 
  **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** options.  The function provided for this option will serve as a replacement of the default search filter function. (A default lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is passed as the second arg to [Lodash's filter function](https://lodash.com/docs#filter) and is along with your **dataSource** as the first arg.
@@ -107,10 +113,6 @@ var exampleSelectHandler = function(selections) {
   **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control before a user has selected any values
 
   **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's searchfield when a user has not entered any characters. 
-
-
-
-
 
 ### License
 

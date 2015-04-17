@@ -15,8 +15,8 @@
 @white: #FFF;
 @red: #F00;
 
-
 @activeBackground: @palerGrey;
+@headingBackground: @lightGreyBackground;
 @hoverBackground: @palestGrey;
 @borderFallback: @paleGreyFallback;
 @border: @paleGrey;
@@ -266,6 +266,33 @@ label {
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+
+  .r-ss-option-group-heading {
+    width: 100%;
+    word-wrap: break-word;
+    padding: .25rem;
+    background-color: @headingBackground;
+    border-bottom: 1px solid @slightBorder;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: @black;
+    border-top: 1px solid @border;
+    border-bottom: 1px solid @border;
+    margin-top: .5rem;
+    padding: .5rem .25rem;
+
+    &:focus,
+    &::selection,
+    &.focused {
+      outline: none;
+      background-color: @focusBlue;
+      border-color: 2px solid @borderSelected;
+    }
   }
 
   .r-ss-dropdown-option {
