@@ -631,11 +631,14 @@ var ReactSuperSelect = React.createClass({
         isSpaceKey = event.which === this.keymap.space;
 
     if (isEnterKey || isSpaceKey) {
-      this._removeTagClick(value); // delegate to click handler
+      this._removeTagClick(value, event); // delegate to click handler
     }
   },
 
-  _removeTagClick: function(value) {
+  _removeTagClick: function(value, event) {
+    event.preventDefault();
+    event.stopPropagation();
+
     var self = this;
     this.setState({
       value: _.reject(this.state.value, function(tag) {
