@@ -81,7 +81,7 @@ var exampleSelectHandler = function(selections) {
 
 #### External Change Handler
 
-**onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selections an array of selected (object) values will be passed to this handler function.
+**onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s) the selected option, or when **multiple** or **tags** is true, an array of selected (objects) values will be passed to this handler function.
 
 #### Data-Source Related props
 
