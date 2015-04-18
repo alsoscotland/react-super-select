@@ -68,6 +68,7 @@ var exampleSelectHandler = function(selections) {
 .r-ss-wrap.{customClassName}
 ```
 
+**customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  Will add a custom css class to the group headings which are rendered into the dropdown
 
 **customSearchIconClass** (String) *optional* - This class name will be added to the icon in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
 
@@ -80,7 +81,7 @@ var exampleSelectHandler = function(selections) {
 
 #### External Change Handler
 
-**onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selections an array of selected (object) values will be passed to this handler function.
+**onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s) the selected option, or when **multiple** or **tags** is true, an array of selected (objects) values will be passed to this handler function.
 
 #### Data-Source Related props
 
@@ -93,6 +94,17 @@ var exampleSelectHandler = function(selections) {
 **optionLabelKey** (String) (*optional - will use 'name' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value you would like displayed for each option.
 
 **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html <select> element
+
+**pageFetch** (Function) *optional* - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the current data array.  It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with an object with two properties.
+  -collection (Array of Objects) the array of data to be used as described by the **dataSource** option documentation.  The array should be the collection value passed into this function augmented with the data from the new page.
+  -complete (Boolean) indicates whether all pages have been fetched (i.e. do not fetch more pages)
+The pageFetch function will be called based upon the user's scroll position in the dropdown.  It will not be called when loading ajax data, or when filtering results in a **searchable** dropdown
+
+
+#### Grouping (by Heading) Functionality
+ **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options in groups by leveraging Lodash's groupBy function.  Please reference Lodash documentation for behavior of *groupBy* when passed different argument types
+
+ **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option)- This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
 
 #### Rendering (Iterator) Function properties
 
@@ -107,10 +119,6 @@ var exampleSelectHandler = function(selections) {
   **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control before a user has selected any values
 
   **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's searchfield when a user has not entered any characters. 
-
-
-
-
 
 ### License
 

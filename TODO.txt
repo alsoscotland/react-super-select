@@ -1,12 +1,9 @@
 TASKS
+1) github.io site / documentation for examples pages/readme
 
-1) paginating data ?
-2) docco annotated source docs?
-3) documentation for examples pages/readme
-4) Do I need header grouping or is sort sufficient with custom template?
-    - I suppose a groupd heading could be in custom template and have click handlers arrested, but that might be a stretch
+CONSIDERED FUTURE FEATURES
+1) Typeahead-type functionality from the main elem?
 
 ONGOING
 • aria-accessibile - ongoing
 • keyboard navigation - ongoing
-• backing to real select element ???  is this needed?
