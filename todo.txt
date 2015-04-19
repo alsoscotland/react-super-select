@@ -1,0 +1,21 @@
+1) API docs in html format
+
+2) example option values
+
+3) examples controls
+
+ - simple
+ - simple ajax
+ - simple custom templated, ajax-paging
+ - simple searchable
+
+ - multi-select
+ - tags custom templated
+ - grouped
+
+ - custom search filter?
+ - custom classes? 
+ - localized full featured
+ - ???
+
+
