@@ -339,6 +339,11 @@ footer {
   padding-left: 50px;
 }
 
+a.live-examples {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
 nav.api {
   box-sizing: border-box;
 }
