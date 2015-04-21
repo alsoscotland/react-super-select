@@ -1,0 +1,63 @@
+{
+  "name": "react-super-select-docs",
+  "version": "0.0.0",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/alsoscotland/react-super-select.git"
+  },
+  "author": "Scotland Stephenson <scotland@sitesbyscotland.com> (http://www.sitesbyscotland.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alsoscotland/react-super-select/issues"
+  },
+  "homepage": "http://alsoscotland.github.io/react-super-select/",
+  "jest": {
+    "scriptPreprocessor": "./preprocessor.js",
+    "unmockedModulePathPatterns": [
+      "./node_modules/react"
+    ],
+    "testPathDirs": [
+      "./src/"
+    ]
+  },
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "classnames": "^1.2.0",
+    "del": "^1.1.1",
+    "gulp": "^3.8.11",
+    "gulp-browserify": "^0.5.1",
+    "gulp-jshint": "^1.10.0",
+    "gulp-minify-css": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-run-sequence": "^0.3.2",
+    "gulp-shell": "^0.4.1",
+    "gulp-sourcemaps": "^1.5.2",
+    "jest-cli": "^0.4.0",
+    "jshint-stylish": "^1.0.1",
+    "lodash": "^3.7.0",
+    "react": "^0.13.2",
+    "react-component-gulp-tasks": "^0.4.6",
+    "vinyl-source-stream": "^1.1.0",
+    "vinyl-transform": "^1.0.0"
+  },
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
+  },
+  "browserify-shim": {
+    "react": "global:React"
+  },
+  "dependencies": {
+    "classnames": "^1.2.0",
+    "jest-cli": "^0.4.0",
+    "lodash": "^3.7.0",
+    "react": "^0.13.2",
+    "react-tools": "^0.13.2",
+    "reactify": "^1.1.0"
+  }
+}
