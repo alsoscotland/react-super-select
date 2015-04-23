@@ -23,7 +23,11 @@ var paths = {
   },
   example: {
     src: 'src',
-    dist: 'example/',
+    dist: {
+      html: 'example/',
+      js: 'example/',
+      css: 'stylesheets'
+    },
     files: [
       './src/annotated-source.html',
       './src/react-super-select-examples.html'
@@ -52,19 +56,19 @@ gulp.task('lint-js', ['jsx'], function() {
 gulp.task('js', function () {
   return gulp.src([paths.main])
    .pipe(browserify())
-   .pipe(gulp.dest(paths.example.dist));
+   .pipe(gulp.dest(paths.example.dist.js));
 });
 
 gulp.task('css', function() {
   var stream = gulp.src(paths.css)
     .pipe(rename('examples-app.css'))
     .pipe(minifyCss());
-  return stream.pipe(gulp.dest('example/'));
+  return stream.pipe(gulp.dest(paths.example.dist.css));
 });
 
 gulp.task('files', function() {
   var stream = gulp.src(paths.example.files);
-  return stream.pipe(gulp.dest('example/'));
+  return stream.pipe(gulp.dest(paths.example.dist.html));
 });
 
 gulp.task('markdown', function() {
