@@ -1,2 +1,3 @@
 ghlighter: pygments
 github: [Repository metadata]
+exclude: ['node_modules', 'src', 'javascripts']

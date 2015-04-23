@@ -1,5 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Arvo:400,700,400italic);
-
 /* MeyerWeb Reset */
 
 html, body, div, span, applet, object, iframe,
@@ -382,13 +380,29 @@ nav.api li {
   margin: .5rem 0;
 }
 
-h4.api-link {
+.api-link {
   border-bottom: 1px solid #999;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
 }
-h4.api-link a {
+.api-link a {
   color: black;
   font-weight: bold;
+}
+
+.live-examples {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+}
+
+.rss-live-example {
+  margin: 2rem 0 2rem 2%;
+
+  width: 96%;
+}
+
+.rss-example-markdown {
+  margin: 2rem 0;
 }
 
 @media print, screen and (max-width: 960px) {

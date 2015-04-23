@@ -1,13 +1,10 @@
 var browserify = require('gulp-browserify'),
     gulp = require('gulp'),
     del = require('del'),
+    markdownToJson = require('gulp-markdown-to-json'),
     minifyCss = require('gulp-minify-css'),
-    reactify = require('reactify'),
     rename = require('gulp-rename'),
-    runSequence = require('gulp-run-sequence'),
     shell = require('gulp-shell'),
-    source = require('vinyl-source-stream'),
-    // transform = require('vinyl-transform'),
     jshint = require('gulp-jshint');
 
 var paths = {
@@ -19,6 +16,10 @@ var paths = {
       './tmp/jsx/**/*.js',
       'gulpfile.js'
     ]
+  },
+  markdown: {
+    files: ['./src/examples/markdown/**.*'],
+    dest: './src/examples/markdown/js'
   },
   example: {
     src: 'src',
@@ -66,6 +67,16 @@ gulp.task('files', function() {
   return stream.pipe(gulp.dest('example/'));
 });
 
+gulp.task('markdown', function() {
+  var stream = gulp.src(paths.markdown.files);
+  stream.pipe(markdownToJson({
+    pedantic: true,
+    smartypants: true,
+    gfm: true
+  }))
+  .pipe(gulp.dest(paths.markdown.dest));
+});
+
 gulp.task('watch', [
   'jsx',
   'lint-js',
@@ -73,10 +84,12 @@ gulp.task('watch', [
   gulp.watch([paths.js], ['jsx']);
   gulp.watch([paths.lint.js], ['lint-js']);
   gulp.watch([paths.css], ['css']);
+  gulp.watch([paths.markdown.files], ['markdown']);
   gulp.watch([paths.example.files], ['files']);
 });
 
 gulp.task('build', [
+  'markdown',
   'clean',
   'js',
   'css',

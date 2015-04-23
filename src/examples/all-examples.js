@@ -1,7 +1,9 @@
-var basicExample = require('./basic-example');
+var basicExample = require('./basic-example'),
+    basicSearchable = require('./basic-searchable');
 
 var allExamples = [
-  basicExample
+  basicExample,
+  basicSearchable
 ];
 
 module.exports = allExamples;
