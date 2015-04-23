@@ -50,16 +50,15 @@ var App = React.createClass({
 
     return {
       then: function(callback) {
-        var complete = ((collection.length + data.length) >= testData.length),
-            pagingData = {
-              collection: complete ? testData : collection.concat(data),
-              complete: complete
-            };
         setTimeout(function() {
-          callback(pagingData);
+          callback(collection.concat(data));
         }, 1500);
       }
     };
+  },
+
+  _hasMorePages: function(collection) {
+    return collection.length < testData.length;
   },
 
   render: function() {
@@ -75,7 +74,7 @@ var App = React.createClass({
         </section>
         <section className="r-ss-example-section">
           <h1>Ajax Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" tags={true} searchable={true} searchPlaceholder="filter" onChange={this.handlerExample} ajaxDataSource={this._simulatedAjaxFetch} pageFetch={this._simulatedPageFetch} />
+          <ReactSuperSelect placeholder="Make a Selection" tags={true} searchable={true} searchPlaceholder="filter" onChange={this.handlerExample} ajaxDataSource={this._simulatedAjaxFetch} pageFetch={this._simulatedPageFetch} hasMorePages={this._hasMorePages} />
         </section>
       </div>
     );

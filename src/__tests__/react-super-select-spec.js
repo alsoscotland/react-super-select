@@ -111,6 +111,33 @@ describe('ReactSuperSelect', function() {
 
   });
 
+  describe('dataSource overloads', function() {
+
+    it('supports a getting options from an object with a collection property', function() {
+      var el = renderComponent({
+        dataSource: {
+          collection: mockData
+        }
+      });
+      expect(el.state.data).toBe(mockData);
+    });
+
+    it('supports a getting options from an object with a get function', function() {
+      var el = renderComponent({
+        dataSource: {
+          internals: {
+            collection: mockData
+          },
+          get: function(key) {
+            return this.internals[key];
+          }
+        }
+      });
+      expect(el.state.data).toBe(mockData);
+    });
+
+  });
+
   describe('toggleDropdown', function() {
 
     var el;
@@ -579,7 +606,7 @@ describe('ReactSuperSelect', function() {
 
     it('renders with customClass when provided', function() {
       var el = renderAndOpen({
-        customClassName: 'yoClass'
+        customClass: 'yoClass'
       });
 
       expect(el.refs.rssControl.props.className).toMatch(/yoClass/);
@@ -610,9 +637,10 @@ describe('ReactSuperSelect', function() {
     beforeEach(function() {
       mockAjaxThen = jest.genMockFunction();
       el = renderComponent({
+        ajaxErrorString: 'No Data For You!!!',
         dataSource: undefined,
         customLoaderClass: "loaditUp",
-        ajaxDataSource: jest.genMockFunction().mockReturnValue({
+        ajaxDataFetch: jest.genMockFunction().mockReturnValue({
           then: mockAjaxThen
         })
       });
@@ -632,11 +660,22 @@ describe('ReactSuperSelect', function() {
 
     it('renders ajax data', function() {
       el.toggleDropdown();
-      var promiseCallback = mockAjaxThen.mock.calls[0][0];
-      promiseCallback(mockData);
+      var promiseSuccessCallback = mockAjaxThen.mock.calls[0][0];
+      promiseSuccessCallback(mockData);
 
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      expect(el.state.ajaxError).toBe(false);
       expect(options.length).toBe(5);
+    });
+
+    it('renders error content on ajax errors', function() {
+      el.toggleDropdown();
+      var promiseErrorCallback = mockAjaxThen.mock.calls[0][1];
+      promiseErrorCallback();
+
+      expect(el.state.ajaxError).toBe(true);
+      expect(el.refs.errorDisplay).toBeTruthy();
+      expect(el.refs.errorDisplay.props.children).toBe('No Data For You!!!');
     });
 
   });
@@ -651,7 +690,8 @@ describe('ReactSuperSelect', function() {
       mockAjaxThen = jest.genMockFunction();
       el = renderAndOpen({
         dataSource: undefined,
-        pageFetch: jest.genMockFunction().mockReturnValue({
+        hasMorePages: jest.genMockFunction(),
+        pageDataFetch: jest.genMockFunction().mockReturnValue({
           then: mockAjaxThen
         })
       });
@@ -661,32 +701,45 @@ describe('ReactSuperSelect', function() {
       scrollNode.scrollTop = 50;
     });
 
-    it('calls the pageFetch handler after scroll threshold is reached', function() {
+    it('calls the pageDataFetch handler after scroll threshold is reached', function() {
+      el.props.hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
-      expect(el.props.pageFetch.mock.calls.length).toBe(1);
+      expect(el.props.pageDataFetch.mock.calls.length).toBe(1);
     });
 
-    it('renders a loader during pageFetch', function() {
+    it('renders a loader during pageDataFetch', function() {
+      el.props.hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
       expect(el.refs.loader).toBeTruthy();
     });
 
-    it('does not call the pageFetch handler if loader present', function() {
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+    it('renders error content on ajax errors', function() {
+      el.props.hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
-      expect(el.props.pageFetch.mock.calls.length).toBe(1);
+      var promiseErrorCallback = mockAjaxThen.mock.calls[0][1];
+      promiseErrorCallback();
+
+      expect(el.state.ajaxError).toBe(true);
+      expect(el.refs.errorDisplay).toBeTruthy();
+      expect(el.refs.errorDisplay.props.children).toBe(el.DEFAULT_LOCALIZATIONS.ajaxErrorString);
     });
 
-    it('does not call the pageFetch handler pageFetchingComplete', function() {
-      el.setState({
-        pageFetchingComplete: true
-      });
+    it('does not call the pageDataFetch handler if loader present', function() {
+      el.props.hasMorePages.mockReturnValue(true);
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
-      expect(el.props.pageFetch.mock.calls.length).toBe(0);
+      expect(el.props.pageDataFetch.mock.calls.length).toBe(1);
+    });
+
+    it('does not call the pageDataFetch handler pageDataFetchingComplete', function() {
+      el.props.hasMorePages.mockReturnValue(false);
+      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+
+      expect(el.props.pageDataFetch.mock.calls.length).toBe(0);
     });
 
   });

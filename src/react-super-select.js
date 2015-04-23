@@ -17,7 +17,6 @@ var ReactSuperSelect = React.createClass({
 
 // Properties
 // ------
-
   propTypes: {
 
     // BOOLEAN OPTIONS
@@ -33,11 +32,11 @@ var ReactSuperSelect = React.createClass({
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
 
-    // **customClassName** (String) *optional* - this string value will be added as a css class to the control's main wrapping element.  You should be able to overide all styling with one point of css specificity by leading your rules with
+    // **customClass** (String) *optional* - this string value will be added as a css class to the control's main wrapping element.  You should be able to overide all styling with one point of css specificity by leading your rules with
     // ```css
-    // .r-ss-wrap.{customClassName}
+    // .r-ss-wrap.{customClass}
     // ```
-    customClassName: React.PropTypes.string,
+    customClass: React.PropTypes.string,
 
     // **customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  Will add a custom css class to the group headings which are rendered into the dropdown
     customGroupHeadingClass: React.PropTypes.string,
@@ -45,7 +44,7 @@ var ReactSuperSelect = React.createClass({
     // **customSearchIconClass** (String) *optional* - This class name will be added to the icon in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
     customSearchIconClass: React.PropTypes.string,
 
-    // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataSource** option.  A css class which will be added to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
+    // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataFetch** option.  A css class which will be added to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
     customLoaderClass: React.PropTypes.string,
 
     // **customTagClass** (String) *optional* - Used in conjunction with the **tags** option.  A css class which will be added to wrapper of a selection displayed as a tag. You should be able to overide all tag styling with one point of css specificity by leading your rules with
@@ -63,14 +62,25 @@ var ReactSuperSelect = React.createClass({
     // OPTION DATA-RELATED PROPS
     // -------------------------
 
-    // **ajaxDataSource** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
+    // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
     // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with an array of objects (a collection) as described by the **dataSource** option documentation. Or a single option object.  The **dataSource** option should be left undefined when using this option.
-    ajaxDataSource: React.PropTypes.func,
+    ajaxDataFetch: React.PropTypes.func,
 
-    // **dataSource** (An Array of Objects, i.e. a collection) (*optional - but **ajaxDataSource** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown. Each option in the collection must have:
+    // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
+    // there is a corresponding internal parser (_configureDataSource) which will return a collection (array of option objects) found based on argument type
+    //
+    //  The parsing method supports data sources as:
+    //  - an array of option objects (will be directly assigned to state.data)
+    //  - an object with a collection property (object.collection will be assigned to state.data)
+    //  - an object with a get function (return value of object.get('collection') will be assigned to state.data)
+    //
+    //  each option in the resulting collection
     //  - a unique value in the key set by the **optionValueKey** or the default of **id**
     //  - a value in the key set by the **optionLabelKey** or the default of **name**
-    dataSource: React.PropTypes.arrayOf(React.PropTypes.object),
+    dataSource: React.PropTypes.oneOfType([
+              React.PropTypes.arrayOf(React.PropTypes.object),
+              React.PropTypes.object
+            ]),
 
     // **optionLabelKey** (String) (*optional - will use 'name' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value you would like displayed for each option.
     optionLabelKey: React.PropTypes.string,
@@ -78,22 +88,24 @@ var ReactSuperSelect = React.createClass({
     // **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
     optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
 
-    // **pageFetch** (Function) *optional* - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the current data array.
-    // It must return a **promise** object. (i.e. an object with a then function).  The promise **must resolve with an object with two properties**.
-    //  - **collection** (Array of Objects) the array of data to be used as described by the **dataSource** option documentation.  The array should be the collection value passed into this function augmented with the data from the new page.
-    //  - **complete** (Boolean) indicates whether all pages have been fetched (i.e. do not fetch more pages)
-    // The pageFetch function will be called based upon the user's scroll position in the dropdown.  *It will not be called when loading ajax data, or when filtering results in a searchable dropdown*
-    pageFetch: React.PropTypes.func,
+    // **pageDataFetch** (Function) *optional* - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the current data array.
+    // It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with an array of objects (a collection) as described by the **dataSource** option documentation. A *hasMorePages* function must be provided
+    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.  *It will not be called when loading ajax data, or when filtering results in a searchable dropdown*
+    pageDataFetch: React.PropTypes.func,
+
+    // **hasMorePages** (Function) *optional* (required when using the *pageDataFetch* option) - A function that accepts one argument, as described by the *dataSource* property, and returns a Boolean value
+    // The value should indicate whether the data collection has any more pages available for fetching
+    hasMorePages: React.PropTypes.func,
 
     // GROUPING FUNCTIONALITY
     // ----------------------
 
     // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
     groupBy: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.func,
-            React.PropTypes.object
-          ]),
+              React.PropTypes.string,
+              React.PropTypes.func,
+              React.PropTypes.object
+            ]),
 
     // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option)- This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
     customGroupHeadingTemplateFunction: React.PropTypes.func,
@@ -111,7 +123,10 @@ var ReactSuperSelect = React.createClass({
     // LOCALIZATION STRINGS
     // --------------------
 
-    // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataSource returns an empty collection)
+    // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
+    ajaxErrorString: React.PropTypes.string,
+
+    // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
     noResultsString: React.PropTypes.string,
 
     // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control before a user has selected any values
@@ -121,20 +136,33 @@ var ReactSuperSelect = React.createClass({
     searchPlaceholder: React.PropTypes.string
   },
 
-
   // CONSTANTS
   // ---------
 
   // represents the focusedID state variable value for the search field of a **searchable** control.
   SEARCH_FOCUS_ID: -1,
 
+  // Default string values for localization options
+  DEFAULT_LOCALIZATIONS: {
+    ajaxErrorString: 'An Error occured while fetching options',
+    noResultsString: 'No Results Available',
+    placeholder: 'Select an Option',
+    searchPlaceholder: 'Search'
+  },
 
   // STATE VARIABLES
   // ---------------
   getInitialState: function() {
     return {
+      // **ajaxError** (Boolean) - set to true when an ajax request fails
+      ajaxError: false,
+
       // **data** (Array of Objects) the data source array used to map to option elements
-      data: this.props.dataSource,
+      data: this._configureDataSource(this.props.dataSource),
+
+      // **rawDataSource** (Object|Array) the raw dataSource the user supplies through *dataSource*, *ajaxDataFetch*, or *pageDataFetch*, this value will be passed to the *pageDataFetch* callback
+      rawDataSource: this.props.dataSource,
+
       // **isOpen** (Boolean) - whether the dropdown is open
       isOpen: false,
       // **focusedId** (Number) - used to track keyboard focus for accessibility
@@ -143,6 +171,7 @@ var ReactSuperSelect = React.createClass({
       labelKey: this.props.optionLabelKey || 'name',
       // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option
       lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
+
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field used for data filtering based on the label key's value
       searchString: undefined,
       // **value** (Array) - An array that holds the currently selected option(s)
@@ -172,9 +201,9 @@ var ReactSuperSelect = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
       this.setState({
-        data: nextProps.dataSource,
+        data: this._configureDataSource(nextProps.dataSource),
+        rawDataSource: nextProps.dataSource,
         focusedId: undefined,
-        pageFetchingComplete: undefined,
         labelKey: nextProps.optionLabelKey || 'name',
         lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
         valueKey: nextProps.optionValueKey || 'id'
@@ -193,6 +222,7 @@ var ReactSuperSelect = React.createClass({
   // main render method
   render: function() {
     var dropdownContent = this._getDropdownContent(),
+        placeholderString,
         valueDisplayClass,
         triggerDisplayContent,
         triggerClasses,
@@ -202,14 +232,15 @@ var ReactSuperSelect = React.createClass({
         }),
         wrapClasses;
 
-    wrapClasses = classNames("r-ss-wrap", this.props.customClassName, {
+    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
       'r-ss-expanded': this.state.isOpen
     });
 
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen
     });
-    triggerDisplayContent = this.state.value.length ? this._generateValueDiplay() : this.props.placeholder;
+    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
+    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
     valueDisplayClass = classNames('r-ss-value-display', {
       'r-ss-placeholder': this.state.value.length < 1,
     });
@@ -217,7 +248,7 @@ var ReactSuperSelect = React.createClass({
     return (
       <div ref="rssControl" className={wrapClasses}>
         <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
-          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={this.props.placeholder}>
+          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={placeholderString}>
             <div className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</div>
             <span ref="carat" className={caratClass}> </span>
           </a>
@@ -244,6 +275,31 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
+  // overloaded dataSource parser (Object|Array)
+  // case: (object) look for a collection property which is an array, or a get function and run get('collection') and determine if retun value of an array
+  // case (Array)
+  // return the dataSource array for use as this.state.data
+  _configureDataSource: function(dataSource) {
+    if (_.isArray(dataSource)) {
+     return dataSource;
+    }
+
+    if (_.isObject(dataSource)) {
+      if (_.isArray(dataSource.collection)) {
+        return dataSource.collection;
+      }
+
+      if (_.isFunction(dataSource.get)) {
+        var collection = dataSource.get('collection');
+        if (_.isArray(collection)) {
+          return collection;
+        }
+      }
+    }
+
+    return [];
+  },
+
   // used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control,
   // runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
   _defaultSearchFilter: function(option) {
@@ -255,30 +311,41 @@ var ReactSuperSelect = React.createClass({
   },
 
 
-  // fetch data source via ajax if **ajaxDataSource** function provided
+  // fetch data source via ajax if **ajaxDataFetch** function provided
+  // handles success and failure for ajax call
   _fetchDataViaAjax: function() {
     var self = this;
-    this.props.ajaxDataSource().then(function(optionDataFromAjax) {
-      var data = _.isArray(optionDataFromAjax) ? optionDataFromAjax : [];
+    this.props.ajaxDataFetch(this.state.rawDataSource).then(function(dataSourceFromAjax) {
       self.setState({
-        data: data
+        ajaxError: false,
+        data: self._configureDataSource(dataSourceFromAjax),
+        rawDataSource: dataSourceFromAjax
+      });
+    }, function() {
+      self.setState({
+        ajaxError: true,
+        // define as empty array on error so that _needsAjaxFetch will evaluate to false
+        rawDataSource: []
       });
     });
   },
 
-  // fetch the next page of options data if **pageFetch** function provided,
-  // called onMouseMove if scroll position in dropdown exceeds threshold
+  // fetch the next page of options data if **pageDataFetch** function provided,
+  // called onMouseMove if scroll position in dropdown exceeds threshold,
+  // handles success and failure for ajax call
   _fetchNextPage: function() {
-    var self = this,
-        currentData = this.state.data || [];
-    this.props.pageFetch(currentData).then(function(dataFromPageFetch) {
-      dataFromPageFetch = dataFromPageFetch || {};
-      var data = _.isArray(dataFromPageFetch.collection) ? dataFromPageFetch.collection: [];
+    var self = this;
+    this.props.pageDataFetch(this.state.rawDataSource).then(function(dataSourceFromPageFetch) {
       self.setState({
-        pageFetchingComplete: dataFromPageFetch.complete,
-        isFetchingPage: false,
-        data: data
+        ajaxError: false,
+        data: self._configureDataSource(dataSourceFromPageFetch),
+        rawDataSource: dataSourceFromPageFetch,
+        isFetchingPage: false
       });
+    }, function() {
+        self.setState({
+          ajaxError: true
+        });
     });
   },
 
@@ -332,12 +399,18 @@ var ReactSuperSelect = React.createClass({
   },
 
   // choose whether to calculate the display values normally, or as tags
-  _generateValueDiplay: function() {
+  _generateValueDisplay: function() {
     if (!this.props.tags) {
       return this._getNormalDisplayMarkup();
     } else {
       return this._getTagsDisplayMarkup();
     }
+  },
+
+  // render the content shown if an ajax error occurs
+  _getAjaxErrorMarkup: function() {
+    var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
+    return (<li className="r-ss-dropdown-option error"><i ref="errorDisplay">{errorString}</i></li>);
   },
 
   // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
@@ -355,25 +428,17 @@ var ReactSuperSelect = React.createClass({
   },
 
   // determine and render the dropdown content
-  // will trigger the **ajaxDataSource** fetch (and show loader) if needed
+  // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
   _getDropdownContent: function() {
     if (!this.state.isOpen) {
       return null;
     }
 
-    var dropdownContent,
-        searchContent = this._getSearchContent(),
+    var searchContent = this._getSearchContent(),
         mouseMoveHandler,
         pagingLi;
 
-    if (this._needsAjaxFetch()) {
-      this._fetchDataViaAjax();
-      dropdownContent = this._getLoadingMarkup();
-    } else {
-      dropdownContent = this._getOptionsMarkup();
-    }
-
-    mouseMoveHandler = (this.props.pageFetch) ? this._onMouseMove : null;
+    mouseMoveHandler = (this.props.pageDataFetch) ? this._onMouseMove : null;
     pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
 
     return(
@@ -381,7 +446,7 @@ var ReactSuperSelect = React.createClass({
         {searchContent}
         <div ref="scrollWrap" className="r-ss-options-wrap" onMouseMove={mouseMoveHandler}>
           <ul className="r-ss-dropdown-options" ref="dropdownOptionsList" aria-hidden={!this.state.isOpen} role="menubar">
-            {dropdownContent}
+            {this._getOptionsMarkup()}
           </ul>
           {pagingLi}
         </div>
@@ -413,8 +478,8 @@ var ReactSuperSelect = React.createClass({
 
   // render the content shown if no options are available
   _getNoResultsMarkup: function() {
-    var noResultsString = this.props.noResultsString ? this.props.noResultsString : 'No Results Available';
-    return (<li className="r-ss-dropdown-option"><i ref="noResults">{noResultsString}</i></li>);
+    var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
+    return (<li className="r-ss-dropdown-option" tabIndex="-1"><i ref="noResults">{noResultsString}</i></li>);
   },
 
   // render the selected options into the trigger element using the default (non-tags) behavior
@@ -438,9 +503,20 @@ var ReactSuperSelect = React.createClass({
   },
 
   // render the data source as options,
+  // render loading if fetching
+  // render ajaxError markup when state.ajaxError is true
   // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
   // - must track options count to maintain a single focusable index mapping across multiple groups of options
   _getOptionsMarkup: function() {
+    if (this._needsAjaxFetch()) {
+      this._fetchDataViaAjax();
+      return this._getPagingLi();
+    }
+
+    if (this.state.ajaxError) {
+      return this._getAjaxErrorMarkup();
+    }
+
     var data = this._getDataSource(),
         self = this,
         options = [],
@@ -459,7 +535,7 @@ var ReactSuperSelect = React.createClass({
     return options;
   },
 
-  // render a list item with a loading indicator.  shown while **pageFetch** function runs
+  // render a list item with a loading indicator.  shown while **pageDataFetch** or **ajaxDataFetch** functions run
   _getPagingLi: function() {
     return(<li key="page_loading" className="r-ss-page-fetch-indicator" tabIndex="-1">
             {this._getLoadingMarkup()}
@@ -474,12 +550,13 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier";
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
+        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder;
 
     return(
       <div className="r-ss-search-wrap">
         <div className="r-ss-search-inner">
-          <input ref="searchInput" placeholder={this.props.searchPlaceholder} onKeyUp={this._handleSearch} onClick={this._setFocusIdToSearch} defaultValue={this.state.searchString} />
+          <input ref="searchInput" placeholder={searchPlaceholderString} onKeyUp={this._handleSearch} onClick={this._setFocusIdToSearch} defaultValue={this.state.searchString} />
           <i className={magnifierClass}>search</i>
         </div>
       </div>
@@ -688,9 +765,9 @@ var ReactSuperSelect = React.createClass({
     this._updateFocusedId(previousId);
   },
 
-  // return boolean to determine if we have already received data from the **ajaxDataSource** function
+  // return boolean to determine if we have already received data from the **ajaxDataFetch** function
   _needsAjaxFetch: function() {
-    return !_.isArray(this.state.data) && this.props.ajaxDataSource;
+    return (_.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch));
   },
 
   // down key handler
@@ -732,10 +809,10 @@ var ReactSuperSelect = React.createClass({
     this._updateFocusedId(0);
   },
 
-  // mouse move handler used when **pageFetch** is set, will fire the pageFetch function if user has srolled sufficiently far in the dropdown
+  // mouse move handler used when **pageDataFetch** is set, will fire the pageDataFetch function if user has srolled sufficiently far in the dropdown
   _onMouseMove: function() {
     // do not fetch page if searching or already loading data
-    if (this.refs.loader || this.state.searchString || this.state.pageFetchingComplete) {
+    if (this.refs.loader || this.state.searchString || !this._pageFetchingComplete()) {
       return;
     }
 
@@ -761,6 +838,16 @@ var ReactSuperSelect = React.createClass({
       return true;
     }
     return false;
+  },
+
+  // if hasMorePages option (Function) present, return the value of its call
+  // otherwise return false so page fetch will no occur
+  _pageFetchingComplete: function() {
+    if (!_.isFunction(this.props.hasMorePages)) {
+      return false;
+    } else {
+      return this.props.hasMorePages(this.state.rawDataSource);
+    }
   },
 
   // remove a selected tag on keyUp
