@@ -1,13 +1,17 @@
+make markdown gulp file that writes to strings
+
+
 1) API docs in html format
 
 2) example option values
 
 3) examples controls
 
- - simple
- - simple ajax
- - simple custom templated, ajax-paging
- - simple searchable
+ - basic
+ - basic searchable
+ - basic ajax
+ - basic custom templated, ajax-paging
+ - basic searchable
 
  - multi-select
  - tags custom templated
