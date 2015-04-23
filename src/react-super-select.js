@@ -68,13 +68,13 @@ var ReactSuperSelect = React.createClass({
 
     // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
     // there is a corresponding internal parser (_configureDataSource) which will return a collection (array of option objects) found based on argument type
-    //
+
     //  The parsing method supports data sources as:
     //  - an array of option objects (will be directly assigned to state.data)
     //  - an object with a collection property (object.collection will be assigned to state.data)
     //  - an object with a get function (return value of object.get('collection') will be assigned to state.data)
-    //
-    //  each option in the resulting collection
+
+    //  each option in the resulting collection must have the following properties
     //  - a unique value in the key set by the **optionValueKey** or the default of **id**
     //  - a value in the key set by the **optionLabelKey** or the default of **name**
     dataSource: React.PropTypes.oneOfType([
@@ -88,13 +88,13 @@ var ReactSuperSelect = React.createClass({
     // **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
     optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
 
-    // **pageDataFetch** (Function) *optional* - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the current data array.
-    // It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with an array of objects (a collection) as described by the **dataSource** option documentation. A *hasMorePages* function must be provided
-    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.  *It will not be called when loading ajax data, or when filtering results in a searchable dropdown*
+    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
+    // It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a valid value as described by the **dataSource** option documentation.
+    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.  *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
     pageDataFetch: React.PropTypes.func,
 
-    // **hasMorePages** (Function) *optional* (required when using the *pageDataFetch* option) - A function that accepts one argument, as described by the *dataSource* property, and returns a Boolean value
-    // The value should indicate whether the data collection has any more pages available for fetching
+    // **hasMorePages** (Function) *optional* (should be provided when using the *pageDataFetch* option) - A function that accepts one argument, a value as described by the *dataSource* option documentation, and returns a Boolean value
+    // The value should indicate whether the option data collection has any more pages available for fetching
     hasMorePages: React.PropTypes.func,
 
     // GROUPING FUNCTIONALITY
