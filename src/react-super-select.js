@@ -88,7 +88,9 @@ var ReactSuperSelect = React.createClass({
     // **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
     optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
 
-    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
+    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
+    // The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
+
     // It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a valid value as described by the **dataSource** option documentation.
     // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.  *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
     pageDataFetch: React.PropTypes.func,
