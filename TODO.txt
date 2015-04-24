@@ -1,2 +1,5 @@
 TASKS
 1) github.io site / documentation for examples pages/readme
+http://www.w3.org/WAI/PF/wiki/ARIA/Tests/Testable_Statements
+MAYBE
+<!-- 6) clear search button (need localization for placeholder)? -->
