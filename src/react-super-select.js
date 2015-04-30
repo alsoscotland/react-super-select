@@ -221,6 +221,10 @@ var ReactSuperSelect = React.createClass({
   // If parent page updates the data source, reset the control with some defaults and the new data source.
   componentWillReceiveProps: function(nextProps) {
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
+
+      this.lastUserSelectedOption = undefined;
+      this.mouseMomentum = 1;
+
       this.setState({
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
