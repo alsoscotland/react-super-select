@@ -10,7 +10,7 @@ var _ = require('lodash'),
 
 // Dependencies
 //  - [Lodash](https://lodash.com/)
-//  - [classNames](https://www.npmjs.com/package/classnames)
+//  - [classnames](https://www.npmjs.com/package/classnames)
 //  - [React](https://facebook.github.io/react/index.html)
 
 var ReactSuperSelect = React.createClass({
@@ -144,6 +144,9 @@ var ReactSuperSelect = React.createClass({
   // represents the focusedID state variable value for the search field of a **searchable** control.
   SEARCH_FOCUS_ID: -1,
 
+  // regex used to determine if event src options have selected class
+  SELECTED_OPTION_REGEX: /r-ss-selected/,
+
   // Default string values for localization options
   DEFAULT_LOCALIZATIONS: {
     ajaxErrorString: 'An Error occured while fetching options',
@@ -159,6 +162,9 @@ var ReactSuperSelect = React.createClass({
       // **ajaxError** (Boolean) - set to true when an ajax request fails
       ajaxError: false,
 
+      // **controlId** (String) - unique identifier for the rss control, used to generate aria accessibility labels
+      controlId: _.uniqueId('rss_'),
+
       // **data** (Array of Objects) the data source array used to map to option elements
       data: this._configureDataSource(this.props.dataSource),
 
@@ -167,23 +173,28 @@ var ReactSuperSelect = React.createClass({
 
       // **isOpen** (Boolean) - whether the dropdown is open
       isOpen: false,
+
       // **focusedId** (Number) - used to track keyboard focus for accessibility
       focusedId: undefined,
+
       // **labelKey** (String) - the option object key that will be used to identify the value used as an option's label
       labelKey: this.props.optionLabelKey || 'name',
+
       // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option
       lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
 
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field used for data filtering based on the label key's value
       searchString: undefined,
+
       // **value** (Array) - An array that holds the currently selected option(s)
       value: [],
+
       // **valueKey** (String) - the option object key that will be used to identify the value used as an option's value property (values must be unique across data source)
       valueKey: this.props.optionValueKey || 'id'
     };
   },
 
-  // KEYMAP
+  // KEYMAP CONSTANT
   // ------
   // text based lookup map for keyboard navigation keys and their corresponding 'which' keycode values
   keymap: {
@@ -198,6 +209,14 @@ var ReactSuperSelect = React.createClass({
     'tab': 9,
     'up': 38
   },
+
+  // NON-STATE VARS (no need to re-render based on these being set)
+
+  // **lastUserSelectedOptionData** - track the last selected option, used for accesibility-related option focusing, and for shift-click selection
+  lastUserSelectedOption: undefined,
+
+  // **mouseMomentum** (Number) (either 1|-1) - Used in shift-click selection to determine direction for traversal of options
+  mouseMomentum: 1,
 
   // If parent page updates the data source, reset the control with some defaults and the new data source.
   componentWillReceiveProps: function(nextProps) {
@@ -214,10 +233,7 @@ var ReactSuperSelect = React.createClass({
   },
 
   // Update focused element after re-render
-  componentDidUpdate: function(prevProps, prevState) {
-    if (prevState.focusedId === this.state.focusedId) {
-      return;
-    }
+  componentDidUpdate: function() {
     this._focusCurrentFocusedId();
   },
 
@@ -225,7 +241,6 @@ var ReactSuperSelect = React.createClass({
   render: function() {
     var dropdownContent = this._getDropdownContent(),
         placeholderString,
-        valueDisplayClass,
         triggerDisplayContent,
         triggerClasses,
         caratClass = classNames('carat', {
@@ -239,21 +254,28 @@ var ReactSuperSelect = React.createClass({
     });
 
     triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen
-    });
-    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
-    valueDisplayClass = classNames('r-ss-value-display', {
-      'r-ss-placeholder': this.state.value.length < 1,
+      'r-ss-open': this.state.isOpen,
+      'r-ss-placeholder': this.state.value.length < 1
     });
 
+    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
+    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+
     return (
-      <div ref="rssControl" className={wrapClasses}>
-        <div ref="triggerDiv" className={triggerClasses} onClick={this.toggleDropdown} onKeyUp={this._handleKeyUp} aria-haspopup="true">
-          <a ref="triggerAnchor" className="r-ss-mock-input" tabIndex="0" aria-label={placeholderString}>
-            <div className={valueDisplayClass} ref="valueDisplay">{triggerDisplayContent}</div>
+      <div ref="rssControl" id={this.state.controlId} className={wrapClasses}>
+        <div ref="triggerDiv"
+           className={triggerClasses}
+           onClick={this.toggleDropdown}
+           onKeyDown={this._handleKeyDown}
+           role="combobox"
+           aria-activedescendant={this._ariaGetActiveDescendentId()}
+           aria-haspopup={true}
+           aria-controls={this._ariaGetListId()}
+           aria-label={placeholderString}
+           aria-multiselectable={this._isMultiSelect()}
+           tabIndex="1">
+            {triggerDisplayContent}
             <span ref="carat" className={caratClass}> </span>
-          </a>
         </div>
         {dropdownContent}
       </div>);
@@ -263,7 +285,25 @@ var ReactSuperSelect = React.createClass({
   toggleDropdown: function() {
     this.setState({
       'isOpen': !this.state.isOpen
+    }, function() {
+      if (this.state.isOpen) {
+        this._setFocusOnOpen();
+      }
     });
+  },
+
+  _ariaGetActiveDescendentId: function() {
+    var ariaActiveDescendantId = null,
+        optionRef = this._getFocusedOptionKey();
+    if (this.refs[optionRef]) {
+      ariaActiveDescendantId = this.refs[optionRef].props.id;
+    }
+    return ariaActiveDescendantId;
+  },
+
+  // calculate the unique identifier for the options ul for aria compliance labeling usage
+  _ariaGetListId: function() {
+    return this.state.controlId + '_list';
   },
 
   // close the dropdown and
@@ -271,8 +311,7 @@ var ReactSuperSelect = React.createClass({
   _closeOnKeypress: function() {
     if (this.state.isOpen) {
       this.setState({
-        isOpen: false,
-        focusedId: undefined
+        isOpen: false
       }, this._focusTrigger);
     }
   },
@@ -311,7 +350,6 @@ var ReactSuperSelect = React.createClass({
     }
     return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
   },
-
 
   // fetch data source via ajax if **ajaxDataFetch** function provided
   // handles success and failure for ajax call
@@ -359,11 +397,10 @@ var ReactSuperSelect = React.createClass({
 
   // used when selecting values, returns an array of full option-data objects which contain any single value or any one of an array of values passed in
   _findArrayOfOptionDataObjectsByValue: function(value) {
-    var self = this,
-        valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
+    var valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
     return _.reject(this.state.data, function(item) {
-      return !_.contains(valuesArray, item[self.state.valueKey]);
-    });
+      return !_.contains(valuesArray, item[this.state.valueKey]);
+    }, this);
   },
 
   // determine whether to focus a option value in the DOM, or the search field
@@ -395,8 +432,8 @@ var ReactSuperSelect = React.createClass({
 
   // focus the main trigger element of the control
   _focusTrigger: function() {
-    if (this.refs.triggerAnchor) {
-      this.refs.triggerAnchor.getDOMNode().focus();
+    if (this.refs.triggerDiv) {
+      this.refs.triggerDiv.getDOMNode().focus();
     }
   },
 
@@ -444,10 +481,15 @@ var ReactSuperSelect = React.createClass({
     pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
 
     return(
-      <div ref="dropdownContent" className="r-ss-dropdown" onKeyUp={this._handleKeyUp}>
+      <div ref="dropdownContent" className="r-ss-dropdown" onKeyDown={this._handleKeyDown}>
         {searchContent}
         <div ref="scrollWrap" className="r-ss-options-wrap" onMouseMove={mouseMoveHandler}>
-          <ul className="r-ss-dropdown-options" ref="dropdownOptionsList" aria-hidden={!this.state.isOpen} role="menubar">
+          <ul className="r-ss-dropdown-options"
+              ref="dropdownOptionsList"
+              tabIndex="-1"
+              id={this._ariaGetListId()}
+              role="listbox"
+              aria-expanded={this.state.isOpen}>
             {this._getOptionsMarkup()}
           </ul>
           {pagingLi}
@@ -487,21 +529,26 @@ var ReactSuperSelect = React.createClass({
   // render the selected options into the trigger element using the default (non-tags) behavior
   // - choose whether to render the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function() {
-    var self = this;
-    var markup = _.map(this.state.value, function(value) {
-      if (self.props.customOptionTemplateFunction) {
-        return self.props.customOptionTemplateFunction(value);
+    return _.map(this.state.value, function(value) {
+      if (this.props.customOptionTemplateFunction) {
+        return this.props.customOptionTemplateFunction(value);
       } else {
-        return value[self.state.labelKey];
+        return value[this.state.labelKey];
       }
-    });
-    return markup;
+    }, this);
   },
 
   // render a loading span (spinner gif), with **customLoaderClass** if provided
   _getLoadingMarkup: function() {
     var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
     return (<span ref="loader" className={loaderClasses}></span>);
+  },
+
+  // get the option Li element from a passed eventTarget.
+  // for key events = event.target
+  // for click events = event.currentTarget
+  _getOptionIndexFromTarget: function(targetLi) {
+    return parseInt(targetLi.getAttribute('data-option-index'), 10);
   },
 
   // render the data source as options,
@@ -520,16 +567,15 @@ var ReactSuperSelect = React.createClass({
     }
 
     var data = this._getDataSource(),
-        self = this,
         options = [],
         optionsCount = 0;
 
     if (!_.isArray(data)) {
       _.forIn(data, function(groupedOptions, heading) {
-        options.push(self._getGroupHeadingMarkup(heading));
-        options = options.concat(self._getTemplatedOptions(groupedOptions, optionsCount));
+        options.push(this._getGroupHeadingMarkup(heading));
+        options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
-      });
+      }, this);
     } else {
       options = this._getTemplatedOptions(data);
     }
@@ -553,12 +599,24 @@ var ReactSuperSelect = React.createClass({
     }
 
     var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
-        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder;
+        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
+        searchAriaId = this.state.controlId + '_search',
+        searchAriaIdLabel = searchAriaId + '_label';
 
     return(
       <div className="r-ss-search-wrap">
         <div className="r-ss-search-inner">
-          <input ref="searchInput" placeholder={searchPlaceholderString} onKeyUp={this._handleSearch} onClick={this._setFocusIdToSearch} defaultValue={this.state.searchString} />
+          <label ref="searchInputLabel" id={searchAriaIdLabel} className="r-ss-search-aria-label" htmlFor={searchAriaId}>{searchPlaceholderString}</label>
+          <input ref="searchInput"
+                 placeholder={searchPlaceholderString}
+                 onKeyUp={this._handleSearch}
+                 onClick={this._setFocusIdToSearch}
+                 defaultValue={this.state.searchString}
+                 name={searchAriaId}
+                 id={searchAriaId}
+                 aria-labelledby={searchAriaIdLabel}
+                 aria-owns={this._ariaGetListId()}
+                 aria-autocomplete="list" />
           <i className={magnifierClass}>search</i>
         </div>
       </div>
@@ -567,11 +625,9 @@ var ReactSuperSelect = React.createClass({
 
   // iterate over selected values and build tags markup for selected options display
   _getTagsDisplayMarkup: function() {
-    var self = this;
-    var markup = _.map(this.state.value, function(value) {
-      return self._getTagMarkup(value);
-    });
-    return markup;
+    return _.map(this.state.value, function(value) {
+      return this._getTagMarkup(value);
+    }, this);
   },
 
   // render a tag for an individual selected value
@@ -586,7 +642,7 @@ var ReactSuperSelect = React.createClass({
     return (
       <span className={tagWrapClass} key={tagKey}>
         <span className="r-ss-tag-label">{label}</span>
-        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyUp={this._removeTagKeyPress.bind(null, value)}>X</button>
+        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyDown={this._removeTagKeyPress.bind(null, value)}>X</button>
       </span>);
   },
 
@@ -594,7 +650,7 @@ var ReactSuperSelect = React.createClass({
   // - render no results markup if no options result from map calls
   _getTemplatedOptions: function(data, indexStart) {
     indexStart = indexStart || 0;
-    var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup(data, indexStart) : this._mapDataToDefaultTemplateMarkup(data, indexStart);
+    var options = this._mapDataToOptionsMarkup(data, indexStart);
 
     if (options.length === 0) {
       options = this._getNoResultsMarkup();
@@ -604,23 +660,21 @@ var ReactSuperSelect = React.createClass({
   },
 
   // main keyup binding map for keyboard navigation and selection
-  _handleKeyUp: function(event) {
-    event.preventDefault();
-    event.stopPropagation();
+  _handleKeyDown: function(event) {
+    if (this.state.isOpen || (event.which !== this.keymap.tab)) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
 
     switch(event.which) {
       case this.keymap.down:
-        this._onDownKey();
+        this._onDownKey(event);
         break;
       case this.keymap.end:
         this._onEndKey();
         break;
       case this.keymap.enter:
-        if (event.shiftKey) {
-          this._handleShiftKeyUpSelect();
-        } else {
-          this._onEnterKey(event);
-        }
+        this._onEnterKey(event);
         break;
       case this.keymap.esc:
         this._onEscKey();
@@ -628,26 +682,16 @@ var ReactSuperSelect = React.createClass({
       case this.keymap.home:
         this._onHomeKey();
         break;
-      case this.keymap.left: // delegate to up handler
-        this._onUpKey();
-        break;
-      case this.keymap.right: // delegate to down handler
-        this._onDownKey();
-        break;
       case this.keymap.space:
-        if (event.shiftKey) {
-          this._handleShiftKeyUpSelect();
-        } else {
-          this._onEnterKey(event); // delegate to enter
-        }
+        this._onEnterKey(event); // delegate to enter
         break;
-      case this.keymap.tab: // delegate to down handler if not at top level of UI DOM
-        if (typeof this.focusedId !== 'undefined') {
-          this._onDownKey();
+      case this.keymap.tab: // delegate to enter (selection) handler
+        if (this.state.isOpen) {
+          this._onEnterKey(event);
         }
         break;
       case this.keymap.up:
-        this._onUpKey();
+        this._onUpKey(event);
         break;
     }
   },
@@ -656,7 +700,7 @@ var ReactSuperSelect = React.createClass({
   _handleSearch: function(event) {
     var searchString = event.target.value;
     this._handleSearchDebounced.call(this, searchString);
-    this._handleKeyUp(event);
+    this._handleKeyDown(event);
   },
 
   // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
@@ -665,24 +709,6 @@ var ReactSuperSelect = React.createClass({
       searchString: search
     });
   }, 300),
-
-  // handle selecting a range of options at once when shift-key is depressed during click
-  _handleShiftSelect: function(value, event) {
-    var optionIndex = parseInt(event.currentTarget.getAttribute('data-option-index'), 10);
-    if (optionIndex === 0) {
-      return;
-    }
-    this._selectAllFromOptionRefToLastSelected(optionIndex);
-  },
-
-  // handle selecting a range of options at once when shift-key is depressed during keyboard selection
-  _handleShiftKeyUpSelect: function() {
-    var focusedOptionKey = this._getFocusedOptionKey();
-
-    if (this.refs[focusedOptionKey]) {
-      this._selectAllFromOptionRefToLastSelected(this.refs[focusedOptionKey].props['data-option-index']);
-    }
-  },
 
   // return the boolean used to determine whether an option should have the 'r-ss-selected' class
   _isCurrentlySelected: function(dataItem) {
@@ -698,47 +724,43 @@ var ReactSuperSelect = React.createClass({
   },
 
   // render option list-items based on a provided **customOptionTemplateFunction** function
-  _mapDataToCustomTemplateMarkup: function(data, indexStart) {
-    var self = this;
-
+  _mapDataToOptionsMarkup: function(data, indexStart) {
     return _.map(data, function(dataOption, index) {
       index = indexStart + index;
 
-      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
+      var isCurrentlySelected = this._isCurrentlySelected(dataOption),
+          itemKey = "drop_li_" + dataOption[this.state.valueKey],
           indexRef = 'option_' + index,
-          customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
+          ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
+          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': self._isCurrentlySelected(dataOption)
+            'r-ss-selected': isCurrentlySelected
           });
 
       return (
-        <li ref={indexRef} tabIndex="0" data-option-index={index} className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
-          {customOptionMarkup}
+        <li ref={indexRef}
+            id={ariaDescendantId}
+            tabIndex="0"
+            data-option-index={index}
+            className={classes}
+            aria-selected={isCurrentlySelected}
+            key={itemKey}
+            data-option-value={dataOption[this.state.valueKey]}
+            onClick={this._selectItemOnOptionClick.bind(null, dataOption)}
+            onMouseEnter={this._trackMouseMomentum}
+            role="option">
+          {optionMarkup}
         </li>);
-    });
-  },
-
-  // render option list-items based on the default template
-  _mapDataToDefaultTemplateMarkup: function(data, indexStart) {
-    var self = this;
-
-    return _.map(data, function(dataOption, index) {
-      index = indexStart + index;
-      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
-          indexRef = 'option_' + index,
-          classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': self._isCurrentlySelected(dataOption)
-          });
-      return (
-        <li ref={indexRef} tabIndex="0" data-option-index={index} className={classes} key={itemKey} data-option-value={dataOption[self.state.valueKey]} onClick={self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey])} role="menuitem">
-          {dataOption[self.state.labelKey]}
-        </li>);
-    });
+    }, this);
   },
 
   // determines next focusedId prior to updateFocusedId call
   _moveFocusDown: function() {
+    if (this._needsAjaxFetch()) {
+      return;
+    }
     var nextId;
+
     if (_.isUndefined(this.state.focusedId)) {
       if (this.props.searchable) {
         nextId = this.SEARCH_FOCUS_ID;
@@ -746,8 +768,9 @@ var ReactSuperSelect = React.createClass({
         nextId = 0;
       }
     } else {
-      nextId = (this.lastOptionId === this.state.focusedId) ? this.lastOptionId : this.state.focusedId + 1;
+      nextId = (this.state.lastOptionId === this.state.focusedId) ? this.state.lastOptionId : this.state.focusedId + 1;
     }
+
     this._updateFocusedId(nextId);
   },
 
@@ -773,9 +796,17 @@ var ReactSuperSelect = React.createClass({
   },
 
   // down key handler
-  _onDownKey: function() {
-    this._openedOnKeypress();
+  // shift-keypress is used to select successive focus items for aria keyboard accessibility
+  _onDownKey: function(event) {
+    if (!this.state.isOpen) {
+      this._openOnKeyPress();
+      return;
+    }
+
     this._moveFocusDown();
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectFocusedOption(event.target, true);
+    }
   },
 
   // end key handler
@@ -789,16 +820,18 @@ var ReactSuperSelect = React.createClass({
   // opens control when closed,
   // otherwise makes selection
   _onEnterKey: function(event) {
-    if (!this._openedOnKeypress()) {
-
-      var focusedOptionKey = this._getFocusedOptionKey();
-
-      if (this.refs[focusedOptionKey]) {
-        var optionValue = this.refs[focusedOptionKey].props['data-option-value'],
-            isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
-        this._selectItemByValues(optionValue, isAdditionalOption);
-      }
+    if (!this.state.isOpen) {
+      this._openOnKeyPress();
+      return;
     }
+
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectAllOptionsToLastUserSelectedOption(event.target);
+      return;
+    }
+
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
+    this._selectFocusedOption(event.target, keepControlOpen);
   },
 
   // escape key handler, closes the dropdown
@@ -828,18 +861,25 @@ var ReactSuperSelect = React.createClass({
   },
 
   // up key handler
-  _onUpKey: function() {
-    this._moveFocusUp();
+  // shift-click is used to select successive focus items for aria keyboard accessibility
+  _onUpKey: function(event) {
+    if (event.altKey) {
+      this._closeOnKeypress();
+      return;
+    }
+
+    if (this.state.isOpen) {
+      this._moveFocusUp();
+      if (this._isMultiSelect() && event.shiftKey) {
+        this._selectFocusedOption(event.target, true);
+      }
+    }
   },
 
   // open the dropdown, return true if opening,
   // return value (boolean) is used in keyUp handlers to alternate behaviors based on open state
-  _openedOnKeypress: function() {
-    if (!this.state.isOpen) {
-      this.toggleDropdown();
-      return true;
-    }
-    return false;
+  _openOnKeyPress: function() {
+    this.toggleDropdown();
   },
 
   // if hasMorePages option (Function) present, return the value of its call
@@ -852,6 +892,53 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
+  // used in shift selection when the event target was previously selected
+  // remove all options up to, but not including the option that raised the event
+  // so it behaves like a native browser form multi-select
+  _removeAllOptionsInOptionIdRange: function(from, to) {
+    var valuePropsToReject = [];
+
+    for (var i = from; i <= to; i++) {
+      var refString = 'option_' + i,
+      option = this.refs[refString];
+      if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
+        if (parseInt(this.lastUserSelectedOption.getAttribute('data-option-value'),10) !== option.props['data-option-value']) {
+          valuePropsToReject.push(option.props['data-option-value']);
+        }
+      }
+    }
+
+    var remainingSelected = _.reject(this.state.value, function(option) {
+        return _.includes(valuePropsToReject, option[this.state.valueKey]);
+      }, this);
+
+    this.props.onChange(remainingSelected);
+
+    this.setState({
+      value: remainingSelected
+    });
+  },
+
+  // remove an item from the state.value select items array
+  // *value* arg represents a full dataSource option object
+  _removeSelectedOptionByValue: function(value) {
+    // clear lastUserSelected if has been removed
+    if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
+      this.lastUserSelectedOption = undefined;
+    }
+
+    var SelectedAfterRemoval = _.reject(this.state.value, function(option) {
+              return option[this.state.valueKey] === value[this.state.valueKey];
+            }, this);
+
+    this.props.onChange(SelectedAfterRemoval);
+
+    this.setState({
+      value: SelectedAfterRemoval
+    });
+  },
+
   // remove a selected tag on keyUp
   _removeTagKeyPress: function(value, event) {
     event.preventDefault();
@@ -861,7 +948,7 @@ var ReactSuperSelect = React.createClass({
         isSpaceKey = event.which === this.keymap.space;
 
     if (isEnterKey || isSpaceKey) {
-      this._removeTagClick(value, event); // delegate to click handler
+      this._removeSelectedOptionByValue(value); // delegate to removal handler
     }
   },
 
@@ -870,52 +957,100 @@ var ReactSuperSelect = React.createClass({
     event.preventDefault();
     event.stopPropagation();
 
-    var self = this;
-    this.setState({
-      value: _.reject(this.state.value, function(tag) {
-              return tag[self.state.valueKey] === value[self.state.valueKey];
-            })
-    });
+    this._removeSelectedOptionByValue(value);
   },
 
-  // used by shift-selection functions, determine a range of options to select from clicked item backwards to closest r-ss-selected
-  _selectAllFromOptionRefToLastSelected: function(optionIndex) {
-    var self = this,
-        optionsToSelect = [],
-        valuesToSelect;
-
-    for (var i = (optionIndex); i >= 0; i--) {
+  // used in shift-click range selections
+  _selectAllOptionsInOptionIdRange: function(from, to) {
+    var valuePropsToSelect = [];
+    for (var i = from; i <= to; i++) {
       var refString = 'option_' + i,
-          option = this.refs[refString];
-
-      if (option.props.className.match(/r-ss-selected/)) {
-        break;
-      } else {
-        optionsToSelect.push(option.props['data-option-value']);
+      option = this.refs[refString];
+      if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        valuePropsToSelect.push(option.props['data-option-value']);
       }
-
     }
 
-    valuesToSelect = _.reject(this.state.data, function(item) {
-                       return optionsToSelect.indexOf(item[self.state.valueKey]) === -1;
-                     });
+    var optionsToSelect = _.reduce(this.state.data, function(memo, option) {
+          if (_.includes(valuePropsToSelect, option[this.state.valueKey])) {
+            memo.push(option);
+          }
+          return memo;
+        }, [], this);
+    this._selectItemByValues(optionsToSelect, true);
+  },
 
-    this._selectItemByValues(valuesToSelect);
+  // used in shift-key selection
+  // select all options from current eventTarget to the lastUserSelectedOption, based on mouseMomentum
+  _selectAllOptionsToLastUserSelectedOption: function(eventTargetLi) {
+    if (!this.lastUserSelectedOption) {
+      this.lastUserSelectedOption = eventTargetLi;
+      //select all from first option to clicked
+      this._selectAllOptionsInOptionIdRange(0, this._getOptionIndexFromTarget(eventTargetLi));
+      return;
+    }
+    var to,
+        from;
+
+    if (this.mouseMomentum === 1) {
+
+      // traversing up the list towards last option
+      // select all up from last user selected until event target option
+      from = this._getOptionIndexFromTarget(this.lastUserSelectedOption);
+      to = this._getOptionIndexFromTarget(eventTargetLi);
+    } else {
+
+      // traversing down the list towards first opion
+      // select all down from event target option to last user selected
+      from = this._getOptionIndexFromTarget(eventTargetLi);
+      to = this._getOptionIndexFromTarget(this.lastUserSelectedOption);
+    }
+
+    // if option was already selected this should trigger a removal operation, otherwise add
+    if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
+      this.lastUserSelectedOption = eventTargetLi;
+      this._removeAllOptionsInOptionIdRange(from, to);
+    } else {
+      this.lastUserSelectedOption = eventTargetLi;
+      this._selectAllOptionsInOptionIdRange(from, to);
+    }
+  },
+
+  // make a user-selection of the option that is currently focused
+  // will close the dropDown when keepControlOpen is falsy
+  _selectFocusedOption: function(eventTargetLi, keepControlOpen) {
+    keepControlOpen = keepControlOpen || false;
+
+    var focusedOptionKey = this._getFocusedOptionKey();
+    if (this.refs[focusedOptionKey]) {
+      var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
+
+      // store as last userSelected
+      this.lastUserSelectedOption = eventTargetLi;
+
+      if (keepControlOpen && this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
+        var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        this._removeSelectedOptionByValue(optionFullFromValueProp);
+      } else {
+        this._selectItemByValues(optionValue, keepControlOpen);
+      }
+    }
   },
 
   // handle selection of an option or array of options
-  // close dropdown on state callback if not selecting additional options in a multi-select control
-  _selectItemByValues: function(value, isAdditionalOption) {
+  // track last selection the user made
+  // close dropdown on state callback if not a non control-closing selection
+  _selectItemByValues: function(value, keepControlOpen) {
    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (this.props.tags || (isAdditionalOption && this.state.value)) {
+    if (this._isMultiSelect() || (keepControlOpen && this.state.value)) {
       objectValues = this.state.value.concat(objectValues);
     }
 
     var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
     this.props.onChange(outputValue);
 
-    if (isAdditionalOption) {
+    if (keepControlOpen) {
       this.setState({
         value: objectValues
       });
@@ -929,32 +1064,51 @@ var ReactSuperSelect = React.createClass({
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
   _selectItemOnOptionClick: function(value, event) {
     if (this._isMultiSelect() && event.shiftKey) {
-      this._handleShiftSelect(value, event);
+      this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
     }
-    var isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
-    this._selectItemByValues(value, isAdditionalOption);
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
+
+    // store as lastUserSelected
+    this.lastUserSelectedOption = event.currentTarget;
+
+    if (keepControlOpen && this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'))) {
+      this._removeSelectedOptionByValue(value);
+    } else {
+      this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
+    }
   },
 
   // set focus id to SEARCH_FOCUS_ID constant value
   _setFocusIdToSearch: function() {
-    this.setState({
-      focusedId: this.SEARCH_FOCUS_ID
-    });
+    this._updateFocusedId(this.SEARCH_FOCUS_ID);
+  },
+
+  // if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown
+  _setFocusOnOpen: function() {
+    if (this.lastUserSelectedOption) {
+      this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
+    } else {
+      this._moveFocusDown();
+    }
+  },
+
+  // used for shift selection
+  // sets direction the user is heading from the lastUserSelectedOption they selected
+  _trackMouseMomentum: function(event) {
+    var mouseOverOptionId = this._getOptionIndexFromTarget(event.currentTarget);
+    if (!this.lastUserSelectedOption) {
+      this.mouseMomentum = 1;
+    } else {
+      this.mouseMomentum = (mouseOverOptionId >= this._getOptionIndexFromTarget(this.lastUserSelectedOption)) ? 1 : -1;
+    }
   },
 
   // sets the current focused id,
   // or closes the dropdown if id is undefined
   _updateFocusedId: function(id) {
-    var self = this;
-
     this.setState({
       focusedId: id
-    }, function() {
-      if (_.isUndefined(id)) {
-        self._closeOnKeypress();
-        return;
-      }
     });
   }
 

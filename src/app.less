@@ -155,41 +155,31 @@ label {
 .r-ss-trigger {
   position: relative;
   cursor: pointer;
+  display: block;
+  line-height: 30px;
+  padding: .25rem @inputWithIconPadding .25rem .25rem;
+  border-color: @borderFallback;
+  border: 1px solid @border;
+  text-decoration: none;
+  color: @borderFallback;
+  .border-radius(.25rem, .25rem, .25rem, .25rem);
+  cursor: pointer;
+  outline: none;
 
   &.r-ss-open {
-    a.r-ss-mock-input {
-      .border-radius(.25rem, 0, 0, .25rem);
+    .border-radius(.25rem, 0, 0, .25rem);
 
-      &:focus {
-        border-color: @border;
-      }
+    &:focus {
+      border-color: @border;
     }
   }
 
-  a.r-ss-mock-input {
-    display: block;
-    line-height: 30px;
-    padding: 0 @inputWithIconPadding 0 0;
-    border-color: @borderFallback;
-    border: 1px solid @border;
-    text-decoration: none;
-    color: @borderFallback;
-    .border-radius(.25rem, .25rem, .25rem, .25rem);
-    cursor: pointer;
-    outline: none;
+  &.r-ss-placeholder {
+    color: @border;
+  }
 
-    &:focus {
-      border-color: black;
-    }
-
-    .r-ss-value-display {
-      display: block;
-      padding: .25rem 0 .25rem .25rem;
-
-      &.r-ss-placeholder {
-        color: @border;
-      }
-    }
+  &:focus {
+    border-color: black;
   }
 
   .carat {
@@ -210,6 +200,10 @@ label {
     }
   }
 
+}
+
+.r-ss-search-aria-label {
+  display: none;
 }
 
 .r-ss-search-inner {
@@ -250,10 +244,12 @@ label {
   .border-radius(0, .25rem, .25rem, 0);
   background-color: @white;
   border-color: @borderFallback;
+  border: 1px solid transparent;
   border: 1px solid @border;
   border-top: none;
   max-height: 350px;
   width: 100%;
+
 
   .r-ss-options-wrap {
     position: relative;
@@ -291,11 +287,14 @@ label {
     &.focused {
       outline: none;
       background-color: @focusBlue;
-      border-color: 2px solid @borderSelected;
+      border-color: 1px solid @borderSelected;
     }
   }
 
   .r-ss-dropdown-option {
+    position: relative;
+    left: 0;
+    top: 0;
     width: 100%;
     word-wrap: break-word;
     padding: .25rem;
@@ -320,14 +319,18 @@ label {
 
     &.r-ss-selected {
       background-color: @selectedBackground;
+
+      &:focus,
+      &::selection {
+        background-color: @selectedBackground;
+      }
     }
 
     &:focus,
-    &::selection,
-    &.focused {
+    &::selection {
       outline: none;
       background-color: @focusBlue;
-      border-color: 2px solid @borderSelected;
+      border: 1px solid @borderSelected;
     }
   }
 }
@@ -363,6 +366,10 @@ label {
   line-height: 22px;
   .border-radius(@tagBorderRadius, @tagBorderRadius, @tagBorderRadius, @tagBorderRadius);
   box-shadow: 1px 1px 1px @tagShadowColor;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 
   &.r-ss-tag-label {
     white-space: nowrap;
@@ -406,6 +413,7 @@ label {
     font-size: 10px;
     border: 1px solid @tagRemoveColor;
     cursor: pointer;
+    z-index: 1;
     .border-radius(@tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius);
 
     &:hover,
