@@ -22,9 +22,9 @@ var ReactSuperSelect = React.createClass({
     // BOOLEAN OPTIONS
     // ---------------
 
-    // **multiple** (Boolean) *optional*  - whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
+    // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
     multiple: React.PropTypes.bool,
-    // **searchable** (Boolean) *optional* - whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
+    // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
