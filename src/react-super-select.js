@@ -76,7 +76,7 @@ var ReactSuperSelect = React.createClass({
 
     //  Each option in the resulting collection must have the following properties:
     //  - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of **id**
-    //  - a defined value corresponsing to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
+    //  - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
     dataSource: React.PropTypes.oneOfType([
               React.PropTypes.arrayOf(React.PropTypes.object),
               React.PropTypes.object
