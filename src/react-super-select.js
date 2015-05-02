@@ -315,10 +315,12 @@ var ReactSuperSelect = React.createClass({
 
   // close the dropdown
   // resets focus to the main control trigger
+  // clear focused id
   _closeOnKeypress: function() {
     if (this.state.isOpen) {
       this.setState({
-        isOpen: false
+        isOpen: false,
+        focusedId: undefined
       }, this._focusTrigger);
     }
   },
@@ -736,7 +738,7 @@ var ReactSuperSelect = React.createClass({
 
   // user search events need to pass through the default keyDown handler
   _isUserSearchTypingEvent: function(event) {
-    if (!this.refs.searchInput || (event.which === this.keymap.down) || ((event.which === this.keymap.up) && event.altKey)) {
+    if (!this.refs.searchInput || (event.which === this.keymap.down) || ((event.which === this.keymap.up) && event.altKey) || (event.which === this.keymap.esc)) {
       return false;
     }
     return (event.target === this.refs.searchInput.getDOMNode());
