@@ -736,7 +736,7 @@ var ReactSuperSelect = React.createClass({
 
   // user search events need to pass through the default keyDown handler
   _isUserSearchTypingEvent: function(event) {
-    if (!this.refs.searchInput || (event.which === this.keymap.down)) {
+    if (!this.refs.searchInput || (event.which === this.keymap.down) || ((event.which === this.keymap.up) && event.altKey)) {
       return false;
     }
     return (event.target === this.refs.searchInput.getDOMNode());
