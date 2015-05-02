@@ -204,8 +204,6 @@ var ReactSuperSelect = React.createClass({
     'enter': 13,
     'esc': 27,
     'home': 36, // go to first option ?
-    'left': 37,
-    'right': 39,
     'space': 32,
     'tab': 9,
     'up': 38
