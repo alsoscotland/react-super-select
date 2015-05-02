@@ -961,13 +961,12 @@ var ReactSuperSelect = React.createClass({
 
   // remove a selected tag on keyDown
   _removeTagKeyPress: function(value, event) {
-    event.preventDefault();
-    event.stopPropagation();
-
     var isEnterKey = event.which === this.keymap.enter,
         isSpaceKey = event.which === this.keymap.space;
 
     if (isEnterKey || isSpaceKey) {
+      event.preventDefault();
+      event.stopPropagation();
       this._removeSelectedOptionByValue(value); // delegate to removal handler
     }
   },
