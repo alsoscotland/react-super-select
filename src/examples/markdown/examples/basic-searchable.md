@@ -1,15 +1,18 @@
 ### JSX Markup
 ```html
-<ReactSuperSelect placeholder=\"Make a Selection\" dataSource={testData} onChange={handlerExample} />
+<ReactSuperSelect placeholder="Make a Selection" 
+                  dataSource={testData} 
+                  onChange={handlerExample} 
+                  searchable={true} />
 ```
 
 ### Properties
 
-#### handlerExample
+#### onChange
 ```js
 var handlerExample = function(option) {
   var output = [
-    'Option Item Chosen = {\n',
+    'Searchable Option Item Chosen = {\n',
     '\tid: ', option.id, '\n',
     '\tname: ', option.name, '\n',
     '\tsize: ', option.size, '\n\t};'];
@@ -17,7 +20,7 @@ var handlerExample = function(option) {
 };
 ```
 
-#### dataSource
+#### dataSource (sample)
 ```js
 var testData = [
 {
@@ -29,6 +32,6 @@ var testData = [
   "id": "5507c0526305bceb0c0e2c7a",
   "name": "dolor nulla velit",
   "size": "Medium"
-}, ...(option objects continue)
+}, ...
 ];
 ```

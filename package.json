@@ -31,6 +31,7 @@
     "fs": "0.0.2",
     "gulp": "^3.8.11",
     "gulp-browserify": "^0.5.1",
+    "gulp-concat": "^2.5.2",
     "gulp-jshint": "^1.10.0",
     "gulp-markdown-to-json": "^0.2.1",
     "gulp-minify-css": "^1.1.0",
@@ -55,6 +56,7 @@
   "dependencies": {
     "classnames": "^1.2.0",
     "jest-cli": "^0.4.0",
+    "jquery": "^2.1.3",
     "lodash": "^3.7.0",
     "react": "^0.13.2",
     "react-tools": "^0.13.2",

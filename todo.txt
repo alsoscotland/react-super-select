@@ -1,11 +1,12 @@
-make markdown gulp file that writes to strings
+// make allExamples and allProps build dynamically???
 
+1) add relevant examples to props docs?
 
-1) API docs in html format
+2) keyboard navigation markdown piece
 
-2) example option values
+4) example option values
 
-3) examples controls
+5) examples controls
 
  - basic
  - basic searchable

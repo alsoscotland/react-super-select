@@ -1,6 +1,6 @@
-var testData = require('../support/test-data.js'),
-    exampleOutput = require('../support/example-output.js'),
-    basicExampleMarkdown = require('./markdown/js/basic-example').body;
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
 
 var handlerExample = function(option) {
   var output = [

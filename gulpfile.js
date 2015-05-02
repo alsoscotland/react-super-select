@@ -1,16 +1,17 @@
 var browserify = require('gulp-browserify'),
+    concat = require('gulp-concat'),
     gulp = require('gulp'),
     del = require('del'),
     markdownToJson = require('gulp-markdown-to-json'),
     minifyCss = require('gulp-minify-css'),
-    rename = require('gulp-rename'),
     shell = require('gulp-shell'),
     jshint = require('gulp-jshint');
 
 var paths = {
-  main: './src/examples-app.js',
+  main: ['./src/examples-app.js', './src/props-app.js', './src/keyboard-navigation-app.js', './javascripts/scale.fix.js'],
   js: ['./src/**/*.js'],
-  css: ['./stylesheets/**/*.css'],
+  css: ['./src/**/*.css', '!./src/stylesheets/docco.css'],
+  css_vendor: ['./src/stylesheets/docco.css'],
   lint: {
     js: [
       './tmp/jsx/**/*.js',
@@ -18,7 +19,7 @@ var paths = {
     ]
   },
   markdown: {
-    files: ['./src/examples/markdown/**.*'],
+    files: ['./src/examples/markdown/**/*.md'],
     dest: './src/examples/markdown/js'
   },
   example: {
@@ -26,7 +27,7 @@ var paths = {
     dist: {
       html: 'example/',
       js: 'example/',
-      css: 'stylesheets'
+      css: './stylesheets/'
     },
     files: [
       './src/annotated-source.html',
@@ -54,15 +55,20 @@ gulp.task('lint-js', ['jsx'], function() {
 });
 
 gulp.task('js', function () {
-  return gulp.src([paths.main])
+  return gulp.src(paths.main)
    .pipe(browserify())
    .pipe(gulp.dest(paths.example.dist.js));
 });
 
 gulp.task('css', function() {
-  var stream = gulp.src(paths.css)
-    .pipe(rename('examples-app.css'))
-    .pipe(minifyCss());
+  return gulp.src(paths.css)
+    .pipe(minifyCss())
+    .pipe(concat('examples-app.css'))
+    .pipe(gulp.dest(paths.example.dist.css));
+});
+
+gulp.task('css-vendor', function() {
+  var stream = gulp.src(paths.css_vendor);
   return stream.pipe(gulp.dest(paths.example.dist.css));
 });
 
@@ -97,6 +103,7 @@ gulp.task('build', [
   'clean',
   'js',
   'css',
+  'css-vendor',
   'files'
 ]);
 

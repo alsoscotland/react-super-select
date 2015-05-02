@@ -65,7 +65,7 @@
               <p>Dependencies</p>
 <ul>
 <li><a href="https://lodash.com/">Lodash</a></li>
-<li><a href="https://www.npmjs.com/package/classnames">classNames</a></li>
+<li><a href="https://www.npmjs.com/package/classnames">classnames</a></li>
 <li><a href="https://facebook.github.io/react/index.html">React</a></li>
 </ul>
 
@@ -135,7 +135,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p><strong>multiple</strong> (Boolean) <em>optional</em>  - set true for a multi-select control with normal or custom templating.  When using the <strong>tags</strong> display option, this option is redundant</p>
+              <p><strong>multiple</strong> (Boolean) <em>optional</em>  - Whether or not the control supports multi-selection. When using the <strong>tags</strong> display option, this option is redundant</p>
 
             </div>
 
@@ -150,7 +150,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p><strong>searchable</strong> (Boolean) <em>optional</em> - whether or not to show a search bar in the dropdown area which offers text-based filtering of the options-set (by label key)</p>
+              <p><strong>searchable</strong> (Boolean) <em>optional</em> - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the <strong>dataSource</strong> options (by label key)</p>
 
             </div>
 
@@ -205,7 +205,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p><strong>customClass</strong> (String) <em>optional</em> - this string value will be added as a css class to the control’s main wrapping element.  You should be able to overide all styling with one point of css specificity by leading your rules with</p>
+              <p><strong>customClass</strong> (String) <em>optional</em> - This value will be added as a css class to the control’s main wrapping element.  You should be able to overide all styling by leading your rules with</p>
 <pre><code class="lang-css">.r-ss-wrap.{customClass}
 </code></pre>
 
@@ -222,7 +222,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p><strong>customGroupHeadingClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>groupBy</strong> option.  Will add a custom css class to the group headings which are rendered into the dropdown</p>
+              <p><strong>customGroupHeadingClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>groupBy</strong> option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown</p>
 
             </div>
 
@@ -237,7 +237,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p><strong>customSearchIconClass</strong> (String) <em>optional</em> - This class name will be added to the icon in the search-filtering bar (when <strong>searchable</strong> is true).  Allowing you to override the default search icon (default: a magnifying glass)</p>
+              <p><strong>customSearchIconClass</strong> (String) <em>optional</em> - This value will be added as a css class to the icon element in the search-filtering bar (when <strong>searchable</strong> is true).  Allowing you to override the default search icon (default: a magnifying glass)</p>
 
             </div>
 
@@ -252,7 +252,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p><strong>customLoaderClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>ajaxDataFetch</strong> option.  A css class which will be added to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.</p>
+              <p><strong>customLoaderClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>ajaxDataFetch</strong> option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.</p>
 
             </div>
 
@@ -267,7 +267,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p><strong>customTagClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>tags</strong> option.  A css class which will be added to wrapper of a selection displayed as a tag. You should be able to overide all tag styling with one point of css specificity by leading your rules with</p>
+              <p><strong>customTagClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>tags</strong> option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with</p>
 <pre><code class="lang-css"> .r-ss-tag.{customTagClass}
 </code></pre>
 
@@ -309,7 +309,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p><strong>onChange</strong> (Function) <em>required</em> - This is the main callback handler for the control.  When a user makes selection(s) the selected option, or when <strong>multiple</strong> or <strong>tags</strong>, an array of selected values (object from the dataSource collection) will be passed to this handler function.</p>
+              <p><strong>onChange</strong> (Function) <em>required</em> - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when <strong>multiple</strong> or <strong>tags</strong> an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)</p>
 
             </div>
 
@@ -350,7 +350,7 @@
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p><strong>ajaxDataFetch</strong> (Function) (<em>optional - but <strong>dataSource</strong> must be supplied if undefined</em>) - Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option.
-The function takes no arguments, but it must return a <strong>promise</strong> object. (i.e. an object with a then function).  The promise must resolve with an array of objects (a collection) as described by the <strong>dataSource</strong> option documentation. Or a single option object.  The <strong>dataSource</strong> option should be left undefined when using this option.</p>
+The function takes no arguments, but it must return a <strong>promise</strong> object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. The <strong>dataSource</strong> option should be left undefined when using this option.</p>
 
             </div>
 
@@ -366,7 +366,7 @@ The function takes no arguments, but it must return a <strong>promise</strong> o
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p><strong>dataSource</strong> (Array|Object|Collection Object) (<em>optional - but <strong>ajaxDataFetch</strong> must be supplied if undefined</em>) - The dataSource option provides the data for your options dropdown.
-there is a corresponding internal parser (_configureDataSource) which will return a collection (array of option objects) found based on argument type</p>
+The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type</p>
 
             </div>
 
@@ -379,11 +379,11 @@ there is a corresponding internal parser (_configureDataSource) which will retur
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p> The parsing method supports data sources as:</p>
+              <p> The parsing method supports dataSource values as:</p>
 <ul>
 <li>an array of option objects (will be directly assigned to state.data)</li>
 <li>an object with a collection property (object.collection will be assigned to state.data)</li>
-<li>an object with a get function (return value of object.get(‘collection’) will be assigned to state.data)</li>
+<li>an object with a get function (the return value of object.get(‘collection’) will be assigned to state.data)</li>
 </ul>
 
             </div>
@@ -397,10 +397,10 @@ there is a corresponding internal parser (_configureDataSource) which will retur
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p> each option in the resulting collection must have the following properties</p>
+              <p> Each option in the resulting collection must have the following properties:</p>
 <ul>
-<li>a unique value in the key set by the <strong>optionValueKey</strong> or the default of <strong>id</strong></li>
-<li>a value in the key set by the <strong>optionLabelKey</strong> or the default of <strong>name</strong></li>
+<li>a unique value corresponding to the key set by the <strong>optionValueKey</strong> or the default optionValueKey of <strong>id</strong></li>
+<li>a defined value corresponding to the key set by the <strong>optionLabelKey</strong> or the default optionLabelKey of <strong>name</strong></li>
 </ul>
 
             </div>
@@ -419,7 +419,7 @@ there is a corresponding internal parser (_configureDataSource) which will retur
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p><strong>optionLabelKey</strong> (String) (<em>optional - will use ‘name’ key if undefined</em>) - This value represents the key in each option object in your <strong>dataSource</strong> collection which represents the value you would like displayed for each option.</p>
+              <p><strong>optionLabelKey</strong> (String) (<em>optional - defaults to using ‘name’ as the key if undefined</em>) - This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value you would like displayed for each option.</p>
 
             </div>
 
@@ -434,7 +434,7 @@ there is a corresponding internal parser (_configureDataSource) which will retur
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p><strong>optionValueKey</strong> (String) (<em>optional - will use ‘id’ key if undefined</em>) - This value represents the key in each option object in your <strong>dataSource</strong> collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html <code>&lt;select&gt;</code> element</p>
+              <p><strong>optionValueKey</strong> (String) (<em>optional - defaults to using ‘id’ as the key if undefined</em>) - This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that <strong>uniquely identifies</strong> that option across the <strong>dataSource</strong> collection.  Think of it in terms of the value attribute of a traditional html <code>&lt;select&gt;</code> element</p>
 
             </div>
 
@@ -449,9 +449,11 @@ there is a corresponding internal parser (_configureDataSource) which will retur
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p><strong>pageDataFetch</strong> (Function) <em>optional</em> (A <em>hasMorePages</em> function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.  The function takes one argument, the value provided as the <strong>dataSource</strong> (or the return value of the <strong>ajaxDataSource</strong> function).
-It must return a <strong>promise</strong> object. (i.e. an object with a then function).  The promise must resolve with a valid value as described by the <strong>dataSource</strong> option documentation.
-The pageDataFetch function will be called based upon the user’s scroll position in the dropdown.  <em>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <em>*hasMorePages</em></em> evaluates to false</p>
+              <p><strong>pageDataFetch</strong> (Function) <em>optional</em> (A <em>hasMorePages</em> function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
+The function takes one argument, the value provided as the <strong>dataSource</strong> (or the return value of the <strong>ajaxDataSource</strong> function).
+It must return a <strong>promise</strong> object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation.
+The pageDataFetch function will be called based upon the user’s scroll position in the dropdown.
+<em>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <em>*hasMorePages</em></em> evaluates to false</p>
 
             </div>
 
@@ -466,7 +468,7 @@ The pageDataFetch function will be called based upon the user’s scroll positio
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p><strong>hasMorePages</strong> (Function) <em>optional</em> (should be provided when using the <em>pageDataFetch</em> option) - A function that accepts one argument, a value as described by the <em>dataSource</em> option documentation, and returns a Boolean value
+              <p><strong>hasMorePages</strong> (Function) <em>optional</em> (should be provided when using the <em>pageDataFetch</em> option) - A function that accepts one argument, a value as described by the <em>dataSource</em> option documentation, and returns a Boolean value.
 The value should indicate whether the option data collection has any more pages available for fetching</p>
 
             </div>
@@ -507,7 +509,7 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p><strong>groupBy</strong> (String|Object|Function) <em>optional</em> - Allows you to sort your dropdown options into groups by leveraging Lodash’s groupBy function.  Please reference <a href="https://lodash.com/docs#groupBy">Lodash</a> documentation for behavior of <em>groupBy</em> when passed different argument types</p>
+              <p><strong>groupBy</strong> (String|Object|Function) <em>optional</em> - Allows you to sort your dropdown options into groups by leveraging Lodash’s groupBy function.  Please reference the <a href="https://lodash.com/docs#groupBy">Lodash</a> documentation for behavior of <em>groupBy</em> when passed different argument types</p>
 
             </div>
 
@@ -526,7 +528,7 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p><strong>customGroupHeadingTemplateFunction</strong> (Function) <em>optional</em> (Used in conjunction with the <strong>groupBy</strong> option)- This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group’s object key (returned by the call of Lodash’s groupBy when passed the value of your <strong>groupBy</strong> option)</p>
+              <p><strong>customGroupHeadingTemplateFunction</strong> (Function) <em>optional</em> (Used in conjunction with the <strong>groupBy</strong> option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group’s object key (returned by the call of Lodash’s groupBy when passed the value of your <strong>groupBy</strong> option)</p>
 
             </div>
 
@@ -566,8 +568,9 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p><strong>customFilterFunction</strong> (Function) <em>optional</em> - Used in conjunction with the <strong>searchable</strong> options.  The function provided for this option will serve as a replacement of the default search filter function.
-(A default lowercase string comparison for text.  Matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown’s search field).  The function is passed as the second arg to <a href="https://lodash.com/docs#filter">Lodash’s filter function</a> and is along with your <strong>dataSource</strong> as the first arg.</p>
+              <p><strong>customFilterFunction</strong> (Function) <em>optional</em> - Used in conjunction with the <strong>searchable</strong> option.  The function provided will serve as a replacement of the default search filter function.
+When left undefined the default filter function will be used.
+(Defaults To: A lowercase string comparison for text.  Matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown’s search field).  The function is leveraged by <a href="https://lodash.com/docs#filter">Lodash’s filter function</a> with your <strong>dataSource</strong> collection as its first argument.</p>
 
             </div>
 
@@ -652,7 +655,7 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
-              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control before a user has selected any values</p>
+              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control when the user has no selected values</p>
 
             </div>
 
@@ -667,7 +670,7 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
-              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area’s searchfield when a user has not entered any characters.</p>
+              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area’s search input field when a user has not entered any characters.</p>
 
             </div>
 
@@ -708,7 +711,7 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
-              <p>represents the focusedID state variable value for the search field of a <strong>searchable</strong> control.</p>
+              <p>used as the focusedID state variable value, when the search input field of a <strong>searchable</strong> control has focus.</p>
 
             </div>
 
@@ -722,6 +725,21 @@ The value should indicate whether the option data collection has any more pages 
 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>regular expression used to determine if event src options have selected class</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  SELECTED_OPTION_REGEX: <span class="hljs-regexp">/r-ss-selected/</span>,</pre></div></div>
+
+        </li>
+
+
+        <li id="section-49">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>Default string values for localization options</p>
 
@@ -737,30 +755,15 @@ The value should indicate whether the option data collection has any more pages 
         </li>
 
 
-        <li id="section-49">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
-              </div>
-              <h2 id="state-variables">STATE VARIABLES</h2>
-
-            </div>
-
-        </li>
-
-
         <li id="section-50">
             <div class="annotation">
 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
+              <h2 id="state-variables">STATE VARIABLES</h2>
 
             </div>
-
-            <div class="content"><div class='highlight'><pre>  getInitialState: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">return</span> {</pre></div></div>
 
         </li>
 
@@ -771,11 +774,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
-              <p><strong>ajaxError</strong> (Boolean) - set to true when an ajax request fails</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      ajaxError: <span class="hljs-literal">false</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  getInitialState: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> {</pre></div></div>
 
         </li>
 
@@ -786,11 +789,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
-              <p><strong>data</strong> (Array of Objects) the data source array used to map to option elements</p>
+              <p><strong>ajaxError</strong> (Boolean) - Set to true when an ajax request fails</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      data: <span class="hljs-keyword">this</span>._configureDataSource(<span class="hljs-keyword">this</span>.props.dataSource),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      ajaxError: <span class="hljs-literal">false</span>,</pre></div></div>
 
         </li>
 
@@ -801,11 +804,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
-              <p><strong>rawDataSource</strong> (Object|Array) the raw dataSource the user supplies through <em>dataSource</em>, <em>ajaxDataFetch</em>, or <em>pageDataFetch</em>, this value will be passed to the <em>pageDataFetch</em> callback</p>
+              <p><strong>controlId</strong> (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      rawDataSource: <span class="hljs-keyword">this</span>.props.dataSource,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      controlId: _.uniqueId(<span class="hljs-string">'rss_'</span>),</pre></div></div>
 
         </li>
 
@@ -816,11 +819,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
-              <p><strong>isOpen</strong> (Boolean) - whether the dropdown is open</p>
+              <p><strong>data</strong> (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      isOpen: <span class="hljs-literal">false</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      data: <span class="hljs-keyword">this</span>._configureDataSource(<span class="hljs-keyword">this</span>.props.dataSource),</pre></div></div>
 
         </li>
 
@@ -831,11 +834,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
-              <p><strong>focusedId</strong> (Number) - used to track keyboard focus for accessibility</p>
+              <p><strong>rawDataSource</strong> (Object|Array) The raw dataSource value the user supplies through the <em>dataSource</em> prop (or returned from <em>ajaxDataFetch</em> / <em>pageDataFetch</em>). This value is passed to the <em>pageDataFetch</em> callback</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      focusedId: <span class="hljs-literal">undefined</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      rawDataSource: <span class="hljs-keyword">this</span>.props.dataSource,</pre></div></div>
 
         </li>
 
@@ -846,11 +849,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
-              <p><strong>labelKey</strong> (String) - the option object key that will be used to identify the value used as an option’s label</p>
+              <p><strong>isOpen</strong> (Boolean) - Whether or not the dropdown is open</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      labelKey: <span class="hljs-keyword">this</span>.props.optionLabelKey || <span class="hljs-string">'name'</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      isOpen: <span class="hljs-literal">false</span>,</pre></div></div>
 
         </li>
 
@@ -861,11 +864,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
-              <p><strong>lastOptionId</strong> (Number) - Used in keyboard navigation to focus the last available option</p>
+              <p><strong>focusedId</strong> (Number) - Used to track keyboard focus for accessibility</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      lastOptionId: (_.isArray(<span class="hljs-keyword">this</span>.props.dataSource) &amp;&amp; (<span class="hljs-keyword">this</span>.props.dataSource.length &gt; <span class="hljs-number">0</span>)) ? <span class="hljs-keyword">this</span>.props.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      focusedId: <span class="hljs-literal">undefined</span>,</pre></div></div>
 
         </li>
 
@@ -876,11 +879,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
-              <p><strong>searchString</strong> (String) - When the <strong>searchable</strong> option is true, this is the user-entered value in the search field used for data filtering based on the label key’s value</p>
+              <p><strong>labelKey</strong> (String) - The option object key that will be used to identify the value displayed as an option’s label</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      searchString: <span class="hljs-literal">undefined</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      labelKey: <span class="hljs-keyword">this</span>.props.optionLabelKey || <span class="hljs-string">'name'</span>,</pre></div></div>
 
         </li>
 
@@ -891,11 +894,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
-              <p><strong>value</strong> (Array) - An array that holds the currently selected option(s)</p>
+              <p><strong>lastOptionId</strong> (Number) - Used in keyboard navigation to focus the last available option in the dropdown</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      value: [],</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      lastOptionId: (_.isArray(<span class="hljs-keyword">this</span>.props.dataSource) &amp;&amp; (<span class="hljs-keyword">this</span>.props.dataSource.length &gt; <span class="hljs-number">0</span>)) ? <span class="hljs-keyword">this</span>.props.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>,</pre></div></div>
 
         </li>
 
@@ -906,13 +909,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
-              <p><strong>valueKey</strong> (String) - the option object key that will be used to identify the value used as an option’s value property (values must be unique across data source)</p>
+              <p><strong>searchString</strong> (String) - When the <strong>searchable</strong> option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key’s value</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>      valueKey: <span class="hljs-keyword">this</span>.props.optionValueKey || <span class="hljs-string">'id'</span>
-    };
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      searchString: <span class="hljs-literal">undefined</span>,</pre></div></div>
 
         </li>
 
@@ -923,9 +924,11 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
-              <h2 id="keymap">KEYMAP</h2>
+              <p><strong>value</strong> (Array) - An array that holds the current user-selected option(s)</p>
 
             </div>
+
+            <div class="content"><div class='highlight'><pre>      value: [],</pre></div></div>
 
         </li>
 
@@ -936,21 +939,12 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
-              <p>text based lookup map for keyboard navigation keys and their corresponding ‘which’ keycode values</p>
+              <p><strong>valueKey</strong> (String) - The option object key that will be used to identify the value used as an option’s value property (values must be unique across data source)</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  keymap: {
-    <span class="hljs-string">'down'</span>: <span class="hljs-number">40</span>,
-    <span class="hljs-string">'end'</span>: <span class="hljs-number">35</span>, <span class="hljs-comment">// goto last option ?</span>
-    <span class="hljs-string">'enter'</span>: <span class="hljs-number">13</span>,
-    <span class="hljs-string">'esc'</span>: <span class="hljs-number">27</span>,
-    <span class="hljs-string">'home'</span>: <span class="hljs-number">36</span>, <span class="hljs-comment">// go to first option ?</span>
-    <span class="hljs-string">'left'</span>: <span class="hljs-number">37</span>,
-    <span class="hljs-string">'right'</span>: <span class="hljs-number">39</span>,
-    <span class="hljs-string">'space'</span>: <span class="hljs-number">32</span>,
-    <span class="hljs-string">'tab'</span>: <span class="hljs-number">9</span>,
-    <span class="hljs-string">'up'</span>: <span class="hljs-number">38</span>
+            <div class="content"><div class='highlight'><pre>      valueKey: <span class="hljs-keyword">this</span>.props.optionValueKey || <span class="hljs-string">'id'</span>
+    };
   },</pre></div></div>
 
         </li>
@@ -962,12 +956,80 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
-              <p>If parent page updates the data source, reset the control with some defaults and the new data source.</p>
+              <h2 id="keymap-constant">KEYMAP CONSTANT</h2>
+
+            </div>
+
+        </li>
+
+
+        <li id="section-64">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>A text-based lookup for keyboard navigation keys and their corresponding ‘which’ keycode values</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  keymap: {
+    <span class="hljs-string">'down'</span>: <span class="hljs-number">40</span>,
+    <span class="hljs-string">'end'</span>: <span class="hljs-number">35</span>, <span class="hljs-comment">// goto last option ?</span>
+    <span class="hljs-string">'enter'</span>: <span class="hljs-number">13</span>,
+    <span class="hljs-string">'esc'</span>: <span class="hljs-number">27</span>,
+    <span class="hljs-string">'home'</span>: <span class="hljs-number">36</span>, <span class="hljs-comment">// go to first option ?</span>
+    <span class="hljs-string">'space'</span>: <span class="hljs-number">32</span>,
+    <span class="hljs-string">'tab'</span>: <span class="hljs-number">9</span>,
+    <span class="hljs-string">'up'</span>: <span class="hljs-number">38</span>
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-65">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>NON-STATE VARS (no need to re-render based on these being set)</p>
+
+            </div>
+
+        </li>
+
+
+        <li id="section-66">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p><strong>lastUserSelectedOptionData</strong> - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  lastUserSelectedOption: <span class="hljs-literal">undefined</span>,</pre></div></div>
+
+        </li>
+
+
+        <li id="section-67">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>If parent page updates the data source, reset the control with some defaults and the new dataSource.</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  componentWillReceiveProps: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nextProps)</span> </span>{
     <span class="hljs-keyword">if</span> (!_.isEqual(<span class="hljs-keyword">this</span>.props.dataSource, nextProps.dataSource)) {
+
+      <span class="hljs-keyword">this</span>.lastUserSelectedOption = <span class="hljs-literal">undefined</span>;
+
       <span class="hljs-keyword">this</span>.setState({
         data: <span class="hljs-keyword">this</span>._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
@@ -982,31 +1044,28 @@ The value should indicate whether the option data collection has any more pages 
         </li>
 
 
-        <li id="section-64">
+        <li id="section-68">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>Update focused element after re-render</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  componentDidUpdate: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(prevProps, prevState)</span> </span>{
-    <span class="hljs-keyword">if</span> (prevState.focusedId === <span class="hljs-keyword">this</span>.state.focusedId) {
-      <span class="hljs-keyword">return</span>;
-    }
+            <div class="content"><div class='highlight'><pre>  componentDidUpdate: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">this</span>._focusCurrentFocusedId();
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-65">
+        <li id="section-69">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>main render method</p>
 
@@ -1015,7 +1074,6 @@ The value should indicate whether the option data collection has any more pages 
             <div class="content"><div class='highlight'><pre>  render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">var</span> dropdownContent = <span class="hljs-keyword">this</span>._getDropdownContent(),
         placeholderString,
-        valueDisplayClass,
         triggerDisplayContent,
         triggerClasses,
         caratClass = classNames(<span class="hljs-string">'carat'</span>, {
@@ -1029,21 +1087,28 @@ The value should indicate whether the option data collection has any more pages 
     });
 
     triggerClasses = classNames(<span class="hljs-string">'r-ss-trigger'</span>, {
-      <span class="hljs-string">'r-ss-open'</span>: <span class="hljs-keyword">this</span>.state.isOpen
-    });
-    placeholderString = <span class="hljs-keyword">this</span>.props.placeholder ? <span class="hljs-keyword">this</span>.props.placeholder : <span class="hljs-keyword">this</span>.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = <span class="hljs-keyword">this</span>.state.value.length ? <span class="hljs-keyword">this</span>._generateValueDisplay() : placeholderString;
-    valueDisplayClass = classNames(<span class="hljs-string">'r-ss-value-display'</span>, {
-      <span class="hljs-string">'r-ss-placeholder'</span>: <span class="hljs-keyword">this</span>.state.value.length &lt; <span class="hljs-number">1</span>,
+      <span class="hljs-string">'r-ss-open'</span>: <span class="hljs-keyword">this</span>.state.isOpen,
+      <span class="hljs-string">'r-ss-placeholder'</span>: <span class="hljs-keyword">this</span>.state.value.length &lt; <span class="hljs-number">1</span>
     });
 
+    placeholderString = <span class="hljs-keyword">this</span>.props.placeholder ? <span class="hljs-keyword">this</span>.props.placeholder : <span class="hljs-keyword">this</span>.DEFAULT_LOCALIZATIONS.placeholder;
+    triggerDisplayContent = <span class="hljs-keyword">this</span>.state.value.length ? <span class="hljs-keyword">this</span>._generateValueDisplay() : placeholderString;
+
     <span class="hljs-keyword">return</span> (
-      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"rssControl"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{wrapClasses}</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"triggerDiv"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{triggerClasses}</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.toggleDropdown}</span> <span class="hljs-attribute">onKeyUp</span>=<span class="hljs-value">{this._handleKeyUp}</span> <span class="hljs-attribute">aria-haspopup</span>=<span class="hljs-value">"true"</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">a</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"triggerAnchor"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-mock-input"</span> <span class="hljs-attribute">tabIndex</span>=<span class="hljs-value">"0"</span> <span class="hljs-attribute">aria-label</span>=<span class="hljs-value">{placeholderString}</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{valueDisplayClass}</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"valueDisplay"</span>&gt;</span>{triggerDisplayContent}<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"rssControl"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">{this.state.controlId}</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{wrapClasses}</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"triggerDiv"</span>
+           <span class="hljs-attribute">className</span>=<span class="hljs-value">{triggerClasses}</span>
+           <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this.toggleDropdown}</span>
+           <span class="hljs-attribute">onKeyDown</span>=<span class="hljs-value">{this._handleKeyDown}</span>
+           <span class="hljs-attribute">role</span>=<span class="hljs-value">"combobox"</span>
+           <span class="hljs-attribute">aria-activedescendant</span>=<span class="hljs-value">{this._ariaGetActiveDescendentId()}</span>
+           <span class="hljs-attribute">aria-haspopup</span>=<span class="hljs-value">{true}</span>
+           <span class="hljs-attribute">aria-controls</span>=<span class="hljs-value">{this._ariaGetListId()}</span>
+           <span class="hljs-attribute">aria-label</span>=<span class="hljs-value">{placeholderString}</span>
+           <span class="hljs-attribute">aria-multiselectable</span>=<span class="hljs-value">{this._isMultiSelect()}</span>
+           <span class="hljs-attribute">tabIndex</span>=<span class="hljs-value">"1"</span>&gt;</span>
+            {triggerDisplayContent}
             <span class="hljs-tag">&lt;<span class="hljs-title">span</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"carat"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{caratClass}</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-          <span class="hljs-tag">&lt;/<span class="hljs-title">a</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
         {dropdownContent}
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>)</span>;
@@ -1052,33 +1117,78 @@ The value should indicate whether the option data collection has any more pages 
         </li>
 
 
-        <li id="section-66">
+        <li id="section-70">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
-              <p>toggles the open-state of the dropdown</p>
+              <p>toggles the open-state of the dropdown
+sets focused option in callback after opening</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  toggleDropdown: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">this</span>.setState({
       <span class="hljs-string">'isOpen'</span>: !<span class="hljs-keyword">this</span>.state.isOpen
+    }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.isOpen) {
+        <span class="hljs-keyword">this</span>._setFocusOnOpen();
+      }
     });
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-67">
+        <li id="section-71">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
-              <p>close the dropdown and
-resets focus to main control trigger</p>
+              <p>returns the unique DOM id for the currently focused option. Used for accessibility-related labeling</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _ariaGetActiveDescendentId: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">var</span> ariaActiveDescendantId = <span class="hljs-literal">null</span>,
+        optionRef = <span class="hljs-keyword">this</span>._getFocusedOptionKey();
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs[optionRef]) {
+      ariaActiveDescendantId = <span class="hljs-keyword">this</span>.refs[optionRef].props.id;
+    }
+    <span class="hljs-keyword">return</span> ariaActiveDescendantId;
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-72">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>calculate the unique identifier for the options ul for aria compliance labeling usage</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _ariaGetListId: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_list'</span>;
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-73">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>close the dropdown
+resets focus to the main control trigger
+clear focused id</p>
 
             </div>
 
@@ -1094,16 +1204,15 @@ resets focus to main control trigger</p>
         </li>
 
 
-        <li id="section-68">
+        <li id="section-74">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p>overloaded dataSource parser (Object|Array)
-case: (object) look for a collection property which is an array, or a get function and run get(‘collection’) and determine if retun value of an array
-case (Array)
-return the dataSource array for use as this.state.data</p>
+case: (object) - look for a collection property which is an array, or runs an existing ‘get’ function, get(‘collection’), and determines if the return value is an array
+case: (Array) - return the dataSource array for use as this.state.data</p>
 
             </div>
 
@@ -1131,14 +1240,14 @@ return the dataSource array for use as this.state.data</p>
         </li>
 
 
-        <li id="section-69">
+        <li id="section-75">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
-              <p>used if no <strong>customFilterFunction</strong> provided for filtering the data options shown in a <strong>searchable</strong> control,
-runs a lowercase string comparison with the <strong>searchString</strong> and the value corresponding to an option’s <strong>optionLabelKey</strong></p>
+              <p>Used if no <strong>customFilterFunction</strong> provided for filtering the data options shown in a <strong>searchable</strong> control.
+Runs a lowercase string comparison with the <strong>searchString</strong> and the value corresponding to an option’s <strong>optionLabelKey</strong></p>
 
             </div>
 
@@ -1153,11 +1262,11 @@ runs a lowercase string comparison with the <strong>searchString</strong> and th
         </li>
 
 
-        <li id="section-70">
+        <li id="section-76">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p>fetch data source via ajax if <strong>ajaxDataFetch</strong> function provided
 handles success and failure for ajax call</p>
@@ -1179,11 +1288,11 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-71">
+        <li id="section-77">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>define as empty array on error so that _needsAjaxFetch will evaluate to false</p>
 
@@ -1197,15 +1306,15 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-72">
+        <li id="section-78">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
-              <p>fetch the next page of options data if <strong>pageDataFetch</strong> function provided,
-called onMouseMove if scroll position in dropdown exceeds threshold,
-handles success and failure for ajax call</p>
+              <p>Fetch the next page of options data if <strong>pageDataFetch</strong> function provided.
+Called onMouseMove if scroll position in dropdown exceeds threshold.
+Handles success and failure for ajax call</p>
 
             </div>
 
@@ -1228,11 +1337,11 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-73">
+        <li id="section-79">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p>choose the appropriate search filter function and run the filter against the options data</p>
 
@@ -1246,32 +1355,31 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-74">
+        <li id="section-80">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
-              <p>used when selecting values, returns an array of full option-data objects which contain any single value or any one of an array of values passed in</p>
+              <p>used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _findArrayOfOptionDataObjectsByValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>,
-        valuesArray = _.isArray(value) ? _.pluck(value, <span class="hljs-keyword">this</span>.state.valueKey) : [value];
+    <span class="hljs-keyword">var</span> valuesArray = _.isArray(value) ? _.pluck(value, <span class="hljs-keyword">this</span>.state.valueKey) : [value];
     <span class="hljs-keyword">return</span> _.reject(<span class="hljs-keyword">this</span>.state.data, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> </span>{
-      <span class="hljs-keyword">return</span> !_.contains(valuesArray, item[self.state.valueKey]);
-    });
+      <span class="hljs-keyword">return</span> !_.contains(valuesArray, item[<span class="hljs-keyword">this</span>.state.valueKey]);
+    }, <span class="hljs-keyword">this</span>);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-75">
+        <li id="section-81">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p>determine whether to focus a option value in the DOM, or the search field</p>
 
@@ -1289,13 +1397,13 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-76">
+        <li id="section-82">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
-              <p>focus the DOM option locatable by the current focusedId</p>
+              <p>focus the DOM option identified by the current state.focusedId</p>
 
             </div>
 
@@ -1311,11 +1419,11 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-77">
+        <li id="section-83">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p>focus the dropdown’s search field if it exists</p>
 
@@ -1330,32 +1438,32 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-78">
+        <li id="section-84">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p>focus the main trigger element of the control</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _focusTrigger: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs.triggerAnchor) {
-      <span class="hljs-keyword">this</span>.refs.triggerAnchor.getDOMNode().focus();
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs.triggerDiv) {
+      <span class="hljs-keyword">this</span>.refs.triggerDiv.getDOMNode().focus();
     }
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-79">
+        <li id="section-85">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
-              <p>choose whether to calculate the display values normally, or as tags</p>
+              <p>choose whether to template the display of user-selected values normally, or as tags</p>
 
             </div>
 
@@ -1370,11 +1478,11 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-80">
+        <li id="section-86">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>render the content shown if an ajax error occurs</p>
 
@@ -1388,11 +1496,11 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-81">
+        <li id="section-87">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p>calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality</p>
 
@@ -1414,13 +1522,13 @@ handles success and failure for ajax call</p>
         </li>
 
 
-        <li id="section-82">
+        <li id="section-88">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
-              <p>determine and render the dropdown content
+              <p>build and render the dropdown content
 will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if needed</p>
 
             </div>
@@ -1438,10 +1546,15 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
     pagingLi = <span class="hljs-keyword">this</span>.state.isFetchingPage ? <span class="hljs-keyword">this</span>._getPagingLi() : <span class="hljs-literal">null</span>;
 
     <span class="hljs-keyword">return</span>(
-      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"dropdownContent"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-dropdown"</span> <span class="hljs-attribute">onKeyUp</span>=<span class="hljs-value">{this._handleKeyUp}</span>&gt;</span>
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"dropdownContent"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-dropdown"</span> <span class="hljs-attribute">onKeyDown</span>=<span class="hljs-value">{this._handleKeyDown}</span>&gt;</span>
         {searchContent}
         <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"scrollWrap"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-options-wrap"</span> <span class="hljs-attribute">onMouseMove</span>=<span class="hljs-value">{mouseMoveHandler}</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">ul</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-dropdown-options"</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"dropdownOptionsList"</span> <span class="hljs-attribute">aria-hidden</span>=<span class="hljs-value">{!this.state.isOpen}</span> <span class="hljs-attribute">role</span>=<span class="hljs-value">"menubar"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">ul</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-dropdown-options"</span>
+              <span class="hljs-attribute">ref</span>=<span class="hljs-value">"dropdownOptionsList"</span>
+              <span class="hljs-attribute">tabIndex</span>=<span class="hljs-value">"-1"</span>
+              <span class="hljs-attribute">id</span>=<span class="hljs-value">{this._ariaGetListId()}</span>
+              <span class="hljs-attribute">role</span>=<span class="hljs-value">"listbox"</span>
+              <span class="hljs-attribute">aria-expanded</span>=<span class="hljs-value">{this.state.isOpen}</span>&gt;</span>
             {this._getOptionsMarkup()}
           <span class="hljs-tag">&lt;/<span class="hljs-title">ul</span>&gt;</span>
           {pagingLi}
@@ -1453,11 +1566,11 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
         </li>
 
 
-        <li id="section-83">
+        <li id="section-89">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p>build the string used as a React component ref for each focusable option</p>
 
@@ -1470,11 +1583,11 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
         </li>
 
 
-        <li id="section-84">
+        <li id="section-90">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <p>render a group heading, used if <strong>groupBy</strong> option is provided.
 renders a non-focusable list item for an option group heading</p>
@@ -1499,13 +1612,13 @@ renders a non-focusable list item for an option group heading</p>
         </li>
 
 
-        <li id="section-85">
+        <li id="section-91">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
-              <p>render the content shown if no options are available</p>
+              <p>render the content shown when no options are available</p>
 
             </div>
 
@@ -1517,39 +1630,35 @@ renders a non-focusable list item for an option group heading</p>
         </li>
 
 
-        <li id="section-86">
+        <li id="section-92">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
-              <p>render the selected options into the trigger element using the default (non-tags) behavior</p>
-<ul>
-<li>choose whether to render the default template or a provided <strong>customOptionTemplateFunction</strong></li>
-</ul>
+              <p>Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
+Choose whether to render using the default template or a provided <strong>customOptionTemplateFunction</strong></p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _getNormalDisplayMarkup: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">var</span> markup = _.map(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
-      <span class="hljs-keyword">if</span> (self.props.customOptionTemplateFunction) {
-        <span class="hljs-keyword">return</span> self.props.customOptionTemplateFunction(value);
+    <span class="hljs-keyword">return</span> _.map(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(value);
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> value[self.state.labelKey];
+        <span class="hljs-keyword">return</span> value[<span class="hljs-keyword">this</span>.state.labelKey];
       }
-    });
-    <span class="hljs-keyword">return</span> markup;
+    }, <span class="hljs-keyword">this</span>);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-87">
+        <li id="section-93">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <p>render a loading span (spinner gif), with <strong>customLoaderClass</strong> if provided</p>
 
@@ -1563,11 +1672,30 @@ renders a non-focusable list item for an option group heading</p>
         </li>
 
 
-        <li id="section-88">
+        <li id="section-94">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
+              </div>
+              <p>get the option Li element from a passed eventTarget.
+for key events = event.target
+for click events = event.currentTarget</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _getOptionIndexFromTarget: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(targetLi)</span> </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(targetLi.getAttribute(<span class="hljs-string">'data-option-index'</span>), <span class="hljs-number">10</span>);
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-95">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p>render the data source as options,
 render loading if fetching
@@ -1590,16 +1718,15 @@ render ajaxError markup when state.ajaxError is true</p>
     }
 
     <span class="hljs-keyword">var</span> data = <span class="hljs-keyword">this</span>._getDataSource(),
-        self = <span class="hljs-keyword">this</span>,
         options = [],
         optionsCount = <span class="hljs-number">0</span>;
 
     <span class="hljs-keyword">if</span> (!_.isArray(data)) {
       _.forIn(data, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(groupedOptions, heading)</span> </span>{
-        options.push(self._getGroupHeadingMarkup(heading));
-        options = options.concat(self._getTemplatedOptions(groupedOptions, optionsCount));
+        options.push(<span class="hljs-keyword">this</span>._getGroupHeadingMarkup(heading));
+        options = options.concat(<span class="hljs-keyword">this</span>._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
-      });
+      }, <span class="hljs-keyword">this</span>);
     } <span class="hljs-keyword">else</span> {
       options = <span class="hljs-keyword">this</span>._getTemplatedOptions(data);
     }
@@ -1610,13 +1737,13 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-89">
+        <li id="section-96">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
-              <p>render a list item with a loading indicator.  shown while <strong>pageDataFetch</strong> or <strong>ajaxDataFetch</strong> functions run</p>
+              <p>render a list item with a loading indicator.  Shown while <strong>pageDataFetch</strong> or <strong>ajaxDataFetch</strong> functions run</p>
 
             </div>
 
@@ -1629,11 +1756,11 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-90">
+        <li id="section-97">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>render a search input bar with a search icon</p>
 <ul>
@@ -1649,12 +1776,24 @@ render ajaxError markup when state.ajaxError is true</p>
     }
 
     <span class="hljs-keyword">var</span> magnifierClass = <span class="hljs-keyword">this</span>.props.customSearchIconClass ? <span class="hljs-keyword">this</span>.props.customSearchIconClass : <span class="hljs-string">"r-ss-magnifier"</span>,
-        searchPlaceholderString = <span class="hljs-keyword">this</span>.props.searchPlaceholder ? <span class="hljs-keyword">this</span>.props.searchPlaceholder : <span class="hljs-keyword">this</span>.DEFAULT_LOCALIZATIONS.searchPlaceholder;
+        searchPlaceholderString = <span class="hljs-keyword">this</span>.props.searchPlaceholder ? <span class="hljs-keyword">this</span>.props.searchPlaceholder : <span class="hljs-keyword">this</span>.DEFAULT_LOCALIZATIONS.searchPlaceholder,
+        searchAriaId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_search'</span>,
+        searchAriaIdLabel = searchAriaId + <span class="hljs-string">'_label'</span>;
 
     <span class="hljs-keyword">return</span>(
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-search-wrap"</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-search-inner"</span>&gt;</span>
-          <span class="hljs-tag">&lt;<span class="hljs-title">input</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"searchInput"</span> <span class="hljs-attribute">placeholder</span>=<span class="hljs-value">{searchPlaceholderString}</span> <span class="hljs-attribute">onKeyUp</span>=<span class="hljs-value">{this._handleSearch}</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this._setFocusIdToSearch}</span> <span class="hljs-attribute">defaultValue</span>=<span class="hljs-value">{this.state.searchString}</span> /&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">label</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"searchInputLabel"</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">{searchAriaIdLabel}</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-search-aria-label"</span> <span class="hljs-attribute">htmlFor</span>=<span class="hljs-value">{searchAriaId}</span>&gt;</span>{searchPlaceholderString}<span class="hljs-tag">&lt;/<span class="hljs-title">label</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-title">input</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">"searchInput"</span>
+                 <span class="hljs-attribute">placeholder</span>=<span class="hljs-value">{searchPlaceholderString}</span>
+                 <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this._setFocusIdToSearch}</span>
+                 <span class="hljs-attribute">onChange</span>=<span class="hljs-value">{this._handleSearch}</span>
+                 <span class="hljs-attribute">defaultValue</span>=<span class="hljs-value">{this.state.searchString}</span>
+                 <span class="hljs-attribute">name</span>=<span class="hljs-value">{searchAriaId}</span>
+                 <span class="hljs-attribute">id</span>=<span class="hljs-value">{searchAriaId}</span>
+                 <span class="hljs-attribute">aria-labelledby</span>=<span class="hljs-value">{searchAriaIdLabel}</span>
+                 <span class="hljs-attribute">aria-owns</span>=<span class="hljs-value">{this._ariaGetListId()}</span>
+                 <span class="hljs-attribute">aria-autocomplete</span>=<span class="hljs-value">"list"</span> /&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-title">i</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{magnifierClass}</span>&gt;</span>search<span class="hljs-tag">&lt;/<span class="hljs-title">i</span>&gt;</span>
         <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
@@ -1664,32 +1803,30 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-91">
+        <li id="section-98">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <p>iterate over selected values and build tags markup for selected options display</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _getTagsDisplayMarkup: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">var</span> markup = _.map(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
-      <span class="hljs-keyword">return</span> self._getTagMarkup(value);
-    });
-    <span class="hljs-keyword">return</span> markup;
+    <span class="hljs-keyword">return</span> _.map(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._getTagMarkup(value);
+    }, <span class="hljs-keyword">this</span>);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-92">
+        <li id="section-99">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <p>render a tag for an individual selected value</p>
 <ul>
@@ -1708,18 +1845,18 @@ render ajaxError markup when state.ajaxError is true</p>
     <span class="hljs-keyword">return</span> (
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">span</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{tagWrapClass}</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">{tagKey}</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-title">span</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-tag-label"</span>&gt;</span>{label}<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">{buttonName}</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"button"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-tag-remove"</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this._removeTagClick.bind(null,</span> <span class="hljs-attribute">value</span>)} <span class="hljs-attribute">onKeyUp</span>=<span class="hljs-value">{this._removeTagKeyPress.bind(null,</span> <span class="hljs-attribute">value</span>)}&gt;</span>X<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-title">button</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">{buttonName}</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"button"</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-tag-remove"</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this._removeTagClick.bind(null,</span> <span class="hljs-attribute">value</span>)} <span class="hljs-attribute">onKeyDown</span>=<span class="hljs-value">{this._removeTagKeyPress.bind(null,</span> <span class="hljs-attribute">value</span>)}&gt;</span>X<span class="hljs-tag">&lt;/<span class="hljs-title">button</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>)</span>;
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-93">
+        <li id="section-100">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <p>choose a rendering function, either <strong>customOptionTemplateFunction</strong> if provided, or default</p>
 <ul>
@@ -1730,7 +1867,7 @@ render ajaxError markup when state.ajaxError is true</p>
 
             <div class="content"><div class='highlight'><pre>  _getTemplatedOptions: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, indexStart)</span> </span>{
     indexStart = indexStart || <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> options = _.isFunction(<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) ? <span class="hljs-keyword">this</span>._mapDataToCustomTemplateMarkup(data, indexStart) : <span class="hljs-keyword">this</span>._mapDataToDefaultTemplateMarkup(data, indexStart);
+    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>._mapDataToOptionsMarkup(data, indexStart);
 
     <span class="hljs-keyword">if</span> (options.length === <span class="hljs-number">0</span>) {
       options = <span class="hljs-keyword">this</span>._getNoResultsMarkup();
@@ -1742,33 +1879,35 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-94">
+        <li id="section-101">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
-              <p>main keyup binding map for keyboard navigation and selection</p>
+              <p>main keyDown binding handler for keyboard navigation and selection</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _handleKeyUp: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
-    event.preventDefault();
-    event.stopPropagation();
+            <div class="content"><div class='highlight'><pre>  _handleKeyDown: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isUserSearchTypingEvent(event)) {
+      <span class="hljs-keyword">return</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.isOpen || (event.which !== <span class="hljs-keyword">this</span>.keymap.tab)) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
 
     <span class="hljs-keyword">switch</span>(event.which) {
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.down:
-        <span class="hljs-keyword">this</span>._onDownKey();
+        <span class="hljs-keyword">this</span>._onDownKey(event);
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.end:
         <span class="hljs-keyword">this</span>._onEndKey();
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.enter:
-        <span class="hljs-keyword">if</span> (event.shiftKey) {
-          <span class="hljs-keyword">this</span>._handleShiftKeyUpSelect();
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">this</span>._onEnterKey(event);
-        }
+        <span class="hljs-keyword">this</span>._onEnterKey(event);
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.esc:
         <span class="hljs-keyword">this</span>._onEscKey();
@@ -1776,26 +1915,16 @@ render ajaxError markup when state.ajaxError is true</p>
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.home:
         <span class="hljs-keyword">this</span>._onHomeKey();
         <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.left: <span class="hljs-comment">// delegate to up handler</span>
-        <span class="hljs-keyword">this</span>._onUpKey();
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.right: <span class="hljs-comment">// delegate to down handler</span>
-        <span class="hljs-keyword">this</span>._onDownKey();
-        <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.space:
-        <span class="hljs-keyword">if</span> (event.shiftKey) {
-          <span class="hljs-keyword">this</span>._handleShiftKeyUpSelect();
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">this</span>._onEnterKey(event); <span class="hljs-comment">// delegate to enter</span>
-        }
+        <span class="hljs-keyword">this</span>._onEnterKey(event); <span class="hljs-comment">// delegate to enter</span>
         <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.tab: <span class="hljs-comment">// delegate to down handler if not at top level of UI DOM</span>
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">this</span>.focusedId !== <span class="hljs-string">'undefined'</span>) {
-          <span class="hljs-keyword">this</span>._onDownKey();
+      <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.tab: <span class="hljs-comment">// delegate to enter (selection) handler</span>
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.isOpen) {
+          <span class="hljs-keyword">this</span>._onEnterKey(event);
         }
         <span class="hljs-keyword">break</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-keyword">this</span>.keymap.up:
-        <span class="hljs-keyword">this</span>._onUpKey();
+        <span class="hljs-keyword">this</span>._onUpKey(event);
         <span class="hljs-keyword">break</span>;
     }
   },</pre></div></div>
@@ -1803,30 +1932,31 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-95">
+        <li id="section-102">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>handler for searchInput’s keyUp event</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _handleSearch: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
+    event.stopPropagation();
+    event.preventDefault();
     <span class="hljs-keyword">var</span> searchString = event.target.value;
     <span class="hljs-keyword">this</span>._handleSearchDebounced.call(<span class="hljs-keyword">this</span>, searchString);
-    <span class="hljs-keyword">this</span>._handleKeyUp(event);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-96">
+        <li id="section-103">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <p>debounced handler for searchInput’s keyUp event, reduces # of times the control re-renders</p>
 
@@ -1841,53 +1971,11 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-97">
+        <li id="section-104">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
-              </div>
-              <p>handle selecting a range of options at once when shift-key is depressed during click</p>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>  _handleShiftSelect: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, event)</span> </span>{
-    <span class="hljs-keyword">var</span> optionIndex = <span class="hljs-built_in">parseInt</span>(event.currentTarget.getAttribute(<span class="hljs-string">'data-option-index'</span>), <span class="hljs-number">10</span>);
-    <span class="hljs-keyword">if</span> (optionIndex === <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">return</span>;
-    }
-    <span class="hljs-keyword">this</span>._selectAllFromOptionRefToLastSelected(optionIndex);
-  },</pre></div></div>
-
-        </li>
-
-
-        <li id="section-98">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
-              </div>
-              <p>handle selecting a range of options at once when shift-key is depressed during keyboard selection</p>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>  _handleShiftKeyUpSelect: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">var</span> focusedOptionKey = <span class="hljs-keyword">this</span>._getFocusedOptionKey();
-
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs[focusedOptionKey]) {
-      <span class="hljs-keyword">this</span>._selectAllFromOptionRefToLastSelected(<span class="hljs-keyword">this</span>.refs[focusedOptionKey].props[<span class="hljs-string">'data-option-index'</span>]);
-    }
-  },</pre></div></div>
-
-        </li>
-
-
-        <li id="section-99">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <p>return the boolean used to determine whether an option should have the ‘r-ss-selected’ class</p>
 
@@ -1903,11 +1991,11 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-100">
+        <li id="section-105">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>tags and mutiple both provide multi-select behavior.  Returns true if either is set to true</p>
 
@@ -1920,81 +2008,85 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-101">
+        <li id="section-106">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
-              <p>render option list-items based on a provided <strong>customOptionTemplateFunction</strong> function</p>
+              <p>user search events need to pass through the default keyDown handler</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _mapDataToCustomTemplateMarkup: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, indexStart)</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-
-    <span class="hljs-keyword">return</span> _.map(data, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dataOption, index)</span> </span>{
-      index = indexStart + index;
-
-      <span class="hljs-keyword">var</span> itemKey = <span class="hljs-string">"drop_li_"</span> + dataOption[self.state.valueKey],
-          indexRef = <span class="hljs-string">'option_'</span> + index,
-          customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
-          classes = classNames(<span class="hljs-string">'r-ss-dropdown-option'</span>, {
-            <span class="hljs-string">'r-ss-selected'</span>: self._isCurrentlySelected(dataOption)
-          });
-
-      <span class="hljs-keyword">return</span> (
-        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">li</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">{indexRef}</span> <span class="hljs-attribute">tabIndex</span>=<span class="hljs-value">"0"</span> <span class="hljs-attribute">data-option-index</span>=<span class="hljs-value">{index}</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{classes}</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">{itemKey}</span> <span class="hljs-attribute">data-option-value</span>=<span class="hljs-value">{dataOption[self.state.valueKey]}</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{self._selectItemOnOptionClick.bind(null,</span> <span class="hljs-attribute">dataOption</span>[<span class="hljs-attribute">self.state.valueKey</span>])} <span class="hljs-attribute">role</span>=<span class="hljs-value">"menuitem"</span>&gt;</span>
-          {customOptionMarkup}
-        <span class="hljs-tag">&lt;/<span class="hljs-title">li</span>&gt;</span>)</span>;
-    });
+            <div class="content"><div class='highlight'><pre>  _isUserSearchTypingEvent: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.refs.searchInput || (event.which === <span class="hljs-keyword">this</span>.keymap.down) || ((event.which === <span class="hljs-keyword">this</span>.keymap.up) &amp;&amp; event.altKey) || (event.which === <span class="hljs-keyword">this</span>.keymap.esc)) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">return</span> (event.target === <span class="hljs-keyword">this</span>.refs.searchInput.getDOMNode());
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-102">
+        <li id="section-107">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
-              <p>render option list-items based on the default template</p>
+              <p>Render the option list-items.
+Leverage the <strong>customOptionTemplateFunction</strong> function if provided</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _mapDataToDefaultTemplateMarkup: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, indexStart)</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-
+            <div class="content"><div class='highlight'><pre>  _mapDataToOptionsMarkup: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(data, indexStart)</span> </span>{
     <span class="hljs-keyword">return</span> _.map(data, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(dataOption, index)</span> </span>{
       index = indexStart + index;
-      <span class="hljs-keyword">var</span> itemKey = <span class="hljs-string">"drop_li_"</span> + dataOption[self.state.valueKey],
+
+      <span class="hljs-keyword">var</span> isCurrentlySelected = <span class="hljs-keyword">this</span>._isCurrentlySelected(dataOption),
+          itemKey = <span class="hljs-string">"drop_li_"</span> + dataOption[<span class="hljs-keyword">this</span>.state.valueKey],
           indexRef = <span class="hljs-string">'option_'</span> + index,
+          ariaDescendantId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_aria_'</span> + indexRef,
+          optionMarkup = _.isFunction(<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) ? <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(dataOption) : dataOption[<span class="hljs-keyword">this</span>.state.labelKey],
           classes = classNames(<span class="hljs-string">'r-ss-dropdown-option'</span>, {
-            <span class="hljs-string">'r-ss-selected'</span>: self._isCurrentlySelected(dataOption)
+            <span class="hljs-string">'r-ss-selected'</span>: isCurrentlySelected
           });
+
       <span class="hljs-keyword">return</span> (
-        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">li</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">{indexRef}</span> <span class="hljs-attribute">tabIndex</span>=<span class="hljs-value">"0"</span> <span class="hljs-attribute">data-option-index</span>=<span class="hljs-value">{index}</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">{classes}</span> <span class="hljs-attribute">key</span>=<span class="hljs-value">{itemKey}</span> <span class="hljs-attribute">data-option-value</span>=<span class="hljs-value">{dataOption[self.state.valueKey]}</span> <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{self._selectItemOnOptionClick.bind(null,</span> <span class="hljs-attribute">dataOption</span>[<span class="hljs-attribute">self.state.valueKey</span>])} <span class="hljs-attribute">role</span>=<span class="hljs-value">"menuitem"</span>&gt;</span>
-          {dataOption[self.state.labelKey]}
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">li</span> <span class="hljs-attribute">ref</span>=<span class="hljs-value">{indexRef}</span>
+            <span class="hljs-attribute">id</span>=<span class="hljs-value">{ariaDescendantId}</span>
+            <span class="hljs-attribute">tabIndex</span>=<span class="hljs-value">"0"</span>
+            <span class="hljs-attribute">data-option-index</span>=<span class="hljs-value">{index}</span>
+            <span class="hljs-attribute">className</span>=<span class="hljs-value">{classes}</span>
+            <span class="hljs-attribute">aria-selected</span>=<span class="hljs-value">{isCurrentlySelected}</span>
+            <span class="hljs-attribute">key</span>=<span class="hljs-value">{itemKey}</span>
+            <span class="hljs-attribute">data-option-value</span>=<span class="hljs-value">{dataOption[this.state.valueKey]}</span>
+            <span class="hljs-attribute">onClick</span>=<span class="hljs-value">{this._selectItemOnOptionClick.bind(null,</span> <span class="hljs-attribute">dataOption</span>)}
+            <span class="hljs-attribute">role</span>=<span class="hljs-value">"option"</span>&gt;</span>
+          {optionMarkup}
         <span class="hljs-tag">&lt;/<span class="hljs-title">li</span>&gt;</span>)</span>;
-    });
+    }, <span class="hljs-keyword">this</span>);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-103">
+        <li id="section-108">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p>determines next focusedId prior to updateFocusedId call</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _moveFocusDown: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._needsAjaxFetch()) {
+      <span class="hljs-keyword">return</span>;
+    }
     <span class="hljs-keyword">var</span> nextId;
+
     <span class="hljs-keyword">if</span> (_.isUndefined(<span class="hljs-keyword">this</span>.state.focusedId)) {
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.searchable) {
         nextId = <span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID;
@@ -2002,19 +2094,20 @@ render ajaxError markup when state.ajaxError is true</p>
         nextId = <span class="hljs-number">0</span>;
       }
     } <span class="hljs-keyword">else</span> {
-      nextId = (<span class="hljs-keyword">this</span>.lastOptionId === <span class="hljs-keyword">this</span>.state.focusedId) ? <span class="hljs-keyword">this</span>.lastOptionId : <span class="hljs-keyword">this</span>.state.focusedId + <span class="hljs-number">1</span>;
+      nextId = (<span class="hljs-keyword">this</span>.state.lastOptionId === <span class="hljs-keyword">this</span>.state.focusedId) ? <span class="hljs-keyword">this</span>.state.lastOptionId : <span class="hljs-keyword">this</span>.state.focusedId + <span class="hljs-number">1</span>;
     }
+
     <span class="hljs-keyword">this</span>._updateFocusedId(nextId);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-104">
+        <li id="section-109">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <p>determines previous focusedId prior to updateFocusedId call</p>
 
@@ -2038,11 +2131,11 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-105">
+        <li id="section-110">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <p>return boolean to determine if we have already received data from the <strong>ajaxDataFetch</strong> function</p>
 
@@ -2055,31 +2148,39 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-106">
+        <li id="section-111">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
-              <p>down key handler</p>
+              <p>down key handler
+shift-keypress is used to select successive focus items for aria keyboard accessibility</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _onDownKey: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">this</span>._openedOnKeypress();
+            <div class="content"><div class='highlight'><pre>  _onDownKey: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.state.isOpen) {
+      <span class="hljs-keyword">this</span>.toggleDropdown();
+      <span class="hljs-keyword">return</span>;
+    }
+
     <span class="hljs-keyword">this</span>._moveFocusDown();
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+      <span class="hljs-keyword">this</span>._selectFocusedOption(event.target, <span class="hljs-literal">true</span>);
+    }
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-107">
+        <li id="section-112">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
-              <p>end key handler</p>
+              <p>end key handler. Move focus to the last available option</p>
 
             </div>
 
@@ -2092,27 +2193,38 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
 
 
-        <li id="section-108">
+        <li id="section-113">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-108">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
-              <p>enter key handler,
-opens control when closed,
-otherwise makes selection</p>
+              <p>Enter key handler.
+Opens the control when closed.
+Otherwise, makes selection</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _onEnterKey: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._openedOnKeypress()) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.state.isOpen) {
+      <span class="hljs-keyword">this</span>.toggleDropdown();
+      <span class="hljs-keyword">return</span>;
+    }
 
-      <span class="hljs-keyword">var</span> focusedOptionKey = <span class="hljs-keyword">this</span>._getFocusedOptionKey();
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+      <span class="hljs-keyword">this</span>._selectAllOptionsToLastUserSelectedOption(event.target);
+      <span class="hljs-keyword">return</span>;
+    }
 
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs[focusedOptionKey]) {
-        <span class="hljs-keyword">var</span> optionValue = <span class="hljs-keyword">this</span>.refs[focusedOptionKey].props[<span class="hljs-string">'data-option-value'</span>],
-            isAdditionalOption = (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey));
-        <span class="hljs-keyword">this</span>._selectItemByValues(optionValue, isAdditionalOption);
+    <span class="hljs-keyword">var</span> keepControlOpen = (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey)),
+        alreadySelected = <span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(event.target.getAttribute(<span class="hljs-string">'class'</span>));
+
+    <span class="hljs-keyword">if</span> (keepControlOpen &amp;&amp; alreadySelected) {
+      <span class="hljs-keyword">var</span> optionData = _.first(<span class="hljs-keyword">this</span>._findArrayOfOptionDataObjectsByValue(event.target.getAttribute(<span class="hljs-string">'data-option-value'</span>)));
+      <span class="hljs-keyword">this</span>._removeSelectedOptionByValue(optionData);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">if</span> (!alreadySelected) {
+        <span class="hljs-keyword">this</span>._selectFocusedOption(event.target, keepControlOpen);
       }
     }
   },</pre></div></div>
@@ -2120,13 +2232,13 @@ otherwise makes selection</p>
         </li>
 
 
-        <li id="section-109">
+        <li id="section-114">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-109">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
-              <p>escape key handler, closes the dropdown</p>
+              <p>Escape key handler. Closes the dropdown</p>
 
             </div>
 
@@ -2137,13 +2249,13 @@ otherwise makes selection</p>
         </li>
 
 
-        <li id="section-110">
+        <li id="section-115">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-110">&#182;</a>
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
-              <p>home key handler, focuses the controls main element</p>
+              <p>Home key handler. Moves focus to the first available option</p>
 
             </div>
 
@@ -2154,13 +2266,13 @@ otherwise makes selection</p>
         </li>
 
 
-        <li id="section-111">
+        <li id="section-116">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
-              <p>mouse move handler used when <strong>pageDataFetch</strong> is set, will fire the pageDataFetch function if user has srolled sufficiently far in the dropdown</p>
+              <p>mouse move handler used when <strong>pageDataFetch</strong> is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown</p>
 
             </div>
 
@@ -2169,11 +2281,11 @@ otherwise makes selection</p>
         </li>
 
 
-        <li id="section-112">
+        <li id="section-117">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>do not fetch page if searching or already loading data</p>
 
@@ -2195,53 +2307,42 @@ otherwise makes selection</p>
         </li>
 
 
-        <li id="section-113">
+        <li id="section-118">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
-              <p>up key handler</p>
+              <p>Up key handler.
+Shift-click is used to select successive focus items for aria keyboard accessibility</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _onUpKey: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">this</span>._moveFocusUp();
-  },</pre></div></div>
-
-        </li>
-
-
-        <li id="section-114">
-            <div class="annotation">
-
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
-              </div>
-              <p>open the dropdown, return true if opening,
-return value (boolean) is used in keyUp handlers to alternate behaviors based on open state</p>
-
-            </div>
-
-            <div class="content"><div class='highlight'><pre>  _openedOnKeypress: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.state.isOpen) {
-      <span class="hljs-keyword">this</span>.toggleDropdown();
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            <div class="content"><div class='highlight'><pre>  _onUpKey: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(event)</span> </span>{
+    <span class="hljs-keyword">if</span> (event.altKey) {
+      <span class="hljs-keyword">this</span>._closeOnKeypress();
+      <span class="hljs-keyword">return</span>;
     }
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.isOpen) {
+      <span class="hljs-keyword">this</span>._moveFocusUp();
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+        <span class="hljs-keyword">this</span>._selectFocusedOption(event.target, <span class="hljs-literal">true</span>);
+      }
+    }
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-115">
+        <li id="section-119">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
-              <p>if hasMorePages option (Function) present, return the value of its call
-otherwise return false so page fetch will no occur</p>
+              <p>If hasMorePages option (Function) present, returns the value of its call.
+Otherwise, returns false so page fetch will not occur</p>
 
             </div>
 
@@ -2256,36 +2357,134 @@ otherwise return false so page fetch will no occur</p>
         </li>
 
 
-        <li id="section-116">
+        <li id="section-120">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
-              <p>remove a selected tag on keyUp</p>
+              <p>Used in shift selection when the event target was previously selected.
+Remove all options up to, but not including the option that raised the event.
+(So it behaves like a native browser form multi-select)</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _removeAllOptionsInOptionIdRange: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span> </span>{
+    <span class="hljs-keyword">var</span> valuePropsToReject = [],
+        start = (from &lt;= to) ? from : to,
+        end = (to &gt;= from) ? to : from;
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = start; i &lt;= end; i++) {
+      <span class="hljs-keyword">var</span> refString = <span class="hljs-string">'option_'</span> + i,
+      option = <span class="hljs-keyword">this</span>.refs[refString];
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(option.props.className)) {</pre></div></div>
+
+        </li>
+
+
+        <li id="section-121">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-121">&#182;</a>
+              </div>
+              <p>do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="hljs-string">'data-option-value'</span>) !== option.getDOMNode().getAttribute(<span class="hljs-string">'data-option-value'</span>)) {
+          valuePropsToReject.push(option.props[<span class="hljs-string">'data-option-value'</span>]);
+        }
+      }
+    }
+
+    <span class="hljs-keyword">var</span> remainingSelected = _.reject(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(option)</span> </span>{
+        <span class="hljs-keyword">return</span> _.includes(valuePropsToReject, option[<span class="hljs-keyword">this</span>.state.valueKey]);
+      }, <span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">this</span>.props.onChange(remainingSelected);
+
+    <span class="hljs-keyword">this</span>.setState({
+      value: remainingSelected
+    });
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-122">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-122">&#182;</a>
+              </div>
+              <p>Remove an item from the state.value selected items array.
+The <em>value</em> arg represents a full dataSource option object</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _removeSelectedOptionByValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{</pre></div></div>
+
+        </li>
+
+
+        <li id="section-123">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-123">&#182;</a>
+              </div>
+              <p>clear lastUserSelected if has been removed</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.lastUserSelectedOption &amp;&amp; (<span class="hljs-keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="hljs-string">'data-option-value'</span>) === value[<span class="hljs-keyword">this</span>.state.valueKey])) {
+      <span class="hljs-keyword">this</span>.lastUserSelectedOption = <span class="hljs-literal">undefined</span>;
+    }
+
+    <span class="hljs-keyword">var</span> SelectedAfterRemoval = _.reject(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(option)</span> </span>{
+              <span class="hljs-keyword">return</span> option[<span class="hljs-keyword">this</span>.state.valueKey] === value[<span class="hljs-keyword">this</span>.state.valueKey];
+            }, <span class="hljs-keyword">this</span>);
+
+    <span class="hljs-keyword">this</span>.props.onChange(SelectedAfterRemoval);
+
+    <span class="hljs-keyword">this</span>.setState({
+      value: SelectedAfterRemoval
+    });
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-124">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-124">&#182;</a>
+              </div>
+              <p>remove a selected tag on keyDown</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _removeTagKeyPress: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, event)</span> </span>{
-    event.preventDefault();
-    event.stopPropagation();
-
     <span class="hljs-keyword">var</span> isEnterKey = event.which === <span class="hljs-keyword">this</span>.keymap.enter,
         isSpaceKey = event.which === <span class="hljs-keyword">this</span>.keymap.space;
 
     <span class="hljs-keyword">if</span> (isEnterKey || isSpaceKey) {
-      <span class="hljs-keyword">this</span>._removeTagClick(value, event); <span class="hljs-comment">// delegate to click handler</span>
+      event.preventDefault();
+      event.stopPropagation();
+      <span class="hljs-keyword">this</span>._removeSelectedOptionByValue(value); <span class="hljs-comment">// delegate to removal handler</span>
     }
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-117">
+        <li id="section-125">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>remove a selected tag on click</p>
 
@@ -2295,76 +2494,175 @@ otherwise return false so page fetch will no occur</p>
     event.preventDefault();
     event.stopPropagation();
 
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">this</span>.setState({
-      value: _.reject(<span class="hljs-keyword">this</span>.state.value, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tag)</span> </span>{
-              <span class="hljs-keyword">return</span> tag[self.state.valueKey] === value[self.state.valueKey];
-            })
-    });
+    <span class="hljs-keyword">this</span>._removeSelectedOptionByValue(value);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-118">
+        <li id="section-126">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
-              <p>used by shift-selection functions, determine a range of options to select from clicked item backwards to closest r-ss-selected</p>
+              <p>used in shift-click range selections</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _selectAllFromOptionRefToLastSelected: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(optionIndex)</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>,
-        optionsToSelect = [],
-        valuesToSelect;
+            <div class="content"><div class='highlight'><pre>  _selectAllOptionsInOptionIdRange: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(from, to)</span> </span>{
+    <span class="hljs-keyword">var</span> valuePropsToSelect = [],
+        start = (from &lt;= to) ? from : to,
+        end = (to &gt;= from) ? to : from;
 
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = (optionIndex); i &gt;= <span class="hljs-number">0</span>; i--) {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = start; i &lt;= end; i++) {
       <span class="hljs-keyword">var</span> refString = <span class="hljs-string">'option_'</span> + i,
-          option = <span class="hljs-keyword">this</span>.refs[refString];
-
-      <span class="hljs-keyword">if</span> (option.props.className.match(<span class="hljs-regexp">/r-ss-selected/</span>)) {
-        <span class="hljs-keyword">break</span>;
-      } <span class="hljs-keyword">else</span> {
-        optionsToSelect.push(option.props[<span class="hljs-string">'data-option-value'</span>]);
+      option = <span class="hljs-keyword">this</span>.refs[refString];
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        valuePropsToSelect.push(option.props[<span class="hljs-string">'data-option-value'</span>]);
       }
-
     }
 
-    valuesToSelect = _.reject(<span class="hljs-keyword">this</span>.state.data, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(item)</span> </span>{
-                       <span class="hljs-keyword">return</span> optionsToSelect.indexOf(item[self.state.valueKey]) === -<span class="hljs-number">1</span>;
-                     });
-
-    <span class="hljs-keyword">this</span>._selectItemByValues(valuesToSelect);
+    <span class="hljs-keyword">var</span> optionsToSelect = _.reduce(<span class="hljs-keyword">this</span>.state.data, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(memo, option)</span> </span>{
+          <span class="hljs-keyword">if</span> (_.includes(valuePropsToSelect, option[<span class="hljs-keyword">this</span>.state.valueKey])) {
+            memo.push(option);
+          }
+          <span class="hljs-keyword">return</span> memo;
+        }, [], <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>._selectItemByValues(optionsToSelect, <span class="hljs-literal">true</span>);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-119">
+        <li id="section-127">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
-              <p>handle selection of an option or array of options
-close dropdown on state callback if not selecting additional options in a multi-select control</p>
+              <p>Used in shift-key selection.
+Select all options from the current eventTarget to the lastUserSelectedOption</p>
 
             </div>
 
-            <div class="content"><div class='highlight'><pre>  _selectItemByValues: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, isAdditionalOption)</span> </span>{
+            <div class="content"><div class='highlight'><pre>  _selectAllOptionsToLastUserSelectedOption: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(eventTargetLi)</span> </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.lastUserSelectedOption) {
+      <span class="hljs-keyword">this</span>.lastUserSelectedOption = eventTargetLi;</pre></div></div>
+
+        </li>
+
+
+        <li id="section-128">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-128">&#182;</a>
+              </div>
+              <p>select all options from the first option to the clicked option</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>._selectAllOptionsInOptionIdRange(<span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>._getOptionIndexFromTarget(eventTargetLi));
+      <span class="hljs-keyword">return</span>;
+    }
+
+    <span class="hljs-keyword">var</span> from = <span class="hljs-keyword">this</span>._getOptionIndexFromTarget(<span class="hljs-keyword">this</span>.lastUserSelectedOption),
+        to = <span class="hljs-keyword">this</span>._getOptionIndexFromTarget(eventTargetLi);
+
+    <span class="hljs-keyword">this</span>.lastUserSelectedOption = eventTargetLi;</pre></div></div>
+
+        </li>
+
+
+        <li id="section-129">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-129">&#182;</a>
+              </div>
+              <p>if the option was already selected, this should trigger a removal operation, otherwise trigger an add</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute(<span class="hljs-string">'class'</span>))) {
+      <span class="hljs-keyword">this</span>._removeAllOptionsInOptionIdRange(from, to);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>._selectAllOptionsInOptionIdRange(from, to);
+    }
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-130">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-130">&#182;</a>
+              </div>
+              <p>Make a user-selection of the option that is currently focused.
+Will close the dropDown when keepControlOpen is falsy</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _selectFocusedOption: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(eventTargetLi, keepControlOpen)</span> </span>{
+    keepControlOpen = keepControlOpen || <span class="hljs-literal">false</span>;
+
+    <span class="hljs-keyword">var</span> focusedOptionKey = <span class="hljs-keyword">this</span>._getFocusedOptionKey();
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs[focusedOptionKey]) {
+      <span class="hljs-keyword">var</span> optionValue = <span class="hljs-keyword">this</span>.refs[focusedOptionKey].props[<span class="hljs-string">'data-option-value'</span>];</pre></div></div>
+
+        </li>
+
+
+        <li id="section-131">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-131">&#182;</a>
+              </div>
+              <p>store as last userSelected</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.lastUserSelectedOption = eventTargetLi;
+
+      <span class="hljs-keyword">if</span> (keepControlOpen &amp;&amp; <span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(<span class="hljs-keyword">this</span>.refs[focusedOptionKey].props.className)) {
+        <span class="hljs-keyword">var</span> optionFullFromValueProp = _.first(<span class="hljs-keyword">this</span>._findArrayOfOptionDataObjectsByValue(optionValue));
+        <span class="hljs-keyword">this</span>._removeSelectedOptionByValue(optionFullFromValueProp);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>._selectItemByValues(optionValue, keepControlOpen);
+      }
+    }
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-132">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-132">&#182;</a>
+              </div>
+              <p>Handle selection of an option or array of options.
+Track last selection the user made.
+Close dropdown on the setState callback if not a non control-closing selection</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _selectItemByValues: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, keepControlOpen)</span> </span>{
    <span class="hljs-keyword">var</span> objectValues = <span class="hljs-keyword">this</span>._findArrayOfOptionDataObjectsByValue(value);
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.tags || (isAdditionalOption &amp;&amp; <span class="hljs-keyword">this</span>.state.value)) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isMultiSelect() || (keepControlOpen &amp;&amp; <span class="hljs-keyword">this</span>.state.value)) {
       objectValues = <span class="hljs-keyword">this</span>.state.value.concat(objectValues);
     }
 
     <span class="hljs-keyword">var</span> outputValue = <span class="hljs-keyword">this</span>._isMultiSelect() ? objectValues : _.first(objectValues);
     <span class="hljs-keyword">this</span>.props.onChange(outputValue);
 
-    <span class="hljs-keyword">if</span> (isAdditionalOption) {
+    <span class="hljs-keyword">if</span> (keepControlOpen) {
       <span class="hljs-keyword">this</span>.setState({
         value: objectValues
       });
@@ -2378,11 +2676,11 @@ close dropdown on state callback if not selecting additional options in a multi-
         </li>
 
 
-        <li id="section-120">
+        <li id="section-133">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control</p>
 
@@ -2390,56 +2688,90 @@ close dropdown on state callback if not selecting additional options in a multi-
 
             <div class="content"><div class='highlight'><pre>  _selectItemOnOptionClick: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, event)</span> </span>{
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
-      <span class="hljs-keyword">this</span>._handleShiftSelect(value, event);
+      <span class="hljs-keyword">this</span>._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       <span class="hljs-keyword">return</span>;
     }
-    <span class="hljs-keyword">var</span> isAdditionalOption = (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey));
-    <span class="hljs-keyword">this</span>._selectItemByValues(value, isAdditionalOption);
+    <span class="hljs-keyword">var</span> keepControlOpen = (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey)),
+        alreadySelected = <span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute(<span class="hljs-string">'class'</span>));</pre></div></div>
+
+        </li>
+
+
+        <li id="section-134">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-134">&#182;</a>
+              </div>
+              <p>store clicked option as the lastUserSelected</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.lastUserSelectedOption = event.currentTarget;
+
+    <span class="hljs-keyword">if</span> (keepControlOpen &amp;&amp; alreadySelected) {
+      <span class="hljs-keyword">this</span>._removeSelectedOptionByValue(value);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">if</span> (!alreadySelected) {
+        <span class="hljs-keyword">this</span>._selectItemByValues(value[<span class="hljs-keyword">this</span>.state.valueKey], keepControlOpen);
+      }
+    }
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-121">
+        <li id="section-135">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
-              <p>set focus id to SEARCH_FOCUS_ID constant value</p>
+              <p>set the focusId to the SEARCH_FOCUS_ID constant value</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _setFocusIdToSearch: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">this</span>.setState({
-      focusedId: <span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID
-    });
+    <span class="hljs-keyword">this</span>._updateFocusedId(<span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID);
   },</pre></div></div>
 
         </li>
 
 
-        <li id="section-122">
+        <li id="section-136">
             <div class="annotation">
 
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
-              <p>sets the current focused id,
-or closes the dropdown if id is undefined</p>
+              <p>if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre>  _setFocusOnOpen: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.lastUserSelectedOption) {
+      <span class="hljs-keyword">this</span>._updateFocusedId(<span class="hljs-built_in">parseInt</span>(<span class="hljs-keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="hljs-string">'data-option-index'</span>), <span class="hljs-number">10</span>));
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>._moveFocusDown();
+    }
+  },</pre></div></div>
+
+        </li>
+
+
+        <li id="section-137">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-137">&#182;</a>
+              </div>
+              <p>Sets the current focusedId.</p>
 
             </div>
 
             <div class="content"><div class='highlight'><pre>  _updateFocusedId: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span> </span>{
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-
     <span class="hljs-keyword">this</span>.setState({
       focusedId: id
-    }, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">if</span> (_.isUndefined(id)) {
-        self._closeOnKeypress();
-        <span class="hljs-keyword">return</span>;
-      }
     });
   }
 

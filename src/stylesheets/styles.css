@@ -337,8 +337,13 @@ footer {
   padding-left: 50px;
 }
 
-a.live-examples {
+a.featured-link {
   font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.feature-heading {
+  font-size: 2rem;
   font-weight: bold;
 }
 
@@ -389,7 +394,7 @@ nav.api li {
   font-weight: bold;
 }
 
-.live-examples {
+.live-examples-list {
   list-style: none;
   margin: 1rem 0;
   padding: 0;

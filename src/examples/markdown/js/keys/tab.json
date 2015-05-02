@@ -1,0 +1,1 @@
+{"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>tab away from the control</strong></li>\n</ul>\n<p>Pressing enter when the the control has focus will open the dropdown.</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<p>In an open control, the tab key mimics the behavior of the <a href=\"#enter\">enter</a> key</p>\n"}

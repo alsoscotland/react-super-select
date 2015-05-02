@@ -31958,21 +31958,29 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":31}],159:[function(require,module,exports){
-var basicExample = require('./basic-example'),
-    basicSearchable = require('./basic-searchable');
+var basicExample = require('./super-selects/basic-example'),
+    basicSearchable = require('./super-selects/basic-searchable'),
+    customTemplate = require('./super-selects/custom-template');
 
 var allExamples = [
   basicExample,
-  basicSearchable
+  basicSearchable,
+  customTemplate
 ];
 
 module.exports = allExamples;
 
 
-},{"./basic-example":160,"./basic-searchable":161}],160:[function(require,module,exports){
-var testData = require('../support/test-data.js'),
-    exampleOutput = require('../support/example-output.js'),
-    basicExampleMarkdown = require('./markdown/js/basic-example').body;
+},{"./super-selects/basic-example":163,"./super-selects/basic-searchable":164,"./super-selects/custom-template":165}],160:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  exampleOutput(&#39;basic_example_output&#39;, output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],161:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  exampleOutput(&#39;basic_example_output&#39;, output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],162:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n},, ...\n];\n</code></pre>\n"}
+},{}],163:[function(require,module,exports){
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
 
 var handlerExample = function(option) {
   var output = [
@@ -32001,10 +32009,10 @@ var basicExample = {
 module.exports = basicExample;
 
 
-},{"../support/example-output.js":166,"../support/test-data.js":167,"./markdown/js/basic-example":162}],161:[function(require,module,exports){
-var testData = require('../support/test-data.js'),
-    exampleOutput = require('../support/example-output.js'),
-    basicSearchableMarkdown = require('./markdown/js/basic-searchable').body;
+},{"../markdown/js/examples/basic-example":160,"./support/example-output.js":166,"./support/test-data.js":168}],164:[function(require,module,exports){
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
 
 var handlerExample = function(option) {
   var output = [
@@ -32012,7 +32020,7 @@ var handlerExample = function(option) {
     '\tid: ', option.id, '\n',
     '\tname: ', option.name, '\n',
     '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('basic_example_output', output.join(''));
+  exampleOutput('basic_searchable_output', output.join(''));
 };
 
 var basicSearchableExample = {
@@ -32034,1041 +32042,59 @@ var basicSearchableExample = {
 module.exports = basicSearchableExample;
 
 
-},{"../support/example-output.js":166,"../support/test-data.js":167,"./markdown/js/basic-searchable":163}],162:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; dataSource={testData} onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"handlerexample\">handlerExample</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  exampleOutput(&#39;basic_example_output&#39;, output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource\">dataSource</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...(option objects continue)\n];\n</code></pre>\n"}
-},{}],163:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; dataSource={testData} onChange={handlerExample} searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"handlerexample\">handlerExample</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  exampleOutput(&#39;basic_example_output&#39;, output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource\">dataSource</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...(option objects continue)\n];\n</code></pre>\n"}
-},{}],164:[function(require,module,exports){
-var _ = require('lodash'),
-    React = require('react'),
-    ReactSuperSelect = require('./react-super-select');
-
-var allExamples = require('./examples/all-examples');
-
-var App = React.createClass({displayName: "App",
-
-  _renderExampleLinks: function() {
-    var exampleLinks = _.map(allExamples, function(example, index) {
-      var href = '#' + example.nameAttr;
-      return (React.createElement("li", {key: index}, React.createElement("a", {href: href}, " ", example.displayName, " ")));
-    });
-
-    return( React.createElement("div", {className: "example-links"}, 
-              React.createElement("h1", null, "React-Super-Select Live Examples"), 
-              React.createElement("h2", null, " Quick Links: "), 
-              React.createElement("nav", {className: "api"}, 
-               React.createElement("ul", null, 
-                 exampleLinks
-               )
-              )
-            ));
-  },
-
-  _renderExampleSections: function() {
-    var exampleSections = _.map(allExamples, function(example, index) {
-      var superSelect = React.createElement(ReactSuperSelect, example.props),
-          outputId = example.nameAttr + '_output';
-
-      return( React.createElement("li", {key: index, className: "example-sections"}, 
-              React.createElement("article", {className: "api-item"}, 
-                React.createElement("h3", {className: "api-link"}, 
-                  React.createElement("a", {name: example.nameAttr}, " ", example.displayName, " ")
-                ), 
-                React.createElement("div", {className: "rss-live-example"}, 
-                  superSelect
-                ), 
-                React.createElement("div", {className: "rss-output-example"}, "onChange Output"), 
-                React.createElement("pre", {className: "example-output", id: outputId}, " "), 
-                React.createElement("div", null, 
-                  React.createElement("aside", {className: "rss-example-markdown", dangerouslySetInnerHTML: {__html: example.renderString}})
-                )
-              )
-            ));
-    });
-
-    return(React.createElement("ul", {className: "live-examples"}, 
-        exampleSections
-      ));
-  },
-
-  render: function() {
-    return (React.createElement("div", null, 
-      this._renderExampleLinks(), 
-      this._renderExampleSections()
-    ));
-  }
-});
-
-React.render(React.createElement(App, null), document.getElementById('examples'));
-
-
-},{"./examples/all-examples":159,"./react-super-select":165,"lodash":3,"react":158}],165:[function(require,module,exports){
-// © Scotland Stephenson 2015
-
-// - [github](https://github.com/alsoscotland/react-super-select)
-// - [documentation](http://alsoscotland.github.io/react-super-select/)
-// - freely distributed under the MIT license.
-
-var _ = require('lodash'),
+},{"../markdown/js/examples/basic-searchable":161,"./support/example-output.js":166,"./support/test-data.js":168}],165:[function(require,module,exports){
+var React = require('react'),
     classNames = require('classnames'),
-    React = require('react');
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
 
-// Dependencies
-//  - [Lodash](https://lodash.com/)
-//  - [classNames](https://www.npmjs.com/package/classnames)
-//  - [React](https://facebook.github.io/react/index.html)
+var handlerExample = function(option) {
+  var output = [
+    'Add To Cart: ',
+    option.label,
+    '\nPrice: ',
+    option.price];
+  exampleOutput('custom_template_output', output.join(''));
+};
 
-var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
+var groceryCartItemTemplate = function(item) {
+  var itemClasses = classNames('grocery-item',
+                               'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon',
+                               'rss-grocery',
+                              'rss-grocery-' + item.attributeName);
 
-// Properties
-// ------
-  propTypes: {
+  return(
+    React.createElement("div", {className: itemClasses}, 
+      React.createElement("span", {className: iconClasses}), 
+      React.createElement("p", null, item.label, " - ", '$' + item.price.toFixed(2))
+    ));
+};
 
-    // BOOLEAN OPTIONS
-    // ---------------
+var customTemplateExample = {
 
-    // **multiple** (Boolean) *optional*  - set true for a multi-select control with normal or custom templating.  When using the **tags** display option, this option is redundant
-    multiple: React.PropTypes.bool,
-    // **searchable** (Boolean) *optional* - whether or not to show a search bar in the dropdown area which offers text-based filtering of the options-set (by label key)
-    searchable: React.PropTypes.bool,
-    // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
-    tags: React.PropTypes.bool,
+  nameAttr: "custom_template",
+  displayName: "Custom Template Example",
 
-    // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
-    // -----------------------------------
-
-    // **customClass** (String) *optional* - this string value will be added as a css class to the control's main wrapping element.  You should be able to overide all styling with one point of css specificity by leading your rules with
-    // ```css
-    // .r-ss-wrap.{customClass}
-    // ```
-    customClass: React.PropTypes.string,
-
-    // **customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  Will add a custom css class to the group headings which are rendered into the dropdown
-    customGroupHeadingClass: React.PropTypes.string,
-
-    // **customSearchIconClass** (String) *optional* - This class name will be added to the icon in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
-    customSearchIconClass: React.PropTypes.string,
-
-    // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataFetch** option.  A css class which will be added to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
-    customLoaderClass: React.PropTypes.string,
-
-    // **customTagClass** (String) *optional* - Used in conjunction with the **tags** option.  A css class which will be added to wrapper of a selection displayed as a tag. You should be able to overide all tag styling with one point of css specificity by leading your rules with
-    // ```css
-    //  .r-ss-tag.{customTagClass}
-    //  ```
-    customTagClass: React.PropTypes.string,
-
-    // MAIN CHANGE HANDLER
-    // -------------------
-
-    // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s) the selected option, or when **multiple** or **tags**, an array of selected values (object from the dataSource collection) will be passed to this handler function.
-    onChange: React.PropTypes.func.isRequired,
-
-    // OPTION DATA-RELATED PROPS
-    // -------------------------
-
-    // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
-    // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with an array of objects (a collection) as described by the **dataSource** option documentation. Or a single option object.  The **dataSource** option should be left undefined when using this option.
-    ajaxDataFetch: React.PropTypes.func,
-
-    // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
-    // there is a corresponding internal parser (_configureDataSource) which will return a collection (array of option objects) found based on argument type
-
-    //  The parsing method supports data sources as:
-    //  - an array of option objects (will be directly assigned to state.data)
-    //  - an object with a collection property (object.collection will be assigned to state.data)
-    //  - an object with a get function (return value of object.get('collection') will be assigned to state.data)
-
-    //  each option in the resulting collection must have the following properties
-    //  - a unique value in the key set by the **optionValueKey** or the default of **id**
-    //  - a value in the key set by the **optionLabelKey** or the default of **name**
-    dataSource: React.PropTypes.oneOfType([
-              React.PropTypes.arrayOf(React.PropTypes.object),
-              React.PropTypes.object
-            ]),
-
-    // **optionLabelKey** (String) (*optional - will use 'name' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value you would like displayed for each option.
-    optionLabelKey: React.PropTypes.string,
-
-    // **optionValueKey** (String) (*optional - will use 'id' key if undefined*) - This value represents the key in each option object in your **dataSource** collection which represents the value that uniquely identifies that option across the dataSource collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
-    optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
-
-    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
-    // The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
-
-    // It must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a valid value as described by the **dataSource** option documentation.
-    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.  *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
-    pageDataFetch: React.PropTypes.func,
-
-    // **hasMorePages** (Function) *optional* (should be provided when using the *pageDataFetch* option) - A function that accepts one argument, a value as described by the *dataSource* option documentation, and returns a Boolean value
-    // The value should indicate whether the option data collection has any more pages available for fetching
-    hasMorePages: React.PropTypes.func,
-
-    // GROUPING FUNCTIONALITY
-    // ----------------------
-
-    // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
-    groupBy: React.PropTypes.oneOfType([
-              React.PropTypes.string,
-              React.PropTypes.func,
-              React.PropTypes.object
-            ]),
-
-    // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option)- This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
-    customGroupHeadingTemplateFunction: React.PropTypes.func,
-
-    // RENDERING (OPTION ITERATOR) FUNCTIONS
-    // -------------------------------------
-
-    // **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** options.  The function provided for this option will serve as a replacement of the default search filter function.
-    //(A default lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is passed as the second arg to [Lodash's filter function](https://lodash.com/docs#filter) and is along with your **dataSource** as the first arg.
-    customFilterFunction: React.PropTypes.func,
-
-    // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
-    customOptionTemplateFunction: React.PropTypes.func,
-
-    // LOCALIZATION STRINGS
-    // --------------------
-
-    // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
-    ajaxErrorString: React.PropTypes.string,
-
-    // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
-    noResultsString: React.PropTypes.string,
-
-    // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control before a user has selected any values
-    placeholder: React.PropTypes.string,
-
-    // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's searchfield when a user has not entered any characters.
-    searchPlaceholder: React.PropTypes.string
+  props: {
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: 'label',
+    placeholder: "Pick an Item",
+    searchable: true,
+    searchPlaceholder: "Search Shop"
   },
 
-  // CONSTANTS
-  // ---------
+  renderString: customTemplateMarkdown
 
-  // represents the focusedID state variable value for the search field of a **searchable** control.
-  SEARCH_FOCUS_ID: -1,
+};
 
-  // Default string values for localization options
-  DEFAULT_LOCALIZATIONS: {
-    ajaxErrorString: 'An Error occured while fetching options',
-    noResultsString: 'No Results Available',
-    placeholder: 'Select an Option',
-    searchPlaceholder: 'Search'
-  },
+module.exports = customTemplateExample;
 
-  // STATE VARIABLES
-  // ---------------
-  getInitialState: function() {
-    return {
-      // **ajaxError** (Boolean) - set to true when an ajax request fails
-      ajaxError: false,
 
-      // **data** (Array of Objects) the data source array used to map to option elements
-      data: this._configureDataSource(this.props.dataSource),
-
-      // **rawDataSource** (Object|Array) the raw dataSource the user supplies through *dataSource*, *ajaxDataFetch*, or *pageDataFetch*, this value will be passed to the *pageDataFetch* callback
-      rawDataSource: this.props.dataSource,
-
-      // **isOpen** (Boolean) - whether the dropdown is open
-      isOpen: false,
-      // **focusedId** (Number) - used to track keyboard focus for accessibility
-      focusedId: undefined,
-      // **labelKey** (String) - the option object key that will be used to identify the value used as an option's label
-      labelKey: this.props.optionLabelKey || 'name',
-      // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option
-      lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
-
-      // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field used for data filtering based on the label key's value
-      searchString: undefined,
-      // **value** (Array) - An array that holds the currently selected option(s)
-      value: [],
-      // **valueKey** (String) - the option object key that will be used to identify the value used as an option's value property (values must be unique across data source)
-      valueKey: this.props.optionValueKey || 'id'
-    };
-  },
-
-  // KEYMAP
-  // ------
-  // text based lookup map for keyboard navigation keys and their corresponding 'which' keycode values
-  keymap: {
-    'down': 40,
-    'end': 35, // goto last option ?
-    'enter': 13,
-    'esc': 27,
-    'home': 36, // go to first option ?
-    'left': 37,
-    'right': 39,
-    'space': 32,
-    'tab': 9,
-    'up': 38
-  },
-
-  // If parent page updates the data source, reset the control with some defaults and the new data source.
-  componentWillReceiveProps: function(nextProps) {
-    if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
-      this.setState({
-        data: this._configureDataSource(nextProps.dataSource),
-        rawDataSource: nextProps.dataSource,
-        focusedId: undefined,
-        labelKey: nextProps.optionLabelKey || 'name',
-        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
-        valueKey: nextProps.optionValueKey || 'id'
-      });
-    }
-  },
-
-  // Update focused element after re-render
-  componentDidUpdate: function(prevProps, prevState) {
-    if (prevState.focusedId === this.state.focusedId) {
-      return;
-    }
-    this._focusCurrentFocusedId();
-  },
-
-  // main render method
-  render: function() {
-    var dropdownContent = this._getDropdownContent(),
-        placeholderString,
-        valueDisplayClass,
-        triggerDisplayContent,
-        triggerClasses,
-        caratClass = classNames('carat', {
-          'down': !this.state.isOpen,
-          'up': this.state.isOpen
-        }),
-        wrapClasses;
-
-    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
-      'r-ss-expanded': this.state.isOpen
-    });
-
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen
-    });
-    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
-    valueDisplayClass = classNames('r-ss-value-display', {
-      'r-ss-placeholder': this.state.value.length < 1,
-    });
-
-    return (
-      React.createElement("div", {ref: "rssControl", className: wrapClasses}, 
-        React.createElement("div", {ref: "triggerDiv", className: triggerClasses, onClick: this.toggleDropdown, onKeyUp: this._handleKeyUp, "aria-haspopup": "true"}, 
-          React.createElement("a", {ref: "triggerAnchor", className: "r-ss-mock-input", tabIndex: "0", "aria-label": placeholderString}, 
-            React.createElement("div", {className: valueDisplayClass, ref: "valueDisplay"}, triggerDisplayContent), 
-            React.createElement("span", {ref: "carat", className: caratClass}, " ")
-          )
-        ), 
-        dropdownContent
-      ));
-  },
-
-  // toggles the open-state of the dropdown
-  toggleDropdown: function() {
-    this.setState({
-      'isOpen': !this.state.isOpen
-    });
-  },
-
-  // close the dropdown and
-  // resets focus to main control trigger
-  _closeOnKeypress: function() {
-    if (this.state.isOpen) {
-      this.setState({
-        isOpen: false,
-        focusedId: undefined
-      }, this._focusTrigger);
-    }
-  },
-
-  // overloaded dataSource parser (Object|Array)
-  // case: (object) look for a collection property which is an array, or a get function and run get('collection') and determine if retun value of an array
-  // case (Array)
-  // return the dataSource array for use as this.state.data
-  _configureDataSource: function(dataSource) {
-    if (_.isArray(dataSource)) {
-     return dataSource;
-    }
-
-    if (_.isObject(dataSource)) {
-      if (_.isArray(dataSource.collection)) {
-        return dataSource.collection;
-      }
-
-      if (_.isFunction(dataSource.get)) {
-        var collection = dataSource.get('collection');
-        if (_.isArray(collection)) {
-          return collection;
-        }
-      }
-    }
-
-    return [];
-  },
-
-  // used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control,
-  // runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
-  _defaultSearchFilter: function(option) {
-    var search = this.state.searchString.toLowerCase();
-    if (!_.isString(option[this.state.labelKey])) {
-      return false;
-    }
-    return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
-  },
-
-
-  // fetch data source via ajax if **ajaxDataFetch** function provided
-  // handles success and failure for ajax call
-  _fetchDataViaAjax: function() {
-    var self = this;
-    this.props.ajaxDataFetch(this.state.rawDataSource).then(function(dataSourceFromAjax) {
-      self.setState({
-        ajaxError: false,
-        data: self._configureDataSource(dataSourceFromAjax),
-        rawDataSource: dataSourceFromAjax
-      });
-    }, function() {
-      self.setState({
-        ajaxError: true,
-        // define as empty array on error so that _needsAjaxFetch will evaluate to false
-        rawDataSource: []
-      });
-    });
-  },
-
-  // fetch the next page of options data if **pageDataFetch** function provided,
-  // called onMouseMove if scroll position in dropdown exceeds threshold,
-  // handles success and failure for ajax call
-  _fetchNextPage: function() {
-    var self = this;
-    this.props.pageDataFetch(this.state.rawDataSource).then(function(dataSourceFromPageFetch) {
-      self.setState({
-        ajaxError: false,
-        data: self._configureDataSource(dataSourceFromPageFetch),
-        rawDataSource: dataSourceFromPageFetch,
-        isFetchingPage: false
-      });
-    }, function() {
-        self.setState({
-          ajaxError: true
-        });
-    });
-  },
-
-  // choose the appropriate search filter function and run the filter against the options data
-  _filterDataBySearchString: function(data) {
-    var filterFunction = _.isFunction(this.props.customFilterFunction) ? this.props.customFilterFunction : this._defaultSearchFilter;
-    return _.filter(data, filterFunction);
-  },
-
-  // used when selecting values, returns an array of full option-data objects which contain any single value or any one of an array of values passed in
-  _findArrayOfOptionDataObjectsByValue: function(value) {
-    var self = this,
-        valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
-    return _.reject(this.state.data, function(item) {
-      return !_.contains(valuesArray, item[self.state.valueKey]);
-    });
-  },
-
-  // determine whether to focus a option value in the DOM, or the search field
-  _focusCurrentFocusedId: function() {
-    if (this.state.focusedId < 0) {
-      this._focusSearch();
-      return;
-    }
-
-    this._focusDOMOption();
-  },
-
-  // focus the DOM option locatable by the current focusedId
-  _focusDOMOption: function() {
-    var optionRef = this._getFocusedOptionKey();
-    if (this.refs[optionRef]) {
-      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
-        this.refs[optionRef].getDOMNode().focus();
-      }
-    }
-  },
-
-  // focus the dropdown's search field if it exists
-  _focusSearch: function() {
-    if (this.refs.searchInput) {
-      this.refs.searchInput.getDOMNode().focus();
-    }
-  },
-
-  // focus the main trigger element of the control
-  _focusTrigger: function() {
-    if (this.refs.triggerAnchor) {
-      this.refs.triggerAnchor.getDOMNode().focus();
-    }
-  },
-
-  // choose whether to calculate the display values normally, or as tags
-  _generateValueDisplay: function() {
-    if (!this.props.tags) {
-      return this._getNormalDisplayMarkup();
-    } else {
-      return this._getTagsDisplayMarkup();
-    }
-  },
-
-  // render the content shown if an ajax error occurs
-  _getAjaxErrorMarkup: function() {
-    var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
-    return (React.createElement("li", {className: "r-ss-dropdown-option error"}, React.createElement("i", {ref: "errorDisplay"}, errorString)));
-  },
-
-  // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
-  _getDataSource: function() {
-    var data = _.isArray(this.state.data) ? this.state.data : [];
-    if (_.isString(this.state.searchString)) {
-      data = this._filterDataBySearchString(data);
-    }
-
-    if (this.props.groupBy) {
-      data = _.groupBy(data, this.props.groupBy);
-    }
-
-    return data;
-  },
-
-  // determine and render the dropdown content
-  // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
-  _getDropdownContent: function() {
-    if (!this.state.isOpen) {
-      return null;
-    }
-
-    var searchContent = this._getSearchContent(),
-        mouseMoveHandler,
-        pagingLi;
-
-    mouseMoveHandler = (this.props.pageDataFetch) ? this._onMouseMove : null;
-    pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
-
-    return(
-      React.createElement("div", {ref: "dropdownContent", className: "r-ss-dropdown", onKeyUp: this._handleKeyUp}, 
-        searchContent, 
-        React.createElement("div", {ref: "scrollWrap", className: "r-ss-options-wrap", onMouseMove: mouseMoveHandler}, 
-          React.createElement("ul", {className: "r-ss-dropdown-options", ref: "dropdownOptionsList", "aria-hidden": !this.state.isOpen, role: "menubar"}, 
-            this._getOptionsMarkup()
-          ), 
-          pagingLi
-        )
-      )
-    );
-  },
-
-  // build the string used as a React component ref for each focusable option
-  _getFocusedOptionKey: function() {
-    return 'option_' + this.state.focusedId;
-  },
-
-  // render a group heading, used if **groupBy** option is provided.
-  // renders a non-focusable list item for an option group heading
-  _getGroupHeadingMarkup: function(heading) {
-    if (!heading) {
-      return null;
-    }
-
-    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
-        headingKey = "heading_" + heading,
-        headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
-
-    return(
-      React.createElement("li", {tabIndex: "-1", className: headingClasses, key: headingKey, role: "separator"}, 
-        headingMarkup
-      ));
-  },
-
-  // render the content shown if no options are available
-  _getNoResultsMarkup: function() {
-    var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
-    return (React.createElement("li", {className: "r-ss-dropdown-option", tabIndex: "-1"}, React.createElement("i", {ref: "noResults"}, noResultsString)));
-  },
-
-  // render the selected options into the trigger element using the default (non-tags) behavior
-  // - choose whether to render the default template or a provided **customOptionTemplateFunction**
-  _getNormalDisplayMarkup: function() {
-    var self = this;
-    var markup = _.map(this.state.value, function(value) {
-      if (self.props.customOptionTemplateFunction) {
-        return self.props.customOptionTemplateFunction(value);
-      } else {
-        return value[self.state.labelKey];
-      }
-    });
-    return markup;
-  },
-
-  // render a loading span (spinner gif), with **customLoaderClass** if provided
-  _getLoadingMarkup: function() {
-    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
-    return (React.createElement("span", {ref: "loader", className: loaderClasses}));
-  },
-
-  // render the data source as options,
-  // render loading if fetching
-  // render ajaxError markup when state.ajaxError is true
-  // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
-  // - must track options count to maintain a single focusable index mapping across multiple groups of options
-  _getOptionsMarkup: function() {
-    if (this._needsAjaxFetch()) {
-      this._fetchDataViaAjax();
-      return this._getPagingLi();
-    }
-
-    if (this.state.ajaxError) {
-      return this._getAjaxErrorMarkup();
-    }
-
-    var data = this._getDataSource(),
-        self = this,
-        options = [],
-        optionsCount = 0;
-
-    if (!_.isArray(data)) {
-      _.forIn(data, function(groupedOptions, heading) {
-        options.push(self._getGroupHeadingMarkup(heading));
-        options = options.concat(self._getTemplatedOptions(groupedOptions, optionsCount));
-        optionsCount = optionsCount + groupedOptions.length;
-      });
-    } else {
-      options = this._getTemplatedOptions(data);
-    }
-
-    return options;
-  },
-
-  // render a list item with a loading indicator.  shown while **pageDataFetch** or **ajaxDataFetch** functions run
-  _getPagingLi: function() {
-    return(React.createElement("li", {key: "page_loading", className: "r-ss-page-fetch-indicator", tabIndex: "-1"}, 
-            this._getLoadingMarkup()
-          ));
-  },
-
-  // render a search input bar with a search icon
-  // - add localized **searchPlaceholder** if provided
-  // - add **customIconClass** if provided
-  _getSearchContent: function() {
-    if (!this.props.searchable) {
-      return null;
-    }
-
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
-        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder;
-
-    return(
-      React.createElement("div", {className: "r-ss-search-wrap"}, 
-        React.createElement("div", {className: "r-ss-search-inner"}, 
-          React.createElement("input", {ref: "searchInput", placeholder: searchPlaceholderString, onKeyUp: this._handleSearch, onClick: this._setFocusIdToSearch, defaultValue: this.state.searchString}), 
-          React.createElement("i", {className: magnifierClass}, "search")
-        )
-      )
-    );
-  },
-
-  // iterate over selected values and build tags markup for selected options display
-  _getTagsDisplayMarkup: function() {
-    var self = this;
-    var markup = _.map(this.state.value, function(value) {
-      return self._getTagMarkup(value);
-    });
-    return markup;
-  },
-
-  // render a tag for an individual selected value
-  // - add **customTagClass** if provided
-  _getTagMarkup: function(value) {
-    var label = value[this.state.labelKey],
-        displayValue = value[this.state.valueKey],
-        tagKey = 'tag_' + displayValue,
-        buttonName = "RemoveTag_" + displayValue,
-        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
-
-    return (
-      React.createElement("span", {className: tagWrapClass, key: tagKey}, 
-        React.createElement("span", {className: "r-ss-tag-label"}, label), 
-        React.createElement("button", {name: buttonName, type: "button", className: "r-ss-tag-remove", onClick: this._removeTagClick.bind(null, value), onKeyUp: this._removeTagKeyPress.bind(null, value)}, "X")
-      ));
-  },
-
-  // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
-  // - render no results markup if no options result from map calls
-  _getTemplatedOptions: function(data, indexStart) {
-    indexStart = indexStart || 0;
-    var options = _.isFunction(this.props.customOptionTemplateFunction) ? this._mapDataToCustomTemplateMarkup(data, indexStart) : this._mapDataToDefaultTemplateMarkup(data, indexStart);
-
-    if (options.length === 0) {
-      options = this._getNoResultsMarkup();
-    }
-
-    return options;
-  },
-
-  // main keyup binding map for keyboard navigation and selection
-  _handleKeyUp: function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    switch(event.which) {
-      case this.keymap.down:
-        this._onDownKey();
-        break;
-      case this.keymap.end:
-        this._onEndKey();
-        break;
-      case this.keymap.enter:
-        if (event.shiftKey) {
-          this._handleShiftKeyUpSelect();
-        } else {
-          this._onEnterKey(event);
-        }
-        break;
-      case this.keymap.esc:
-        this._onEscKey();
-        break;
-      case this.keymap.home:
-        this._onHomeKey();
-        break;
-      case this.keymap.left: // delegate to up handler
-        this._onUpKey();
-        break;
-      case this.keymap.right: // delegate to down handler
-        this._onDownKey();
-        break;
-      case this.keymap.space:
-        if (event.shiftKey) {
-          this._handleShiftKeyUpSelect();
-        } else {
-          this._onEnterKey(event); // delegate to enter
-        }
-        break;
-      case this.keymap.tab: // delegate to down handler if not at top level of UI DOM
-        if (typeof this.focusedId !== 'undefined') {
-          this._onDownKey();
-        }
-        break;
-      case this.keymap.up:
-        this._onUpKey();
-        break;
-    }
-  },
-
-  // handler for searchInput's keyUp event
-  _handleSearch: function(event) {
-    var searchString = event.target.value;
-    this._handleSearchDebounced.call(this, searchString);
-    this._handleKeyUp(event);
-  },
-
-  // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
-  _handleSearchDebounced: _.debounce(function(search) {
-    this.setState({
-      searchString: search
-    });
-  }, 300),
-
-  // handle selecting a range of options at once when shift-key is depressed during click
-  _handleShiftSelect: function(value, event) {
-    var optionIndex = parseInt(event.currentTarget.getAttribute('data-option-index'), 10);
-    if (optionIndex === 0) {
-      return;
-    }
-    this._selectAllFromOptionRefToLastSelected(optionIndex);
-  },
-
-  // handle selecting a range of options at once when shift-key is depressed during keyboard selection
-  _handleShiftKeyUpSelect: function() {
-    var focusedOptionKey = this._getFocusedOptionKey();
-
-    if (this.refs[focusedOptionKey]) {
-      this._selectAllFromOptionRefToLastSelected(this.refs[focusedOptionKey].props['data-option-index']);
-    }
-  },
-
-  // return the boolean used to determine whether an option should have the 'r-ss-selected' class
-  _isCurrentlySelected: function(dataItem) {
-    if (!_.isArray(this.state.value)) {
-      return _.isEqual(this.state.value, dataItem);
-    }
-    return !!(_.findWhere(this.state.value, dataItem));
-  },
-
-  // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
-  _isMultiSelect: function() {
-    return this.props.multiple || this.props.tags;
-  },
-
-  // render option list-items based on a provided **customOptionTemplateFunction** function
-  _mapDataToCustomTemplateMarkup: function(data, indexStart) {
-    var self = this;
-
-    return _.map(data, function(dataOption, index) {
-      index = indexStart + index;
-
-      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
-          indexRef = 'option_' + index,
-          customOptionMarkup = self.props.customOptionTemplateFunction(dataOption),
-          classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': self._isCurrentlySelected(dataOption)
-          });
-
-      return (
-        React.createElement("li", {ref: indexRef, tabIndex: "0", "data-option-index": index, className: classes, key: itemKey, "data-option-value": dataOption[self.state.valueKey], onClick: self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey]), role: "menuitem"}, 
-          customOptionMarkup
-        ));
-    });
-  },
-
-  // render option list-items based on the default template
-  _mapDataToDefaultTemplateMarkup: function(data, indexStart) {
-    var self = this;
-
-    return _.map(data, function(dataOption, index) {
-      index = indexStart + index;
-      var itemKey = "drop_li_" + dataOption[self.state.valueKey],
-          indexRef = 'option_' + index,
-          classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': self._isCurrentlySelected(dataOption)
-          });
-      return (
-        React.createElement("li", {ref: indexRef, tabIndex: "0", "data-option-index": index, className: classes, key: itemKey, "data-option-value": dataOption[self.state.valueKey], onClick: self._selectItemOnOptionClick.bind(null, dataOption[self.state.valueKey]), role: "menuitem"}, 
-          dataOption[self.state.labelKey]
-        ));
-    });
-  },
-
-  // determines next focusedId prior to updateFocusedId call
-  _moveFocusDown: function() {
-    var nextId;
-    if (_.isUndefined(this.state.focusedId)) {
-      if (this.props.searchable) {
-        nextId = this.SEARCH_FOCUS_ID;
-      } else {
-        nextId = 0;
-      }
-    } else {
-      nextId = (this.lastOptionId === this.state.focusedId) ? this.lastOptionId : this.state.focusedId + 1;
-    }
-    this._updateFocusedId(nextId);
-  },
-
-  // determines previous focusedId prior to updateFocusedId call
-  _moveFocusUp: function() {
-    var previousId;
-
-    if (!_.isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
-      if (this.state.focusedId === 0) {
-        if (this.props.searchable) {
-          previousId = this.SEARCH_FOCUS_ID;
-        }
-      } else {
-        previousId = this.state.focusedId - 1;
-      }
-    }
-    this._updateFocusedId(previousId);
-  },
-
-  // return boolean to determine if we have already received data from the **ajaxDataFetch** function
-  _needsAjaxFetch: function() {
-    return (_.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch));
-  },
-
-  // down key handler
-  _onDownKey: function() {
-    this._openedOnKeypress();
-    this._moveFocusDown();
-  },
-
-  // end key handler
-  _onEndKey: function() {
-    if (this.state.lastOptionId) {
-      this._updateFocusedId(this.state.lastOptionId);
-    }
-  },
-
-  // enter key handler,
-  // opens control when closed,
-  // otherwise makes selection
-  _onEnterKey: function(event) {
-    if (!this._openedOnKeypress()) {
-
-      var focusedOptionKey = this._getFocusedOptionKey();
-
-      if (this.refs[focusedOptionKey]) {
-        var optionValue = this.refs[focusedOptionKey].props['data-option-value'],
-            isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
-        this._selectItemByValues(optionValue, isAdditionalOption);
-      }
-    }
-  },
-
-  // escape key handler, closes the dropdown
-  _onEscKey: function() {
-    this._closeOnKeypress();
-  },
-
-  // home key handler, focuses the controls main element
-  _onHomeKey: function() {
-    this._updateFocusedId(0);
-  },
-
-  // mouse move handler used when **pageDataFetch** is set, will fire the pageDataFetch function if user has srolled sufficiently far in the dropdown
-  _onMouseMove: function() {
-    // do not fetch page if searching or already loading data
-    if (this.refs.loader || this.state.searchString || !this._pageFetchingComplete()) {
-      return;
-    }
-
-    var wrap = this.refs.scrollWrap.getDOMNode();
-
-    if ((wrap.scrollTop + wrap.offsetHeight) >= wrap.scrollHeight) {
-      this.setState({
-        isFetchingPage: true
-      }, this._fetchNextPage);
-    }
-  },
-
-  // up key handler
-  _onUpKey: function() {
-    this._moveFocusUp();
-  },
-
-  // open the dropdown, return true if opening,
-  // return value (boolean) is used in keyUp handlers to alternate behaviors based on open state
-  _openedOnKeypress: function() {
-    if (!this.state.isOpen) {
-      this.toggleDropdown();
-      return true;
-    }
-    return false;
-  },
-
-  // if hasMorePages option (Function) present, return the value of its call
-  // otherwise return false so page fetch will no occur
-  _pageFetchingComplete: function() {
-    if (!_.isFunction(this.props.hasMorePages)) {
-      return false;
-    } else {
-      return this.props.hasMorePages(this.state.rawDataSource);
-    }
-  },
-
-  // remove a selected tag on keyUp
-  _removeTagKeyPress: function(value, event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    var isEnterKey = event.which === this.keymap.enter,
-        isSpaceKey = event.which === this.keymap.space;
-
-    if (isEnterKey || isSpaceKey) {
-      this._removeTagClick(value, event); // delegate to click handler
-    }
-  },
-
-  // remove a selected tag on click
-  _removeTagClick: function(value, event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    var self = this;
-    this.setState({
-      value: _.reject(this.state.value, function(tag) {
-              return tag[self.state.valueKey] === value[self.state.valueKey];
-            })
-    });
-  },
-
-  // used by shift-selection functions, determine a range of options to select from clicked item backwards to closest r-ss-selected
-  _selectAllFromOptionRefToLastSelected: function(optionIndex) {
-    var self = this,
-        optionsToSelect = [],
-        valuesToSelect;
-
-    for (var i = (optionIndex); i >= 0; i--) {
-      var refString = 'option_' + i,
-          option = this.refs[refString];
-
-      if (option.props.className.match(/r-ss-selected/)) {
-        break;
-      } else {
-        optionsToSelect.push(option.props['data-option-value']);
-      }
-
-    }
-
-    valuesToSelect = _.reject(this.state.data, function(item) {
-                       return optionsToSelect.indexOf(item[self.state.valueKey]) === -1;
-                     });
-
-    this._selectItemByValues(valuesToSelect);
-  },
-
-  // handle selection of an option or array of options
-  // close dropdown on state callback if not selecting additional options in a multi-select control
-  _selectItemByValues: function(value, isAdditionalOption) {
-   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
-
-    if (this.props.tags || (isAdditionalOption && this.state.value)) {
-      objectValues = this.state.value.concat(objectValues);
-    }
-
-    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
-    this.props.onChange(outputValue);
-
-    if (isAdditionalOption) {
-      this.setState({
-        value: objectValues
-      });
-    } else {
-      this.setState({
-        value: objectValues
-      }, this._closeOnKeypress);
-    }
-  },
-
-  // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
-  _selectItemOnOptionClick: function(value, event) {
-    if (this._isMultiSelect() && event.shiftKey) {
-      this._handleShiftSelect(value, event);
-      return;
-    }
-    var isAdditionalOption = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
-    this._selectItemByValues(value, isAdditionalOption);
-  },
-
-  // set focus id to SEARCH_FOCUS_ID constant value
-  _setFocusIdToSearch: function() {
-    this.setState({
-      focusedId: this.SEARCH_FOCUS_ID
-    });
-  },
-
-  // sets the current focused id,
-  // or closes the dropdown if id is undefined
-  _updateFocusedId: function(id) {
-    var self = this;
-
-    this.setState({
-      focusedId: id
-    }, function() {
-      if (_.isUndefined(id)) {
-        self._closeOnKeypress();
-        return;
-      }
-    });
-  }
-
-});
-
-module.exports = ReactSuperSelect;
-
-
-},{"classnames":1,"lodash":3,"react":158}],166:[function(require,module,exports){
+},{"../markdown/js/examples/custom-template":162,"./support/example-output.js":166,"./support/groceries.js":167,"classnames":1,"react":158}],166:[function(require,module,exports){
 var exampleOutput = function(id, content) {
   var outputDiv = document.getElementById(id);
 
@@ -33084,6 +32110,126 @@ module.exports = exampleOutput;
 
 
 },{}],167:[function(require,module,exports){
+var groceries = [
+{
+  id: 1,
+  attributeName: "apple",
+  label: "Apple",
+  iconClass: "rss-grocery rss-grocery-apple",
+  group: "Fruit",
+  price: 0.79
+},{
+  id: 2,
+  attributeName: "carrot",
+  label: "Carrot",
+  iconClass: "rss-grocery rss-grocery-carrot",
+  group: "Vegetable",
+  price: 0.21
+},{
+  id: 3,
+  attributeName: "cherries",
+  label: "Cherries",
+  iconClass: "rss-grocery rss-grocery-cherries",
+  group: "Fruit",
+  price: 0.45
+},{
+  id: 4,
+  attributeName: "eggplant",
+  label: "Eggplant",
+  iconClass: "rss-grocery rss-grocery-eggplant",
+  group: "Vegetable",
+  price: 1.50
+},{
+  id: 5,
+  attributeName: "garlic",
+  label: "Garlic",
+  iconClass: "rss-grocery rss-grocery-garlic",
+  group: "Vegetable",
+  price: 0.60
+},{
+  id: 6,
+  attributeName: "grapes",
+  label: "Grapes",
+  iconClass: "rss-grocery rss-grocery-grapes",
+  group: "Fruit",
+  price: 3.00
+},{
+  id: 7,
+  attributeName: "green_pepper",
+  label: "Green Pepper",
+  iconClass: "rss-grocery rss-grocery-green_pepper",
+  group: "Vegetable",
+  price: 0.95
+},{
+  id: 8,
+  attributeName: "lemon",
+  label: "Lemon",
+  iconClass: "rss-grocery rss-grocery-lemon",
+  group: "Fruit",
+  price: 0.40
+},{
+  id: 9,
+  attributeName: "orange",
+  label: "Orange",
+  iconClass: "rss-grocery rss-grocery-orange",
+  group: "Fruit",
+  price: 0.60
+},{
+  id: 10,
+  attributeName: "peach",
+  label: "Peach",
+  iconClass: "rss-grocery rss-grocery-peach",
+  group: "Fruit",
+  price: 0.95
+},{
+  id: 11,
+  attributeName: "pear",
+  label: "Pear",
+  iconClass: "rss-grocery rss-grocery-pear",
+  group: "Fruit",
+  price: 0.55
+},{
+  id: 12,
+  attributeName: "pumpkin",
+  label: "Pumpkin",
+  iconClass: "rss-grocery rss-grocery-pumpkin",
+  group: "Vegetable",
+  price: 2.00
+},{
+  id: 13,
+  attributeName: "red_pepper",
+  label: "Red Pepper",
+  iconClass: "rss-grocery rss-grocery-red_pepper",
+  group: "Vegetable",
+  price: 1.00
+},{
+  id: 14,
+  attributeName: "strawberry",
+  label: "Strawberry",
+  iconClass: "rss-grocery rss-grocery-strawberry",
+  group: "Fruit",
+  price: 0.15
+},{
+  id: 15,
+  attributeName: "tomato",
+  label: "Tomato",
+  iconClass: "rss-grocery rss-grocery-tomato",
+  group: "Fruit",
+  price: 0.60
+},{
+  id: 16,
+  attributeName: "watermelon",
+  label: "Watermelon",
+  iconClass: "rss-grocery rss-grocery-watermelon",
+  group: "Fruit",
+  price: 1.90
+}
+];
+
+module.exports = groceries;
+
+
+},{}],168:[function(require,module,exports){
 var testData = [
 {
   "id": "5507c0528152e61f3c348d56",
@@ -33314,4 +32460,1188 @@ var testData = [
 module.exports = testData;
 
 
-},{}]},{},[164])
+},{}],169:[function(require,module,exports){
+var _ = require('lodash'),
+    React = require('react'),
+    ReactSuperSelect = require('./react-super-select');
+
+var allExamples = require('./examples/all-examples');
+
+var Examples = React.createClass({displayName: "Examples",
+
+  _renderExampleLinks: function() {
+    var exampleLinks = _.map(allExamples, function(example, index) {
+      var href = '#' + example.nameAttr;
+      return (React.createElement("li", {key: index}, React.createElement("a", {href: href}, " ", example.displayName, " ")));
+    });
+
+    return( React.createElement("div", {className: "example-links"}, 
+              React.createElement("h1", null, "React-Super-Select Live Examples"), 
+              React.createElement("h2", null, " Quick Links: "), 
+              React.createElement("nav", {className: "api"}, 
+               React.createElement("ul", null, 
+                 exampleLinks
+               )
+              )
+            ));
+  },
+
+  _renderExampleSections: function() {
+    var exampleSections = _.map(allExamples, function(example, index) {
+      var superSelect = React.createElement(ReactSuperSelect, example.props),
+          outputId = example.nameAttr + '_output';
+
+      return( React.createElement("li", {key: index, className: "example-sections"}, 
+              React.createElement("article", {className: "api-item"}, 
+                React.createElement("h3", {className: "api-link"}, 
+                  React.createElement("a", {name: example.nameAttr}, " ", example.displayName, " ")
+                ), 
+                React.createElement("div", {className: "rss-live-example"}, 
+                  superSelect
+                ), 
+                React.createElement("div", {className: "rss-output-example"}, "onChange Output"), 
+                React.createElement("pre", {className: "example-output", id: outputId}, " "), 
+                React.createElement("div", null, 
+                  React.createElement("aside", {className: "rss-example-markdown", dangerouslySetInnerHTML: {__html: example.renderString}})
+                )
+              )
+            ));
+    });
+
+    return(React.createElement("ul", {className: "live-examples-list"}, 
+        exampleSections
+      ));
+  },
+
+  render: function() {
+    return (React.createElement("div", null, 
+      this._renderExampleLinks(), 
+      this._renderExampleSections()
+    ));
+  }
+});
+
+React.render(React.createElement(Examples, null), document.getElementById('examples'));
+
+
+},{"./examples/all-examples":159,"./react-super-select":170,"lodash":3,"react":158}],170:[function(require,module,exports){
+// © Scotland Stephenson 2015
+
+// - [github](https://github.com/alsoscotland/react-super-select)
+// - [documentation](http://alsoscotland.github.io/react-super-select/)
+// - freely distributed under the MIT license.
+
+var _ = require('lodash'),
+    classNames = require('classnames'),
+    React = require('react');
+
+// Dependencies
+//  - [Lodash](https://lodash.com/)
+//  - [classnames](https://www.npmjs.com/package/classnames)
+//  - [React](https://facebook.github.io/react/index.html)
+
+var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
+
+// Properties
+// ------
+  propTypes: {
+
+    // BOOLEAN OPTIONS
+    // ---------------
+
+    // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
+    multiple: React.PropTypes.bool,
+    // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
+    searchable: React.PropTypes.bool,
+    // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
+    tags: React.PropTypes.bool,
+
+    // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
+    // -----------------------------------
+
+    // **customClass** (String) *optional* - This value will be added as a css class to the control's main wrapping element.  You should be able to overide all styling by leading your rules with
+    // ```css
+    // .r-ss-wrap.{customClass}
+    // ```
+    customClass: React.PropTypes.string,
+
+    // **customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown
+    customGroupHeadingClass: React.PropTypes.string,
+
+    // **customSearchIconClass** (String) *optional* - This value will be added as a css class to the icon element in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
+    customSearchIconClass: React.PropTypes.string,
+
+    // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataFetch** option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
+    customLoaderClass: React.PropTypes.string,
+
+    // **customTagClass** (String) *optional* - Used in conjunction with the **tags** option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with
+    // ```css
+    //  .r-ss-tag.{customTagClass}
+    //  ```
+    customTagClass: React.PropTypes.string,
+
+    // MAIN CHANGE HANDLER
+    // -------------------
+
+    // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
+    onChange: React.PropTypes.func.isRequired,
+
+    // OPTION DATA-RELATED PROPS
+    // -------------------------
+
+    // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
+    // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the **dataSource** option documentation. The **dataSource** option should be left undefined when using this option.
+    ajaxDataFetch: React.PropTypes.func,
+
+    // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
+    // The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type
+
+    //  The parsing method supports dataSource values as:
+    //  - an array of option objects (will be directly assigned to state.data)
+    //  - an object with a collection property (object.collection will be assigned to state.data)
+    //  - an object with a get function (the return value of object.get('collection') will be assigned to state.data)
+
+    //  Each option in the resulting collection must have the following properties:
+    //  - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of **id**
+    //  - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
+    dataSource: React.PropTypes.oneOfType([
+              React.PropTypes.arrayOf(React.PropTypes.object),
+              React.PropTypes.object
+            ]),
+
+    // **optionLabelKey** (String) (*optional - defaults to using 'name' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value you would like displayed for each option.
+    optionLabelKey: React.PropTypes.string,
+
+    // **optionValueKey** (String) (*optional - defaults to using 'id' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value that **uniquely identifies** that option across the **dataSource** collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
+    optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
+
+    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
+    // The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
+    // It must return a **promise** object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the **dataSource** option documentation.
+    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.
+    // *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
+    pageDataFetch: React.PropTypes.func,
+
+    // **hasMorePages** (Function) *optional* (should be provided when using the *pageDataFetch* option) - A function that accepts one argument, a value as described by the *dataSource* option documentation, and returns a Boolean value.
+    // The value should indicate whether the option data collection has any more pages available for fetching
+    hasMorePages: React.PropTypes.func,
+
+    // GROUPING FUNCTIONALITY
+    // ----------------------
+
+    // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference the [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
+    groupBy: React.PropTypes.oneOfType([
+              React.PropTypes.string,
+              React.PropTypes.func,
+              React.PropTypes.object
+            ]),
+
+    // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
+    customGroupHeadingTemplateFunction: React.PropTypes.func,
+
+    // RENDERING (OPTION ITERATOR) FUNCTIONS
+    // -------------------------------------
+
+    // **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** option.  The function provided will serve as a replacement of the default search filter function.
+    // When left undefined the default filter function will be used.
+    //(Defaults To: A lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is leveraged by [Lodash's filter function](https://lodash.com/docs#filter) with your **dataSource** collection as its first argument.
+    customFilterFunction: React.PropTypes.func,
+
+    // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
+    customOptionTemplateFunction: React.PropTypes.func,
+
+    // LOCALIZATION STRINGS
+    // --------------------
+
+    // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
+    ajaxErrorString: React.PropTypes.string,
+
+    // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
+    noResultsString: React.PropTypes.string,
+
+    // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control when the user has no selected values
+    placeholder: React.PropTypes.string,
+
+    // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's search input field when a user has not entered any characters.
+    searchPlaceholder: React.PropTypes.string
+  },
+
+  // CONSTANTS
+  // ---------
+
+  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
+  SEARCH_FOCUS_ID: -1,
+
+  // regular expression used to determine if event src options have selected class
+  SELECTED_OPTION_REGEX: /r-ss-selected/,
+
+  // Default string values for localization options
+  DEFAULT_LOCALIZATIONS: {
+    ajaxErrorString: 'An Error occured while fetching options',
+    noResultsString: 'No Results Available',
+    placeholder: 'Select an Option',
+    searchPlaceholder: 'Search'
+  },
+
+  // STATE VARIABLES
+  // ---------------
+  getInitialState: function() {
+    return {
+      // **ajaxError** (Boolean) - Set to true when an ajax request fails
+      ajaxError: false,
+
+      // **controlId** (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels
+      controlId: _.uniqueId('rss_'),
+
+      // **data** (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected
+      data: this._configureDataSource(this.props.dataSource),
+
+      // **rawDataSource** (Object|Array) The raw dataSource value the user supplies through the *dataSource* prop (or returned from *ajaxDataFetch* / *pageDataFetch*). This value is passed to the *pageDataFetch* callback
+      rawDataSource: this.props.dataSource,
+
+      // **isOpen** (Boolean) - Whether or not the dropdown is open
+      isOpen: false,
+
+      // **focusedId** (Number) - Used to track keyboard focus for accessibility
+      focusedId: undefined,
+
+      // **labelKey** (String) - The option object key that will be used to identify the value displayed as an option's label
+      labelKey: this.props.optionLabelKey || 'name',
+
+      // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option in the dropdown
+      lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
+
+      // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
+      searchString: undefined,
+
+      // **value** (Array) - An array that holds the current user-selected option(s)
+      value: [],
+
+      // **valueKey** (String) - The option object key that will be used to identify the value used as an option's value property (values must be unique across data source)
+      valueKey: this.props.optionValueKey || 'id'
+    };
+  },
+
+  // KEYMAP CONSTANT
+  // ------
+  // A text-based lookup for keyboard navigation keys and their corresponding 'which' keycode values
+  keymap: {
+    'down': 40,
+    'end': 35, // goto last option ?
+    'enter': 13,
+    'esc': 27,
+    'home': 36, // go to first option ?
+    'space': 32,
+    'tab': 9,
+    'up': 38
+  },
+
+  // NON-STATE VARS (no need to re-render based on these being set)
+
+  // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
+  lastUserSelectedOption: undefined,
+
+  // If parent page updates the data source, reset the control with some defaults and the new dataSource.
+  componentWillReceiveProps: function(nextProps) {
+    if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
+
+      this.lastUserSelectedOption = undefined;
+
+      this.setState({
+        data: this._configureDataSource(nextProps.dataSource),
+        rawDataSource: nextProps.dataSource,
+        focusedId: undefined,
+        labelKey: nextProps.optionLabelKey || 'name',
+        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
+        valueKey: nextProps.optionValueKey || 'id'
+      });
+    }
+  },
+
+  // Update focused element after re-render
+  componentDidUpdate: function() {
+    this._focusCurrentFocusedId();
+  },
+
+  // main render method
+  render: function() {
+    var dropdownContent = this._getDropdownContent(),
+        placeholderString,
+        triggerDisplayContent,
+        triggerClasses,
+        caratClass = classNames('carat', {
+          'down': !this.state.isOpen,
+          'up': this.state.isOpen
+        }),
+        wrapClasses;
+
+    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
+      'r-ss-expanded': this.state.isOpen
+    });
+
+    triggerClasses = classNames('r-ss-trigger', {
+      'r-ss-open': this.state.isOpen,
+      'r-ss-placeholder': this.state.value.length < 1
+    });
+
+    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
+    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+
+    return (
+      React.createElement("div", {ref: "rssControl", id: this.state.controlId, className: wrapClasses}, 
+        React.createElement("div", {ref: "triggerDiv", 
+           className: triggerClasses, 
+           onClick: this.toggleDropdown, 
+           onKeyDown: this._handleKeyDown, 
+           role: "combobox", 
+           "aria-activedescendant": this._ariaGetActiveDescendentId(), 
+           "aria-haspopup": true, 
+           "aria-controls": this._ariaGetListId(), 
+           "aria-label": placeholderString, 
+           "aria-multiselectable": this._isMultiSelect(), 
+           tabIndex: "1"}, 
+            triggerDisplayContent, 
+            React.createElement("span", {ref: "carat", className: caratClass}, " ")
+        ), 
+        dropdownContent
+      ));
+  },
+
+  // toggles the open-state of the dropdown
+  // sets focused option in callback after opening
+  toggleDropdown: function() {
+    this.setState({
+      'isOpen': !this.state.isOpen
+    }, function() {
+      if (this.state.isOpen) {
+        this._setFocusOnOpen();
+      }
+    });
+  },
+
+  // returns the unique DOM id for the currently focused option. Used for accessibility-related labeling
+  _ariaGetActiveDescendentId: function() {
+    var ariaActiveDescendantId = null,
+        optionRef = this._getFocusedOptionKey();
+    if (this.refs[optionRef]) {
+      ariaActiveDescendantId = this.refs[optionRef].props.id;
+    }
+    return ariaActiveDescendantId;
+  },
+
+  // calculate the unique identifier for the options ul for aria compliance labeling usage
+  _ariaGetListId: function() {
+    return this.state.controlId + '_list';
+  },
+
+  // close the dropdown
+  // resets focus to the main control trigger
+  // clear focused id
+  _closeOnKeypress: function() {
+    if (this.state.isOpen) {
+      this.setState({
+        isOpen: false,
+        focusedId: undefined
+      }, this._focusTrigger);
+    }
+  },
+
+  // overloaded dataSource parser (Object|Array)
+  // case: (object) - look for a collection property which is an array, or runs an existing 'get' function, get('collection'), and determines if the return value is an array
+  // case: (Array) - return the dataSource array for use as this.state.data
+  _configureDataSource: function(dataSource) {
+    if (_.isArray(dataSource)) {
+     return dataSource;
+    }
+
+    if (_.isObject(dataSource)) {
+      if (_.isArray(dataSource.collection)) {
+        return dataSource.collection;
+      }
+
+      if (_.isFunction(dataSource.get)) {
+        var collection = dataSource.get('collection');
+        if (_.isArray(collection)) {
+          return collection;
+        }
+      }
+    }
+
+    return [];
+  },
+
+  // Used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control.
+  // Runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
+  _defaultSearchFilter: function(option) {
+    var search = this.state.searchString.toLowerCase();
+    if (!_.isString(option[this.state.labelKey])) {
+      return false;
+    }
+    return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
+  },
+
+  // fetch data source via ajax if **ajaxDataFetch** function provided
+  // handles success and failure for ajax call
+  _fetchDataViaAjax: function() {
+    var self = this;
+    this.props.ajaxDataFetch(this.state.rawDataSource).then(function(dataSourceFromAjax) {
+      self.setState({
+        ajaxError: false,
+        data: self._configureDataSource(dataSourceFromAjax),
+        rawDataSource: dataSourceFromAjax
+      });
+    }, function() {
+      self.setState({
+        ajaxError: true,
+        // define as empty array on error so that _needsAjaxFetch will evaluate to false
+        rawDataSource: []
+      });
+    });
+  },
+
+  // Fetch the next page of options data if **pageDataFetch** function provided.
+  // Called onMouseMove if scroll position in dropdown exceeds threshold.
+  // Handles success and failure for ajax call
+  _fetchNextPage: function() {
+    var self = this;
+    this.props.pageDataFetch(this.state.rawDataSource).then(function(dataSourceFromPageFetch) {
+      self.setState({
+        ajaxError: false,
+        data: self._configureDataSource(dataSourceFromPageFetch),
+        rawDataSource: dataSourceFromPageFetch,
+        isFetchingPage: false
+      });
+    }, function() {
+        self.setState({
+          ajaxError: true
+        });
+    });
+  },
+
+  // choose the appropriate search filter function and run the filter against the options data
+  _filterDataBySearchString: function(data) {
+    var filterFunction = _.isFunction(this.props.customFilterFunction) ? this.props.customFilterFunction : this._defaultSearchFilter;
+    return _.filter(data, filterFunction);
+  },
+
+  // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
+  _findArrayOfOptionDataObjectsByValue: function(value) {
+    var valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
+    return _.reject(this.state.data, function(item) {
+      return !_.contains(valuesArray, item[this.state.valueKey]);
+    }, this);
+  },
+
+  // determine whether to focus a option value in the DOM, or the search field
+  _focusCurrentFocusedId: function() {
+    if (this.state.focusedId < 0) {
+      this._focusSearch();
+      return;
+    }
+
+    this._focusDOMOption();
+  },
+
+  // focus the DOM option identified by the current state.focusedId
+  _focusDOMOption: function() {
+    var optionRef = this._getFocusedOptionKey();
+    if (this.refs[optionRef]) {
+      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
+        this.refs[optionRef].getDOMNode().focus();
+      }
+    }
+  },
+
+  // focus the dropdown's search field if it exists
+  _focusSearch: function() {
+    if (this.refs.searchInput) {
+      this.refs.searchInput.getDOMNode().focus();
+    }
+  },
+
+  // focus the main trigger element of the control
+  _focusTrigger: function() {
+    if (this.refs.triggerDiv) {
+      this.refs.triggerDiv.getDOMNode().focus();
+    }
+  },
+
+  // choose whether to template the display of user-selected values normally, or as tags
+  _generateValueDisplay: function() {
+    if (!this.props.tags) {
+      return this._getNormalDisplayMarkup();
+    } else {
+      return this._getTagsDisplayMarkup();
+    }
+  },
+
+  // render the content shown if an ajax error occurs
+  _getAjaxErrorMarkup: function() {
+    var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
+    return (React.createElement("li", {className: "r-ss-dropdown-option error"}, React.createElement("i", {ref: "errorDisplay"}, errorString)));
+  },
+
+  // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
+  _getDataSource: function() {
+    var data = _.isArray(this.state.data) ? this.state.data : [];
+    if (_.isString(this.state.searchString)) {
+      data = this._filterDataBySearchString(data);
+    }
+
+    if (this.props.groupBy) {
+      data = _.groupBy(data, this.props.groupBy);
+    }
+
+    return data;
+  },
+
+  // build and render the dropdown content
+  // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
+  _getDropdownContent: function() {
+    if (!this.state.isOpen) {
+      return null;
+    }
+
+    var searchContent = this._getSearchContent(),
+        mouseMoveHandler,
+        pagingLi;
+
+    mouseMoveHandler = (this.props.pageDataFetch) ? this._onMouseMove : null;
+    pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
+
+    return(
+      React.createElement("div", {ref: "dropdownContent", className: "r-ss-dropdown", onKeyDown: this._handleKeyDown}, 
+        searchContent, 
+        React.createElement("div", {ref: "scrollWrap", className: "r-ss-options-wrap", onMouseMove: mouseMoveHandler}, 
+          React.createElement("ul", {className: "r-ss-dropdown-options", 
+              ref: "dropdownOptionsList", 
+              tabIndex: "-1", 
+              id: this._ariaGetListId(), 
+              role: "listbox", 
+              "aria-expanded": this.state.isOpen}, 
+            this._getOptionsMarkup()
+          ), 
+          pagingLi
+        )
+      )
+    );
+  },
+
+  // build the string used as a React component ref for each focusable option
+  _getFocusedOptionKey: function() {
+    return 'option_' + this.state.focusedId;
+  },
+
+  // render a group heading, used if **groupBy** option is provided.
+  // renders a non-focusable list item for an option group heading
+  _getGroupHeadingMarkup: function(heading) {
+    if (!heading) {
+      return null;
+    }
+
+    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
+        headingKey = "heading_" + heading,
+        headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
+
+    return(
+      React.createElement("li", {tabIndex: "-1", className: headingClasses, key: headingKey, role: "separator"}, 
+        headingMarkup
+      ));
+  },
+
+  // render the content shown when no options are available
+  _getNoResultsMarkup: function() {
+    var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
+    return (React.createElement("li", {className: "r-ss-dropdown-option", tabIndex: "-1"}, React.createElement("i", {ref: "noResults"}, noResultsString)));
+  },
+
+  // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
+  // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
+  _getNormalDisplayMarkup: function() {
+    return _.map(this.state.value, function(value) {
+      if (this.props.customOptionTemplateFunction) {
+        return this.props.customOptionTemplateFunction(value);
+      } else {
+        return value[this.state.labelKey];
+      }
+    }, this);
+  },
+
+  // render a loading span (spinner gif), with **customLoaderClass** if provided
+  _getLoadingMarkup: function() {
+    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
+    return (React.createElement("span", {ref: "loader", className: loaderClasses}));
+  },
+
+  // get the option Li element from a passed eventTarget.
+  // for key events = event.target
+  // for click events = event.currentTarget
+  _getOptionIndexFromTarget: function(targetLi) {
+    return parseInt(targetLi.getAttribute('data-option-index'), 10);
+  },
+
+  // render the data source as options,
+  // render loading if fetching
+  // render ajaxError markup when state.ajaxError is true
+  // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
+  // - must track options count to maintain a single focusable index mapping across multiple groups of options
+  _getOptionsMarkup: function() {
+    if (this._needsAjaxFetch()) {
+      this._fetchDataViaAjax();
+      return this._getPagingLi();
+    }
+
+    if (this.state.ajaxError) {
+      return this._getAjaxErrorMarkup();
+    }
+
+    var data = this._getDataSource(),
+        options = [],
+        optionsCount = 0;
+
+    if (!_.isArray(data)) {
+      _.forIn(data, function(groupedOptions, heading) {
+        options.push(this._getGroupHeadingMarkup(heading));
+        options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
+        optionsCount = optionsCount + groupedOptions.length;
+      }, this);
+    } else {
+      options = this._getTemplatedOptions(data);
+    }
+
+    return options;
+  },
+
+  // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
+  _getPagingLi: function() {
+    return(React.createElement("li", {key: "page_loading", className: "r-ss-page-fetch-indicator", tabIndex: "-1"}, 
+            this._getLoadingMarkup()
+          ));
+  },
+
+  // render a search input bar with a search icon
+  // - add localized **searchPlaceholder** if provided
+  // - add **customIconClass** if provided
+  _getSearchContent: function() {
+    if (!this.props.searchable) {
+      return null;
+    }
+
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
+        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
+        searchAriaId = this.state.controlId + '_search',
+        searchAriaIdLabel = searchAriaId + '_label';
+
+    return(
+      React.createElement("div", {className: "r-ss-search-wrap"}, 
+        React.createElement("div", {className: "r-ss-search-inner"}, 
+          React.createElement("label", {ref: "searchInputLabel", id: searchAriaIdLabel, className: "r-ss-search-aria-label", htmlFor: searchAriaId}, searchPlaceholderString), 
+          React.createElement("input", {ref: "searchInput", 
+                 placeholder: searchPlaceholderString, 
+                 onClick: this._setFocusIdToSearch, 
+                 onChange: this._handleSearch, 
+                 defaultValue: this.state.searchString, 
+                 name: searchAriaId, 
+                 id: searchAriaId, 
+                 "aria-labelledby": searchAriaIdLabel, 
+                 "aria-owns": this._ariaGetListId(), 
+                 "aria-autocomplete": "list"}), 
+          React.createElement("i", {className: magnifierClass}, "search")
+        )
+      )
+    );
+  },
+
+  // iterate over selected values and build tags markup for selected options display
+  _getTagsDisplayMarkup: function() {
+    return _.map(this.state.value, function(value) {
+      return this._getTagMarkup(value);
+    }, this);
+  },
+
+  // render a tag for an individual selected value
+  // - add **customTagClass** if provided
+  _getTagMarkup: function(value) {
+    var label = value[this.state.labelKey],
+        displayValue = value[this.state.valueKey],
+        tagKey = 'tag_' + displayValue,
+        buttonName = "RemoveTag_" + displayValue,
+        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+
+    return (
+      React.createElement("span", {className: tagWrapClass, key: tagKey}, 
+        React.createElement("span", {className: "r-ss-tag-label"}, label), 
+        React.createElement("button", {name: buttonName, type: "button", className: "r-ss-tag-remove", onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value)}, "X")
+      ));
+  },
+
+  // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
+  // - render no results markup if no options result from map calls
+  _getTemplatedOptions: function(data, indexStart) {
+    indexStart = indexStart || 0;
+    var options = this._mapDataToOptionsMarkup(data, indexStart);
+
+    if (options.length === 0) {
+      options = this._getNoResultsMarkup();
+    }
+
+    return options;
+  },
+
+  // main keyDown binding handler for keyboard navigation and selection
+  _handleKeyDown: function(event) {
+    if (this._isUserSearchTypingEvent(event)) {
+      return;
+    }
+
+    if (this.state.isOpen || (event.which !== this.keymap.tab)) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+
+    switch(event.which) {
+      case this.keymap.down:
+        this._onDownKey(event);
+        break;
+      case this.keymap.end:
+        this._onEndKey();
+        break;
+      case this.keymap.enter:
+        this._onEnterKey(event);
+        break;
+      case this.keymap.esc:
+        this._onEscKey();
+        break;
+      case this.keymap.home:
+        this._onHomeKey();
+        break;
+      case this.keymap.space:
+        this._onEnterKey(event); // delegate to enter
+        break;
+      case this.keymap.tab: // delegate to enter (selection) handler
+        if (this.state.isOpen) {
+          this._onEnterKey(event);
+        }
+        break;
+      case this.keymap.up:
+        this._onUpKey(event);
+        break;
+    }
+  },
+
+  // handler for searchInput's keyUp event
+  _handleSearch: function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    var searchString = event.target.value;
+    this._handleSearchDebounced.call(this, searchString);
+  },
+
+  // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
+  _handleSearchDebounced: _.debounce(function(search) {
+    this.setState({
+      searchString: search
+    });
+  }, 300),
+
+  // return the boolean used to determine whether an option should have the 'r-ss-selected' class
+  _isCurrentlySelected: function(dataItem) {
+    if (!_.isArray(this.state.value)) {
+      return _.isEqual(this.state.value, dataItem);
+    }
+    return !!(_.findWhere(this.state.value, dataItem));
+  },
+
+  // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
+  _isMultiSelect: function() {
+    return this.props.multiple || this.props.tags;
+  },
+
+  // user search events need to pass through the default keyDown handler
+  _isUserSearchTypingEvent: function(event) {
+    if (!this.refs.searchInput || (event.which === this.keymap.down) || ((event.which === this.keymap.up) && event.altKey) || (event.which === this.keymap.esc)) {
+      return false;
+    }
+    return (event.target === this.refs.searchInput.getDOMNode());
+  },
+
+  // Render the option list-items.
+  // Leverage the **customOptionTemplateFunction** function if provided
+  _mapDataToOptionsMarkup: function(data, indexStart) {
+    return _.map(data, function(dataOption, index) {
+      index = indexStart + index;
+
+      var isCurrentlySelected = this._isCurrentlySelected(dataOption),
+          itemKey = "drop_li_" + dataOption[this.state.valueKey],
+          indexRef = 'option_' + index,
+          ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
+          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
+          classes = classNames('r-ss-dropdown-option', {
+            'r-ss-selected': isCurrentlySelected
+          });
+
+      return (
+        React.createElement("li", {ref: indexRef, 
+            id: ariaDescendantId, 
+            tabIndex: "0", 
+            "data-option-index": index, 
+            className: classes, 
+            "aria-selected": isCurrentlySelected, 
+            key: itemKey, 
+            "data-option-value": dataOption[this.state.valueKey], 
+            onClick: this._selectItemOnOptionClick.bind(null, dataOption), 
+            role: "option"}, 
+          optionMarkup
+        ));
+    }, this);
+  },
+
+  // determines next focusedId prior to updateFocusedId call
+  _moveFocusDown: function() {
+    if (this._needsAjaxFetch()) {
+      return;
+    }
+    var nextId;
+
+    if (_.isUndefined(this.state.focusedId)) {
+      if (this.props.searchable) {
+        nextId = this.SEARCH_FOCUS_ID;
+      } else {
+        nextId = 0;
+      }
+    } else {
+      nextId = (this.state.lastOptionId === this.state.focusedId) ? this.state.lastOptionId : this.state.focusedId + 1;
+    }
+
+    this._updateFocusedId(nextId);
+  },
+
+  // determines previous focusedId prior to updateFocusedId call
+  _moveFocusUp: function() {
+    var previousId;
+
+    if (!_.isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
+      if (this.state.focusedId === 0) {
+        if (this.props.searchable) {
+          previousId = this.SEARCH_FOCUS_ID;
+        }
+      } else {
+        previousId = this.state.focusedId - 1;
+      }
+    }
+    this._updateFocusedId(previousId);
+  },
+
+  // return boolean to determine if we have already received data from the **ajaxDataFetch** function
+  _needsAjaxFetch: function() {
+    return (_.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch));
+  },
+
+  // down key handler
+  // shift-keypress is used to select successive focus items for aria keyboard accessibility
+  _onDownKey: function(event) {
+    if (!this.state.isOpen) {
+      this.toggleDropdown();
+      return;
+    }
+
+    this._moveFocusDown();
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectFocusedOption(event.target, true);
+    }
+  },
+
+  // end key handler. Move focus to the last available option
+  _onEndKey: function() {
+    if (this.state.lastOptionId) {
+      this._updateFocusedId(this.state.lastOptionId);
+    }
+  },
+
+  // Enter key handler.
+  // Opens the control when closed.
+  // Otherwise, makes selection
+  _onEnterKey: function(event) {
+    if (!this.state.isOpen) {
+      this.toggleDropdown();
+      return;
+    }
+
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectAllOptionsToLastUserSelectedOption(event.target);
+      return;
+    }
+
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.target.getAttribute('class'));
+
+    if (keepControlOpen && alreadySelected) {
+      var optionData = _.first(this._findArrayOfOptionDataObjectsByValue(event.target.getAttribute('data-option-value')));
+      this._removeSelectedOptionByValue(optionData);
+    } else {
+      if (!alreadySelected) {
+        this._selectFocusedOption(event.target, keepControlOpen);
+      }
+    }
+  },
+
+  // Escape key handler. Closes the dropdown
+  _onEscKey: function() {
+    this._closeOnKeypress();
+  },
+
+  // Home key handler. Moves focus to the first available option
+  _onHomeKey: function() {
+    this._updateFocusedId(0);
+  },
+
+  // mouse move handler used when **pageDataFetch** is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown
+  _onMouseMove: function() {
+    // do not fetch page if searching or already loading data
+    if (this.refs.loader || this.state.searchString || !this._pageFetchingComplete()) {
+      return;
+    }
+
+    var wrap = this.refs.scrollWrap.getDOMNode();
+
+    if ((wrap.scrollTop + wrap.offsetHeight) >= wrap.scrollHeight) {
+      this.setState({
+        isFetchingPage: true
+      }, this._fetchNextPage);
+    }
+  },
+
+  // Up key handler.
+  // Shift-click is used to select successive focus items for aria keyboard accessibility
+  _onUpKey: function(event) {
+    if (event.altKey) {
+      this._closeOnKeypress();
+      return;
+    }
+
+    if (this.state.isOpen) {
+      this._moveFocusUp();
+      if (this._isMultiSelect() && event.shiftKey) {
+        this._selectFocusedOption(event.target, true);
+      }
+    }
+  },
+
+  // If hasMorePages option (Function) present, returns the value of its call.
+  // Otherwise, returns false so page fetch will not occur
+  _pageFetchingComplete: function() {
+    if (!_.isFunction(this.props.hasMorePages)) {
+      return false;
+    } else {
+      return this.props.hasMorePages(this.state.rawDataSource);
+    }
+  },
+
+  // Used in shift selection when the event target was previously selected.
+  // Remove all options up to, but not including the option that raised the event.
+  // (So it behaves like a native browser form multi-select)
+  _removeAllOptionsInOptionIdRange: function(from, to) {
+    var valuePropsToReject = [],
+        start = (from <= to) ? from : to,
+        end = (to >= from) ? to : from;
+
+    for (var i = start; i <= end; i++) {
+      var refString = 'option_' + i,
+      option = this.refs[refString];
+      if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
+        if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getDOMNode().getAttribute('data-option-value')) {
+          valuePropsToReject.push(option.props['data-option-value']);
+        }
+      }
+    }
+
+    var remainingSelected = _.reject(this.state.value, function(option) {
+        return _.includes(valuePropsToReject, option[this.state.valueKey]);
+      }, this);
+
+    this.props.onChange(remainingSelected);
+
+    this.setState({
+      value: remainingSelected
+    });
+  },
+
+  // Remove an item from the state.value selected items array.
+  // The *value* arg represents a full dataSource option object
+  _removeSelectedOptionByValue: function(value) {
+    // clear lastUserSelected if has been removed
+    if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
+      this.lastUserSelectedOption = undefined;
+    }
+
+    var SelectedAfterRemoval = _.reject(this.state.value, function(option) {
+              return option[this.state.valueKey] === value[this.state.valueKey];
+            }, this);
+
+    this.props.onChange(SelectedAfterRemoval);
+
+    this.setState({
+      value: SelectedAfterRemoval
+    });
+  },
+
+  // remove a selected tag on keyDown
+  _removeTagKeyPress: function(value, event) {
+    var isEnterKey = event.which === this.keymap.enter,
+        isSpaceKey = event.which === this.keymap.space;
+
+    if (isEnterKey || isSpaceKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      this._removeSelectedOptionByValue(value); // delegate to removal handler
+    }
+  },
+
+  // remove a selected tag on click
+  _removeTagClick: function(value, event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this._removeSelectedOptionByValue(value);
+  },
+
+  // used in shift-click range selections
+  _selectAllOptionsInOptionIdRange: function(from, to) {
+    var valuePropsToSelect = [],
+        start = (from <= to) ? from : to,
+        end = (to >= from) ? to : from;
+
+    for (var i = start; i <= end; i++) {
+      var refString = 'option_' + i,
+      option = this.refs[refString];
+      if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        valuePropsToSelect.push(option.props['data-option-value']);
+      }
+    }
+
+    var optionsToSelect = _.reduce(this.state.data, function(memo, option) {
+          if (_.includes(valuePropsToSelect, option[this.state.valueKey])) {
+            memo.push(option);
+          }
+          return memo;
+        }, [], this);
+    this._selectItemByValues(optionsToSelect, true);
+  },
+
+  // Used in shift-key selection.
+  // Select all options from the current eventTarget to the lastUserSelectedOption
+  _selectAllOptionsToLastUserSelectedOption: function(eventTargetLi) {
+    if (!this.lastUserSelectedOption) {
+      this.lastUserSelectedOption = eventTargetLi;
+      // select all options from the first option to the clicked option
+      this._selectAllOptionsInOptionIdRange(0, this._getOptionIndexFromTarget(eventTargetLi));
+      return;
+    }
+
+    var from = this._getOptionIndexFromTarget(this.lastUserSelectedOption),
+        to = this._getOptionIndexFromTarget(eventTargetLi);
+
+    this.lastUserSelectedOption = eventTargetLi;
+
+    // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
+    if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
+      this._removeAllOptionsInOptionIdRange(from, to);
+    } else {
+      this._selectAllOptionsInOptionIdRange(from, to);
+    }
+  },
+
+  // Make a user-selection of the option that is currently focused.
+  // Will close the dropDown when keepControlOpen is falsy
+  _selectFocusedOption: function(eventTargetLi, keepControlOpen) {
+    keepControlOpen = keepControlOpen || false;
+
+    var focusedOptionKey = this._getFocusedOptionKey();
+    if (this.refs[focusedOptionKey]) {
+      var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
+
+      // store as last userSelected
+      this.lastUserSelectedOption = eventTargetLi;
+
+      if (keepControlOpen && this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
+        var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        this._removeSelectedOptionByValue(optionFullFromValueProp);
+      } else {
+        this._selectItemByValues(optionValue, keepControlOpen);
+      }
+    }
+  },
+
+  // Handle selection of an option or array of options.
+  // Track last selection the user made.
+  // Close dropdown on the setState callback if not a non control-closing selection
+  _selectItemByValues: function(value, keepControlOpen) {
+   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+
+    if (this._isMultiSelect() || (keepControlOpen && this.state.value)) {
+      objectValues = this.state.value.concat(objectValues);
+    }
+
+    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
+    this.props.onChange(outputValue);
+
+    if (keepControlOpen) {
+      this.setState({
+        value: objectValues
+      });
+    } else {
+      this.setState({
+        value: objectValues
+      }, this._closeOnKeypress);
+    }
+  },
+
+  // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
+  _selectItemOnOptionClick: function(value, event) {
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
+      return;
+    }
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
+
+    // store clicked option as the lastUserSelected
+    this.lastUserSelectedOption = event.currentTarget;
+
+    if (keepControlOpen && alreadySelected) {
+      this._removeSelectedOptionByValue(value);
+    } else {
+      if (!alreadySelected) {
+        this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
+      }
+    }
+  },
+
+  // set the focusId to the SEARCH_FOCUS_ID constant value
+  _setFocusIdToSearch: function() {
+    this._updateFocusedId(this.SEARCH_FOCUS_ID);
+  },
+
+  // if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown
+  _setFocusOnOpen: function() {
+    if (this.lastUserSelectedOption) {
+      this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
+    } else {
+      this._moveFocusDown();
+    }
+  },
+
+  // Sets the current focusedId.
+  _updateFocusedId: function(id) {
+    this.setState({
+      focusedId: id
+    });
+  }
+
+});
+
+module.exports = ReactSuperSelect;
+
+
+},{"classnames":1,"lodash":3,"react":158}]},{},[169])

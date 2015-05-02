@@ -5,9 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>React-super-select by alsoscotland</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
+    <script src="example/scale.fix.js"></script>
     <link rel="stylesheet" href="stylesheets/examples-app.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -36,356 +34,51 @@
       <section>
         <h2>react-super-select</h2>
 
-<p>A flexible replacement for the html select control built with React</p>
-<h3>Features:</h3>
-<ul>
-  <li>template capability for options</li>
-  <li>aria-compliant keyboard navigation</li>
-  <li>multiselect &amp; tags</li>
-  <li>ajax support</li>
-  <li>ajax paging/load-more support</li>
-  <li>grouped options under headings</li>
-  <li>easy style customization</li>
-  <li>localization support</li>
-</ul>
+        <p>A flexible replacement for the html select control built with React</p>
+        <h3>Features:</h3>
+        <ul>
+          <li>template capability for options</li>
+          <li>aria-compliant keyboard navigation</li>
+          <li>multiselect &amp; tags</li>
+          <li>ajax support</li>
+          <li>ajax paging/load-more support</li>
+          <li>grouped options under headings</li>
+          <li>easy style customization</li>
+          <li>localization support</li>
+        </ul>
 
-<h3>Dependencies:</h3>
-<ul>
-  <li><a href="https://facebook.github.io/react/index.html">React</a></li>
-  <li><a href="https://www.npmjs.com/package/classnames">classNames</a></li>
-  <li><a href="https://lodash.com/">Lodash</a></li>
-</ul>
+        <h3>Dependencies:</h3>
+        <ul>
+          <li><a href="https://facebook.github.io/react/index.html">React</a></li>
+          <li><a href="https://www.npmjs.com/package/classnames">classNames</a></li>
+          <li><a href="https://lodash.com/">Lodash</a></li>
+        </ul>
 
-<h3>install from npm</h3>
-<pre><code>$ npm install react-super-select
-</code></pre>
-
-<!-- Live Examples -->
-<h3>Live Examples Page</h3>
-<a class="live-examples" href="example/react-super-select-examples.html">View Live Examples</a>
-
-<!-- API Documentation -->
-<h3>API documentation</h3>
-  you can always view the
-  <a href="example/annotated-source.html">Annotated Source</a>
-
-  <h4> Component Property Documentation Links: </h4>
-  <nav class="api">
-    <ul>
-      <li><a href="#ajaxDataSource"> ajaxDataSource </a></li>
-      <li><a href="#customClassName"> customClassName </a></li>
-      <li><a href="#customFilterFunction"> customFilterFunction </a></li>
-      <li><a href="#customGroupHeadingClass"> customGroupHeadingClass </a></li>
-      <li><a href="#customGroupHeadingTemplateFunction"> customGroupHeadingTemplateFunction </a></li>
-      <li><a href="#customLoaderClass"> customLoaderClass </a></li>
-      <li><a href="#customOptionTemplateFunction"> customOptionTemplateFunction </a></li>
-      <li><a href="#customSearchIconClass"> customSearchIconClass </a></li>
-      <li><a href="#customTagClass"> customTagClass </a></li>
-      <li><a href="#dataSource"> dataSource </a></li>
-      <li><a href="#groupBy"> groupBy </a></li>
-      <li><a href="#multiple"> multiple </a></li>
-      <li><a href="#noResultsString"> noResultsString </a></li>
-      <li><a href="#onChange"> onChange </a></li>
-      <li><a href="#optionLabelKey"> optionLabelKey </a></li>
-      <li><a href="#optionValueKey"> optionValueKey </a></li>
-      <li><a href="#pageFetch"> pageFetch </a></li>
-      <li><a href="#placeholder"> placeholder </a></li>
-      <li><a href="#searchPlaceholder"> searchPlaceholder </a></li>
-      <li><a href="#searchable"> searchable </a></li>
-      <li><a href="#tags"> tags </a></li>
-    </ul>
-  </nav>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="ajaxDataSource"> ajaxDataSource </a>
-  </h4>
-  <p>
-    (Function) (<em>optional - but <strong>dataSource</strong> must be supplied if undefined</em>)
-    <br />
-    Your select dropdown&#39;s data may be fetched via ajax if you provide a function as the value for this option.
-    <br />
-    The function takes no arguments, but it must return a <strong>promise</strong> object. (i.e. an object with a then function).
-    <br />
-    The promise must resolve with an array of objects (a collection) as described by the <strong>dataSource</strong> option documentation.
-    <br />
-    The <strong>dataSource</strong> option should be left undefined when using this option.
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customClassName"> customClassName </a>
-  </h4>
-  <p>
-     (String) <em>optional</em>
-     <br />
-     This string value will be added as a css class to the control&#39;s main wrapping element.  You should be able to overide all styling with one point of css specificity by leading your rules with
-<pre><code class="lang-css">.r-ss-wrap.{customClassName}
-</code></pre>
-  </p>
-</article>
+        <h3>install from npm</h3>
+        <pre><code>$ npm install react-super-select
+        </code></pre>
 
 
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customFilterFunction"> customFilterFunction </a>
-  </h4>
-  <p>
-   (Function) <em>optional</em> - Used in conjunction with the <strong>searchable</strong> options.
-   <br />
-   The function provided for this option will serve as a replacement of the default search filter function.
-   <br >
-   (The default is a lowercase string comparison for text.  Matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown&#39;s search field).
-   <br />
-   The function is passed as the second arg to <a href="https://lodash.com/docs#filter">Lodash&#39;s filter function</a>.  Your <strong>dataSource</strong> as the first arg.
-  </p>
-</article>
+        <h3>API Docs</h3>
+        <a class="featured-link" href="#apiDocs">
+          View API Documentation
+        </a>
 
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customGroupHeadingClass"> customGroupHeadingClass </a>
-  </h4>
-  <p>
-    (String) <em>optional</em> - Used in conjunction with the <strong>groupBy</strong> option.
-    <br />
-    Will add a custom css class to the group headings which are rendered into the dropdown
-  </p>
-</article>
+        <h3>Live Examples Page</h3>
+        <a class="featured-link" href="example/react-super-select-examples.html">
+          View Live Examples
+        </a>
 
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customGroupHeadingTemplateFunction"> customGroupHeadingTemplateFunction </a>
-  </h4>
-  <p>
-    (Function) <em>optional</em>
-    (Used in conjunction with the <strong>groupBy</strong> option)
-    <br />
-    This function provides custom templating capability for your dropdown heading options.
-    <br/ >
-    The function should accept the value returned as each group&#39;s object key
-    <br />
-    (These keys are returned by the call of Lodash&#39;s groupBy when passed the value of your <strong>groupBy</strong> option)
-  </p>
-</article>
+        <h3>Keyboard Navigation</h3>
+        <a class="featured-link" href="#keyboard">
+          View Keyboard Navigation Docs
+        </a>
 
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customLoaderClass"> customLoaderClass </a>
-  </h4>
-  <p>
-    (String) <em>optional</em> - Used in conjunction with the <strong>ajaxDataSource</strong> option.
-    <br />
-    A css class which will be added to the loading icon, allowing css overrides.
-    <br />( By default the control shows an animated gif spinner as base64 background image in css)
-  </p>
-</article>
+        <!-- API doc react -->
+        <div id="props_docs"></div>
 
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customOptionTemplateFunction"> customOptionTemplateFunction </a>
-  </h4>
-  <p>
-    (Function) <em>optional</em>
-    <br />
-    This function provides custom templating capability for your dropdown options and the display of selected values.
-    <br />The function should accept a single option object from your <strong>dataSource</strong>collection
-    <br />
-    The function should return your desired markup based on that object&#39;s properties.
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customSearchIconClass"> customSearchIconClass </a>
-  </h4>
-  <p>
-    (String) <em>optional - relevant if <strong>searchable</strong> is true</em>
-    <br />
-    This class name will be added to the icon in the search-filtering bar.  Allowing you to override the default search icon
-    <br />
-    (By default the control shows a magnifying glass icon)
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="customTagClass"> customTagClass </a>
-  </h4>
-  <p>
-    (String) <em>optional</em> - Used in conjunction with the <strong>tags</strong> option.
-    <br />
-    A css class which will be added to wrapper of a selection displayed as a tag.
-    <br />
-    You should be able to overide all tag styling with one point of css specificity by leading your rules with
-<pre><code class="lang-css"> .r-ss-tag.{customTagClass}
-</code></pre>
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="dataSource"> dataSource </a>
-  </h4>
-  <p>
-    (An Array of Objects, i.e. a collection) (<em>optional - but <strong>ajaxDataSource</strong> must be supplied if undefined</em>)
-    <br />
-    The dataSource option provides the data for your options dropdown. Each option in the collection must have:
-  </p>
-  <ul>
-    <li>a unique value in the key set by the <strong>optionValueKey</strong> or the default of <strong>id</strong></li>
-    <li>a value in the key set by the <strong>optionLabelKey</strong> or the default of <strong>name</strong></li>
-  </ul>
-
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="groupBy"> groupBy </a>
-  </h4>
-  <p>
-    (String|Object|Function) <em>optional</em>
-    <br />
-    Allows you to sort your dropdown options into groups by leveraging Lodash&#39;s groupBy function.  Please reference <a href="https://lodash.com/docs#groupBy">Lodash</a> documentation for behavior of <em>groupBy</em> when passed different argument types
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="multiple"> multiple </a>
-  </h4>
-  <p>
-    (Boolean) <em>optional</em>
-    <br/ >
-    Set to true for a multi-select control with normal or custom templating.  When using the <strong>tags</strong> display option, this option is redundant
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="noResultsString"> noResultsString </a>
-  </h4>
-  <p>
-    (String) <em>optional</em>
-    <br />
-    A string value which will be displayed when your dropdown shows no results.
-    <br />
-    (i.e. dataSource is an empty collection, or ajaxDataSource returns an empty collection)
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="onChange"> onChange </a>
-  </h4>
-  <p>
-    (Function) <em>required</em>
-    <br />
-    This is the main callback handler for the control which fires when a user makes selection(s)
-    <br />
-    In single-select control, the single selected option will be passed to this handler function.
-    <br/ >
-    In a <strong>multiple</strong> or <strong>tags</strong> control, an array of selected values (object from the dataSource collection) will be passed to this handler function.
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="optionLabelKey"> optionLabelKey </a>
-  </h4>
-  <p>
-    (String) (<em>optional - will use &#39;name&#39; key if undefined</em>)
-    <br />
-    This value represents the key in each option object in your <strong>dataSource</strong> collection which represents the value you would like displayed for each option.
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="optionValueKey"> optionValueKey </a>
-  </h4>
-  <p>
-    (String) (<em>optional - will use &#39;id&#39; key if undefined</em>)
-    <br />
-    This value represents the key in each option object in your <strong>dataSource</strong> collection which represents the value that uniquely identifies that option across the dataSource collection.
-    <br />
-    You can think of it in terms of the value attribute of a traditional html <code>&lt;select&gt;</code> element
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="pageFetch"> pageFetch </a>
-  </h4>
-  <p>
-    (Function) <em>optional</em>
-    <br />
-    Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
-    <br />
-    The function takes one argument, the current data array.
-    <br />
-    It must return a <strong>promise</strong> object. (i.e. an object with a then function).
-    <br />
-    The promise <strong>must resolve with an object with two properties</strong>.
-  </p>
-  <ul>
-    <li>
-      <strong>collection</strong> (Array of Objects) the array of data to be used as described by the <strong>dataSource</strong> option documentation.  The array should be the collection value passed into this function augmented with the data from the new page.
-    </li>
-    <li>
-      <strong>complete</strong> (Boolean) indicates whether all pages have been fetched (i.e. do not fetch more pages)
-      The pageFetch function will be called based upon the user&#39;s scroll position in the dropdown.  <em>It will not be called when loading ajax data, or when filtering results in a searchable dropdown</em>
-    </li>
-  </ul>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="placeholder"> placeholder </a>
-  </h4>
-  <p>
-    (String) <em>optional</em>
-    <br />
-    This string value will be displayed in the main display area of your control before a user has selected any values
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="searchPlaceholder"> searchPlaceholder </a>
-  </h4>
-  <p>
-    (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option)
-    <br />
-    This string will be shown in the dropdown area&#39;s searchfield when a user has not entered any characters.
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="searchable"> searchable </a>
-  </h4>
-  <p>
-    (Boolean) <em>optional</em>
-    <br />
-    Whether or not to show a search bar in the dropdown area which offers text-based filtering of the options-set (by label key)
-  </p>
-</article>
-
-<article class="api-item">
-  <h4 class="api-link">
-    <a name="tags"> tags </a>
-  </h4>
-  <p>
-    (Boolean) <em>optional</em>
-    <br />
-    Whether or not to display your chosen multi-select values as tags.
-    <br />
-    (When set, there is no need to set the <strong>multiple</strong> option)
-  </p>
-</article>
-
-<!-- END API documentation -->
+        <!-- Keyboard Navigation docs react -->
+        <div id="keyboard_docs"></div>
 
       </section>
       <footer>
@@ -393,5 +86,7 @@
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    <script src="example/props-app.js"></script>
+    <script src="example/keyboard-navigation-app.js"></script>
   </body>
 </html>

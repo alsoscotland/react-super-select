@@ -1,6 +1,6 @@
-var testData = require('../support/test-data.js'),
-    exampleOutput = require('../support/example-output.js'),
-    basicSearchableMarkdown = require('./markdown/js/basic-searchable').body;
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
 
 var handlerExample = function(option) {
   var output = [
@@ -8,7 +8,7 @@ var handlerExample = function(option) {
     '\tid: ', option.id, '\n',
     '\tname: ', option.name, '\n',
     '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('basic_example_output', output.join(''));
+  exampleOutput('basic_searchable_output', output.join(''));
 };
 
 var basicSearchableExample = {

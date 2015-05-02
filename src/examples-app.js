@@ -4,7 +4,7 @@ var _ = require('lodash'),
 
 var allExamples = require('./examples/all-examples');
 
-var App = React.createClass({
+var Examples = React.createClass({
 
   _renderExampleLinks: function() {
     var exampleLinks = _.map(allExamples, function(example, index) {
@@ -45,7 +45,7 @@ var App = React.createClass({
             </li>);
     });
 
-    return(<ul className="live-examples">
+    return(<ul className="live-examples-list">
         {exampleSections}
       </ul>);
   },
@@ -58,4 +58,4 @@ var App = React.createClass({
   }
 });
 
-React.render(<App />, document.getElementById('examples'));
+React.render(<Examples />, document.getElementById('examples'));
