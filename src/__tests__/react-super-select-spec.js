@@ -603,7 +603,15 @@ describe('ReactSuperSelect', function() {
       el._updateFocusedId(1);
       TestUtils.Simulate.keyDown(options[1], {
         metaKey: true,
-        which: el.keymap.enter
+        which: el.keymap.enter,
+        target: {
+          getAttribute: function(key) {
+            var attrs = {
+              "data-option-value": options[1].id
+            };
+            return attrs[key];
+          }
+        }
       }, options[1].id);
 
       expect(_.isEqual(el.state.value, [mockData[3]])).toBe(true);

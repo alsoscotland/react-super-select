@@ -615,8 +615,8 @@ var ReactSuperSelect = React.createClass({
           <label ref="searchInputLabel" id={searchAriaIdLabel} className="r-ss-search-aria-label" htmlFor={searchAriaId}>{searchPlaceholderString}</label>
           <input ref="searchInput"
                  placeholder={searchPlaceholderString}
-                 onKeyUp={this._handleSearch}
                  onClick={this._setFocusIdToSearch}
+                 onChange={this._handleSearch}
                  defaultValue={this.state.searchString}
                  name={searchAriaId}
                  id={searchAriaId}
@@ -667,6 +667,10 @@ var ReactSuperSelect = React.createClass({
 
   // main keyDown binding handler for keyboard navigation and selection
   _handleKeyDown: function(event) {
+    if (this._isUserSearchTypingEvent(event)) {
+      return;
+    }
+
     if (this.state.isOpen || (event.which !== this.keymap.tab)) {
       event.stopPropagation();
       event.preventDefault();
@@ -704,9 +708,10 @@ var ReactSuperSelect = React.createClass({
 
   // handler for searchInput's keyUp event
   _handleSearch: function(event) {
+    event.stopPropagation();
+    event.preventDefault();
     var searchString = event.target.value;
     this._handleSearchDebounced.call(this, searchString);
-    this._handleKeyDown(event);
   },
 
   // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
@@ -727,6 +732,14 @@ var ReactSuperSelect = React.createClass({
   // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
   _isMultiSelect: function() {
     return this.props.multiple || this.props.tags;
+  },
+
+  // user search events need to pass through the default keyDown handler
+  _isUserSearchTypingEvent: function(event) {
+    if (!this.refs.searchInput || (event.which === this.keymap.down)) {
+      return false;
+    }
+    return (event.target === this.refs.searchInput.getDOMNode());
   },
 
   // Render the option list-items.
@@ -837,8 +850,17 @@ var ReactSuperSelect = React.createClass({
       return;
     }
 
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
-    this._selectFocusedOption(event.target, keepControlOpen);
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.target.getAttribute('class'));
+
+    if (keepControlOpen && alreadySelected) {
+      var optionData = _.first(this._findArrayOfOptionDataObjectsByValue(event.target.getAttribute('data-option-value')));
+      this._removeSelectedOptionByValue(optionData);
+    } else {
+      if (!alreadySelected) {
+        this._selectFocusedOption(event.target, keepControlOpen);
+      }
+    }
   },
 
   // Escape key handler. Closes the dropdown
@@ -1066,15 +1088,18 @@ var ReactSuperSelect = React.createClass({
       this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
     }
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
 
     // store clicked option as the lastUserSelected
     this.lastUserSelectedOption = event.currentTarget;
 
-    if (keepControlOpen && this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'))) {
+    if (keepControlOpen && alreadySelected) {
       this._removeSelectedOptionByValue(value);
     } else {
-      this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
+      if (!alreadySelected) {
+        this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
+      }
     }
   },
 
