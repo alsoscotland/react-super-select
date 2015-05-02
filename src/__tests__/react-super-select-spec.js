@@ -793,8 +793,6 @@ describe('ReactSuperSelect', function() {
           }
         }, options[3].id);
 
-        el.mouseMomentum = -1;
-
         TestUtils.Simulate.click(options[0], {
           shiftKey: true,
           currentTarget: {
@@ -825,8 +823,6 @@ describe('ReactSuperSelect', function() {
           }
         }, options[0].id);
 
-        el.mouseMomentum = 1;
-
         TestUtils.Simulate.click(options[3], {
           shiftKey: true,
           currentTarget: {
@@ -835,8 +831,6 @@ describe('ReactSuperSelect', function() {
             }
           }
         }, options[3].id);
-
-        el.mouseMomentum = -1;
 
         TestUtils.Simulate.click(options[0], {
           shiftKey: true,
@@ -869,8 +863,6 @@ describe('ReactSuperSelect', function() {
           }
         }, options[3].id);
 
-        el.mouseMomentum = -1;
-
         TestUtils.Simulate.click(options[0], {
           metaKey: true,
           currentTarget: {
@@ -879,8 +871,6 @@ describe('ReactSuperSelect', function() {
             }
           }
         }, options[0].id);
-
-        el.mouseMomentum = 1;
 
         TestUtils.Simulate.click(options[3], {
           shiftKey: true,
