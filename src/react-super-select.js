@@ -216,15 +216,11 @@ var ReactSuperSelect = React.createClass({
   // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
   lastUserSelectedOption: undefined,
 
-  // **mouseMomentum** (Number) (1|-1) - Used in shift-click selection to determine direction for traversal of options
-  mouseMomentum: 1,
-
   // If parent page updates the data source, reset the control with some defaults and the new dataSource.
   componentWillReceiveProps: function(nextProps) {
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
 
       this.lastUserSelectedOption = undefined;
-      this.mouseMomentum = 1;
 
       this.setState({
         data: this._configureDataSource(nextProps.dataSource),
@@ -769,7 +765,6 @@ var ReactSuperSelect = React.createClass({
             key={itemKey}
             data-option-value={dataOption[this.state.valueKey]}
             onClick={this._selectItemOnOptionClick.bind(null, dataOption)}
-            onMouseEnter={this._trackMouseMomentum}
             role="option">
           {optionMarkup}
         </li>);
@@ -921,14 +916,16 @@ var ReactSuperSelect = React.createClass({
   // Remove all options up to, but not including the option that raised the event.
   // (So it behaves like a native browser form multi-select)
   _removeAllOptionsInOptionIdRange: function(from, to) {
-    var valuePropsToReject = [];
+    var valuePropsToReject = [],
+        start = (from <= to) ? from : to,
+        end = (to >= from) ? to : from;
 
-    for (var i = from; i <= to; i++) {
+    for (var i = start; i <= end; i++) {
       var refString = 'option_' + i,
       option = this.refs[refString];
       if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
         // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
-        if (parseInt(this.lastUserSelectedOption.getAttribute('data-option-value'),10) !== option.props['data-option-value']) {
+        if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getDOMNode().getAttribute('data-option-value')) {
           valuePropsToReject.push(option.props['data-option-value']);
         }
       }
@@ -987,8 +984,11 @@ var ReactSuperSelect = React.createClass({
 
   // used in shift-click range selections
   _selectAllOptionsInOptionIdRange: function(from, to) {
-    var valuePropsToSelect = [];
-    for (var i = from; i <= to; i++) {
+    var valuePropsToSelect = [],
+        start = (from <= to) ? from : to,
+        end = (to >= from) ? to : from;
+
+    for (var i = start; i <= end; i++) {
       var refString = 'option_' + i,
       option = this.refs[refString];
       if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
@@ -1006,7 +1006,7 @@ var ReactSuperSelect = React.createClass({
   },
 
   // Used in shift-key selection.
-  // Select all options from the current eventTarget to the lastUserSelectedOption, based on mouseMomentum
+  // Select all options from the current eventTarget to the lastUserSelectedOption
   _selectAllOptionsToLastUserSelectedOption: function(eventTargetLi) {
     if (!this.lastUserSelectedOption) {
       this.lastUserSelectedOption = eventTargetLi;
@@ -1014,27 +1014,16 @@ var ReactSuperSelect = React.createClass({
       this._selectAllOptionsInOptionIdRange(0, this._getOptionIndexFromTarget(eventTargetLi));
       return;
     }
-    var to,
-        from;
 
-    if (this.mouseMomentum === 1) {
-      // Traversing up the list towards the last option.
-      // Select all options up from last user selected until event target option
-      from = this._getOptionIndexFromTarget(this.lastUserSelectedOption);
-      to = this._getOptionIndexFromTarget(eventTargetLi);
-    } else {
-      // Traversing down the list towards first option.
-      // Select all options down from the event target option to the last user selected option
-      from = this._getOptionIndexFromTarget(eventTargetLi);
-      to = this._getOptionIndexFromTarget(this.lastUserSelectedOption);
-    }
+    var from = this._getOptionIndexFromTarget(this.lastUserSelectedOption),
+        to = this._getOptionIndexFromTarget(eventTargetLi);
+
+    this.lastUserSelectedOption = eventTargetLi;
 
     // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
     if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
-      this.lastUserSelectedOption = eventTargetLi;
       this._removeAllOptionsInOptionIdRange(from, to);
     } else {
-      this.lastUserSelectedOption = eventTargetLi;
       this._selectAllOptionsInOptionIdRange(from, to);
     }
   },
@@ -1116,17 +1105,6 @@ var ReactSuperSelect = React.createClass({
       this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
     } else {
       this._moveFocusDown();
-    }
-  },
-
-  // Used for shift selection.
-  // Sets direction the user is heading from the lastUserSelectedOption
-  _trackMouseMomentum: function(event) {
-    var mouseOverOptionId = this._getOptionIndexFromTarget(event.currentTarget);
-    if (!this.lastUserSelectedOption) {
-      this.mouseMomentum = 1;
-    } else {
-      this.mouseMomentum = (mouseOverOptionId >= this._getOptionIndexFromTarget(this.lastUserSelectedOption)) ? 1 : -1;
     }
   },
 
