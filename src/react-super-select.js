@@ -535,7 +535,7 @@ var ReactSuperSelect = React.createClass({
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
-        return value[this.state.labelKey];
+        return (<span className="r-ss-selected-label">{value[this.state.labelKey]}</span>);
       }
     }, this);
   },
