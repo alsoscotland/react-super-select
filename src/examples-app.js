@@ -37,10 +37,12 @@ var Examples = React.createClass({
                   {superSelect}
                 </div>
                 <div className="rss-output-example">onChange Output</div>
-                <pre className="example-output" id={outputId}> </pre>
+                <pre className="example-output" id={outputId}>
+                </pre>
                 <div>
                   <aside className="rss-example-markdown" dangerouslySetInnerHTML={{__html: example.renderString}} />
                 </div>
+                <a className="top-return" href="#top">Back to Top</a>
               </article>
             </li>);
     });
@@ -52,6 +54,7 @@ var Examples = React.createClass({
 
   render: function() {
     return (<div>
+      <a name="top"> </a>
       {this._renderExampleLinks()}
       {this._renderExampleSections()}
     </div>);

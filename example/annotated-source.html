@@ -1646,7 +1646,7 @@ Choose whether to render using the default template or a provided <strong>custom
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) {
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(value);
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> value[<span class="hljs-keyword">this</span>.state.labelKey];
+        <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">span</span> <span class="hljs-attribute">className</span>=<span class="hljs-value">"r-ss-selected-label"</span>&gt;</span>{value[this.state.labelKey]}<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>)</span>;
       }
     }, <span class="hljs-keyword">this</span>);
   },</pre></div></div>

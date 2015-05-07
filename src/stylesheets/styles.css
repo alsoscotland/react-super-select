@@ -370,12 +370,6 @@ nav.api li {
   padding: 0 .25rem;
 }
 
-.api-item {
-  margin-top: 3rem;
-  padding: .5rem;
-  border: 1px dotted rgba(100,100,100,.25);
-}
-
 .api-item h4 {
   margin: 0;
 }

@@ -1,20 +1,23 @@
 ### JSX Markup
 ```html
-<ReactSuperSelect placeholder="Pick an Item" 
+<ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,
+                  dataSource={groceries}
+                  onChange={this.groceryCartHandler}
+                  optionLabelKey="label"
+                  placeholder="Pick an Item"
+                  searchable={true}
                   searchPlaceholder="Search shop"
-                  onChange={this.handlerExample}
-                  customOptionTemplateFunction={groceryCartItemTemplate} 
-                  dataSource={groceries} />
+                  groupBy="group" />
 ```
 
 ### Properties
-
-#### onChange
-```js
-var groceryCartHandler = function(item) {
-  console.log('Add To Cart: ', item.label, ' ', 'Price: ', item.price);
-};
+#### groupBy
+Using the simplest form of lodash's groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that 
+key across the dataSource collection.
+```jsx
+groupBy="group"
 ```
+
 
 #### customOptionTemplateFunction
 ```js
@@ -34,6 +37,13 @@ var groceryCartItemTemplate = function(item) {
 ```
 
 
+#### onChange
+```js
+var groceryCartHandler = function(item) {
+  console.log('Add To Cart: ', item.label, ' ', 'Price: ', item.price);
+};
+```
+
 #### dataSource (sample)
 ```js
 var groceries = [
@@ -42,14 +52,14 @@ var groceries = [
   attributeName: "apple",
   label: "Apple",
   iconClass: "rss-grocery rss-grocery-apple",
-  group: "Fruit",
+  group: "Fruits",
   price: 0.79
 },{
   id: 2,
   attributeName: "carrot",
   label: "Carrot",
   iconClass: "rss-grocery rss-grocery-carrot",
-  group: "Vegetable",
+  group: "Vegetables",
   price: 0.21
 }, ...
 ];

@@ -15,7 +15,7 @@ var handlerExample = function(option) {
     '\tid: ', option.id, '\n',
     '\tname: ', option.name, '\n',
     '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('basic_example_output', output.join(''));
+  console.log(output.join(''));
 };
 ```
 

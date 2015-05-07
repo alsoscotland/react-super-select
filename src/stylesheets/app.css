@@ -67,6 +67,21 @@ label {
 .r-ss-wrap {
   position: relative;
   width: 100%;
+  -webkit-border-top-right-radius: 0.25rem;
+  -webkit-border-bottom-right-radius: 0.25rem;
+  -webkit-border-bottom-left-radius: 0.25rem;
+  -webkit-border-top-left-radius: 0.25rem;
+  -moz-border-radius-topright: 0.25rem;
+  -moz-border-radius-bottomright: 0.25rem;
+  -moz-border-radius-bottomleft: 0.25rem;
+  -moz-border-radius-topleft: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  border-top-left-radius: 0.25rem;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
   -ms-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -113,6 +128,14 @@ label {
   background-clip: padding-box;
   cursor: pointer;
   outline: none;
+}
+.r-ss-trigger .r-ss-selected-label {
+  padding: 0 .5rem;
+  border-left: 1px solid #9e9e9e;
+}
+.r-ss-trigger .r-ss-selected-label:first-child {
+  padding-left: 0;
+  border-left: none;
 }
 .r-ss-trigger.r-ss-open {
   -webkit-border-top-right-radius: 0.25rem;

@@ -7,7 +7,7 @@ When the control's main element is focused.  Pressing the down arrow key will op
 #### (Opened Control State)
 - **navigation of options**
 
-Pressing the down-arrow key when the drop is open will move focus down to the next selectable option.  If the **searchable** prop is true, The first press will focus the search input field.
+Pressing the down-arrow key when the dropdown is open will move focus down to the next selectable option.  If the **searchable** prop is true, The first keypress of the down arrow will focus the search input field.
 
 #### Multiselect Specific Behaviors
 
@@ -15,4 +15,5 @@ Pressing the down-arrow key when the drop is open will move focus down to the ne
 - **select focused option and move focus down**
 
 If the down arrow is pressed with the shift-key in a **multiselect** or **tags** control, the focused option will be selected (or deselected if alreadySelected), and the focus will move down to the next available option.
+
 
