@@ -27,7 +27,7 @@ var Props = React.createClass({
                   <a name={prop.nameAttr}>{prop.nameAttr}</a>
                 </h4>
                 <p dangerouslySetInnerHTML={{__html: prop.renderString}} />
-                <a className="top-return" href="#properties_top">Back to Properties Links</a>
+                <a className="top-return" href="#properties_top">Back to API Documentation Links</a>
               </article>);
     });
 

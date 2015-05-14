@@ -32381,7 +32381,7 @@ var Props = React.createClass({displayName: "Props",
                   React.createElement("a", {name: prop.nameAttr}, prop.nameAttr)
                 ), 
                 React.createElement("p", {dangerouslySetInnerHTML: {__html: prop.renderString}}), 
-                React.createElement("a", {className: "top-return", href: "#properties_top"}, "Back to Properties Links")
+                React.createElement("a", {className: "top-return", href: "#properties_top"}, "Back to API Documentation Links")
               ));
     });
 
