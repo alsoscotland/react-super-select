@@ -430,6 +430,18 @@ label {
     z-index: 1;
     .border-radius(@tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius);
 
+    > span {
+
+      &:before {
+        position: aboslute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        content: 'X';
+      }
+    }
+
     &:hover,
     &:focus {
       opacity: 1;

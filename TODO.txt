@@ -1,5 +1,6 @@
 TASKS
-1) github.io site / documentation for examples pages/readme
-http://www.w3.org/WAI/PF/wiki/ARIA/Tests/Testable_Statements
-MAYBE
-<!-- 6) clear search button (need localization for placeholder)? -->
+1) list groups should be separately focus-able and navigable?
+Change groups to http://www.w3.org/TR/WCAG20-TECHS/H85.html
+ex: <optgroup label="Fruits"
+
+Cannot use optgroup in combobox/listbox - can this be reconciled?
