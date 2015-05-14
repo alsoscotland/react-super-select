@@ -20,6 +20,9 @@ node_modules
 example/dist
 dist/
 
+# Publish directory
+.publish
+
 # Editor and other tmp files
 *.swp
 *.un~
