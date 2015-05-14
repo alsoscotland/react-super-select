@@ -83,11 +83,14 @@ var simulatedAjaxFetch= function() {
 #### onChange
 ```js
 var handlerExample = function(option) {
-  var output = [
-    'Option Item Chosen = {\n',
+  var output = [];
+  _.map(options, function(option){
+    output = output.concat([
+    'Localized Tags Chosen Option = {\n',
     '\tid: ', option.id, '\n',
     '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+    '\tsize: ', option.size, '\n\t};\n']);
+  });
   console.log(output.join(''));
 };
 ```

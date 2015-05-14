@@ -3,12 +3,16 @@ var _ = require('lodash'),
     exampleOutput = require('./support/example-output.js'),
     localizedMarkdown = require('../markdown/js/examples/localized').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Option Item Chosen = {\n',
+var handlerExample = function(options) {
+  var output = [];
+  _.map(options, function(option){
+    output = output.concat([
+    'Localized Tags Chosen Option = {\n',
     '\tid: ', option.id, '\n',
     '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+    '\tsize: ', option.size, '\n\t};\n']);
+  });
+
   exampleOutput('localized_output', output.join(''));
 };
 
