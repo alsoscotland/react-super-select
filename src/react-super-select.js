@@ -1,4 +1,5 @@
 // © Scotland Stephenson 2015
+// version 0.1.0
 
 // - [github](https://github.com/alsoscotland/react-super-select)
 // - [documentation](http://alsoscotland.github.io/react-super-select/)

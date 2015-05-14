@@ -32898,6 +32898,7 @@ React.render(React.createElement(Examples, null), document.getElementById('examp
 
 },{"./examples/all-examples":159,"./react-super-select":182,"lodash":3,"react":158}],182:[function(require,module,exports){
 // © Scotland Stephenson 2015
+// version 0.1.0
 
 // - [github](https://github.com/alsoscotland/react-super-select)
 // - [documentation](http://alsoscotland.github.io/react-super-select/)
