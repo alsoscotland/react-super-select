@@ -136,7 +136,10 @@ var ReactSuperSelect = React.createClass({
     placeholder: React.PropTypes.string,
 
     // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's search input field when a user has not entered any characters.
-    searchPlaceholder: React.PropTypes.string
+    searchPlaceholder: React.PropTypes.string,
+
+    // **tagRemoveLabelString** (String) *optional* - (Used in conjunction with the **tags** option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).
+    tagRemoveLabelString: React.PropTypes.string
   },
 
   // CONSTANTS
@@ -153,7 +156,8 @@ var ReactSuperSelect = React.createClass({
     ajaxErrorString: 'An Error occured while fetching options',
     noResultsString: 'No Results Available',
     placeholder: 'Select an Option',
-    searchPlaceholder: 'Search'
+    searchPlaceholder: 'Search',
+    tagRemoveLabelString: 'Remove Tag'
   },
 
   // STATE VARIABLES
@@ -516,8 +520,10 @@ var ReactSuperSelect = React.createClass({
         headingKey = "heading_" + heading,
         headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
 
+    // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
+    // in search of a better solution for announcing/navigating grouped listbox items as subgroups
     return(
-      <li tabIndex="-1" className={headingClasses} key={headingKey} role="separator">
+      <li tabIndex="-1" className={headingClasses} key={headingKey} role="separator" aria-label={heading} aria-hidden={true}>
         {headingMarkup}
       </li>);
   },
@@ -532,10 +538,11 @@ var ReactSuperSelect = React.createClass({
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function() {
     return _.map(this.state.value, function(value) {
+      var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
-        return (<span className="r-ss-selected-label">{value[this.state.labelKey]}</span>);
+        return (<span key={selectedKey} className="r-ss-selected-label">{value[this.state.labelKey]}</span>);
       }
     }, this);
   },
@@ -617,7 +624,6 @@ var ReactSuperSelect = React.createClass({
                  name={searchAriaId}
                  id={searchAriaId}
                  aria-labelledby={searchAriaIdLabel}
-                 aria-owns={this._ariaGetListId()}
                  aria-autocomplete="list" />
           <i className={magnifierClass}>search</i>
         </div>
@@ -639,13 +645,24 @@ var ReactSuperSelect = React.createClass({
         displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
         buttonName = "RemoveTag_" + displayValue,
+        tagRemoveIndex = this._getTagRemoveIndex(displayValue),
+        tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
         tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
 
     return (
       <span className={tagWrapClass} key={tagKey}>
         <span className="r-ss-tag-label">{label}</span>
-        <button name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyDown={this._removeTagKeyPress.bind(null, value)}>X</button>
+        <button aria-label={tagRemoveButtonLabelString} ref={tagRemoveIndex} name={buttonName} type="button" className="r-ss-tag-remove" onClick={this._removeTagClick.bind(null, value)} onKeyDown={this._removeTagKeyPress.bind(null, value)}>
+          <span />
+        </button>
       </span>);
+  },
+
+  // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
+  _getTagRemoveIndex: function(identifier) {
+    return "tag_remove_" + identifier;
   },
 
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
@@ -942,21 +959,23 @@ var ReactSuperSelect = React.createClass({
 
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
-  _removeSelectedOptionByValue: function(value) {
+  _removeSelectedOptionByValue: function(value, callback) {
     // clear lastUserSelected if has been removed
     if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
       this.lastUserSelectedOption = undefined;
     }
 
     var SelectedAfterRemoval = _.reject(this.state.value, function(option) {
-              return option[this.state.valueKey] === value[this.state.valueKey];
-            }, this);
+                                 return option[this.state.valueKey] === value[this.state.valueKey];
+                               }, this);
 
     this.props.onChange(SelectedAfterRemoval);
 
+    callback = _.isFunction(callback) ? callback :  _.noop;
+
     this.setState({
       value: SelectedAfterRemoval
-    });
+    }, callback);
   },
 
   // remove a selected tag on keyDown
@@ -967,8 +986,9 @@ var ReactSuperSelect = React.createClass({
     if (isEnterKey || isSpaceKey) {
       event.preventDefault();
       event.stopPropagation();
-      this._removeSelectedOptionByValue(value); // delegate to removal handler
+      this._removeSelectedOptionByValue(value, this._setFocusToTagRemovalIfPresent); // delegate to removal handler
     }
+
   },
 
   // remove a selected tag on click
@@ -1103,6 +1123,25 @@ var ReactSuperSelect = React.createClass({
     } else {
       this._moveFocusDown();
     }
+  },
+
+  // DOM focus for tag removal buttons will get lost after a tag removal.
+  // After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove
+  _setFocusToTagRemovalIfPresent: function() {
+    if (!this.props.tags || (this.state.value.length === 0)) {
+      return false;
+    }
+
+    var firstValue = _.first(this.state.value)[this.state.valueKey],
+        firstTag = this.refs[this._getTagRemoveIndex(firstValue)];
+
+    if (firstTag) {
+      if (_.isFunction(firstTag.getDOMNode().focus)) {
+        firstTag.getDOMNode().focus();
+        return true;
+      }
+    }
+    return false;
   },
 
   // Sets the current focusedId.
