@@ -98,7 +98,7 @@ describe('ReactSuperSelect', function() {
     it('does not add placeholder display class when value set', function() {
       var triggerDiv = el.refs.triggerDiv;
       el.setState({
-        value: 'foo'
+        value: ['foo']
       });
 
       expect(triggerDiv.props.className.indexOf('r-ss-placeholder')).toBe(-1);
@@ -114,6 +114,7 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent();
 
       expect(el.refs.triggerDiv.props.role).toBe('combobox');
+      expect(el.refs.triggerDiv.props['aria-activedescendant']).not.toBeUndefined();
       expect(el.refs.triggerDiv.props['aria-haspopup']).toBe(true);
       expect(el.refs.triggerDiv.props['aria-controls']).toBe(el._ariaGetListId());
       expect(_.isString(el.refs.triggerDiv.props['aria-label'])).toBe(true);
@@ -150,7 +151,6 @@ describe('ReactSuperSelect', function() {
       });
 
       expect(el.refs.searchInput.props['aria-labelledby']).toBe(el.refs.searchInputLabel.props.id);
-      expect(el.refs.searchInput.props['aria-owns']).toBe(el._ariaGetListId());
       expect(el.refs.searchInput.props['aria-autocomplete']).toBe('list');
     });
 
@@ -681,6 +681,20 @@ describe('ReactSuperSelect', function() {
       var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
       expect(tags.length).toBe(2);
       expect(el.state.value.length).toBe(2);
+    });
+
+    it.only('will focus first available tag after tag removal by tag removal keypress on tag removal button', function() {
+      var el = getElWithThreeTags();
+
+      var removeTagButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');
+      var tagFocusSpy = spyOn(el, '_setFocusToTagRemovalIfPresent');
+      TestUtils.Simulate.keyDown(removeTagButtons[0], {
+        which: el.keymap.enter,
+        preventDefault: jest.genMockFunction(),
+        stopPropagation: jest.genMockFunction()
+      });
+
+      expect(tagFocusSpy.calls.length).toBe(1);
     });
 
     it('tag deletion works via enter key', function() {
