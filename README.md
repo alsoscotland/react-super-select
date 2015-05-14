@@ -29,6 +29,9 @@ Please ensure any pull requests have jest specs and that all tests succeed when 
 npm test
 ```
 
+## A note on accessibility
+Aria support for accessibility is a clear objective for this control. Finding clear and accurate information regarding cross-device accessibility practices is proving difficult to come by.  If you are a daily screen-reader user, or if you have particular expertise regarding accessibility, I would love to get your input on how to make the control better.
+
 ## Installation
 
 The easiest way to use react-super-select is to install it from NPM and include it in your own React build process (using [Browserify](http://browserify.org), [Webpack](http://webpack.github.io/), etc).
