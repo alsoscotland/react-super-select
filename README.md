@@ -1,7 +1,16 @@
 # react-super-select
 
-React Super Select aims to be a replacement for html select form elements.
-This project is in nascent development stages.
+A flexible replacement for the html select control built with React and Lodash
+
+####Features:
+  - template capability for options
+  - aria-compliant keyboard navigation
+  - multiselect & tags
+  - ajax support
+  - ajax paging/load-more support
+  - grouped options under headings
+  - easy style customization
+  - localization support
 
 
 ## Demo & Examples
