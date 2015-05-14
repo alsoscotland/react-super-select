@@ -31994,7 +31994,7 @@ module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=
 },{}],164:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],165:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"localization-properties\">localization properties</h4>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  tags={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot;\n                  tagRemoveLabelString=&quot;删除标记&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"localization-properties\">localization properties</h4>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\ntagRemoveLabelString=&quot;删除标记&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],166:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],167:[function(require,module,exports){
@@ -32290,7 +32290,9 @@ var localizedExample = {
     ajaxErrorString: "错误",
     noResultsString: "无结果",
     searchPlaceholder: "搜索",
-    searchable: true
+    searchable: true,
+    tagRemoveLabelString: '删除标记',
+    tags: true
   },
 
   renderString: localizedMarkdown
@@ -33029,7 +33031,10 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     placeholder: React.PropTypes.string,
 
     // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's search input field when a user has not entered any characters.
-    searchPlaceholder: React.PropTypes.string
+    searchPlaceholder: React.PropTypes.string,
+
+    // **tagRemoveLabelString** (String) *optional* - (Used in conjunction with the **tags** option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).
+    tagRemoveLabelString: React.PropTypes.string
   },
 
   // CONSTANTS
@@ -33046,7 +33051,8 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     ajaxErrorString: 'An Error occured while fetching options',
     noResultsString: 'No Results Available',
     placeholder: 'Select an Option',
-    searchPlaceholder: 'Search'
+    searchPlaceholder: 'Search',
+    tagRemoveLabelString: 'Remove Tag'
   },
 
   // STATE VARIABLES
@@ -33409,8 +33415,10 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
         headingKey = "heading_" + heading,
         headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
 
+    // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
+    // in search of a better solution for announcing/navigating grouped listbox items as subgroups
     return(
-      React.createElement("li", {tabIndex: "-1", className: headingClasses, key: headingKey, role: "separator"}, 
+      React.createElement("li", {tabIndex: "-1", className: headingClasses, key: headingKey, role: "separator", "aria-label": heading, "aria-hidden": true}, 
         headingMarkup
       ));
   },
@@ -33425,10 +33433,11 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function() {
     return _.map(this.state.value, function(value) {
+      var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
-        return (React.createElement("span", {className: "r-ss-selected-label"}, value[this.state.labelKey]));
+        return (React.createElement("span", {key: selectedKey, className: "r-ss-selected-label"}, value[this.state.labelKey]));
       }
     }, this);
   },
@@ -33510,7 +33519,6 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
                  name: searchAriaId, 
                  id: searchAriaId, 
                  "aria-labelledby": searchAriaIdLabel, 
-                 "aria-owns": this._ariaGetListId(), 
                  "aria-autocomplete": "list"}), 
           React.createElement("i", {className: magnifierClass}, "search")
         )
@@ -33532,13 +33540,24 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
         displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
         buttonName = "RemoveTag_" + displayValue,
+        tagRemoveIndex = this._getTagRemoveIndex(displayValue),
+        tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
         tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
 
     return (
       React.createElement("span", {className: tagWrapClass, key: tagKey}, 
         React.createElement("span", {className: "r-ss-tag-label"}, label), 
-        React.createElement("button", {name: buttonName, type: "button", className: "r-ss-tag-remove", onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value)}, "X")
+        React.createElement("button", {"aria-label": tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: "button", className: "r-ss-tag-remove", onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value)}, 
+          React.createElement("span", null)
+        )
       ));
+  },
+
+  // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
+  _getTagRemoveIndex: function(identifier) {
+    return "tag_remove_" + identifier;
   },
 
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
@@ -33835,21 +33854,23 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
-  _removeSelectedOptionByValue: function(value) {
+  _removeSelectedOptionByValue: function(value, callback) {
     // clear lastUserSelected if has been removed
     if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
       this.lastUserSelectedOption = undefined;
     }
 
     var SelectedAfterRemoval = _.reject(this.state.value, function(option) {
-              return option[this.state.valueKey] === value[this.state.valueKey];
-            }, this);
+                                 return option[this.state.valueKey] === value[this.state.valueKey];
+                               }, this);
 
     this.props.onChange(SelectedAfterRemoval);
 
+    callback = _.isFunction(callback) ? callback :  _.noop;
+
     this.setState({
       value: SelectedAfterRemoval
-    });
+    }, callback);
   },
 
   // remove a selected tag on keyDown
@@ -33860,8 +33881,9 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     if (isEnterKey || isSpaceKey) {
       event.preventDefault();
       event.stopPropagation();
-      this._removeSelectedOptionByValue(value); // delegate to removal handler
+      this._removeSelectedOptionByValue(value, this._setFocusToTagRemovalIfPresent); // delegate to removal handler
     }
+
   },
 
   // remove a selected tag on click
@@ -33996,6 +34018,25 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     } else {
       this._moveFocusDown();
     }
+  },
+
+  // DOM focus for tag removal buttons will get lost after a tag removal.
+  // After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove
+  _setFocusToTagRemovalIfPresent: function() {
+    if (!this.props.tags || (this.state.value.length === 0)) {
+      return false;
+    }
+
+    var firstValue = _.first(this.state.value)[this.state.valueKey],
+        firstTag = this.refs[this._getTagRemoveIndex(firstValue)];
+
+    if (firstTag) {
+      if (_.isFunction(firstTag.getDOMNode().focus)) {
+        firstTag.getDOMNode().focus();
+        return true;
+      }
+    }
+    return false;
   },
 
   // Sets the current focusedId.

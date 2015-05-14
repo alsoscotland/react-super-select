@@ -20,7 +20,8 @@ var multiple = require('./properties/multiple'),
     ajaxErrorString = require('./properties/ajaxErrorString'),
     noResultsString = require('./properties/noResultsString'),
     placeholder = require('./properties/placeholder'),
-    searchPlaceholder = require('./properties/searchPlaceholder');
+    searchPlaceholder = require('./properties/searchPlaceholder'),
+    tagRemoveLabelString = require('./properties/tagRemoveLabelString');
 
 var allProps = [
   multiple,
@@ -45,7 +46,8 @@ var allProps = [
   ajaxErrorString,
   noResultsString,
   placeholder,
-  searchPlaceholder
+  searchPlaceholder,
+  tagRemoveLabelString
 ];
 
 module.exports = allProps;

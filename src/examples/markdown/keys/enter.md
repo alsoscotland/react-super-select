@@ -3,6 +3,11 @@
 
 Pressing enter when the the control has focus will open the dropdown.
 
+#### (Closed Control State - when tag removal button focused)
+- **remove the focused tag** (only applicable to controls with the **tags** property set to true) 
+
+Pressing enter when a tag removal button has focus will remove the tag from the selected values.  After the tag has been removed, focus is moved to the first-available tag removal button.
+
 #### (Opened Control State)
 - **Select the currently focused option**
 

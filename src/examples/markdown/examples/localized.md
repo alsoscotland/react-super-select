@@ -5,10 +5,12 @@
                   onChange={handlerExample}
                   pageDataFetch={simulatedPageFetch}
                   searchable={true}
+                  tags={true}
                   placeholder="选择"
                   ajaxErrorString="错误"
                   noResultsString="无结果"
-                  searchPlaceholder="搜索" />
+                  searchPlaceholder="搜索"
+                  tagRemoveLabelString="删除标记" />
 ```
 
 ### Properties
@@ -19,6 +21,7 @@ placeholder="选择"
 ajaxErrorString="错误"
 noResultsString="无结果"
 searchPlaceholder="搜索"
+tagRemoveLabelString="删除标记"
 ```
 
 #### pageDataFetch

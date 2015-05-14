@@ -1,8 +1,3 @@
-/*
-// Examples Stylesheet
-// -------------------
-*/
-/* vars */
 body {
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -62,8 +57,6 @@ label {
   font-style: italic;
   color: #999;
 }
-/* mixins */
-/* control */
 .r-ss-wrap {
   position: relative;
   width: 100%;
@@ -439,6 +432,14 @@ label {
   -moz-background-clip: padding-box;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
+}
+.r-ss-tag .r-ss-tag-remove > span:before {
+  position: aboslute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: 'X';
 }
 .r-ss-tag .r-ss-tag-remove:hover,
 .r-ss-tag .r-ss-tag-remove:focus {

@@ -23,6 +23,7 @@ var Props = React.createClass({
                   <a name={key.nameAttr}>{key.displayName}</a>
                 </h5>
                 <p dangerouslySetInnerHTML={{__html: key.renderString}} />
+                <a className="top-return" href="#keys_top">Back Keys Links</a>
               </article>);
     });
 
@@ -33,6 +34,7 @@ var Props = React.createClass({
     return( <section className="api-docs-section">
               <a name="keyboard"> </a>
               <h3 className="feature-heading">Keyboard Navigation:</h3>
+              <a name="keys_top"> </a>
               <h5>Keyboard Navigation Links By Key:</h5>
               <nav className="api">
                <ul>

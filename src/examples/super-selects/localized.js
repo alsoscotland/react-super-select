@@ -71,7 +71,9 @@ var localizedExample = {
     ajaxErrorString: "错误",
     noResultsString: "无结果",
     searchPlaceholder: "搜索",
-    searchable: true
+    searchable: true,
+    tagRemoveLabelString: '删除标记',
+    tags: true
   },
 
   renderString: localizedMarkdown

@@ -31934,7 +31934,8 @@ var multiple = require('./properties/multiple'),
     ajaxErrorString = require('./properties/ajaxErrorString'),
     noResultsString = require('./properties/noResultsString'),
     placeholder = require('./properties/placeholder'),
-    searchPlaceholder = require('./properties/searchPlaceholder');
+    searchPlaceholder = require('./properties/searchPlaceholder'),
+    tagRemoveLabelString = require('./properties/tagRemoveLabelString');
 
 var allProps = [
   multiple,
@@ -31959,13 +31960,14 @@ var allProps = [
   ajaxErrorString,
   noResultsString,
   placeholder,
-  searchPlaceholder
+  searchPlaceholder,
+  tagRemoveLabelString
 ];
 
 module.exports = allProps;
 
 
-},{"./properties/ajaxDataFetch":182,"./properties/ajaxErrorString":183,"./properties/customClass":184,"./properties/customFilterFunction":185,"./properties/customGroupHeadingClass":186,"./properties/customGroupHeadingTemplateFunction":187,"./properties/customLoaderClass":188,"./properties/customOptionTemplateFunction":189,"./properties/customSearchIconClass":190,"./properties/customTagClass":191,"./properties/dataSource":192,"./properties/groupBy":193,"./properties/hasMorePages":194,"./properties/multiple":195,"./properties/noResultsString":196,"./properties/onChange":197,"./properties/optionLabelKey":198,"./properties/optionValueKey":199,"./properties/pageDataFetch":200,"./properties/placeholder":201,"./properties/searchPlaceholder":202,"./properties/searchable":203,"./properties/tags":204}],159:[function(require,module,exports){
+},{"./properties/ajaxDataFetch":183,"./properties/ajaxErrorString":184,"./properties/customClass":185,"./properties/customFilterFunction":186,"./properties/customGroupHeadingClass":187,"./properties/customGroupHeadingTemplateFunction":188,"./properties/customLoaderClass":189,"./properties/customOptionTemplateFunction":190,"./properties/customSearchIconClass":191,"./properties/customTagClass":192,"./properties/dataSource":193,"./properties/groupBy":194,"./properties/hasMorePages":195,"./properties/multiple":196,"./properties/noResultsString":197,"./properties/onChange":198,"./properties/optionLabelKey":199,"./properties/optionValueKey":200,"./properties/pageDataFetch":201,"./properties/placeholder":202,"./properties/searchPlaceholder":203,"./properties/searchable":204,"./properties/tagRemoveLabelString":205,"./properties/tags":206}],159:[function(require,module,exports){
 module.exports={"body":"<!-- ajaxDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(<strong>dataSource</strong> must be supplied if left undefined)</p>\n<p>Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function takes no arguments, but it must return a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The <strong>dataSource</strong> option should be left undefined when using this option.</p>\n"}
 },{}],160:[function(require,module,exports){
 module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options)</p>\n<p>This string will be shown as a message in the dropdown area in the event that an ajax request for options data fails</p>\n"}
@@ -32010,8 +32012,10 @@ module.exports={"body":"<!-- searchPlaceholder -->\n<p>(<strong>String</strong>)
 },{}],180:[function(require,module,exports){
 module.exports={"body":"<!-- searchable -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to show a search bar in the dropdown area which offers text-based filtering of the dataSource options (by label <strong>optionLabelKey</strong>)</p>\n"}
 },{}],181:[function(require,module,exports){
-module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n"}
+module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>tagRemoveLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>\n"}
 },{}],182:[function(require,module,exports){
+module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n"}
+},{}],183:[function(require,module,exports){
 var ajaxDataFetchMarkdown = require('../markdown/js/properties/ajaxDataFetch').body;
 
 var ajaxDataFetchProp = {
@@ -32025,7 +32029,7 @@ var ajaxDataFetchProp = {
 module.exports = ajaxDataFetchProp;
 
 
-},{"../markdown/js/properties/ajaxDataFetch":159}],183:[function(require,module,exports){
+},{"../markdown/js/properties/ajaxDataFetch":159}],184:[function(require,module,exports){
 var ajaxErrorStringMarkdown = require('../markdown/js/properties/ajaxErrorString').body;
 
 var ajaxErrorStringProp = {
@@ -32039,7 +32043,7 @@ var ajaxErrorStringProp = {
 module.exports = ajaxErrorStringProp;
 
 
-},{"../markdown/js/properties/ajaxErrorString":160}],184:[function(require,module,exports){
+},{"../markdown/js/properties/ajaxErrorString":160}],185:[function(require,module,exports){
 var customClassMarkdown = require('../markdown/js/properties/customClass').body;
 
 var customClassProp = {
@@ -32053,7 +32057,7 @@ var customClassProp = {
 module.exports = customClassProp;
 
 
-},{"../markdown/js/properties/customClass":161}],185:[function(require,module,exports){
+},{"../markdown/js/properties/customClass":161}],186:[function(require,module,exports){
 var customFilterFunctionMarkdown = require('../markdown/js/properties/customFilterFunction').body;
 
 var customFilterFunctionProp = {
@@ -32067,7 +32071,7 @@ var customFilterFunctionProp = {
 module.exports = customFilterFunctionProp;
 
 
-},{"../markdown/js/properties/customFilterFunction":162}],186:[function(require,module,exports){
+},{"../markdown/js/properties/customFilterFunction":162}],187:[function(require,module,exports){
 var customGroupHeadingClassMarkdown = require('../markdown/js/properties/customGroupHeadingClass').body;
 
 var customGroupHeadingClassProp = {
@@ -32081,7 +32085,7 @@ var customGroupHeadingClassProp = {
 module.exports = customGroupHeadingClassProp;
 
 
-},{"../markdown/js/properties/customGroupHeadingClass":163}],187:[function(require,module,exports){
+},{"../markdown/js/properties/customGroupHeadingClass":163}],188:[function(require,module,exports){
 var customGroupHeadingTemplateFunctionMarkdown = require('../markdown/js/properties/customGroupHeadingTemplateFunction').body;
 
 var customGroupHeadingTemplateFunctionProp = {
@@ -32095,7 +32099,7 @@ var customGroupHeadingTemplateFunctionProp = {
 module.exports = customGroupHeadingTemplateFunctionProp;
 
 
-},{"../markdown/js/properties/customGroupHeadingTemplateFunction":164}],188:[function(require,module,exports){
+},{"../markdown/js/properties/customGroupHeadingTemplateFunction":164}],189:[function(require,module,exports){
 var customLoaderClassMarkdown = require('../markdown/js/properties/customLoaderClass').body;
 
 var customLoaderClassProp = {
@@ -32109,7 +32113,7 @@ var customLoaderClassProp = {
 module.exports = customLoaderClassProp;
 
 
-},{"../markdown/js/properties/customLoaderClass":165}],189:[function(require,module,exports){
+},{"../markdown/js/properties/customLoaderClass":165}],190:[function(require,module,exports){
 var customOptionTemplateFunctionMarkdown = require('../markdown/js/properties/customOptionTemplateFunction').body;
 
 var customOptionTemplateFunctionProp = {
@@ -32123,7 +32127,7 @@ var customOptionTemplateFunctionProp = {
 module.exports = customOptionTemplateFunctionProp;
 
 
-},{"../markdown/js/properties/customOptionTemplateFunction":166}],190:[function(require,module,exports){
+},{"../markdown/js/properties/customOptionTemplateFunction":166}],191:[function(require,module,exports){
 var customSearchIconClassMarkdown = require('../markdown/js/properties/customSearchIconClass').body;
 
 var customSearchIconClassProp = {
@@ -32137,7 +32141,7 @@ var customSearchIconClassProp = {
 module.exports = customSearchIconClassProp;
 
 
-},{"../markdown/js/properties/customSearchIconClass":167}],191:[function(require,module,exports){
+},{"../markdown/js/properties/customSearchIconClass":167}],192:[function(require,module,exports){
 var customTagClassMarkdown = require('../markdown/js/properties/customTagClass').body;
 
 var customTagClassProp = {
@@ -32151,7 +32155,7 @@ var customTagClassProp = {
 module.exports = customTagClassProp;
 
 
-},{"../markdown/js/properties/customTagClass":168}],192:[function(require,module,exports){
+},{"../markdown/js/properties/customTagClass":168}],193:[function(require,module,exports){
 var dataSourceMarkdown = require('../markdown/js/properties/dataSource').body;
 
 var dataSourceProp = {
@@ -32165,7 +32169,7 @@ var dataSourceProp = {
 module.exports = dataSourceProp;
 
 
-},{"../markdown/js/properties/dataSource":169}],193:[function(require,module,exports){
+},{"../markdown/js/properties/dataSource":169}],194:[function(require,module,exports){
 var groupByMarkdown = require('../markdown/js/properties/groupBy').body;
 
 var groupByProp = {
@@ -32179,7 +32183,7 @@ var groupByProp = {
 module.exports = groupByProp;
 
 
-},{"../markdown/js/properties/groupBy":170}],194:[function(require,module,exports){
+},{"../markdown/js/properties/groupBy":170}],195:[function(require,module,exports){
 var hasMorePagesMarkdown = require('../markdown/js/properties/hasMorePages').body;
 
 var hasMorePagesProp = {
@@ -32193,7 +32197,7 @@ var hasMorePagesProp = {
 module.exports = hasMorePagesProp;
 
 
-},{"../markdown/js/properties/hasMorePages":171}],195:[function(require,module,exports){
+},{"../markdown/js/properties/hasMorePages":171}],196:[function(require,module,exports){
 var multipleMarkdown = require('../markdown/js/properties/multiple').body;
 
 var multipleProp = {
@@ -32207,7 +32211,7 @@ var multipleProp = {
 module.exports = multipleProp;
 
 
-},{"../markdown/js/properties/multiple":172}],196:[function(require,module,exports){
+},{"../markdown/js/properties/multiple":172}],197:[function(require,module,exports){
 var noResultsStringMarkdown = require('../markdown/js/properties/noResultsString').body;
 
 var noResultsStringProp = {
@@ -32221,7 +32225,7 @@ var noResultsStringProp = {
 module.exports = noResultsStringProp;
 
 
-},{"../markdown/js/properties/noResultsString":173}],197:[function(require,module,exports){
+},{"../markdown/js/properties/noResultsString":173}],198:[function(require,module,exports){
 var onChangeMarkdown = require('../markdown/js/properties/onChange').body;
 
 var onChangeProp = {
@@ -32235,7 +32239,7 @@ var onChangeProp = {
 module.exports = onChangeProp;
 
 
-},{"../markdown/js/properties/onChange":174}],198:[function(require,module,exports){
+},{"../markdown/js/properties/onChange":174}],199:[function(require,module,exports){
 var optionLabelKeyMarkdown = require('../markdown/js/properties/optionLabelKey').body;
 
 var optionLabelKeyProp = {
@@ -32249,7 +32253,7 @@ var optionLabelKeyProp = {
 module.exports = optionLabelKeyProp;
 
 
-},{"../markdown/js/properties/optionLabelKey":175}],199:[function(require,module,exports){
+},{"../markdown/js/properties/optionLabelKey":175}],200:[function(require,module,exports){
 var optionValueKeyMarkdown = require('../markdown/js/properties/optionValueKey').body;
 
 var optionValueKeyProp = {
@@ -32263,7 +32267,7 @@ var optionValueKeyProp = {
 module.exports = optionValueKeyProp;
 
 
-},{"../markdown/js/properties/optionValueKey":176}],200:[function(require,module,exports){
+},{"../markdown/js/properties/optionValueKey":176}],201:[function(require,module,exports){
 var pageDataFetchMarkdown = require('../markdown/js/properties/pageDataFetch').body;
 
 var pageDataFetchProp = {
@@ -32277,7 +32281,7 @@ var pageDataFetchProp = {
 module.exports = pageDataFetchProp;
 
 
-},{"../markdown/js/properties/pageDataFetch":177}],201:[function(require,module,exports){
+},{"../markdown/js/properties/pageDataFetch":177}],202:[function(require,module,exports){
 var placeholderMarkdown = require('../markdown/js/properties/placeholder').body;
 
 var placeholderProp = {
@@ -32291,7 +32295,7 @@ var placeholderProp = {
 module.exports = placeholderProp;
 
 
-},{"../markdown/js/properties/placeholder":178}],202:[function(require,module,exports){
+},{"../markdown/js/properties/placeholder":178}],203:[function(require,module,exports){
 var searchPlaceholderMarkdown = require('../markdown/js/properties/searchPlaceholder').body;
 
 var searchPlaceholderProp = {
@@ -32305,7 +32309,7 @@ var searchPlaceholderProp = {
 module.exports = searchPlaceholderProp;
 
 
-},{"../markdown/js/properties/searchPlaceholder":179}],203:[function(require,module,exports){
+},{"../markdown/js/properties/searchPlaceholder":179}],204:[function(require,module,exports){
 var searchableMarkdown = require('../markdown/js/properties/searchable').body;
 
 var searchableProp = {
@@ -32319,7 +32323,21 @@ var searchableProp = {
 module.exports = searchableProp;
 
 
-},{"../markdown/js/properties/searchable":180}],204:[function(require,module,exports){
+},{"../markdown/js/properties/searchable":180}],205:[function(require,module,exports){
+var tagRemoveLabelStringMarkdown = require('../markdown/js/properties/tagRemoveLabelString').body;
+
+var tagRemoveLabelStringProp = {
+
+  nameAttr: "tagRemoveLabelString",
+
+  renderString: tagRemoveLabelStringMarkdown
+
+};
+
+module.exports = tagRemoveLabelStringProp;
+
+
+},{"../markdown/js/properties/tagRemoveLabelString":181}],206:[function(require,module,exports){
 var tagsMarkdown = require('../markdown/js/properties/tags').body;
 
 var tagsProp = {
@@ -32333,7 +32351,7 @@ var tagsProp = {
 module.exports = tagsProp;
 
 
-},{"../markdown/js/properties/tags":181}],205:[function(require,module,exports){
+},{"../markdown/js/properties/tags":182}],207:[function(require,module,exports){
 var _ = require('lodash'),
     React = require('react');
 
@@ -32362,7 +32380,8 @@ var Props = React.createClass({displayName: "Props",
                 React.createElement("h4", {className: "api-link"}, 
                   React.createElement("a", {name: prop.nameAttr}, prop.nameAttr)
                 ), 
-                React.createElement("p", {dangerouslySetInnerHTML: {__html: prop.renderString}})
+                React.createElement("p", {dangerouslySetInnerHTML: {__html: prop.renderString}}), 
+                React.createElement("a", {className: "top-return", href: "#properties_top"}, "Back to Properties Links")
               ));
     });
 
@@ -32375,6 +32394,7 @@ var Props = React.createClass({displayName: "Props",
               React.createElement("h3", {className: "feature-heading"}, "API documentation"), 
               "you can also view the", 
               React.createElement("a", {href: "example/annotated-source.html"}, " Annotated Source Code "), 
+              React.createElement("a", {name: "properties_top"}, " "), 
               React.createElement("h5", null, "Component Property API Documentation Links:"), 
               React.createElement("nav", {className: "api"}, 
                React.createElement("ul", null, 
@@ -32390,4 +32410,4 @@ var Props = React.createClass({displayName: "Props",
 React.render(React.createElement(Props, null), document.getElementById('props_docs'));
 
 
-},{"./examples/all-props":158,"lodash":2,"react":157}]},{},[205])
+},{"./examples/all-props":158,"lodash":2,"react":157}]},{},[207])

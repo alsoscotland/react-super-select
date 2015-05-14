@@ -27,6 +27,7 @@ var Props = React.createClass({
                   <a name={prop.nameAttr}>{prop.nameAttr}</a>
                 </h4>
                 <p dangerouslySetInnerHTML={{__html: prop.renderString}} />
+                <a className="top-return" href="#properties_top">Back to Properties Links</a>
               </article>);
     });
 
@@ -39,6 +40,7 @@ var Props = React.createClass({
               <h3 className="feature-heading">API documentation</h3>
               you can also view the
               <a href="example/annotated-source.html"> Annotated Source Code </a>
+              <a name="properties_top"> </a>
               <h5>Component Property API Documentation Links:</h5>
               <nav className="api">
                <ul>
