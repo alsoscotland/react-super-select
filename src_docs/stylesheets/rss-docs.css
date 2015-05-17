@@ -1,0 +1,114 @@
+a.live-examples {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+nav.api {
+  box-sizing: border-box;
+}
+nav.api * {
+  box-sizing: border-box;
+}
+
+nav.api section {
+  display: inline-block;
+  width: 25%;
+  padding: .25rem;
+}
+
+nav.api ul {
+  list-style: none;
+}
+
+nav.api li {
+  display: inline-block;
+  width: 45%;
+  padding: 0 .25rem;
+}
+
+.api-item {
+  margin-top: 3rem;
+  padding: .5rem;
+  border: 1px dotted rgba(100,100,100,.25);
+  border-radius: 6px;
+  background-color: #e6f3f7;
+}
+
+.api-item .r-ss-wrap {
+  background-color: #FFF;
+}
+
+.api-item h4 {
+  margin: 0;
+}
+
+.api-item ul,
+.api-item p {
+  margin: .5rem 0;
+}
+
+.api-link {
+  border-bottom: 1px solid #999;
+  font-size: 1.4rem;
+}
+
+.api-link a {
+  color: black;
+  font-weight: bold;
+}
+
+.example-output {
+  min-height: 2rem;
+}
+
+.live-examples {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+}
+
+.rss-live-example {
+  margin: 2rem 0 2rem 2%;
+
+  width: 96%;
+}
+
+.top-return {
+  display: block;
+  text-align: right;
+}
+
+.rss-example-markdown {
+  margin: 2rem 0;
+}
+
+/* grocery examples */
+.grocery-item {
+  padding: .5rem;
+  border-radius: 0 5px 5px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.grocery-item p {
+  display: inline-block;
+}
+
+.grocery-icon {
+  display: inline-block;
+  width: 36px;
+  height: 100%;
+  min-height: 36px;
+  vertical-align: top;
+  margin-right: .5rem;
+}
+
+.example-fruit {
+  border: 1px solid red;
+  border-right: 15px solid red;
+}
+
+.example-vegetable {
+  border: 1px solid green;
+  border-right: 15px solid green;
+}

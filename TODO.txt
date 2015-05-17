@@ -1,7 +1,5 @@
 TASKS
-1) move gh-pages stuff into examples so gulp deploy handles it too?
-
-2) list groups should be separately focus-able and navigable?
+1) list groups should be separately focus-able and navigable?
 Change groups to http://www.w3.org/TR/WCAG20-TECHS/H85.html
 ex: <optgroup label="Fruits"
 
