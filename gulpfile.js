@@ -105,6 +105,12 @@ gulp.task('rssdev', function() {
                 'watch:examples-lint');
 });
 
+// release with auto-generated docs built so that they can be pushed to gh-pages
+gulp.task('rss_release', function() {
+  runSequence('docs_build',
+              'release');
+});
+
 // DOCS RELATED GULP TASKS BELOW
 var documentation_paths = {
   docs_bundle: [

@@ -65,7 +65,14 @@
   "readmeFilename": "README.md",
   "keywords": [
     "react",
-    "react-component"
+    "react-component",
+    "select",
+    "UI-control",
+    "UI",
+    "accessible",
+    "multiselect",
+    "tagging",
+    "tags"
   ],
   "license": "MIT"
 }
