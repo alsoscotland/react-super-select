@@ -1,1 +1,0 @@
-console.log("<article class=\"api-item\">\n\t<h4 class=\"api-link\">\n\t\t<a name=\"", prop, "\">",prop,"</a>\n\t</h4>\n\t<p>\n\n\t</p>\n</article>");
