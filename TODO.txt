@@ -1,5 +1,7 @@
 TASKS
-1) list groups should be separately focus-able and navigable?
+1) why is push to gh-pages failing
+
+2) list groups should be separately focus-able and navigable?
 Change groups to http://www.w3.org/TR/WCAG20-TECHS/H85.html
 ex: <optgroup label="Fruits"
 
