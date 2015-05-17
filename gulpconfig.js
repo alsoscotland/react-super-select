@@ -25,19 +25,14 @@ module.exports = {
     dependencies: dependencies
   },
 
+  // replaced the default examples behavior with the
+  // docs generation code.  All we need is to simply copy the files over here
   example: {
-    src: 'src',
+    less: [],
+    src: 'docs_generated',
+    scripts: [],
     dist: 'example/dist',
-    files: [
-      'index.html',
-      'standalone.html'
-    ],
-    scripts: [
-      'app.js'
-    ],
-    less: [
-      'app.less'
-    ]
+    files: ['**/*'],
   }
 
 };

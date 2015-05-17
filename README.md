@@ -2,7 +2,7 @@
 
 A flexible replacement for the html select control built with React and Lodash
 
-####Features:
+#### Features:
   - template capability for options
   - aria-compliant keyboard navigation
   - multiselect & tags
