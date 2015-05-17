@@ -1,1 +1,0 @@
-{"body":"<!-- customGroupHeadingClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>Used in conjunction with the <strong>groupBy</strong> option.</p>\n<p>This string value will be added as a custom css class to the group headings which are rendered into the dropdown</p>\n"}
