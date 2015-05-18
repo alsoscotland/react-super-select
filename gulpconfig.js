@@ -18,6 +18,7 @@ module.exports = {
 
   component: {
     file: COMPONENT_NAME + '.js',
+    less: './src/app.less',
     name: COMPONENT_NAME,
     src: 'src',
     dist: 'dist',

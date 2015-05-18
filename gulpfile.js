@@ -24,7 +24,7 @@ var paths = {
       './tmp/jsx/**/*.js',
       'gulpfile.js'
     ],
-    css: [
+    less: [
       './src/app.less'
     ]
   }
@@ -286,7 +286,7 @@ gulp.task('docs_build', function() {
               'docs_add_version',
               'docs_files',
               'docs_markdown',
-              'docs_js_unbundled',
+               'docs_js_unbundled',
               'live_examples_js_bundled',
               'test_page_js_bundled',
               'docs_fonts',
