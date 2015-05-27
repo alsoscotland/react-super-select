@@ -17,9 +17,6 @@ Object.keys(pkg.dependencies).forEach(function(i) {
 module.exports = {
 
   component: {
-    example: {
-      dist: 'example/dist'
-    },
     file: COMPONENT_NAME + '.js',
     less: './src/react-super-select.less',
     name: COMPONENT_NAME,

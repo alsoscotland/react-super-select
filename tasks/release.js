@@ -31,9 +31,9 @@ module.exports = function(gulp, config) {
 
   var releaseTasks = ['build:docs', 'publish:tag', 'publish:npm'];
 
-  if (config.component.example) {
+  if (config.documentation.example.dist) {
     gulp.task('publish:examples', ['build:examples'], function() {
-      return gulp.src(config.component.example.dist + '/**/*').pipe(deploy({
+      return gulp.src(config.documentation.example.dist + '/**/*').pipe(deploy({
         branch: "gh-pages",
         force: true
       }));
