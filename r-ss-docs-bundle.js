@@ -32070,9 +32070,9 @@ module.exports = allProps;
 
 
 },{"./properties/ajaxDataFetch":202,"./properties/ajaxErrorString":203,"./properties/customClass":204,"./properties/customFilterFunction":205,"./properties/customGroupHeadingClass":206,"./properties/customGroupHeadingTemplateFunction":207,"./properties/customLoaderClass":208,"./properties/customOptionTemplateFunction":209,"./properties/customSearchIconClass":210,"./properties/customTagClass":211,"./properties/dataSource":212,"./properties/groupBy":213,"./properties/hasMorePages":214,"./properties/multiple":215,"./properties/noResultsString":216,"./properties/onChange":217,"./properties/optionLabelKey":218,"./properties/optionValueKey":219,"./properties/pageDataFetch":220,"./properties/placeholder":221,"./properties/searchPlaceholder":222,"./properties/searchable":223,"./properties/tagRemoveLabelString":224,"./properties/tags":225}],160:[function(require,module,exports){
-var PropsApp = require('./props-app');
-var KeyboardNavigationApp = require('./keyboard-navigation-app');
-var VersionPrinter = require('./version-printer');
+require('./props-app');
+require('./keyboard-navigation-app');
+require('./version-printer');
 
 
 
@@ -32746,7 +32746,7 @@ React.render(React.createElement(PropsApp, null), document.getElementById('props
 
 
 },{"./all-props":159,"lodash":2,"react":157}],227:[function(require,module,exports){
-var RSS_VERSION = "0.1.4";
+var RSS_VERSION = "0.1.5";
 var React = require('react');
 
 var VersionPrinter = React.createClass({displayName: "VersionPrinter",
