@@ -1,3 +1,3 @@
-var PropsApp = require('./props-app');
-var KeyboardNavigationApp = require('./keyboard-navigation-app');
-var VersionPrinter = require('./version-printer');
+require('./props-app');
+require('./keyboard-navigation-app');
+require('./version-printer');

@@ -21,7 +21,8 @@ To build and run the examples locally, run:
 
 ```
 npm install
-gulp rssdev
+gulp build
+gulp dev
 ```
 
 Then open [`localhost:8000`](http://localhost:8000) in a browser.
@@ -30,12 +31,18 @@ Then open [`localhost:8000`](http://localhost:8000) in a browser.
 
 Feedback, issue reports, and feature requests are welcome.  There is a provided gulp task for running a dev environment with live linting
 ```
-gulp rssdev
+gulp dev
 ```
 
 Please ensure any pull requests have jest specs and that all tests succeed when running
 ```
 npm test
+```
+
+Watching for changes and live linting.
+jshint for js and recess errors for less will report to the console
+```
+gulp watch
 ```
 
 ## A note on accessibility
@@ -47,8 +54,14 @@ The easiest way to use react-super-select is to install it from NPM and include 
 
 You can also use the standalone build by including `dist/react-super-select.js` in your page. If you use this, make sure you have already included React, and it is available as a global variable.
 
+via npm:
 ```
 npm install react-super-select --save
+```
+
+via bower:
+```
+bower install react-super-select
 ```
 
 ## Dependencies
@@ -60,6 +73,9 @@ React-Super-Select requires
 ## Usage
 
 To use react super-select (jsx), require the module in your source code, and add a ReactSuperSelect element with a combination of the properties listed in the [API docs](http://alsoscotland.github.io/react-super-select/) or the [Annotated Source](http://alsoscotland.github.io/react-super-select/example/annotated-source.html)
+
+### include css
+copy the css file from the dist/ folder of node_modules/react-super-select (react-super-select.css) into your app's css directory
 
 ### License
 

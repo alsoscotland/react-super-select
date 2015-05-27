@@ -17,23 +17,90 @@ Object.keys(pkg.dependencies).forEach(function(i) {
 module.exports = {
 
   component: {
+    example: {
+      dist: 'example/dist'
+    },
     file: COMPONENT_NAME + '.js',
-    less: './src/app.less',
+    less: './src/react-super-select.less',
     name: COMPONENT_NAME,
+    lib: 'lib',
     src: 'src',
     dist: 'dist',
     pkgName: pkg.name,
-    dependencies: dependencies
+    dependencies: dependencies,
+    lint: {
+      js: [
+        './src/**/*-spec.js',
+        './tmp/jsx/**/*.js',
+        'gulpfile.js'
+      ],
+      less: [
+        './src/react-super-select.less'
+      ]
+    }
   },
 
-  // replaced the default examples behavior with the
-  // docs generation code.  All we need is to simply copy the files over here
-  example: {
-    less: [],
-    src: 'docs_generated',
-    scripts: [],
-    dist: 'example/dist',
-    files: ['**/*'],
+  tasks: {
+    lint: {
+      js: [
+        './tasks/*.js'
+      ]
+    }
+  },
+
+  documentation: {
+    clean: [
+      './src_docs/markdown/js/**/*',
+      'docs_generated/*',
+      'tmp_docs/cache',
+      'tmp_docs/jsx*'
+    ],
+    docs_bundle: [
+      './src_docs/index-bundle.js'
+    ],
+    live_examples_bundle: [
+      './src_docs/live-examples-app.js'
+    ],
+    test_page_bundle: [
+      './src_docs/test-page-app.js'
+    ],
+    js_unbundled: [
+      './src_docs/scale.fix.js',
+    ],
+    css: ['./src_docs/**/*.css', '!./src_docs/stylesheets/docco.css'],
+    less: {
+      files: './src/app.less',
+      dest: './src_docs/stylesheets'
+    },
+    css_vendor: ['./src_docs/stylesheets/docco.css'],
+    lint: {
+      js: [
+        './src_docs/all-*.js',
+        './tmp_docs/jsx/**/*.js'
+      ]
+    },
+    markdown: {
+      files: ['./src_docs/markdown/**/*.md'],
+      dest: './src_docs/markdown/js'
+    },
+    fonts: {
+      files: 'src_docs/fonts/*',
+      dist: 'docs_generated/fonts'
+    },
+    img: {
+      files: 'src_docs/images/*',
+      dist: 'docs_generated/images'
+    },
+    example: {
+      dist: 'docs_generated',
+      files: [
+        './src_docs/index.html',
+        './src_docs/annotated-source.html',
+        './src_docs/react-super-select-examples.html',
+        './src_docs/test-page.html'
+      ]
+    },
+    version_printer: './src_docs/version-printer.js'
   }
 
 };
