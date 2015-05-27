@@ -24,6 +24,15 @@
     "src",
     "node_modules",
     "example",
-    "test"
+    "test",
+    ".jshintrc",
+    ".npmignore",
+    "TODO.txt",
+    "gulpconfig.js",
+    "gulpfile.js",
+    "preprocessor.js",
+    "scripts",
+    "src_docs",
+    "tasks"
   ]
 }

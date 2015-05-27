@@ -38,19 +38,10 @@
   background-clip: @argument;
 }
 
-.border-radius(@topright: 0, @bottomright: 0, @bottomleft: 0, @topleft: 0) {
-  -webkit-border-top-right-radius: @topright;
-  -webkit-border-bottom-right-radius: @bottomright;
-  -webkit-border-bottom-left-radius: @bottomleft;
-  -webkit-border-top-left-radius: @topleft;
-  -moz-border-radius-topright: @topright;
-  -moz-border-radius-bottomright: @bottomright;
-  -moz-border-radius-bottomleft: @bottomleft;
-  -moz-border-radius-topleft: @topleft;
-  border-top-right-radius: @topright;
-  border-bottom-right-radius: @bottomright;
-  border-bottom-left-radius: @bottomleft;
-  border-top-left-radius: @topleft;
+.border-radius(@topleft: 0, @topright: 0, @bottomright: 0, @bottomleft: 0) {
+  -webkit-border-radius: @topleft @topright @bottomright @bottomleft;
+  -moz-border-radius: @topleft @topright @bottomright @bottomleft;
+  border-radius: @topleft @topright @bottomright @bottomleft;
   .background-clip(padding-box);
 }
 
@@ -109,7 +100,7 @@
   }
 
   &.r-ss-open {
-    .border-radius(.25rem, 0, 0, .25rem);
+    .border-radius(.25rem, .25rem, 0, 0);
 
     &:focus {
       border-color: @border;
@@ -182,7 +173,7 @@
 .r-ss-dropdown {
   position: absolute;
   top: 99%;
-  .border-radius(0, .25rem, .25rem, 0);
+  .border-radius(0, 0, .25rem, .25rem);
   background-color: @white;
   border-color: @borderFallback;
   border: 1px solid transparent;
