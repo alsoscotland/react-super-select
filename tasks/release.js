@@ -29,17 +29,17 @@ module.exports = function(gulp, config) {
       .on('close', done);
   });
 
-  var releaseTasks = ['build:docs', 'publish:tag', 'publish:npm'];
+  var releaseTasks = ['publish:tag', 'publish:npm'];
 
   if (config.documentation.example.dist) {
-    gulp.task('publish:examples', function() {
+    gulp.task('publish:docs', function() {
       return gulp.src(config.documentation.example.dist + '/**/*').pipe(deploy({
         branch: "gh-pages",
         force: true
       }));
     });
 
-    releaseTasks.push('publish:examples');
+    releaseTasks.push('publish:docs');
   }
 
   gulp.task('release', releaseTasks);
