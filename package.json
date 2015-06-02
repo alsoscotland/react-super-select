@@ -1,6 +1,6 @@
 {
   "name": "react-super-select",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "react-super-select",
   "author": "Scotland Stephenson",
   "homepage": "https://github.com/alsoscotland/react-super-select",
@@ -17,7 +17,8 @@
     "react": ">=0.12.2"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "src/"
   ],
   "jest": {
     "scriptPreprocessor": "./preprocessor.js",
