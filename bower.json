@@ -1,6 +1,6 @@
 {
   "name": "react-super-select",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "react-super-select",
   "main": "dist/react-super-select.min.js",
   "homepage": "https://github.com/alsoscotland/react-super-select",
