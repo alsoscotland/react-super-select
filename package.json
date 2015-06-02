@@ -1,8 +1,8 @@
 {
   "name": "react-super-select",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "react-super-select",
-  "main": "index.js",
+  "main": "dist/react-super-select.min.js",
   "author": "Scotland Stephenson",
   "homepage": "https://github.com/alsoscotland/react-super-select",
   "repository": {
