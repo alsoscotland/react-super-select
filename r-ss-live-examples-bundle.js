@@ -33215,93 +33215,675 @@ module.exports = ReactSuperSelect;
 
 
 },{"classnames":1,"lodash":3,"react":158}],160:[function(require,module,exports){
+var basicAjaxExample = require('./super-selects/basic-ajax'),
+    basicExample = require('./super-selects/basic-example'),
+    basicSearchable = require('./super-selects/basic-searchable'),
+    customTemplate = require('./super-selects/custom-template'),
+    groupBy = require('./super-selects/group-by'),
+    localized = require('./super-selects/localized'),
+    multiselect = require('./super-selects/multiselect'),
+    paging = require('./super-selects/paging'),
+    tagsExample = require('./super-selects/tags-example');
+
+var allExamples = [
+  basicExample,
+  basicAjaxExample,
+  basicSearchable,
+  customTemplate,
+  groupBy,
+  localized,
+  multiselect,
+  paging,
+  tagsExample
+];
+
+module.exports = allExamples;
+
+
+},{"./super-selects/basic-ajax":171,"./super-selects/basic-example":172,"./super-selects/basic-searchable":173,"./super-selects/custom-template":174,"./super-selects/group-by":175,"./super-selects/localized":176,"./super-selects/multiselect":177,"./super-selects/paging":178,"./super-selects/tags-example":182}],161:[function(require,module,exports){
 var _ = require('lodash'),
     React = require('react'),
-    ReactSuperSelect = require('../src/react-super-select'),
-    TestPageExampleOptionTemplate = require('./super-selects/support/test-page-example-option-template');
+    ReactSuperSelect = require('../src/react-super-select');
 
-var testData = require('./super-selects/support/test-data.js'),
-    mockAjaxPerPage = 10,
-    lastPage = 0;
+var allExamples = require('./all-examples');
 
-var RSSTestPageApp = React.createClass({displayName: "RSSTestPageApp",
+var RSSExamples = React.createClass({displayName: "RSSExamples",
 
-  handlerExample: function(newValue) {
-    console.log(newValue);
+  _renderExampleLinks: function() {
+    var exampleLinks = _.map(allExamples, function(example, index) {
+      var href = '#' + example.nameAttr;
+      return (React.createElement("li", {key: index}, React.createElement("a", {href: href}, " ", example.displayName, " ")));
+    });
+
+    return( React.createElement("div", {className: "example-links"}, 
+              React.createElement("h1", null, "React-Super-Select Live Examples"), 
+              React.createElement("h2", null, " Quick Links: "), 
+              React.createElement("nav", {className: "api"}, 
+               React.createElement("ul", null, 
+                 exampleLinks
+               )
+              )
+            ));
   },
 
-  _customMarkupMapper: function(item) {
-    return(
-    React.createElement(TestPageExampleOptionTemplate, {key: item.id, option: item}));
+  _renderExampleSections: function() {
+    var exampleSections = _.map(allExamples, function(example, index) {
+      var superSelect = React.createElement(ReactSuperSelect, example.props),
+          outputId = example.nameAttr + '_output';
+
+      return( React.createElement("li", {key: index, className: "example-sections"}, 
+              React.createElement("article", {className: "api-item"}, 
+                React.createElement("h3", {className: "api-link"}, 
+                  React.createElement("a", {name: example.nameAttr}, " ", example.displayName, " ")
+                ), 
+                React.createElement("div", {className: "rss-live-example"}, 
+                  superSelect
+                ), 
+                React.createElement("div", {className: "rss-output-example"}, "onChange Output"), 
+                React.createElement("pre", {className: "example-output", id: outputId}
+                ), 
+                React.createElement("div", null, 
+                  React.createElement("aside", {className: "rss-example-markdown", dangerouslySetInnerHTML: {__html: example.renderString}})
+                ), 
+                React.createElement("a", {className: "top-return", href: "#top"}, "Back to Top")
+              )
+            ));
+    });
+
+    return(React.createElement("ul", {className: "live-examples-list"}, 
+        exampleSections
+      ));
   },
 
-  _simulatedAjaxFetch: function() {
-    var data = _.take(testData, mockAjaxPerPage);
-    // simulate a 2.5 second ajax fetch for collection data
+  render: function() {
+    return (React.createElement("div", null, 
+      React.createElement("a", {name: "top"}, " "), 
+      this._renderExampleLinks(), 
+      this._renderExampleSections()
+    ));
+  }
+});
+
+React.render(React.createElement(RSSExamples, null), document.getElementById('examples'));
+
+
+},{"../src/react-super-select":159,"./all-examples":160,"lodash":3,"react":158}],162:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  ajaxDataFetch={simulatedAjaxFetch} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  // simulate a 2 second ajax fetch for collection data\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(testData);\n      }, 2000);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],163:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],164:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],165:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+},{}],166:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+},{}],167:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  tags={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot;\n                  tagRemoveLabelString=&quot;删除标记&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"localization-properties\">localization properties</h4>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\ntagRemoveLabelString=&quot;删除标记&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Localized Tags Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};\\n&#39;]);\n  });\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],168:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],169:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],170:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],171:[function(require,module,exports){
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicAjaxMarkdown = require('../markdown/js/examples/basic-ajax').body;
+
+var handlerExample = function(option) {
+  var output = [
+    'Option Item Chosen = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('basic_ajax_output', output.join(''));
+};
+
+var simulatedAjaxFetch= function() {
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function(callback) {
+      setTimeout(function() {
+        callback(testData);
+      }, 2000);
+    }
+  };
+};
+
+var basicAjaxExample = {
+
+  nameAttr: "basic_ajax",
+  displayName: "Basic Ajax",
+
+  props: {
+    placeholder: "Choose An Option",
+    ajaxDataFetch: simulatedAjaxFetch,
+    onChange: handlerExample,
+    searchable: true
+  },
+
+  renderString: basicAjaxMarkdown
+
+};
+
+module.exports = basicAjaxExample;
+
+
+},{"../markdown/js/examples/basic-ajax":162,"./support/example-output.js":179,"./support/test-data.js":181}],172:[function(require,module,exports){
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
+
+var handlerExample = function(option) {
+  var output = [
+    'Option Item Chosen = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('basic_example_output', output.join(''));
+};
+
+var basicExample = {
+
+  nameAttr: "basic_example",
+  displayName: "Basic Example",
+
+  props: {
+    placeholder: "Make a Selection",
+    dataSource: testData,
+    onChange: handlerExample
+  },
+
+  renderString: basicExampleMarkdown
+
+};
+
+module.exports = basicExample;
+
+
+},{"../markdown/js/examples/basic-example":163,"./support/example-output.js":179,"./support/test-data.js":181}],173:[function(require,module,exports){
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
+
+var handlerExample = function(option) {
+  var output = [
+    'Searchable Option Item Chosen = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('basic_searchable_output', output.join(''));
+};
+
+var basicSearchableExample = {
+
+  nameAttr: "basic_searchable",
+  displayName: "Basic Searchable",
+
+  props: {
+    placeholder: "Make a Selection",
+    dataSource: testData,
+    onChange: handlerExample,
+    searchable: true
+  },
+
+  renderString: basicSearchableMarkdown
+
+};
+
+module.exports = basicSearchableExample;
+
+
+},{"../markdown/js/examples/basic-searchable":164,"./support/example-output.js":179,"./support/test-data.js":181}],174:[function(require,module,exports){
+var React = require('react'),
+    classNames = require('classnames'),
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
+
+var handlerExample = function(option) {
+  var output = [
+    'Add To Cart: ',
+    option.label,
+    '\nPrice: ',
+    option.price];
+  exampleOutput('custom_template_output', output.join(''));
+};
+
+var groceryCartItemTemplate = function(item) {
+  var itemClasses = classNames('grocery-item',
+                               'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon',
+                               'rss-grocery',
+                              'rss-grocery-' + item.attributeName);
+
+  return(
+    React.createElement("div", {className: itemClasses}, 
+      React.createElement("span", {className: iconClasses}), 
+      React.createElement("p", null, item.label, " - ", '$' + item.price.toFixed(2))
+    ));
+};
+
+var customTemplateExample = {
+
+  nameAttr: "custom_template",
+  displayName: "Custom Template Example",
+
+  props: {
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: 'label',
+    placeholder: "Pick an Item",
+    searchable: true,
+    searchPlaceholder: "Search Shop"
+  },
+
+  renderString: customTemplateMarkdown
+
+};
+
+module.exports = customTemplateExample;
+
+
+},{"../markdown/js/examples/custom-template":165,"./support/example-output.js":179,"./support/groceries.js":180,"classnames":1,"react":158}],175:[function(require,module,exports){
+var React = require('react'),
+    classNames = require('classnames'),
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    groupByMarkdown = require('../markdown/js/examples/group-by').body;
+
+var handlerExample = function(option) {
+  var output = [
+    'Add To Cart: ',
+    option.label,
+    '\nPrice: ',
+    option.price];
+  exampleOutput('group_by_output', output.join(''));
+};
+
+var groceryCartItemTemplate = function(item) {
+  var itemClasses = classNames('grocery-item',
+                               'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon',
+                               'rss-grocery',
+                              'rss-grocery-' + item.attributeName);
+
+  return(
+    React.createElement("div", {className: itemClasses}, 
+      React.createElement("span", {className: iconClasses}), 
+      React.createElement("p", null, item.label, " - ", '$' + item.price.toFixed(2))
+    ));
+};
+
+var groupByExample = {
+
+  nameAttr: "group_by",
+  displayName: "Grouped Options Example",
+
+  props: {
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: "label",
+    placeholder: "Pick an Item",
+    searchable: true,
+    searchPlaceholder: "Search Shop",
+    groupBy: "group"
+  },
+
+  renderString: groupByMarkdown
+
+};
+
+module.exports = groupByExample;
+
+
+},{"../markdown/js/examples/group-by":166,"./support/example-output.js":179,"./support/groceries.js":180,"classnames":1,"react":158}],176:[function(require,module,exports){
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    localizedMarkdown = require('../markdown/js/examples/localized').body;
+
+var handlerExample = function(options) {
+  var output = [];
+  _.map(options, function(option){
+    output = output.concat([
+    'Localized Tags Chosen Option = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};\n']);
+  });
+
+  exampleOutput('localized_output', output.join(''));
+};
+
+var simulatedAjaxFetch= function() {
+  var MOCK_AJAX_PER_PAGE = 10;
+  var data = _.take(testData, MOCK_AJAX_PER_PAGE);
+    // simulate a 2 second ajax fetch for collection data
     return {
       then: function(callback) {
         setTimeout(function() {
           callback(data);
-        }, 2500);
+        }, 2000);
       }
     };
+};
+
+var hasMorePagesExample = function(collection) {
+  return collection.length < testData.length;
+};
+
+var previousPage = 0;
+
+var simulatedPageFetch = function(collection) {
+  var MOCK_AJAX_PER_PAGE = 10;
+  previousPage = previousPage + 1;
+  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
+      data;
+  if (sliceLocation < testData.length) {
+    data = [];
+
+    for (var i = sliceLocation; i < (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {
+      if (testData[i]) {
+        data.push(testData[i]);
+      }
+    }
+  } else {
+    data = testData;
+  }
+
+  return {
+    then: function(callback) {
+      setTimeout(function() {
+        callback(collection.concat(data));
+      }, 1500);
+    }
+  };
+};
+
+var localizedExample = {
+
+  nameAttr: "localized",
+  displayName: "Localized",
+
+  props: {
+    ajaxDataFetch: simulatedAjaxFetch,
+    hasMorePages: hasMorePagesExample,
+    onChange: handlerExample,
+    pageDataFetch: simulatedPageFetch,
+    placeholder: "选择",
+    ajaxErrorString: "错误",
+    noResultsString: "无结果",
+    searchPlaceholder: "搜索",
+    searchable: true,
+    tagRemoveLabelString: '删除标记',
+    tags: true
   },
 
-  _groupBy: 'size',
+  renderString: localizedMarkdown
 
-  _simulatedPageFetch: function(collection) {
-    lastPage = lastPage + 1;
-    var sliceLocation = lastPage * mockAjaxPerPage,
-        data;
-    if (sliceLocation < testData.length) {
-      data = [];
+};
 
-      for (var i = sliceLocation; i < (sliceLocation + mockAjaxPerPage); i++) {
-        if (testData[i]) {
-          data.push(testData[i]);
-        }
-      }
-    } else {
-      data = testData;
-    }
+module.exports = localizedExample;
 
+
+},{"../markdown/js/examples/localized":167,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}],177:[function(require,module,exports){
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    multiselectMarkdown = require('../markdown/js/examples/multiselect').body;
+
+var handlerExample = function(options) {
+  var output = [];
+  _.map(options, function(option){
+    output = output.concat([
+    'Multiselect Chosen Option = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};\n']);
+  });
+
+  exampleOutput('multiselect_output', output.join(''));
+};
+
+var multiselectExample = {
+
+  nameAttr: "multiselect",
+  displayName: "Multiselect",
+
+  props: {
+    placeholder: "Make Your Selections",
+    dataSource: testData,
+    onChange: handlerExample,
+    multiple: true
+  },
+
+  renderString: multiselectMarkdown
+
+};
+
+module.exports = multiselectExample;
+
+
+},{"../markdown/js/examples/multiselect":168,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}],178:[function(require,module,exports){
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    pagingMarkdown = require('../markdown/js/examples/paging').body;
+
+var handlerExample = function(option) {
+  var output = [
+    'Option Item Chosen = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('paging_output', output.join(''));
+};
+
+var simulatedAjaxFetch= function() {
+  var MOCK_AJAX_PER_PAGE = 10;
+  var data = _.take(testData, MOCK_AJAX_PER_PAGE);
+    // simulate a 2 second ajax fetch for collection data
     return {
       then: function(callback) {
         setTimeout(function() {
-          callback(collection.concat(data));
-        }, 1500);
+          callback(data);
+        }, 2000);
       }
     };
-  },
+};
 
-  _hasMorePages: function(collection) {
-    return collection.length < testData.length;
-  },
+var hasMorePagesExample = function(collection) {
+  return collection.length < testData.length;
+};
 
-  render: function() {
-    return (
-      React.createElement("div", null, 
-        React.createElement("section", null, 
-          React.createElement("h1", null, "Basic Example"), 
-          React.createElement(ReactSuperSelect, {placeholder: "Make a Selection", searchable: true, searchPlaceholder: "search", dataSource: testData, onChange: this.handlerExample})
-        ), 
-        React.createElement("section", null, 
-          React.createElement("h1", null, "Custom Template Example"), 
-          React.createElement(ReactSuperSelect, {groupBy: this._groupBy, placeholder: "Make a Selection", customClassName: "your-custom-wrapper-class", tags: true, initialValue: [testData[0], testData[4]], searchable: true, searchPlaceholder: "search", onChange: this.handlerExample, customOptionTemplateFunction: this._customMarkupMapper, dataSource: testData})
-        ), 
-        React.createElement("section", null, 
-          React.createElement("h1", null, "Ajax Example"), 
-          React.createElement(ReactSuperSelect, {placeholder: "Make a Selection", tags: true, searchable: true, searchPlaceholder: "filter", onChange: this.handlerExample, ajaxDataFetch: this._simulatedAjaxFetch, pageDataFetch: this._simulatedPageFetch, hasMorePages: this._hasMorePages})
-        )
-      )
-    );
+var previousPage = 0;
+
+var simulatedPageFetch = function(collection) {
+  var MOCK_AJAX_PER_PAGE = 10;
+  previousPage = previousPage + 1;
+  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
+      data;
+  if (sliceLocation < testData.length) {
+    data = [];
+
+    for (var i = sliceLocation; i < (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {
+      if (testData[i]) {
+        data.push(testData[i]);
+      }
+    }
+  } else {
+    data = testData;
   }
-});
 
-React.render(React.createElement(RSSTestPageApp, null), document.getElementById('test_page_app'));
+  return {
+    then: function(callback) {
+      setTimeout(function() {
+        callback(collection.concat(data));
+      }, 1500);
+    }
+  };
+};
+
+var pagingExample = {
+
+  nameAttr: "paging",
+  displayName: "Paging",
+
+  props: {
+    ajaxDataFetch: simulatedAjaxFetch,
+    hasMorePages: hasMorePagesExample,
+    onChange: handlerExample,
+    pageDataFetch: simulatedPageFetch,
+    placeholder: "Choose An Option",
+    searchable: true
+  },
+
+  renderString: pagingMarkdown
+
+};
+
+module.exports = pagingExample;
 
 
-},{"../src/react-super-select":159,"./super-selects/support/test-data.js":161,"./super-selects/support/test-page-example-option-template":162,"lodash":3,"react":158}],161:[function(require,module,exports){
+},{"../markdown/js/examples/paging":169,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}],179:[function(require,module,exports){
+var exampleOutput = function(id, content) {
+  var outputDiv = document.getElementById(id);
+
+  if (outputDiv && outputDiv.childNodes && outputDiv.childNodes[0]) {
+    outputDiv.replaceChild(document.createTextNode(content), outputDiv.childNodes[0]);
+  } else {
+    outputDiv.appendChild(document.createTextNode(content));
+  }
+
+};
+
+module.exports = exampleOutput;
+
+
+},{}],180:[function(require,module,exports){
+var groceries = [
+{
+  id: 1,
+  attributeName: "apple",
+  label: "Apple",
+  iconClass: "rss-grocery rss-grocery-apple",
+  group: "fruits",
+  price: 0.79
+},{
+  id: 2,
+  attributeName: "carrot",
+  label: "Carrot",
+  iconClass: "rss-grocery rss-grocery-carrot",
+  group: "Vegetables",
+  price: 0.21
+},{
+  id: 3,
+  attributeName: "cherries",
+  label: "Cherries",
+  iconClass: "rss-grocery rss-grocery-cherries",
+  group: "fruits",
+  price: 0.45
+},{
+  id: 4,
+  attributeName: "eggplant",
+  label: "Eggplant",
+  iconClass: "rss-grocery rss-grocery-eggplant",
+  group: "Vegetables",
+  price: 1.50
+},{
+  id: 5,
+  attributeName: "garlic",
+  label: "Garlic",
+  iconClass: "rss-grocery rss-grocery-garlic",
+  group: "Vegetables",
+  price: 0.60
+},{
+  id: 6,
+  attributeName: "grapes",
+  label: "Grapes",
+  iconClass: "rss-grocery rss-grocery-grapes",
+  group: "fruits",
+  price: 3.00
+},{
+  id: 7,
+  attributeName: "green_pepper",
+  label: "Green Pepper",
+  iconClass: "rss-grocery rss-grocery-green_pepper",
+  group: "Vegetables",
+  price: 0.95
+},{
+  id: 8,
+  attributeName: "lemon",
+  label: "Lemon",
+  iconClass: "rss-grocery rss-grocery-lemon",
+  group: "fruits",
+  price: 0.40
+},{
+  id: 9,
+  attributeName: "orange",
+  label: "Orange",
+  iconClass: "rss-grocery rss-grocery-orange",
+  group: "fruits",
+  price: 0.60
+},{
+  id: 10,
+  attributeName: "peach",
+  label: "Peach",
+  iconClass: "rss-grocery rss-grocery-peach",
+  group: "fruits",
+  price: 0.95
+},{
+  id: 11,
+  attributeName: "pear",
+  label: "Pear",
+  iconClass: "rss-grocery rss-grocery-pear",
+  group: "fruits",
+  price: 0.55
+},{
+  id: 12,
+  attributeName: "pumpkin",
+  label: "Pumpkin",
+  iconClass: "rss-grocery rss-grocery-pumpkin",
+  group: "Vegetables",
+  price: 2.00
+},{
+  id: 13,
+  attributeName: "red_pepper",
+  label: "Red Pepper",
+  iconClass: "rss-grocery rss-grocery-red_pepper",
+  group: "Vegetables",
+  price: 1.00
+},{
+  id: 14,
+  attributeName: "strawberry",
+  label: "Strawberry",
+  iconClass: "rss-grocery rss-grocery-strawberry",
+  group: "fruits",
+  price: 0.15
+},{
+  id: 15,
+  attributeName: "tomato",
+  label: "Tomato",
+  iconClass: "rss-grocery rss-grocery-tomato",
+  group: "fruits",
+  price: 0.60
+},{
+  id: 16,
+  attributeName: "watermelon",
+  label: "Watermelon",
+  iconClass: "rss-grocery rss-grocery-watermelon",
+  group: "fruits",
+  price: 1.90
+}
+];
+
+module.exports = groceries;
+
+
+},{}],181:[function(require,module,exports){
 var testData = [
 {
   "id": "5507c0528152e61f3c348d56",
@@ -33532,28 +34114,43 @@ var testData = [
 module.exports = testData;
 
 
-},{}],162:[function(require,module,exports){
-var React = require('react');
+},{}],182:[function(require,module,exports){
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    tagsMarkdown = require('../markdown/js/examples/tags-example').body;
 
-var TestPageExampleOptionTemplate = React.createClass({displayName: "TestPageExampleOptionTemplate",
+var handlerExample = function(options) {
+  var output = [];
+  _.map(options, function(option){
+    output = output.concat([
+    'Tags Chosen Option = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};\n']);
+  });
 
-  propTypes: {
-    option: React.PropTypes.object
+  exampleOutput('tags_example_output', output.join(''));
+};
+
+var tagsExample = {
+
+  nameAttr: "tags_example",
+  displayName: "Tags",
+
+  props: {
+    placeholder: "Make Your Selections",
+    dataSource: testData,
+    initialValue: [testData[0], testData[1]],
+    onChange: handlerExample,
+    tags: true
   },
 
-  render: function() {
-    var name = this.props.option.name;
+  renderString: tagsMarkdown
 
-    return (
-      React.createElement("div", {className: "r-ss-example-option"}, 
-        React.createElement("img", {src: "//sitesbyscotland.com/images/monkeyTorso.png", height: "30"}), 
-        React.createElement("strong", null, name)
-      ));
-  }
+};
 
-});
-
-module.exports = TestPageExampleOptionTemplate;
+module.exports = tagsExample;
 
 
-},{"react":158}]},{},[160])
+},{"../markdown/js/examples/tags-example":170,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}]},{},[161])
