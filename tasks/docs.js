@@ -16,16 +16,16 @@ module.exports = function(gulp, config) {
     runSequence('docs_clean',
                 'docs_annotate_source',
                 'docs_add_version',
-                'docs_files',
                 'docs_markdown',
                 'docs_js_unbundled',
-                'live_examples_js_bundled',
-                'test_page_js_bundled',
+                'docs_files',
                 'docs_fonts',
                 'docs_images',
                 'docs_less-compile',
                 'docs_css',
                 'docs_css-vendor',
+                'test_page_js_bundled',
+                'live_examples_js_bundled',
                 'docs_js_bundled');
   });
 

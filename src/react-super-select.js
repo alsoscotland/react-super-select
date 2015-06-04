@@ -82,6 +82,14 @@ var ReactSuperSelect = React.createClass({
               React.PropTypes.object
             ]),
 
+    // **initialValue** (Array|Object) *optional*
+    // The selected value the control will be initialized with
+    // must be an array of option items or a single option item from your dataSource collection
+    initialValue: React.PropTypes.oneOfType([
+              React.PropTypes.arrayOf(React.PropTypes.object),
+              React.PropTypes.object
+            ]),
+
     // **optionLabelKey** (String) (*optional - defaults to using 'name' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value you would like displayed for each option.
     optionLabelKey: React.PropTypes.string,
 
@@ -192,7 +200,7 @@ var ReactSuperSelect = React.createClass({
       searchString: undefined,
 
       // **value** (Array) - An array that holds the current user-selected option(s)
-      value: [],
+      value: this._buildInitialValue(),
 
       // **valueKey** (String) - The option object key that will be used to identify the value used as an option's value property (values must be unique across data source)
       valueKey: this.props.optionValueKey || 'id'
@@ -309,6 +317,21 @@ var ReactSuperSelect = React.createClass({
   // calculate the unique identifier for the options ul for aria compliance labeling usage
   _ariaGetListId: function() {
     return this.state.controlId + '_list';
+  },
+
+  // calculate the initial value for the control from props
+  _buildInitialValue: function() {
+    var initialValue = [];
+
+    if (!_.isUndefined(this.props.initialValue)) {
+      initialValue = _.isArray(this.props.initialValue) ? this.props.initialValue : [this.props.initialValue];
+
+      if (!this._isMultiSelect()) {
+        initialValue = [_.first(initialValue)];
+      }
+    }
+
+    return initialValue;
   },
 
   // close the dropdown

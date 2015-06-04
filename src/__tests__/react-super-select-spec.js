@@ -173,6 +173,45 @@ describe('ReactSuperSelect', function() {
     });
   });
 
+  describe('initialValue', function() {
+    it('will preselect an array of options provided to the initialValue prop', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      expect(_.isEqual(el.state.value, [mockData[2], mockData[4]])).toBe(true);
+    });
+
+    it('will preselect options provided to the initialValue prop', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: mockData[2]
+        });
+
+      expect(_.isEqual(el.state.value, [mockData[2]])).toBe(true);
+    });
+
+    it('will preselect only one option if provided an array to the initialValue prop in a non-multi-select', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: false,
+          tags: false,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      expect(_.isEqual(el.state.value, [mockData[2]])).toBe(true);
+    });
+  });
+
   describe('dataSource overloads', function() {
     it('supports a getting options from an object with a collection property', function() {
       var el = renderComponent({
@@ -683,7 +722,7 @@ describe('ReactSuperSelect', function() {
       expect(el.state.value.length).toBe(2);
     });
 
-    it.only('will focus first available tag after tag removal by tag removal keypress on tag removal button', function() {
+    it('will focus first available tag after tag removal by tag removal keypress on tag removal button', function() {
       var el = getElWithThreeTags();
 
       var removeTagButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');

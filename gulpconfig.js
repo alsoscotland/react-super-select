@@ -64,7 +64,11 @@ module.exports = {
     js_unbundled: [
       './src_docs/scale.fix.js',
     ],
-    css: ['./src_docs/**/*.css', '!./src_docs/stylesheets/docco.css'],
+    css: [
+      './lib/react-super-select.css',
+      './src_docs/**/*.css',
+      '!./src_docs/stylesheets/docco.css'
+    ],
     less: {
       files: './src/app.less',
       dest: './src_docs/stylesheets'
@@ -82,7 +86,7 @@ module.exports = {
     },
     fonts: {
       files: 'src_docs/fonts/*',
-      dist: 'docs_generated/fonts'
+      dist: 'docs_generated/public/fonts'
     },
     img: {
       files: 'src_docs/images/*',

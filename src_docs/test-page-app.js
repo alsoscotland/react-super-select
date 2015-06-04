@@ -70,7 +70,7 @@ var RSSTestPageApp = React.createClass({
         </section>
         <section>
           <h1>Custom Template Example</h1>
-          <ReactSuperSelect groupBy={this._groupBy} placeholder="Make a Selection" customClassName="your-custom-wrapper-class" tags={true} multiple={true} searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionTemplateFunction={this._customMarkupMapper} dataSource={testData} />
+          <ReactSuperSelect groupBy={this._groupBy} placeholder="Make a Selection" customClassName="your-custom-wrapper-class" tags={true} initialValue={[testData[0], testData[4]]} searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionTemplateFunction={this._customMarkupMapper} dataSource={testData} />
         </section>
         <section>
           <h1>Ajax Example</h1>
