@@ -75,14 +75,14 @@
   right: .25rem;
   height: 0;
   width: 0;
-  border: 8px solid transparent;
+  border: 11px solid transparent;
 }
 .r-ss-trigger .carat.up {
-  bottom: 17px;
+  bottom: 14px;
   border-color: transparent transparent #333333 transparent;
 }
 .r-ss-trigger .carat.down {
-  bottom: 9px;
+  bottom: 1px;
   border-color: #333333 transparent transparent transparent;
 }
 .r-ss-search-aria-label {

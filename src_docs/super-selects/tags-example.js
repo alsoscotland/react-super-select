@@ -24,6 +24,7 @@ var tagsExample = {
   props: {
     placeholder: "Make Your Selections",
     dataSource: testData,
+    initialValue: [testData[0], testData[1]],
     onChange: handlerExample,
     tags: true
   },

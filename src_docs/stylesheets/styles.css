@@ -320,6 +320,18 @@ a.buttons:hover {
 
 /* Section - for main page content */
 
+.test-page-container {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.test-page-container section {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+}
+
 section {
   width:650px;
   float:right;

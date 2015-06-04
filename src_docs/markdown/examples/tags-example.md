@@ -2,7 +2,8 @@
 ```html
 <ReactSuperSelect placeholder="Make Your Selections" 
                   dataSource={testData} 
-                  onChange={handlerExample} 
+                  onChange={handlerExample}
+                  initialValue={[testData[0], testData[1]]}
                   tags={true} />
 ```
 
