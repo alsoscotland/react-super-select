@@ -56,6 +56,7 @@ module.exports = function(gulp, config) {
                   'lint-less',
                   'less-compile',
                   function() {
+                    gulp.watch([config.component.js], ['jsx']);
                     gulp.watch([config.component.lint.js], ['lint-js']);
                     gulp.watch([config.component.lint.less], ['lint-less']);
                   });

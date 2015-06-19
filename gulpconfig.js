@@ -18,6 +18,7 @@ module.exports = {
 
   component: {
     file: COMPONENT_NAME + '.js',
+    js: './src/react-super-select.js',
     less: './src/react-super-select.less',
     name: COMPONENT_NAME,
     lib: 'lib',

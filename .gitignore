@@ -19,7 +19,6 @@ node_modules
 # Example build directory
 example/dist
 docs_generated/
-dist/
 tmp/
 tmp_docs/
 tmp/jsx-cache/
