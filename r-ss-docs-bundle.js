@@ -32266,7 +32266,7 @@ module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)
 },{}],177:[function(require,module,exports){
 module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>navigation of options</strong></li>\n</ul>\n<p>Pressing the up-arrow key when the dropdown is open will move focus up to the next selectable option.  If the focus reaches the first option, or the search input field in a <strong>searchable</strong> control, no action will occur.</p>\n<h4 id=\"-with-alt-key-held-down-\">(With alt-key held down)</h4>\n<ul>\n<li><strong>close the drop down</strong>\nAn alt-key press of the up-arrow will close the dropdown</li>\n</ul>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select focused option and move focus up</strong></li>\n</ul>\n<p>If the up arrow is pressed with the shift-key in a <strong>multiselect</strong> or <strong>tags</strong> control, the focused option will be selected (or deselected if alreadySelected), and the focus will move up to the next available option.</p>\n"}
 },{}],178:[function(require,module,exports){
-module.exports={"body":"<!-- ajaxDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(<strong>dataSource</strong> must be supplied if left undefined)</p>\n<p>Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function takes no arguments, but it must return a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The <strong>dataSource</strong> option should be left undefined when using this option.</p>\n"}
+module.exports={"body":"<!-- ajaxDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(<strong>dataSource</strong> must be supplied if left undefined)</p>\n<p>Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function will be passed one argument, the dataSource that was provided to\nthe <strong>dataSource prop</strong></p>\n<p>The return value of the function must be a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The <strong>dataSource</strong> option should be left undefined when using this option.</p>\n"}
 },{}],179:[function(require,module,exports){
 module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options)</p>\n<p>This string will be shown as a message in the dropdown area in the event that an ajax request for options data fails</p>\n"}
 },{}],180:[function(require,module,exports){
@@ -32727,7 +32727,7 @@ React.render(React.createElement(PropsApp, null), document.getElementById('props
 
 
 },{"./all-props":159,"lodash":2,"react":157}],229:[function(require,module,exports){
-var RSS_VERSION = "0.1.14";
+var RSS_VERSION = "0.1.15";
 var React = require('react');
 
 var VersionPrinter = React.createClass({displayName: "VersionPrinter",
