@@ -1261,4 +1261,83 @@ describe('ReactSuperSelect', function() {
       expect(customHeadings.length).toBe(3);
     });
   });
+
+  describe('componentWillReceiveProps', function() {
+
+    var parent,
+        testParentComponent,
+        optOne = {
+          id: 1,
+          name: "Test Option 1",
+          foo: "Foo1",
+          bar: "Bar1"
+        },
+        optTwo = {
+          id: 2,
+          name: "Test Option 2",
+          foo: "Foo2",
+          bar: "Bar2"
+        };
+
+    beforeEach(function() {
+      testParentComponent = React.createFactory(React.createClass({
+        getInitialState: function() {
+          return {
+            dataSource: [optOne, optTwo],
+            initialValue: optOne,
+            optionLabelKey: undefined,
+            optionValueKey: undefined
+          };
+        },
+        render: function() {
+          return React.createElement(ReactSuperSelect, {
+                    ref: "rss",
+                    onChange: _.noop,
+                    dataSource: this.state.dataSource,
+                    initialValue: this.state.initialValue,
+                    optionLabelKey: this.state.optionLabelKey,
+                    optionValueKey: this.state.optionValueKey
+                  });
+        }
+      }));
+      parent = TestUtils.renderIntoDocument(testParentComponent());
+    });
+
+    it('resets to new initial value on initial value prop change', function() {
+      expect(parent.refs.rss.props.initialValue).toBe(optOne);
+      expect(_.isEqual(parent.refs.rss.state.value, [optOne])).toBe(true);
+      parent.setState({
+        initialValue: optTwo
+      });
+      expect(parent.refs.rss.props.initialValue).toBe(optTwo);
+      expect(_.isEqual(parent.refs.rss.state.value, [optTwo])).toBe(true);
+    });
+
+    it('will update the optionLabel Key', function() {
+      expect(parent.refs.rss.state.labelKey).toBe("name");
+      parent.setState({
+        optionLabelKey: "foo"
+      });
+      expect(parent.refs.rss.state.labelKey).toBe("foo");
+    });
+
+    it('will update the optionValue Key', function() {
+      expect(parent.refs.rss.state.valueKey).toBe("id");
+      parent.setState({
+        optionValueKey: "bar"
+      });
+      expect(parent.refs.rss.state.valueKey).toBe("bar");
+    });
+
+    it('will update on dataSource change', function() {
+      var lastData = parent.refs.rss.state.data;
+      parent.setState({
+        dataSource: [optTwo]
+      });
+      expect(_.isEqual(parent.refs.rss.state.data, lastData)).toBeFalsy();
+      expect(_.isEqual(parent.refs.rss.state.rawDataSource, [optTwo])).toBeTruthy();
+      expect(parent.refs.rss.state.lastOptionId).toBe(0);
+    });
+
+  });
 });
