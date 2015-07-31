@@ -331,6 +331,34 @@ describe('ReactSuperSelect', function() {
     });
   });
 
+  describe('triggerEnabled set to false', function() {
+
+    var el;
+
+    beforeEach(function() {
+      el = renderComponent({triggerEnabled: false});
+    });
+
+    it('will not render the trigger div if the triggerEnabled property is set to false', function() {
+      var trigger = el.refs.triggerDiv;
+
+      expect(trigger).toBeFalsy();
+    });
+
+    it('will have an initial state of isOpen = true if triggerEnabled property is set to false', function() {
+      expect(el.state.isOpen).toBeTruthy();
+    });
+
+    it('will not close the dropdown on the press of the escape key', function() {
+      TestUtils.Simulate.keyDown(el.refs.dropdownContent.getDOMNode(), {
+        which: el.keymap.esc
+      });
+
+      expect(el.state.isOpen).toBeTruthy();
+    });
+
+  });
+
   describe('focus handling', function() {
     it('focuses searchbox when searchable and expanded by keypress', function() {
       var el = renderComponent({
