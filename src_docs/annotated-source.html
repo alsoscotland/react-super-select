@@ -1057,23 +1057,41 @@ When left undefined the default filter function will be used.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
-              <p>If parent page updates the data source, reset the control with some defaults and the new dataSource.</p>
+              <p>If parent page updates the data source, reset all control state values which are derived from props.
+Reset some state defaults and dataSource related fields if dataSource changed.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  componentWillReceiveProps: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(nextProps)</span> </span>{
+    <span class="hljs-keyword">var</span> newState = {};
+
+    <span class="hljs-keyword">if</span> (!_.isEqual(nextProps.initialValue, <span class="hljs-keyword">this</span>.props.initialValue)) {
+      newState.value = <span class="hljs-keyword">this</span>._buildInitialValue(nextProps)
+    }
+
+    <span class="hljs-keyword">if</span> (!_.isUndefined(nextProps.optionLabelKey) &amp;&amp; (nextProps.optionLabelKey !== <span class="hljs-keyword">this</span>.props.optionLabelKey)) {
+      newState.labelKey = nextProps.optionLabelKey;
+    }
+
+    <span class="hljs-keyword">if</span> (!_.isUndefined(nextProps.optionValueKey) &amp;&amp; (nextProps.optionValueKey !== <span class="hljs-keyword">this</span>.props.optionValueKey)) {
+      newState.valueKey = nextProps.optionValueKey;
+    }
+
     <span class="hljs-keyword">if</span> (!_.isEqual(<span class="hljs-keyword">this</span>.props.dataSource, nextProps.dataSource)) {
 
       <span class="hljs-keyword">this</span>.lastUserSelectedOption = <span class="hljs-literal">undefined</span>;
 
-      <span class="hljs-keyword">this</span>.setState({
+      newState = _.extend(newState, {
         data: <span class="hljs-keyword">this</span>._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: <span class="hljs-literal">undefined</span>,
-        labelKey: nextProps.optionLabelKey || <span class="hljs-string">'name'</span>,
         lastOptionId: (_.isArray(nextProps.dataSource) &amp;&amp; (nextProps.dataSource.length &gt; <span class="hljs-number">0</span>)) ? nextProps.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>,
-        valueKey: nextProps.optionValueKey || <span class="hljs-string">'id'</span>
       });
+
+    }
+
+    <span class="hljs-keyword">if</span> (!_.isEmpty(newState)) {
+      <span class="hljs-keyword">this</span>.setState(newState);
     }
   },</pre></div></div>
             
@@ -1222,15 +1240,16 @@ sets focused option in callback after opening</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
-              <p>calculate the initial value for the control from props</p>
+              <p>calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _buildInitialValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre>  _buildInitialValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(props)</span> </span>{
+    props = props || <span class="hljs-keyword">this</span>.props;
     <span class="hljs-keyword">var</span> initialValue = [];
 
-    <span class="hljs-keyword">if</span> (!_.isUndefined(<span class="hljs-keyword">this</span>.props.initialValue)) {
-      initialValue = _.isArray(<span class="hljs-keyword">this</span>.props.initialValue) ? <span class="hljs-keyword">this</span>.props.initialValue : [<span class="hljs-keyword">this</span>.props.initialValue];
+    <span class="hljs-keyword">if</span> (!_.isUndefined(props.initialValue)) {
+      initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
 
       <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._isMultiSelect()) {
         initialValue = [_.first(initialValue)];
