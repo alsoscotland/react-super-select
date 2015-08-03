@@ -32727,7 +32727,7 @@ React.render(React.createElement(PropsApp, null), document.getElementById('props
 
 
 },{"./all-props":159,"lodash":2,"react":157}],229:[function(require,module,exports){
-var RSS_VERSION = "0.1.15";
+var RSS_VERSION = "0.1.16";
 var React = require('react');
 
 var VersionPrinter = React.createClass({displayName: "VersionPrinter",
