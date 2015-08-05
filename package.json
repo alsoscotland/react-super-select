@@ -59,7 +59,6 @@
     "gulp-util": "^3.0.4",
     "jest-cli": ">=0.4.0",
     "jshint-stylish": "^1.0.0",
-    "react": "^0.13.3",
     "react-tools": ">=0.13.0",
     "reactify": "^1.1.1",
     "run-sequence": "^1.1.0",
