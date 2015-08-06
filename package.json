@@ -71,6 +71,11 @@
   "scripts": {
     "test": "$(npm bin)/jest"
   },
+  "browserify" : {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
   "readmeFilename": "README.md",
   "keywords": [
     "react",
