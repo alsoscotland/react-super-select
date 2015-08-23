@@ -1121,25 +1121,20 @@ var ReactSuperSelect = React.createClass({
   // Handle selection of an option or array of options.
   // Track last selection the user made.
   // Close dropdown on the setState callback if not a non control-closing selection
-  _selectItemByValues: function(value, keepControlOpen) {
-   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+  _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
+    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (this._isMultiSelect() || (keepControlOpen && this.state.value)) {
+    if(this._isMultiSelect()) {
       objectValues = this.state.value.concat(objectValues);
     }
 
     var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
     this.props.onChange(outputValue);
 
-    if (keepControlOpen) {
-      this.setState({
-        value: objectValues
-      });
-    } else {
-      this.setState({
-        value: objectValues
-      }, this._closeOnKeypress);
-    }
+    var func = keepControlOpen ? null : this._closeOnKeypress;
+    this.setState({
+      value: outputValue
+    }, func);
   },
 
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
