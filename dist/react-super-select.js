@@ -10,7 +10,7 @@
 
 var _ = require('lodash'),
     classNames = require('classnames'),
-    React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
+    React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 
 // Dependencies
 //  - [Lodash](https://lodash.com/)
@@ -33,6 +33,9 @@ var ReactSuperSelect = React.createClass({
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
+
+    // **clearable** (Boolean) *optional* - Whether or not to include a button to clear the selected option.
+    clearable: React.PropTypes.bool,
 
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
@@ -246,7 +249,8 @@ var ReactSuperSelect = React.createClass({
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: undefined,
-        lastOptionId: _.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined });
+        lastOptionId: _.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
+      });
     }
 
     if (!_.isEmpty(newState)) {
@@ -262,6 +266,7 @@ var ReactSuperSelect = React.createClass({
   // main render method
   render: function render() {
     var dropdownContent = this._getDropdownContent(),
+        clearButton = this._getClearButton(),
         placeholderString,
         triggerDisplayContent,
         triggerClasses,
@@ -271,13 +276,14 @@ var ReactSuperSelect = React.createClass({
     }),
         wrapClasses;
 
-    wrapClasses = classNames('r-ss-wrap', this.props.customClass, {
+    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
       'r-ss-expanded': this.state.isOpen
     });
 
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen,
-      'r-ss-placeholder': this.state.value.length < 1
+      'r-ss-placeholder': this.state.value.length < 1,
+      'r-ss-clearable': this.props.clearable
     });
 
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
@@ -300,6 +306,7 @@ var ReactSuperSelect = React.createClass({
           'aria-multiselectable': this._isMultiSelect(),
           tabIndex: '1' },
         triggerDisplayContent,
+        clearButton,
         React.createElement(
           'span',
           { ref: 'carat', className: caratClass },
@@ -522,6 +529,26 @@ var ReactSuperSelect = React.createClass({
     return data;
   },
 
+  _clearSelection: function _clearSelection(e) {
+    var selected = [];
+
+    e.stopPropagation();
+
+    this.props.onChange(null);
+
+    this.setState({ value: selected });
+  },
+
+  _getClearButton: function _getClearButton() {
+    var button = null;
+
+    if (this.props.clearable && !this._isMultiSelect() && this.state.value.length > 0) {
+      button = React.createElement('span', { className: 'r-ss-clearable-button', onClick: this._clearSelection });
+    }
+
+    return button;
+  },
+
   // build and render the dropdown content
   // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
   _getDropdownContent: function _getDropdownContent() {
@@ -570,8 +597,8 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var headingClasses = classNames('r-ss-option-group-heading', this.props.customGroupHeadingClass),
-        headingKey = 'heading_' + heading,
+    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
+        headingKey = "heading_" + heading,
         headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
 
     // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
@@ -601,7 +628,7 @@ var ReactSuperSelect = React.createClass({
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function _getNormalDisplayMarkup() {
     return _.map(this.state.value, function (value) {
-      var selectedKey = 'r_ss_selected_' + value[this.state.labelKey];
+      var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
@@ -616,7 +643,7 @@ var ReactSuperSelect = React.createClass({
 
   // render a loading span (spinner gif), with **customLoaderClass** if provided
   _getLoadingMarkup: function _getLoadingMarkup() {
-    var loaderClasses = this.props.customLoaderClass ? 'r-ss-loader ' + this.props.customLoaderClass : 'r-ss-loader';
+    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
     return React.createElement('span', { ref: 'loader', className: loaderClasses });
   },
 
@@ -676,7 +703,7 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : 'r-ss-magnifier',
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
         searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
@@ -723,12 +750,12 @@ var ReactSuperSelect = React.createClass({
     var label = value[this.state.labelKey],
         displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
-        buttonName = 'RemoveTag_' + displayValue,
+        buttonName = "RemoveTag_" + displayValue,
         tagRemoveIndex = this._getTagRemoveIndex(displayValue),
         tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
-        tagWrapClass = this.props.customTagClass ? 'r-ss-tag ' + this.props.customTagClass : 'r-ss-tag';
+        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
-    tagRemoveButtonLabelString = tagRemoveButtonLabelString + ' ' + label;
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
 
     return React.createElement(
       'span',
@@ -748,7 +775,7 @@ var ReactSuperSelect = React.createClass({
 
   // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
   _getTagRemoveIndex: function _getTagRemoveIndex(identifier) {
-    return 'tag_remove_' + identifier;
+    return "tag_remove_" + identifier;
   },
 
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
@@ -849,7 +876,7 @@ var ReactSuperSelect = React.createClass({
       index = indexStart + index;
 
       var isCurrentlySelected = this._isCurrentlySelected(dataOption),
-          itemKey = 'drop_li_' + dataOption[this.state.valueKey],
+          itemKey = "drop_li_" + dataOption[this.state.valueKey],
           indexRef = 'option_' + index,
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
           optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],

@@ -29,6 +29,9 @@ var ReactSuperSelect = React.createClass({
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
 
+    // **clearable** (Boolean) *optional* - Whether or not to include a button to clear the selected option.
+    clearable: React.PropTypes.bool,
+
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
 
@@ -232,7 +235,7 @@ var ReactSuperSelect = React.createClass({
     var newState = {};
 
     if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
-      newState.value = this._buildInitialValue(nextProps)
+      newState.value = this._buildInitialValue(nextProps);
     }
 
     if (!_.isUndefined(nextProps.optionLabelKey) && (nextProps.optionLabelKey !== this.props.optionLabelKey)) {
@@ -269,6 +272,7 @@ var ReactSuperSelect = React.createClass({
   // main render method
   render: function() {
     var dropdownContent = this._getDropdownContent(),
+        clearButton = this._getClearButton(),
         placeholderString,
         triggerDisplayContent,
         triggerClasses,
@@ -284,7 +288,8 @@ var ReactSuperSelect = React.createClass({
 
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen,
-      'r-ss-placeholder': this.state.value.length < 1
+      'r-ss-placeholder': this.state.value.length < 1,
+      'r-ss-clearable': this.props.clearable
     });
 
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
@@ -304,6 +309,7 @@ var ReactSuperSelect = React.createClass({
            aria-multiselectable={this._isMultiSelect()}
            tabIndex="1">
             {triggerDisplayContent}
+            {clearButton}
             <span ref="carat" className={caratClass}> </span>
         </div>
         {dropdownContent}
@@ -512,6 +518,26 @@ var ReactSuperSelect = React.createClass({
     }
 
     return data;
+  },
+
+  _clearSelection: function(e) {
+    var selected = [];
+
+    e.stopPropagation();
+
+    this.props.onChange(null);
+
+    this.setState({value: selected});
+  },
+
+  _getClearButton: function() {
+    var button = null;
+
+    if (this.props.clearable && !this._isMultiSelect() && this.state.value.length > 0) {
+      button = <span className="r-ss-clearable-button" onClick={this._clearSelection}></span>;
+    }
+
+    return button;
   },
 
   // build and render the dropdown content
