@@ -531,8 +531,10 @@ var ReactSuperSelect = React.createClass({
     return data;
   },
 
-  _clearSelection: function _clearSelection() {
+  _clearSelection: function _clearSelection(e) {
     var selected = [];
+
+    e.stopPropagation();
 
     this.props.onChange(null);
 
@@ -542,7 +544,7 @@ var ReactSuperSelect = React.createClass({
   _getClearButton: function _getClearButton() {
     var button = null;
 
-    if (this.props.clearable && !this._isMultiSelect()) {
+    if (this.props.clearable && !this._isMultiSelect() && this.state.value.length > 0) {
       button = React.createElement(
         'a',
         { className: 'r-ss-clearable-button', href: '#', onClick: this._clearSelection },
