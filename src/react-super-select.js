@@ -536,7 +536,7 @@ var ReactSuperSelect = React.createClass({
     var button = null;
 
     if (this.props.clearable && !this._isMultiSelect() && this.state.value.length > 0) {
-      button = <a className="r-ss-clearable-button" href="#" onClick={this._clearSelection}>x</a>;
+      button = <span className="r-ss-clearable-button" onClick={this._clearSelection}>x</span>;
     }
 
     return button;
