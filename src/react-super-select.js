@@ -295,8 +295,6 @@ var ReactSuperSelect = React.createClass({
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
     triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
 
-    console.log(this.props.clearable);
-
     return (
       <div ref="rssControl" id={this.state.controlId} className={wrapClasses}>
         <div ref="triggerDiv"
@@ -536,7 +534,7 @@ var ReactSuperSelect = React.createClass({
     var button = null;
 
     if (this.props.clearable && !this._isMultiSelect() && this.state.value.length > 0) {
-      button = <span className="r-ss-clearable-button" onClick={this._clearSelection}>x</span>;
+      button = <span className="r-ss-clearable-button" onClick={this._clearSelection}></span>;
     }
 
     return button;
