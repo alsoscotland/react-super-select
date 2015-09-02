@@ -288,7 +288,8 @@ var ReactSuperSelect = React.createClass({
 
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen,
-      'r-ss-placeholder': this.state.value.length < 1
+      'r-ss-placeholder': this.state.value.length < 1,
+      'r-ss-clearable': this.props.clearable
     });
 
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
@@ -524,7 +525,7 @@ var ReactSuperSelect = React.createClass({
   _clearSelection: function() {
     var selected = [];
 
-    this.props.onChange(selected);
+    this.props.onChange(null);
 
     this.setState({value: selected});
   },
@@ -532,8 +533,8 @@ var ReactSuperSelect = React.createClass({
   _getClearButton: function() {
     var button = null;
 
-    if (this.props.clearable && !this.props.multiple) {
-      button = <a href="#" onClick={this._clearSelection}>x</a>;
+    if (this.props.clearable && !this._isMultiSelect()) {
+      button = <a className="r-ss-clearable-button" href="#" onClick={this._clearSelection}>x</a>;
     }
 
     return button;
