@@ -554,7 +554,8 @@ describe('ReactSuperSelect', function() {
       mockFocusForTriggerDiv(el);
 
       TestUtils.Simulate.click(options[1]);
-      expect(el.state.value[0]).toBe(mockData[1]);
+
+      expect(el.state.value).toBe(mockData[1]);
     });
 
     it('selects item by keyDown for enter', function() {
@@ -567,7 +568,7 @@ describe('ReactSuperSelect', function() {
         which: el.keymap.enter
       });
 
-      expect(el.state.value[0]).toBe(mockData[0]);
+      expect(el.state.value).toBe(mockData[0]);
       expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
 
@@ -582,7 +583,7 @@ describe('ReactSuperSelect', function() {
         which: el.keymap.space
       });
 
-      expect(el.state.value[0]).toBe(mockData[0]);
+      expect(el.state.value).toBe(mockData[0]);
       expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
   });
@@ -854,8 +855,7 @@ describe('ReactSuperSelect', function() {
           which: el.keymap.enter
         }, options[3].id);
 
-        expect(el.state.value.length).toBe(1);
-        expect(el.state.value[0]).toBe(mockData[3]);
+        expect(el.state.value).toBe(mockData[3]);
       });
 
       it('selects multiple sequential options on shift-click in a up-list direction', function() {
