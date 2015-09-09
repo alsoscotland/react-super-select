@@ -32039,6 +32039,8 @@ module.exports = require('./lib/React');
 // - [documentation](http://alsoscotland.github.io/react-super-select/)
 // - freely distributed under the MIT license.
 
+'use strict';
+
 var _ = require('lodash'),
     classNames = require('classnames'),
     React = require('react');
@@ -32048,10 +32050,11 @@ var _ = require('lodash'),
 //  - [classnames](https://www.npmjs.com/package/classnames)
 //  - [React](https://facebook.github.io/react/index.html)
 
-var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
+var ReactSuperSelect = React.createClass({
+  displayName: 'ReactSuperSelect',
 
-// Properties
-// ------
+  // Properties
+  // ------
   propTypes: {
 
     // BOOLEAN OPTIONS
@@ -32112,18 +32115,12 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     //  Each option in the resulting collection must have the following properties:
     //  - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of **id**
     //  - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
-    dataSource: React.PropTypes.oneOfType([
-              React.PropTypes.arrayOf(React.PropTypes.object),
-              React.PropTypes.object
-            ]),
+    dataSource: React.PropTypes.oneOfType([React.PropTypes.arrayOf(React.PropTypes.object), React.PropTypes.object]),
 
     // **initialValue** (Array|Object) *optional*
     // The selected value the control will be initialized with
     // must be an array of option items or a single option item from your dataSource collection
-    initialValue: React.PropTypes.oneOfType([
-              React.PropTypes.arrayOf(React.PropTypes.object),
-              React.PropTypes.object
-            ]),
+    initialValue: React.PropTypes.oneOfType([React.PropTypes.arrayOf(React.PropTypes.object), React.PropTypes.object]),
 
     // **optionLabelKey** (String) (*optional - defaults to using 'name' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value you would like displayed for each option.
     optionLabelKey: React.PropTypes.string,
@@ -32146,11 +32143,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     // ----------------------
 
     // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference the [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
-    groupBy: React.PropTypes.oneOfType([
-              React.PropTypes.string,
-              React.PropTypes.func,
-              React.PropTypes.object
-            ]),
+    groupBy: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func, React.PropTypes.object]),
 
     // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
     customGroupHeadingTemplateFunction: React.PropTypes.func,
@@ -32159,6 +32152,10 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     // -------------------------------------
 
     // **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** option.  The function provided will serve as a replacement of the default search filter function.
+    // and will be called as the predicate function of [Lodash's filter function](https://lodash.com/docs#filter)
+
+    // The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current **searchString** (state variable)
+
     // When left undefined the default filter function will be used.
     //(Defaults To: A lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is leveraged by [Lodash's filter function](https://lodash.com/docs#filter) with your **dataSource** collection as its first argument.
     customFilterFunction: React.PropTypes.func,
@@ -32205,7 +32202,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // STATE VARIABLES
   // ---------------
-  getInitialState: function() {
+  getInitialState: function getInitialState() {
     return {
       // **ajaxError** (Boolean) - Set to true when an ajax request fails
       ajaxError: false,
@@ -32229,7 +32226,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
       labelKey: this.props.optionLabelKey || 'name',
 
       // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option in the dropdown
-      lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
+      lastOptionId: _.isArray(this.props.dataSource) && this.props.dataSource.length > 0 ? this.props.dataSource.length - 1 : undefined,
 
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
       searchString: undefined,
@@ -32263,18 +32260,18 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // If parent page updates the data source, reset all control state values which are derived from props.
   // Reset some state defaults and dataSource related fields if dataSource changed.
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
     var newState = {};
 
     if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
-      newState.value = this._buildInitialValue(nextProps)
+      newState.value = this._buildInitialValue(nextProps);
     }
 
-    if (!_.isUndefined(nextProps.optionLabelKey) && (nextProps.optionLabelKey !== this.props.optionLabelKey)) {
+    if (!_.isUndefined(nextProps.optionLabelKey) && nextProps.optionLabelKey !== this.props.optionLabelKey) {
       newState.labelKey = nextProps.optionLabelKey;
     }
 
-    if (!_.isUndefined(nextProps.optionValueKey) && (nextProps.optionValueKey !== this.props.optionValueKey)) {
+    if (!_.isUndefined(nextProps.optionValueKey) && nextProps.optionValueKey !== this.props.optionValueKey) {
       newState.valueKey = nextProps.optionValueKey;
     }
 
@@ -32286,9 +32283,8 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: undefined,
-        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
+        lastOptionId: _.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
       });
-
     }
 
     if (!_.isEmpty(newState)) {
@@ -32297,23 +32293,23 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // Update focused element after re-render
-  componentDidUpdate: function() {
+  componentDidUpdate: function componentDidUpdate() {
     this._focusCurrentFocusedId();
   },
 
   // main render method
-  render: function() {
+  render: function render() {
     var dropdownContent = this._getDropdownContent(),
         placeholderString,
         triggerDisplayContent,
         triggerClasses,
         caratClass = classNames('carat', {
-          'down': !this.state.isOpen,
-          'up': this.state.isOpen
-        }),
+      'down': !this.state.isOpen,
+      'up': this.state.isOpen
+    }),
         wrapClasses;
 
-    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
+    wrapClasses = classNames('r-ss-wrap', this.props.customClass, {
       'r-ss-expanded': this.state.isOpen
     });
 
@@ -32325,32 +32321,39 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
     triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
 
-    return (
-      React.createElement("div", {ref: "rssControl", id: this.state.controlId, className: wrapClasses}, 
-        React.createElement("div", {ref: "triggerDiv", 
-           className: triggerClasses, 
-           onClick: this.toggleDropdown, 
-           onKeyDown: this._handleKeyDown, 
-           role: "combobox", 
-           "aria-activedescendant": this._ariaGetActiveDescendentId(), 
-           "aria-haspopup": true, 
-           "aria-controls": this._ariaGetListId(), 
-           "aria-label": placeholderString, 
-           "aria-multiselectable": this._isMultiSelect(), 
-           tabIndex: "1"}, 
-            triggerDisplayContent, 
-            React.createElement("span", {ref: "carat", className: caratClass}, " ")
-        ), 
-        dropdownContent
-      ));
+    return React.createElement(
+      'div',
+      { ref: 'rssControl', id: this.state.controlId, className: wrapClasses },
+      React.createElement(
+        'div',
+        { ref: 'triggerDiv',
+          className: triggerClasses,
+          onClick: this.toggleDropdown,
+          onKeyDown: this._handleKeyDown,
+          role: 'combobox',
+          'aria-activedescendant': this._ariaGetActiveDescendentId(),
+          'aria-haspopup': true,
+          'aria-controls': this._ariaGetListId(),
+          'aria-label': placeholderString,
+          'aria-multiselectable': this._isMultiSelect(),
+          tabIndex: '1' },
+        triggerDisplayContent,
+        React.createElement(
+          'span',
+          { ref: 'carat', className: caratClass },
+          ' '
+        )
+      ),
+      dropdownContent
+    );
   },
 
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
-  toggleDropdown: function() {
+  toggleDropdown: function toggleDropdown() {
     this.setState({
       'isOpen': !this.state.isOpen
-    }, function() {
+    }, function () {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
@@ -32358,7 +32361,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // returns the unique DOM id for the currently focused option. Used for accessibility-related labeling
-  _ariaGetActiveDescendentId: function() {
+  _ariaGetActiveDescendentId: function _ariaGetActiveDescendentId() {
     var ariaActiveDescendantId = null,
         optionRef = this._getFocusedOptionKey();
     if (this.refs[optionRef]) {
@@ -32368,12 +32371,12 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // calculate the unique identifier for the options ul for aria compliance labeling usage
-  _ariaGetListId: function() {
+  _ariaGetListId: function _ariaGetListId() {
     return this.state.controlId + '_list';
   },
 
   // calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps
-  _buildInitialValue: function(props) {
+  _buildInitialValue: function _buildInitialValue(props) {
     props = props || this.props;
     var initialValue = [];
 
@@ -32391,7 +32394,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // close the dropdown
   // resets focus to the main control trigger
   // clear focused id
-  _closeOnKeypress: function() {
+  _closeOnKeypress: function _closeOnKeypress() {
     if (this.state.isOpen) {
       this.setState({
         isOpen: false,
@@ -32403,9 +32406,9 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // overloaded dataSource parser (Object|Array)
   // case: (object) - look for a collection property which is an array, or runs an existing 'get' function, get('collection'), and determines if the return value is an array
   // case: (Array) - return the dataSource array for use as this.state.data
-  _configureDataSource: function(dataSource) {
+  _configureDataSource: function _configureDataSource(dataSource) {
     if (_.isArray(dataSource)) {
-     return dataSource;
+      return dataSource;
     }
 
     if (_.isObject(dataSource)) {
@@ -32426,7 +32429,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // Used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control.
   // Runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
-  _defaultSearchFilter: function(option) {
+  _defaultSearchFilter: function _defaultSearchFilter(option) {
     var search = this.state.searchString.toLowerCase();
     if (!_.isString(option[this.state.labelKey])) {
       return false;
@@ -32436,15 +32439,15 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // fetch data source via ajax if **ajaxDataFetch** function provided
   // handles success and failure for ajax call
-  _fetchDataViaAjax: function() {
+  _fetchDataViaAjax: function _fetchDataViaAjax() {
     var self = this;
-    this.props.ajaxDataFetch(this.state.rawDataSource).then(function(dataSourceFromAjax) {
+    this.props.ajaxDataFetch(this.state.rawDataSource).then(function (dataSourceFromAjax) {
       self.setState({
         ajaxError: false,
         data: self._configureDataSource(dataSourceFromAjax),
         rawDataSource: dataSourceFromAjax
       });
-    }, function() {
+    }, function () {
       self.setState({
         ajaxError: true,
         // define as empty array on error so that _needsAjaxFetch will evaluate to false
@@ -32456,38 +32459,44 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // Fetch the next page of options data if **pageDataFetch** function provided.
   // Called onMouseMove if scroll position in dropdown exceeds threshold.
   // Handles success and failure for ajax call
-  _fetchNextPage: function() {
+  _fetchNextPage: function _fetchNextPage() {
     var self = this;
-    this.props.pageDataFetch(this.state.rawDataSource).then(function(dataSourceFromPageFetch) {
+    this.props.pageDataFetch(this.state.rawDataSource).then(function (dataSourceFromPageFetch) {
       self.setState({
         ajaxError: false,
         data: self._configureDataSource(dataSourceFromPageFetch),
         rawDataSource: dataSourceFromPageFetch,
         isFetchingPage: false
       });
-    }, function() {
-        self.setState({
-          ajaxError: true
-        });
+    }, function () {
+      self.setState({
+        ajaxError: true
+      });
     });
   },
 
   // choose the appropriate search filter function and run the filter against the options data
-  _filterDataBySearchString: function(data) {
-    var filterFunction = _.isFunction(this.props.customFilterFunction) ? this.props.customFilterFunction : this._defaultSearchFilter;
+  _filterDataBySearchString: function _filterDataBySearchString(data) {
+    var self = this;
+    var filterFunction = this._defaultSearchFilter;
+    if (_.isFunction(this.props.customFilterFunction)) {
+      filterFunction = function (value, index, collection) {
+        return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
+      };
+    }
     return _.filter(data, filterFunction);
   },
 
   // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
-  _findArrayOfOptionDataObjectsByValue: function(value) {
+  _findArrayOfOptionDataObjectsByValue: function _findArrayOfOptionDataObjectsByValue(value) {
     var valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
-    return _.reject(this.state.data, function(item) {
+    return _.reject(this.state.data, function (item) {
       return !_.contains(valuesArray, item[this.state.valueKey]);
     }, this);
   },
 
   // determine whether to focus a option value in the DOM, or the search field
-  _focusCurrentFocusedId: function() {
+  _focusCurrentFocusedId: function _focusCurrentFocusedId() {
     if (this.state.focusedId < 0) {
       this._focusSearch();
       return;
@@ -32497,7 +32506,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // focus the DOM option identified by the current state.focusedId
-  _focusDOMOption: function() {
+  _focusDOMOption: function _focusDOMOption() {
     var optionRef = this._getFocusedOptionKey();
     if (this.refs[optionRef]) {
       if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
@@ -32507,21 +32516,21 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // focus the dropdown's search field if it exists
-  _focusSearch: function() {
+  _focusSearch: function _focusSearch() {
     if (this.refs.searchInput) {
       this.refs.searchInput.getDOMNode().focus();
     }
   },
 
   // focus the main trigger element of the control
-  _focusTrigger: function() {
+  _focusTrigger: function _focusTrigger() {
     if (this.refs.triggerDiv) {
       this.refs.triggerDiv.getDOMNode().focus();
     }
   },
 
   // choose whether to template the display of user-selected values normally, or as tags
-  _generateValueDisplay: function() {
+  _generateValueDisplay: function _generateValueDisplay() {
     if (!this.props.tags) {
       return this._getNormalDisplayMarkup();
     } else {
@@ -32530,13 +32539,21 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // render the content shown if an ajax error occurs
-  _getAjaxErrorMarkup: function() {
+  _getAjaxErrorMarkup: function _getAjaxErrorMarkup() {
     var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
-    return (React.createElement("li", {className: "r-ss-dropdown-option error"}, React.createElement("i", {ref: "errorDisplay"}, errorString)));
+    return React.createElement(
+      'li',
+      { className: 'r-ss-dropdown-option error' },
+      React.createElement(
+        'i',
+        { ref: 'errorDisplay' },
+        errorString
+      )
+    );
   },
 
   // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
-  _getDataSource: function() {
+  _getDataSource: function _getDataSource() {
     var data = _.isArray(this.state.data) ? this.state.data : [];
     if (_.isString(this.state.searchString)) {
       data = this._filterDataBySearchString(data);
@@ -32551,7 +32568,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // build and render the dropdown content
   // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
-  _getDropdownContent: function() {
+  _getDropdownContent: function _getDropdownContent() {
     if (!this.state.isOpen) {
       return null;
     }
@@ -32560,80 +32577,97 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
         mouseMoveHandler,
         pagingLi;
 
-    mouseMoveHandler = (this.props.pageDataFetch) ? this._onMouseMove : null;
+    mouseMoveHandler = this.props.pageDataFetch ? this._onMouseMove : null;
     pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
 
-    return(
-      React.createElement("div", {ref: "dropdownContent", className: "r-ss-dropdown", onKeyDown: this._handleKeyDown}, 
-        searchContent, 
-        React.createElement("div", {ref: "scrollWrap", className: "r-ss-options-wrap", onMouseMove: mouseMoveHandler}, 
-          React.createElement("ul", {className: "r-ss-dropdown-options", 
-              ref: "dropdownOptionsList", 
-              tabIndex: "-1", 
-              id: this._ariaGetListId(), 
-              role: "listbox", 
-              "aria-expanded": this.state.isOpen}, 
-            this._getOptionsMarkup()
-          ), 
-          pagingLi
-        )
+    return React.createElement(
+      'div',
+      { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown },
+      searchContent,
+      React.createElement(
+        'div',
+        { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler },
+        React.createElement(
+          'ul',
+          { className: 'r-ss-dropdown-options',
+            ref: 'dropdownOptionsList',
+            tabIndex: '-1',
+            id: this._ariaGetListId(),
+            role: 'listbox',
+            'aria-expanded': this.state.isOpen },
+          this._getOptionsMarkup()
+        ),
+        pagingLi
       )
     );
   },
 
   // build the string used as a React component ref for each focusable option
-  _getFocusedOptionKey: function() {
+  _getFocusedOptionKey: function _getFocusedOptionKey() {
     return 'option_' + this.state.focusedId;
   },
 
   // render a group heading, used if **groupBy** option is provided.
   // renders a non-focusable list item for an option group heading
-  _getGroupHeadingMarkup: function(heading) {
+  _getGroupHeadingMarkup: function _getGroupHeadingMarkup(heading) {
     if (!heading) {
       return null;
     }
 
-    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
-        headingKey = "heading_" + heading,
+    var headingClasses = classNames('r-ss-option-group-heading', this.props.customGroupHeadingClass),
+        headingKey = 'heading_' + heading,
         headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
 
     // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
     // in search of a better solution for announcing/navigating grouped listbox items as subgroups
-    return(
-      React.createElement("li", {tabIndex: "-1", className: headingClasses, key: headingKey, role: "separator", "aria-label": heading, "aria-hidden": true}, 
-        headingMarkup
-      ));
+    return React.createElement(
+      'li',
+      { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true },
+      headingMarkup
+    );
   },
 
   // render the content shown when no options are available
-  _getNoResultsMarkup: function() {
+  _getNoResultsMarkup: function _getNoResultsMarkup() {
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
-    return (React.createElement("li", {className: "r-ss-dropdown-option", tabIndex: "-1"}, React.createElement("i", {ref: "noResults"}, noResultsString)));
+    return React.createElement(
+      'li',
+      { className: 'r-ss-dropdown-option', tabIndex: '-1' },
+      React.createElement(
+        'i',
+        { ref: 'noResults' },
+        noResultsString
+      )
+    );
   },
 
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
-  _getNormalDisplayMarkup: function() {
-    return _.map(this.state.value, function(value) {
-      var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
+  _getNormalDisplayMarkup: function _getNormalDisplayMarkup() {
+    return _.map(this.state.value, function (value) {
+      var selectedKey = 'r_ss_selected_' + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
-        return (React.createElement("span", {key: selectedKey, className: "r-ss-selected-label"}, value[this.state.labelKey]));
+        return React.createElement(
+          'span',
+          { key: selectedKey, className: 'r-ss-selected-label' },
+          value[this.state.labelKey]
+        );
       }
     }, this);
   },
 
   // render a loading span (spinner gif), with **customLoaderClass** if provided
-  _getLoadingMarkup: function() {
-    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
-    return (React.createElement("span", {ref: "loader", className: loaderClasses}));
+  _getLoadingMarkup: function _getLoadingMarkup() {
+    var loaderClasses = this.props.customLoaderClass ? 'r-ss-loader ' + this.props.customLoaderClass : 'r-ss-loader';
+    return React.createElement('span', { ref: 'loader', className: loaderClasses });
   },
 
   // get the option Li element from a passed eventTarget.
   // for key events = event.target
   // for click events = event.currentTarget
-  _getOptionIndexFromTarget: function(targetLi) {
+  _getOptionIndexFromTarget: function _getOptionIndexFromTarget(targetLi) {
     return parseInt(targetLi.getAttribute('data-option-index'), 10);
   },
 
@@ -32642,7 +32676,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // render ajaxError markup when state.ajaxError is true
   // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
   // - must track options count to maintain a single focusable index mapping across multiple groups of options
-  _getOptionsMarkup: function() {
+  _getOptionsMarkup: function _getOptionsMarkup() {
     if (this._needsAjaxFetch()) {
       this._fetchDataViaAjax();
       return this._getPagingLi();
@@ -32657,7 +32691,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
         optionsCount = 0;
 
     if (!_.isArray(data)) {
-      _.forIn(data, function(groupedOptions, heading) {
+      _.forIn(data, function (groupedOptions, heading) {
         options.push(this._getGroupHeadingMarkup(heading));
         options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
@@ -32670,81 +32704,100 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
-  _getPagingLi: function() {
-    return(React.createElement("li", {key: "page_loading", className: "r-ss-page-fetch-indicator", tabIndex: "-1"}, 
-            this._getLoadingMarkup()
-          ));
+  _getPagingLi: function _getPagingLi() {
+    return React.createElement(
+      'li',
+      { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1' },
+      this._getLoadingMarkup()
+    );
   },
 
   // render a search input bar with a search icon
   // - add localized **searchPlaceholder** if provided
   // - add **customIconClass** if provided
-  _getSearchContent: function() {
+  _getSearchContent: function _getSearchContent() {
     if (!this.props.searchable) {
       return null;
     }
 
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : 'r-ss-magnifier',
         searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
 
-    return(
-      React.createElement("div", {className: "r-ss-search-wrap"}, 
-        React.createElement("div", {className: "r-ss-search-inner"}, 
-          React.createElement("label", {ref: "searchInputLabel", id: searchAriaIdLabel, className: "r-ss-search-aria-label", htmlFor: searchAriaId}, searchPlaceholderString), 
-          React.createElement("input", {ref: "searchInput", 
-                 placeholder: searchPlaceholderString, 
-                 onClick: this._setFocusIdToSearch, 
-                 onChange: this._handleSearch, 
-                 defaultValue: this.state.searchString, 
-                 name: searchAriaId, 
-                 id: searchAriaId, 
-                 "aria-labelledby": searchAriaIdLabel, 
-                 "aria-autocomplete": "list"}), 
-          React.createElement("i", {className: magnifierClass}, "search")
+    return React.createElement(
+      'div',
+      { className: 'r-ss-search-wrap' },
+      React.createElement(
+        'div',
+        { className: 'r-ss-search-inner' },
+        React.createElement(
+          'label',
+          { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId },
+          searchPlaceholderString
+        ),
+        React.createElement('input', { ref: 'searchInput',
+          placeholder: searchPlaceholderString,
+          onClick: this._setFocusIdToSearch,
+          onChange: this._handleSearch,
+          defaultValue: this.state.searchString,
+          name: searchAriaId,
+          id: searchAriaId,
+          'aria-labelledby': searchAriaIdLabel,
+          'aria-autocomplete': 'list' }),
+        React.createElement(
+          'i',
+          { className: magnifierClass },
+          'search'
         )
       )
     );
   },
 
   // iterate over selected values and build tags markup for selected options display
-  _getTagsDisplayMarkup: function() {
-    return _.map(this.state.value, function(value) {
+  _getTagsDisplayMarkup: function _getTagsDisplayMarkup() {
+    return _.map(this.state.value, function (value) {
       return this._getTagMarkup(value);
     }, this);
   },
 
   // render a tag for an individual selected value
   // - add **customTagClass** if provided
-  _getTagMarkup: function(value) {
+  _getTagMarkup: function _getTagMarkup(value) {
     var label = value[this.state.labelKey],
         displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
-        buttonName = "RemoveTag_" + displayValue,
+        buttonName = 'RemoveTag_' + displayValue,
         tagRemoveIndex = this._getTagRemoveIndex(displayValue),
         tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
-        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+        tagWrapClass = this.props.customTagClass ? 'r-ss-tag ' + this.props.customTagClass : 'r-ss-tag';
 
-    tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + ' ' + label;
 
-    return (
-      React.createElement("span", {className: tagWrapClass, key: tagKey}, 
-        React.createElement("span", {className: "r-ss-tag-label"}, label), 
-        React.createElement("button", {"aria-label": tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: "button", className: "r-ss-tag-remove", onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value)}, 
-          React.createElement("span", null)
-        )
-      ));
+    return React.createElement(
+      'span',
+      { className: tagWrapClass, key: tagKey },
+      React.createElement(
+        'span',
+        { className: 'r-ss-tag-label' },
+        label
+      ),
+      React.createElement(
+        'button',
+        { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
+        React.createElement('span', null)
+      )
+    );
   },
 
   // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
-  _getTagRemoveIndex: function(identifier) {
-    return "tag_remove_" + identifier;
+  _getTagRemoveIndex: function _getTagRemoveIndex(identifier) {
+    return 'tag_remove_' + identifier;
   },
 
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
   // - render no results markup if no options result from map calls
-  _getTemplatedOptions: function(data, indexStart) {
+  _getTemplatedOptions: function _getTemplatedOptions(data, indexStart) {
     indexStart = indexStart || 0;
     var options = this._mapDataToOptionsMarkup(data, indexStart);
 
@@ -32756,17 +32809,17 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // main keyDown binding handler for keyboard navigation and selection
-  _handleKeyDown: function(event) {
+  _handleKeyDown: function _handleKeyDown(event) {
     if (this._isUserSearchTypingEvent(event)) {
       return;
     }
 
-    if (this.state.isOpen || (event.which !== this.keymap.tab)) {
+    if (this.state.isOpen || event.which !== this.keymap.tab) {
       event.stopPropagation();
       event.preventDefault();
     }
 
-    switch(event.which) {
+    switch (event.which) {
       case this.keymap.down:
         this._onDownKey(event);
         break;
@@ -32785,7 +32838,8 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
       case this.keymap.space:
         this._onEnterKey(event); // delegate to enter
         break;
-      case this.keymap.tab: // delegate to enter (selection) handler
+      case this.keymap.tab:
+        // delegate to enter (selection) handler
         if (this.state.isOpen) {
           this._onEnterKey(event);
         }
@@ -32797,7 +32851,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // handler for searchInput's keyUp event
-  _handleSearch: function(event) {
+  _handleSearch: function _handleSearch(event) {
     event.stopPropagation();
     event.preventDefault();
     var searchString = event.target.value;
@@ -32805,66 +32859,67 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
-  _handleSearchDebounced: _.debounce(function(search) {
+  _handleSearchDebounced: _.debounce(function (search) {
     this.setState({
       searchString: search
     });
   }, 300),
 
   // return the boolean used to determine whether an option should have the 'r-ss-selected' class
-  _isCurrentlySelected: function(dataItem) {
+  _isCurrentlySelected: function _isCurrentlySelected(dataItem) {
     if (!_.isArray(this.state.value)) {
       return _.isEqual(this.state.value, dataItem);
     }
-    return !!(_.findWhere(this.state.value, dataItem));
+    return !!_.findWhere(this.state.value, dataItem);
   },
 
   // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
-  _isMultiSelect: function() {
+  _isMultiSelect: function _isMultiSelect() {
     return this.props.multiple || this.props.tags;
   },
 
   // user search events need to pass through the default keyDown handler
-  _isUserSearchTypingEvent: function(event) {
-    if (!this.refs.searchInput || (event.which === this.keymap.down) || ((event.which === this.keymap.up) && event.altKey) || (event.which === this.keymap.esc)) {
+  _isUserSearchTypingEvent: function _isUserSearchTypingEvent(event) {
+    if (!this.refs.searchInput || event.which === this.keymap.down || event.which === this.keymap.up && event.altKey || event.which === this.keymap.esc) {
       return false;
     }
-    return (event.target === this.refs.searchInput.getDOMNode());
+    return event.target === this.refs.searchInput.getDOMNode();
   },
 
   // Render the option list-items.
   // Leverage the **customOptionTemplateFunction** function if provided
-  _mapDataToOptionsMarkup: function(data, indexStart) {
-    return _.map(data, function(dataOption, index) {
+  _mapDataToOptionsMarkup: function _mapDataToOptionsMarkup(data, indexStart) {
+    return _.map(data, function (dataOption, index) {
       index = indexStart + index;
 
       var isCurrentlySelected = this._isCurrentlySelected(dataOption),
-          itemKey = "drop_li_" + dataOption[this.state.valueKey],
+          itemKey = 'drop_li_' + dataOption[this.state.valueKey],
           indexRef = 'option_' + index,
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
           optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': isCurrentlySelected
-          });
+        'r-ss-selected': isCurrentlySelected
+      });
 
-      return (
-        React.createElement("li", {ref: indexRef, 
-            id: ariaDescendantId, 
-            tabIndex: "0", 
-            "data-option-index": index, 
-            className: classes, 
-            "aria-selected": isCurrentlySelected, 
-            key: itemKey, 
-            "data-option-value": dataOption[this.state.valueKey], 
-            onClick: this._selectItemOnOptionClick.bind(null, dataOption), 
-            role: "option"}, 
-          optionMarkup
-        ));
+      return React.createElement(
+        'li',
+        { ref: indexRef,
+          id: ariaDescendantId,
+          tabIndex: '0',
+          'data-option-index': index,
+          className: classes,
+          'aria-selected': isCurrentlySelected,
+          key: itemKey,
+          'data-option-value': dataOption[this.state.valueKey],
+          onClick: this._selectItemOnOptionClick.bind(null, dataOption),
+          role: 'option' },
+        optionMarkup
+      );
     }, this);
   },
 
   // determines next focusedId prior to updateFocusedId call
-  _moveFocusDown: function() {
+  _moveFocusDown: function _moveFocusDown() {
     if (this._needsAjaxFetch()) {
       return;
     }
@@ -32877,17 +32932,17 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
         nextId = 0;
       }
     } else {
-      nextId = (this.state.lastOptionId === this.state.focusedId) ? this.state.lastOptionId : this.state.focusedId + 1;
+      nextId = this.state.lastOptionId === this.state.focusedId ? this.state.lastOptionId : this.state.focusedId + 1;
     }
 
     this._updateFocusedId(nextId);
   },
 
   // determines previous focusedId prior to updateFocusedId call
-  _moveFocusUp: function() {
+  _moveFocusUp: function _moveFocusUp() {
     var previousId;
 
-    if (!_.isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
+    if (!_.isUndefined(this.state.focusedId) && this.state.focusedId !== this.SEARCH_FOCUS_ID) {
       if (this.state.focusedId === 0) {
         if (this.props.searchable) {
           previousId = this.SEARCH_FOCUS_ID;
@@ -32900,13 +32955,13 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // return boolean to determine if we have already received data from the **ajaxDataFetch** function
-  _needsAjaxFetch: function() {
-    return (_.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch));
+  _needsAjaxFetch: function _needsAjaxFetch() {
+    return _.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch);
   },
 
   // down key handler
   // shift-keypress is used to select successive focus items for aria keyboard accessibility
-  _onDownKey: function(event) {
+  _onDownKey: function _onDownKey(event) {
     if (!this.state.isOpen) {
       this.toggleDropdown();
       return;
@@ -32919,7 +32974,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // end key handler. Move focus to the last available option
-  _onEndKey: function() {
+  _onEndKey: function _onEndKey() {
     if (this.state.lastOptionId) {
       this._updateFocusedId(this.state.lastOptionId);
     }
@@ -32928,7 +32983,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // Enter key handler.
   // Opens the control when closed.
   // Otherwise, makes selection
-  _onEnterKey: function(event) {
+  _onEnterKey: function _onEnterKey(event) {
     if (!this.state.isOpen) {
       this.toggleDropdown();
       return;
@@ -32939,7 +32994,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
       return;
     }
 
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey),
         alreadySelected = this.SELECTED_OPTION_REGEX.test(event.target.getAttribute('class'));
 
     if (keepControlOpen && alreadySelected) {
@@ -32953,17 +33008,17 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // Escape key handler. Closes the dropdown
-  _onEscKey: function() {
+  _onEscKey: function _onEscKey() {
     this._closeOnKeypress();
   },
 
   // Home key handler. Moves focus to the first available option
-  _onHomeKey: function() {
+  _onHomeKey: function _onHomeKey() {
     this._updateFocusedId(0);
   },
 
   // mouse move handler used when **pageDataFetch** is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown
-  _onMouseMove: function() {
+  _onMouseMove: function _onMouseMove() {
     // do not fetch page if searching or already loading data
     if (this.refs.loader || this.state.searchString || !this._pageFetchingComplete()) {
       return;
@@ -32971,7 +33026,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
     var wrap = this.refs.scrollWrap.getDOMNode();
 
-    if ((wrap.scrollTop + wrap.offsetHeight) >= wrap.scrollHeight) {
+    if (wrap.scrollTop + wrap.offsetHeight >= wrap.scrollHeight) {
       this.setState({
         isFetchingPage: true
       }, this._fetchNextPage);
@@ -32980,7 +33035,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // Up key handler.
   // Shift-click is used to select successive focus items for aria keyboard accessibility
-  _onUpKey: function(event) {
+  _onUpKey: function _onUpKey(event) {
     if (event.altKey) {
       this._closeOnKeypress();
       return;
@@ -32996,7 +33051,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // If hasMorePages option (Function) present, returns the value of its call.
   // Otherwise, returns false so page fetch will not occur
-  _pageFetchingComplete: function() {
+  _pageFetchingComplete: function _pageFetchingComplete() {
     if (!_.isFunction(this.props.hasMorePages)) {
       return false;
     } else {
@@ -33007,14 +33062,14 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // Used in shift selection when the event target was previously selected.
   // Remove all options up to, but not including the option that raised the event.
   // (So it behaves like a native browser form multi-select)
-  _removeAllOptionsInOptionIdRange: function(from, to) {
+  _removeAllOptionsInOptionIdRange: function _removeAllOptionsInOptionIdRange(from, to) {
     var valuePropsToReject = [],
-        start = (from <= to) ? from : to,
-        end = (to >= from) ? to : from;
+        start = from <= to ? from : to,
+        end = to >= from ? to : from;
 
     for (var i = start; i <= end; i++) {
       var refString = 'option_' + i,
-      option = this.refs[refString];
+          option = this.refs[refString];
       if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
         // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
         if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getDOMNode().getAttribute('data-option-value')) {
@@ -33023,9 +33078,9 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
       }
     }
 
-    var remainingSelected = _.reject(this.state.value, function(option) {
-        return _.includes(valuePropsToReject, option[this.state.valueKey]);
-      }, this);
+    var remainingSelected = _.reject(this.state.value, function (option) {
+      return _.includes(valuePropsToReject, option[this.state.valueKey]);
+    }, this);
 
     this.props.onChange(remainingSelected);
 
@@ -33036,19 +33091,19 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
-  _removeSelectedOptionByValue: function(value, callback) {
+  _removeSelectedOptionByValue: function _removeSelectedOptionByValue(value, callback) {
     // clear lastUserSelected if has been removed
-    if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
+    if (this.lastUserSelectedOption && this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey]) {
       this.lastUserSelectedOption = undefined;
     }
 
-    var SelectedAfterRemoval = _.reject(this.state.value, function(option) {
-                                 return option[this.state.valueKey] === value[this.state.valueKey];
-                               }, this);
+    var SelectedAfterRemoval = _.reject(this.state.value, function (option) {
+      return option[this.state.valueKey] === value[this.state.valueKey];
+    }, this);
 
     this.props.onChange(SelectedAfterRemoval);
 
-    callback = _.isFunction(callback) ? callback :  _.noop;
+    callback = _.isFunction(callback) ? callback : _.noop;
 
     this.setState({
       value: SelectedAfterRemoval
@@ -33056,7 +33111,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // remove a selected tag on keyDown
-  _removeTagKeyPress: function(value, event) {
+  _removeTagKeyPress: function _removeTagKeyPress(value, event) {
     var isEnterKey = event.which === this.keymap.enter,
         isSpaceKey = event.which === this.keymap.space;
 
@@ -33065,11 +33120,10 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
       event.stopPropagation();
       this._removeSelectedOptionByValue(value, this._setFocusToTagRemovalIfPresent); // delegate to removal handler
     }
-
   },
 
   // remove a selected tag on click
-  _removeTagClick: function(value, event) {
+  _removeTagClick: function _removeTagClick(value, event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -33077,31 +33131,31 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // used in shift-click range selections
-  _selectAllOptionsInOptionIdRange: function(from, to) {
+  _selectAllOptionsInOptionIdRange: function _selectAllOptionsInOptionIdRange(from, to) {
     var valuePropsToSelect = [],
-        start = (from <= to) ? from : to,
-        end = (to >= from) ? to : from;
+        start = from <= to ? from : to,
+        end = to >= from ? to : from;
 
     for (var i = start; i <= end; i++) {
       var refString = 'option_' + i,
-      option = this.refs[refString];
+          option = this.refs[refString];
       if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
         valuePropsToSelect.push(option.props['data-option-value']);
       }
     }
 
-    var optionsToSelect = _.reduce(this.state.data, function(memo, option) {
-          if (_.includes(valuePropsToSelect, option[this.state.valueKey])) {
-            memo.push(option);
-          }
-          return memo;
-        }, [], this);
+    var optionsToSelect = _.reduce(this.state.data, function (memo, option) {
+      if (_.includes(valuePropsToSelect, option[this.state.valueKey])) {
+        memo.push(option);
+      }
+      return memo;
+    }, [], this);
     this._selectItemByValues(optionsToSelect, true);
   },
 
   // Used in shift-key selection.
   // Select all options from the current eventTarget to the lastUserSelectedOption
-  _selectAllOptionsToLastUserSelectedOption: function(eventTargetLi) {
+  _selectAllOptionsToLastUserSelectedOption: function _selectAllOptionsToLastUserSelectedOption(eventTargetLi) {
     if (!this.lastUserSelectedOption) {
       this.lastUserSelectedOption = eventTargetLi;
       // select all options from the first option to the clicked option
@@ -33124,7 +33178,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // Make a user-selection of the option that is currently focused.
   // Will close the dropDown when keepControlOpen is falsy
-  _selectFocusedOption: function(eventTargetLi, keepControlOpen) {
+  _selectFocusedOption: function _selectFocusedOption(eventTargetLi, keepControlOpen) {
     keepControlOpen = keepControlOpen || false;
 
     var focusedOptionKey = this._getFocusedOptionKey();
@@ -33146,10 +33200,10 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   // Handle selection of an option or array of options.
   // Track last selection the user made.
   // Close dropdown on the setState callback if not a non control-closing selection
-  _selectItemByValues: function(value, keepControlOpen) {
-   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+  _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
+    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (this._isMultiSelect() || (keepControlOpen && this.state.value)) {
+    if (this._isMultiSelect() || keepControlOpen && this.state.value) {
       objectValues = this.state.value.concat(objectValues);
     }
 
@@ -33168,12 +33222,12 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
-  _selectItemOnOptionClick: function(value, event) {
+  _selectItemOnOptionClick: function _selectItemOnOptionClick(value, event) {
     if (this._isMultiSelect() && event.shiftKey) {
       this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
     }
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey),
         alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
 
     // store clicked option as the lastUserSelected
@@ -33189,12 +33243,12 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // set the focusId to the SEARCH_FOCUS_ID constant value
-  _setFocusIdToSearch: function() {
+  _setFocusIdToSearch: function _setFocusIdToSearch() {
     this._updateFocusedId(this.SEARCH_FOCUS_ID);
   },
 
   // if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown
-  _setFocusOnOpen: function() {
+  _setFocusOnOpen: function _setFocusOnOpen() {
     if (this.lastUserSelectedOption) {
       this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
     } else {
@@ -33204,8 +33258,8 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
   // DOM focus for tag removal buttons will get lost after a tag removal.
   // After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove
-  _setFocusToTagRemovalIfPresent: function() {
-    if (!this.props.tags || (this.state.value.length === 0)) {
+  _setFocusToTagRemovalIfPresent: function _setFocusToTagRemovalIfPresent() {
+    if (!this.props.tags || this.state.value.length === 0) {
       return false;
     }
 
@@ -33222,7 +33276,7 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
   },
 
   // Sets the current focusedId.
-  _updateFocusedId: function(id) {
+  _updateFocusedId: function _updateFocusedId(id) {
     this.setState({
       focusedId: id
     });
@@ -33232,11 +33286,13 @@ var ReactSuperSelect = React.createClass({displayName: "ReactSuperSelect",
 
 module.exports = ReactSuperSelect;
 
-
 },{"classnames":1,"lodash":3,"react":158}],160:[function(require,module,exports){
+'use strict';
+
 var basicAjaxExample = require('./super-selects/basic-ajax'),
     basicExample = require('./super-selects/basic-example'),
     basicSearchable = require('./super-selects/basic-searchable'),
+    customFilterFunction = require('./super-selects/custom-filter-function'),
     customTemplate = require('./super-selects/custom-template'),
     groupBy = require('./super-selects/group-by'),
     localized = require('./super-selects/localized'),
@@ -33244,87 +33300,133 @@ var basicAjaxExample = require('./super-selects/basic-ajax'),
     paging = require('./super-selects/paging'),
     tagsExample = require('./super-selects/tags-example');
 
-var allExamples = [
-  basicExample,
-  basicAjaxExample,
-  basicSearchable,
-  customTemplate,
-  groupBy,
-  localized,
-  multiselect,
-  paging,
-  tagsExample
-];
+var allExamples = [basicExample, basicAjaxExample, basicSearchable, customFilterFunction, customTemplate, groupBy, localized, multiselect, paging, tagsExample];
 
 module.exports = allExamples;
 
+},{"./super-selects/basic-ajax":172,"./super-selects/basic-example":173,"./super-selects/basic-searchable":174,"./super-selects/custom-filter-function":175,"./super-selects/custom-template":176,"./super-selects/group-by":177,"./super-selects/localized":178,"./super-selects/multiselect":179,"./super-selects/paging":180,"./super-selects/tags-example":184}],161:[function(require,module,exports){
+'use strict';
 
-},{"./super-selects/basic-ajax":171,"./super-selects/basic-example":172,"./super-selects/basic-searchable":173,"./super-selects/custom-template":174,"./super-selects/group-by":175,"./super-selects/localized":176,"./super-selects/multiselect":177,"./super-selects/paging":178,"./super-selects/tags-example":182}],161:[function(require,module,exports){
 var _ = require('lodash'),
     React = require('react'),
     ReactSuperSelect = require('../src/react-super-select');
 
 var allExamples = require('./all-examples');
 
-var RSSExamples = React.createClass({displayName: "RSSExamples",
+var RSSExamples = React.createClass({
+  displayName: 'RSSExamples',
 
-  _renderExampleLinks: function() {
-    var exampleLinks = _.map(allExamples, function(example, index) {
+  _renderExampleLinks: function _renderExampleLinks() {
+    var exampleLinks = _.map(allExamples, function (example, index) {
       var href = '#' + example.nameAttr;
-      return (React.createElement("li", {key: index}, React.createElement("a", {href: href}, " ", example.displayName, " ")));
+      return React.createElement(
+        'li',
+        { key: index },
+        React.createElement(
+          'a',
+          { href: href },
+          ' ',
+          example.displayName,
+          ' '
+        )
+      );
     });
 
-    return( React.createElement("div", {className: "example-links"}, 
-              React.createElement("h1", null, "React-Super-Select Live Examples"), 
-              React.createElement("h2", null, " Quick Links: "), 
-              React.createElement("nav", {className: "api"}, 
-               React.createElement("ul", null, 
-                 exampleLinks
-               )
-              )
-            ));
+    return React.createElement(
+      'div',
+      { className: 'example-links' },
+      React.createElement(
+        'h1',
+        null,
+        'React-Super-Select Live Examples'
+      ),
+      React.createElement(
+        'h2',
+        null,
+        ' Quick Links: '
+      ),
+      React.createElement(
+        'nav',
+        { className: 'api' },
+        React.createElement(
+          'ul',
+          null,
+          exampleLinks
+        )
+      )
+    );
   },
 
-  _renderExampleSections: function() {
-    var exampleSections = _.map(allExamples, function(example, index) {
+  _renderExampleSections: function _renderExampleSections() {
+    var exampleSections = _.map(allExamples, function (example, index) {
       var superSelect = React.createElement(ReactSuperSelect, example.props),
           outputId = example.nameAttr + '_output';
 
-      return( React.createElement("li", {key: index, className: "example-sections"}, 
-              React.createElement("article", {className: "api-item"}, 
-                React.createElement("h3", {className: "api-link"}, 
-                  React.createElement("a", {name: example.nameAttr}, " ", example.displayName, " ")
-                ), 
-                React.createElement("div", {className: "rss-live-example"}, 
-                  superSelect
-                ), 
-                React.createElement("div", {className: "rss-output-example"}, "onChange Output"), 
-                React.createElement("pre", {className: "example-output", id: outputId}
-                ), 
-                React.createElement("div", null, 
-                  React.createElement("aside", {className: "rss-example-markdown", dangerouslySetInnerHTML: {__html: example.renderString}})
-                ), 
-                React.createElement("a", {className: "top-return", href: "#top"}, "Back to Top")
-              )
-            ));
+      return React.createElement(
+        'li',
+        { key: index, className: 'example-sections' },
+        React.createElement(
+          'article',
+          { className: 'api-item' },
+          React.createElement(
+            'h3',
+            { className: 'api-link' },
+            React.createElement(
+              'a',
+              { name: example.nameAttr },
+              ' ',
+              example.displayName,
+              ' '
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'rss-live-example' },
+            superSelect
+          ),
+          React.createElement(
+            'div',
+            { className: 'rss-output-example' },
+            'onChange Output'
+          ),
+          React.createElement('pre', { className: 'example-output', id: outputId }),
+          React.createElement(
+            'div',
+            null,
+            React.createElement('aside', { className: 'rss-example-markdown', dangerouslySetInnerHTML: { __html: example.renderString } })
+          ),
+          React.createElement(
+            'a',
+            { className: 'top-return', href: '#top' },
+            'Back to Top'
+          )
+        )
+      );
     });
 
-    return(React.createElement("ul", {className: "live-examples-list"}, 
-        exampleSections
-      ));
+    return React.createElement(
+      'ul',
+      { className: 'live-examples-list' },
+      exampleSections
+    );
   },
 
-  render: function() {
-    return (React.createElement("div", null, 
-      React.createElement("a", {name: "top"}, " "), 
-      this._renderExampleLinks(), 
+  render: function render() {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'a',
+        { name: 'top' },
+        ' '
+      ),
+      this._renderExampleLinks(),
       this._renderExampleSections()
-    ));
+    );
   }
 });
 
 React.render(React.createElement(RSSExamples, null), document.getElementById('examples'));
-
 
 },{"../src/react-super-select":159,"./all-examples":160,"lodash":3,"react":158}],162:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  ajaxDataFetch={simulatedAjaxFetch} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  // simulate a 2 second ajax fetch for collection data\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(testData);\n      }, 2000);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
@@ -33333,36 +33435,36 @@ module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=
 },{}],164:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],165:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customFilterFunction: customFilterExample,\n                  placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;filter shop by category&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customfilterfunction\">customFilterFunction</h4>\n<pre><code class=\"lang-js\">var customFilterExample = function (option, index, collection, searchTerm) {\n  return option.group.toLowerCase().indexOf(searchTerm) &gt; -1;\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],166:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],167:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  tags={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot;\n                  tagRemoveLabelString=&quot;删除标记&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"localization-properties\">localization properties</h4>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\ntagRemoveLabelString=&quot;删除标记&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Localized Tags Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};\\n&#39;]);\n  });\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],168:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  tags={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot;\n                  tagRemoveLabelString=&quot;删除标记&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"localization-properties\">localization properties</h4>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\ntagRemoveLabelString=&quot;删除标记&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Localized Tags Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};\\n&#39;]);\n  });\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],169:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],170:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],171:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],172:[function(require,module,exports){
+'use strict';
+
 var testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     basicAjaxMarkdown = require('../markdown/js/examples/basic-ajax').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+var handlerExample = function handlerExample(option) {
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_ajax_output', output.join(''));
 };
 
-var simulatedAjaxFetch= function() {
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
   // simulate a 2 second ajax fetch for collection data
   return {
-    then: function(callback) {
-      setTimeout(function() {
+    then: function then(callback) {
+      setTimeout(function () {
         callback(testData);
       }, 2000);
     }
@@ -33371,11 +33473,11 @@ var simulatedAjaxFetch= function() {
 
 var basicAjaxExample = {
 
-  nameAttr: "basic_ajax",
-  displayName: "Basic Ajax",
+  nameAttr: 'basic_ajax',
+  displayName: 'Basic Ajax',
 
   props: {
-    placeholder: "Choose An Option",
+    placeholder: 'Choose An Option',
     ajaxDataFetch: simulatedAjaxFetch,
     onChange: handlerExample,
     searchable: true
@@ -33387,28 +33489,25 @@ var basicAjaxExample = {
 
 module.exports = basicAjaxExample;
 
+},{"../markdown/js/examples/basic-ajax":162,"./support/example-output.js":181,"./support/test-data.js":183}],173:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/basic-ajax":162,"./support/example-output.js":179,"./support/test-data.js":181}],172:[function(require,module,exports){
 var testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+var handlerExample = function handlerExample(option) {
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_example_output', output.join(''));
 };
 
 var basicExample = {
 
-  nameAttr: "basic_example",
-  displayName: "Basic Example",
+  nameAttr: 'basic_example',
+  displayName: 'Basic Example',
 
   props: {
-    placeholder: "Make a Selection",
+    placeholder: 'Make a Selection',
     dataSource: testData,
     onChange: handlerExample
   },
@@ -33419,28 +33518,25 @@ var basicExample = {
 
 module.exports = basicExample;
 
+},{"../markdown/js/examples/basic-example":163,"./support/example-output.js":181,"./support/test-data.js":183}],174:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/basic-example":163,"./support/example-output.js":179,"./support/test-data.js":181}],173:[function(require,module,exports){
 var testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Searchable Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+var handlerExample = function handlerExample(option) {
+  var output = ['Searchable Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_searchable_output', output.join(''));
 };
 
 var basicSearchableExample = {
 
-  nameAttr: "basic_searchable",
-  displayName: "Basic Searchable",
+  nameAttr: 'basic_searchable',
+  displayName: 'Basic Searchable',
 
   props: {
-    placeholder: "Make a Selection",
+    placeholder: 'Make a Selection',
     dataSource: testData,
     onChange: handlerExample,
     searchable: true
@@ -33452,50 +33548,109 @@ var basicSearchableExample = {
 
 module.exports = basicSearchableExample;
 
+},{"../markdown/js/examples/basic-searchable":164,"./support/example-output.js":181,"./support/test-data.js":183}],175:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/basic-searchable":164,"./support/example-output.js":179,"./support/test-data.js":181}],174:[function(require,module,exports){
+var React = require('react'),
+    classNames = require('classnames'),
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    customFilterFunctionMarkdown = require('../markdown/js/examples/custom-filter-function').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
+  exampleOutput('custom_template_output', output.join(''));
+};
+
+var customFilter = function customFilter(option, index, collection, searchTerm) {
+  return option.group.toLowerCase().indexOf(searchTerm) > -1;
+};
+
+var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
+
+  return React.createElement(
+    'div',
+    { className: itemClasses },
+    React.createElement('span', { className: iconClasses }),
+    React.createElement(
+      'p',
+      null,
+      item.label,
+      ' - ',
+      '$' + item.price.toFixed(2)
+    )
+  );
+};
+
+var customFilterExample = {
+
+  nameAttr: 'custom_filter_function',
+  displayName: 'Custom Filter Function Example',
+
+  props: {
+    customFilterFunction: customFilter,
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: 'label',
+    placeholder: 'Pick an Item',
+    searchable: true,
+    searchPlaceholder: 'filter shop by category'
+  },
+
+  renderString: customFilterFunctionMarkdown
+
+};
+
+module.exports = customFilterExample;
+
+},{"../markdown/js/examples/custom-filter-function":165,"./support/example-output.js":181,"./support/groceries.js":182,"classnames":1,"react":158}],176:[function(require,module,exports){
+'use strict';
+
 var React = require('react'),
     classNames = require('classnames'),
     groceries = require('./support/groceries.js'),
     exampleOutput = require('./support/example-output.js'),
     customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Add To Cart: ',
-    option.label,
-    '\nPrice: ',
-    option.price];
+var handlerExample = function handlerExample(option) {
+  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
   exampleOutput('custom_template_output', output.join(''));
 };
 
-var groceryCartItemTemplate = function(item) {
-  var itemClasses = classNames('grocery-item',
-                               'example-' + item.group.toLowerCase()),
-      iconClasses = classNames('grocery-icon',
-                               'rss-grocery',
-                              'rss-grocery-' + item.attributeName);
+var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
 
-  return(
-    React.createElement("div", {className: itemClasses}, 
-      React.createElement("span", {className: iconClasses}), 
-      React.createElement("p", null, item.label, " - ", '$' + item.price.toFixed(2))
-    ));
+  return React.createElement(
+    'div',
+    { className: itemClasses },
+    React.createElement('span', { className: iconClasses }),
+    React.createElement(
+      'p',
+      null,
+      item.label,
+      ' - ',
+      '$' + item.price.toFixed(2)
+    )
+  );
 };
 
 var customTemplateExample = {
 
-  nameAttr: "custom_template",
-  displayName: "Custom Template Example",
+  nameAttr: 'custom_template',
+  displayName: 'Custom Template Example',
 
   props: {
     customOptionTemplateFunction: groceryCartItemTemplate,
     dataSource: groceries,
     onChange: handlerExample,
     optionLabelKey: 'label',
-    placeholder: "Pick an Item",
+    placeholder: 'Pick an Item',
     searchable: true,
-    searchPlaceholder: "Search Shop"
+    searchPlaceholder: 'Search Shop'
   },
 
   renderString: customTemplateMarkdown
@@ -33504,51 +33659,52 @@ var customTemplateExample = {
 
 module.exports = customTemplateExample;
 
+},{"../markdown/js/examples/custom-template":166,"./support/example-output.js":181,"./support/groceries.js":182,"classnames":1,"react":158}],177:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/custom-template":165,"./support/example-output.js":179,"./support/groceries.js":180,"classnames":1,"react":158}],175:[function(require,module,exports){
 var React = require('react'),
     classNames = require('classnames'),
     groceries = require('./support/groceries.js'),
     exampleOutput = require('./support/example-output.js'),
     groupByMarkdown = require('../markdown/js/examples/group-by').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Add To Cart: ',
-    option.label,
-    '\nPrice: ',
-    option.price];
+var handlerExample = function handlerExample(option) {
+  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
   exampleOutput('group_by_output', output.join(''));
 };
 
-var groceryCartItemTemplate = function(item) {
-  var itemClasses = classNames('grocery-item',
-                               'example-' + item.group.toLowerCase()),
-      iconClasses = classNames('grocery-icon',
-                               'rss-grocery',
-                              'rss-grocery-' + item.attributeName);
+var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
 
-  return(
-    React.createElement("div", {className: itemClasses}, 
-      React.createElement("span", {className: iconClasses}), 
-      React.createElement("p", null, item.label, " - ", '$' + item.price.toFixed(2))
-    ));
+  return React.createElement(
+    'div',
+    { className: itemClasses },
+    React.createElement('span', { className: iconClasses }),
+    React.createElement(
+      'p',
+      null,
+      item.label,
+      ' - ',
+      '$' + item.price.toFixed(2)
+    )
+  );
 };
 
 var groupByExample = {
 
-  nameAttr: "group_by",
-  displayName: "Grouped Options Example",
+  nameAttr: 'group_by',
+  displayName: 'Grouped Options Example',
 
   props: {
     customOptionTemplateFunction: groceryCartItemTemplate,
     dataSource: groceries,
     onChange: handlerExample,
-    optionLabelKey: "label",
-    placeholder: "Pick an Item",
+    optionLabelKey: 'label',
+    placeholder: 'Pick an Item',
     searchable: true,
-    searchPlaceholder: "Search Shop",
-    groupBy: "group"
+    searchPlaceholder: 'Search Shop',
+    groupBy: 'group'
   },
 
   renderString: groupByMarkdown
@@ -33557,46 +33713,43 @@ var groupByExample = {
 
 module.exports = groupByExample;
 
+},{"../markdown/js/examples/group-by":167,"./support/example-output.js":181,"./support/groceries.js":182,"classnames":1,"react":158}],178:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/group-by":166,"./support/example-output.js":179,"./support/groceries.js":180,"classnames":1,"react":158}],176:[function(require,module,exports){
 var _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     localizedMarkdown = require('../markdown/js/examples/localized').body;
 
-var handlerExample = function(options) {
+var handlerExample = function handlerExample(options) {
   var output = [];
-  _.map(options, function(option){
-    output = output.concat([
-    'Localized Tags Chosen Option = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};\n']);
+  _.map(options, function (option) {
+    output = output.concat(['Localized Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
   });
 
   exampleOutput('localized_output', output.join(''));
 };
 
-var simulatedAjaxFetch= function() {
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
   var MOCK_AJAX_PER_PAGE = 10;
   var data = _.take(testData, MOCK_AJAX_PER_PAGE);
-    // simulate a 2 second ajax fetch for collection data
-    return {
-      then: function(callback) {
-        setTimeout(function() {
-          callback(data);
-        }, 2000);
-      }
-    };
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(data);
+      }, 2000);
+    }
+  };
 };
 
-var hasMorePagesExample = function(collection) {
+var hasMorePagesExample = function hasMorePagesExample(collection) {
   return collection.length < testData.length;
 };
 
 var previousPage = 0;
 
-var simulatedPageFetch = function(collection) {
+var simulatedPageFetch = function simulatedPageFetch(collection) {
   var MOCK_AJAX_PER_PAGE = 10;
   previousPage = previousPage + 1;
   var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
@@ -33604,7 +33757,7 @@ var simulatedPageFetch = function(collection) {
   if (sliceLocation < testData.length) {
     data = [];
 
-    for (var i = sliceLocation; i < (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {
+    for (var i = sliceLocation; i < sliceLocation + MOCK_AJAX_PER_PAGE; i++) {
       if (testData[i]) {
         data.push(testData[i]);
       }
@@ -33614,8 +33767,8 @@ var simulatedPageFetch = function(collection) {
   }
 
   return {
-    then: function(callback) {
-      setTimeout(function() {
+    then: function then(callback) {
+      setTimeout(function () {
         callback(collection.concat(data));
       }, 1500);
     }
@@ -33624,18 +33777,18 @@ var simulatedPageFetch = function(collection) {
 
 var localizedExample = {
 
-  nameAttr: "localized",
-  displayName: "Localized",
+  nameAttr: 'localized',
+  displayName: 'Localized',
 
   props: {
     ajaxDataFetch: simulatedAjaxFetch,
     hasMorePages: hasMorePagesExample,
     onChange: handlerExample,
     pageDataFetch: simulatedPageFetch,
-    placeholder: "选择",
-    ajaxErrorString: "错误",
-    noResultsString: "无结果",
-    searchPlaceholder: "搜索",
+    placeholder: '选择',
+    ajaxErrorString: '错误',
+    noResultsString: '无结果',
+    searchPlaceholder: '搜索',
     searchable: true,
     tagRemoveLabelString: '删除标记',
     tags: true
@@ -33647,21 +33800,18 @@ var localizedExample = {
 
 module.exports = localizedExample;
 
+},{"../markdown/js/examples/localized":168,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}],179:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/localized":167,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}],177:[function(require,module,exports){
 var _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     multiselectMarkdown = require('../markdown/js/examples/multiselect').body;
 
-var handlerExample = function(options) {
+var handlerExample = function handlerExample(options) {
   var output = [];
-  _.map(options, function(option){
-    output = output.concat([
-    'Multiselect Chosen Option = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};\n']);
+  _.map(options, function (option) {
+    output = output.concat(['Multiselect Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
   });
 
   exampleOutput('multiselect_output', output.join(''));
@@ -33669,11 +33819,11 @@ var handlerExample = function(options) {
 
 var multiselectExample = {
 
-  nameAttr: "multiselect",
-  displayName: "Multiselect",
+  nameAttr: 'multiselect',
+  displayName: 'Multiselect',
 
   props: {
-    placeholder: "Make Your Selections",
+    placeholder: 'Make Your Selections',
     dataSource: testData,
     onChange: handlerExample,
     multiple: true
@@ -33685,42 +33835,39 @@ var multiselectExample = {
 
 module.exports = multiselectExample;
 
+},{"../markdown/js/examples/multiselect":169,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}],180:[function(require,module,exports){
+'use strict';
 
-},{"../markdown/js/examples/multiselect":168,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}],178:[function(require,module,exports){
 var _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     pagingMarkdown = require('../markdown/js/examples/paging').body;
 
-var handlerExample = function(option) {
-  var output = [
-    'Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+var handlerExample = function handlerExample(option) {
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('paging_output', output.join(''));
 };
 
-var simulatedAjaxFetch= function() {
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
   var MOCK_AJAX_PER_PAGE = 10;
   var data = _.take(testData, MOCK_AJAX_PER_PAGE);
-    // simulate a 2 second ajax fetch for collection data
-    return {
-      then: function(callback) {
-        setTimeout(function() {
-          callback(data);
-        }, 2000);
-      }
-    };
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(data);
+      }, 2000);
+    }
+  };
 };
 
-var hasMorePagesExample = function(collection) {
+var hasMorePagesExample = function hasMorePagesExample(collection) {
   return collection.length < testData.length;
 };
 
 var previousPage = 0;
 
-var simulatedPageFetch = function(collection) {
+var simulatedPageFetch = function simulatedPageFetch(collection) {
   var MOCK_AJAX_PER_PAGE = 10;
   previousPage = previousPage + 1;
   var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
@@ -33728,7 +33875,7 @@ var simulatedPageFetch = function(collection) {
   if (sliceLocation < testData.length) {
     data = [];
 
-    for (var i = sliceLocation; i < (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {
+    for (var i = sliceLocation; i < sliceLocation + MOCK_AJAX_PER_PAGE; i++) {
       if (testData[i]) {
         data.push(testData[i]);
       }
@@ -33738,8 +33885,8 @@ var simulatedPageFetch = function(collection) {
   }
 
   return {
-    then: function(callback) {
-      setTimeout(function() {
+    then: function then(callback) {
+      setTimeout(function () {
         callback(collection.concat(data));
       }, 1500);
     }
@@ -33748,15 +33895,15 @@ var simulatedPageFetch = function(collection) {
 
 var pagingExample = {
 
-  nameAttr: "paging",
-  displayName: "Paging",
+  nameAttr: 'paging',
+  displayName: 'Paging',
 
   props: {
     ajaxDataFetch: simulatedAjaxFetch,
     hasMorePages: hasMorePagesExample,
     onChange: handlerExample,
     pageDataFetch: simulatedPageFetch,
-    placeholder: "Choose An Option",
+    placeholder: 'Choose An Option',
     searchable: true
   },
 
@@ -33766,9 +33913,10 @@ var pagingExample = {
 
 module.exports = pagingExample;
 
+},{"../markdown/js/examples/paging":170,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}],181:[function(require,module,exports){
+"use strict";
 
-},{"../markdown/js/examples/paging":169,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}],179:[function(require,module,exports){
-var exampleOutput = function(id, content) {
+var exampleOutput = function exampleOutput(id, content) {
   var outputDiv = document.getElementById(id);
 
   if (outputDiv && outputDiv.childNodes && outputDiv.childNodes[0]) {
@@ -33776,355 +33924,309 @@ var exampleOutput = function(id, content) {
   } else {
     outputDiv.appendChild(document.createTextNode(content));
   }
-
 };
 
 module.exports = exampleOutput;
 
+},{}],182:[function(require,module,exports){
+"use strict";
 
-},{}],180:[function(require,module,exports){
-var groceries = [
-{
+var groceries = [{
   id: 1,
   attributeName: "apple",
   label: "Apple",
   iconClass: "rss-grocery rss-grocery-apple",
   group: "fruits",
   price: 0.79
-},{
+}, {
   id: 2,
   attributeName: "carrot",
   label: "Carrot",
   iconClass: "rss-grocery rss-grocery-carrot",
   group: "Vegetables",
   price: 0.21
-},{
+}, {
   id: 3,
   attributeName: "cherries",
   label: "Cherries",
   iconClass: "rss-grocery rss-grocery-cherries",
   group: "fruits",
   price: 0.45
-},{
+}, {
   id: 4,
   attributeName: "eggplant",
   label: "Eggplant",
   iconClass: "rss-grocery rss-grocery-eggplant",
   group: "Vegetables",
-  price: 1.50
-},{
+  price: 1.5
+}, {
   id: 5,
   attributeName: "garlic",
   label: "Garlic",
   iconClass: "rss-grocery rss-grocery-garlic",
   group: "Vegetables",
-  price: 0.60
-},{
+  price: 0.6
+}, {
   id: 6,
   attributeName: "grapes",
   label: "Grapes",
   iconClass: "rss-grocery rss-grocery-grapes",
   group: "fruits",
-  price: 3.00
-},{
+  price: 3
+}, {
   id: 7,
   attributeName: "green_pepper",
   label: "Green Pepper",
   iconClass: "rss-grocery rss-grocery-green_pepper",
   group: "Vegetables",
   price: 0.95
-},{
+}, {
   id: 8,
   attributeName: "lemon",
   label: "Lemon",
   iconClass: "rss-grocery rss-grocery-lemon",
   group: "fruits",
-  price: 0.40
-},{
+  price: 0.4
+}, {
   id: 9,
   attributeName: "orange",
   label: "Orange",
   iconClass: "rss-grocery rss-grocery-orange",
   group: "fruits",
-  price: 0.60
-},{
+  price: 0.6
+}, {
   id: 10,
   attributeName: "peach",
   label: "Peach",
   iconClass: "rss-grocery rss-grocery-peach",
   group: "fruits",
   price: 0.95
-},{
+}, {
   id: 11,
   attributeName: "pear",
   label: "Pear",
   iconClass: "rss-grocery rss-grocery-pear",
   group: "fruits",
   price: 0.55
-},{
+}, {
   id: 12,
   attributeName: "pumpkin",
   label: "Pumpkin",
   iconClass: "rss-grocery rss-grocery-pumpkin",
   group: "Vegetables",
-  price: 2.00
-},{
+  price: 2
+}, {
   id: 13,
   attributeName: "red_pepper",
   label: "Red Pepper",
   iconClass: "rss-grocery rss-grocery-red_pepper",
   group: "Vegetables",
-  price: 1.00
-},{
+  price: 1
+}, {
   id: 14,
   attributeName: "strawberry",
   label: "Strawberry",
   iconClass: "rss-grocery rss-grocery-strawberry",
   group: "fruits",
   price: 0.15
-},{
+}, {
   id: 15,
   attributeName: "tomato",
   label: "Tomato",
   iconClass: "rss-grocery rss-grocery-tomato",
   group: "fruits",
-  price: 0.60
-},{
+  price: 0.6
+}, {
   id: 16,
   attributeName: "watermelon",
   label: "Watermelon",
   iconClass: "rss-grocery rss-grocery-watermelon",
   group: "fruits",
-  price: 1.90
-}
-];
+  price: 1.9
+}];
 
 module.exports = groceries;
 
+},{}],183:[function(require,module,exports){
+"use strict";
 
-},{}],181:[function(require,module,exports){
-var testData = [
-{
+var testData = [{
   "id": "5507c0528152e61f3c348d56",
   "name": "elit laborum et",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c0526305bceb0c0e2c7a",
   "name": "dolor nulla velit",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052467f171e4e2f460e",
   "name": "consequat commodo elit",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c05280458aa7521a98d3",
   "name": "dolor deserunt pariatur",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c0525c18b6bc81e2a661",
   "name": "labore excepteur ut",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c05226d6c301539c9363",
   "name": "occaecat ipsum sit",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052981e4a28d673820c",
   "name": "dolor officia eu",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c0522340b9bec96ef3d0",
   "name": "ad enim ad",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052f379af7af42af291",
   "name": "amet in sunt",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c0525b90c984190cb7f9",
   "name": "ea sit qui",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c0525013be7033176d97",
   "name": "reprehenderit adipisicing nisi",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052c957e4c4a94c09d6",
   "name": "veniam pariatur sint",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c052a2ef6ce44a822f9f",
   "name": "mollit in elit",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c052265e8dbfb667b320",
   "name": "sunt est reprehenderit",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c0526c19cadf4345992b",
   "name": "reprehenderit officia sint",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c052ab8f326ac857413b",
   "name": "enim duis est",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c05224e453ebbd82ec23",
   "name": "occaecat elit esse",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052f3a9f85a73feac00",
   "name": "enim magna reprehenderit",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052b016fd12b330bcc1",
   "name": "nostrud commodo laboris",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c05287dc146f83eb969c",
   "name": "anim mollit dolor",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052d62d6e47a7b9e3ea",
   "name": "tempor duis irure",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052e3604925abd04af7",
   "name": "ullamco exercitation commodo",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052af7f3ede18c29878",
   "name": "non ex ullamco",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052f8419e0c886ad481",
   "name": "dolore pariatur voluptate",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c0527b92f529158aa3f3",
   "name": "nisi consequat minim",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052fa42ff00ff3b706e",
   "name": "laborum reprehenderit ut",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c0529ac26334e60054cb",
   "name": "qui ullamco non",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052973e3ac25c7ceb3a",
   "name": "cillum Lorem amet",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052fdeeb5210cf219fe",
   "name": "enim commodo officia",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052c8751cfa0ebac0c9",
   "name": "esse ullamco duis",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c0525dcfda7c9d57d1f2",
   "name": "ea Lorem quis",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c052ab2af04b759874ec",
   "name": "velit ipsum occaecat",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c05295f489e31f118a1c",
   "name": "aute qui et",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c052341811b6429577c3",
   "name": "incididunt aliquip aliquip",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052089b0968cb58de59",
   "name": "veniam et Lorem",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c0524bdb62dca52c0943",
   "name": "fugiat esse consectetur",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c0524f9611ea15963c20",
   "name": "do excepteur occaecat",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c052958a89ff83da7df1",
   "name": "irure pariatur irure",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c0525566ad2cd006b31a",
   "name": "veniam ut veniam",
   "size": "Medium"
-},
-{
+}, {
   "id": "5507c05231dcc890c5c25dc7",
   "name": "reprehenderit nulla eiusmod",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c05265bf7b373ee75105",
   "name": "id ullamco id",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c052a64af7c2f1a9a28b",
   "name": "est esse voluptate",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c0529fecf0d2ff679c24",
   "name": "reprehenderit sunt proident",
   "size": "Large"
-},
-{
+}, {
   "id": "5507c052b2382a6259ecd4ca",
   "name": "dolore velit enim",
   "size": "Small"
-},
-{
+}, {
   "id": "5507c05225dccd4c70999902",
   "name": "enim et nulla",
   "size": "Small"
@@ -34132,21 +34234,18 @@ var testData = [
 
 module.exports = testData;
 
+},{}],184:[function(require,module,exports){
+'use strict';
 
-},{}],182:[function(require,module,exports){
 var _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     tagsMarkdown = require('../markdown/js/examples/tags-example').body;
 
-var handlerExample = function(options) {
+var handlerExample = function handlerExample(options) {
   var output = [];
-  _.map(options, function(option){
-    output = output.concat([
-    'Tags Chosen Option = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};\n']);
+  _.map(options, function (option) {
+    output = output.concat(['Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
   });
 
   exampleOutput('tags_example_output', output.join(''));
@@ -34154,11 +34253,11 @@ var handlerExample = function(options) {
 
 var tagsExample = {
 
-  nameAttr: "tags_example",
-  displayName: "Tags",
+  nameAttr: 'tags_example',
+  displayName: 'Tags',
 
   props: {
-    placeholder: "Make Your Selections",
+    placeholder: 'Make Your Selections',
     dataSource: testData,
     initialValue: [testData[0], testData[1]],
     onChange: handlerExample,
@@ -34171,5 +34270,4 @@ var tagsExample = {
 
 module.exports = tagsExample;
 
-
-},{"../markdown/js/examples/tags-example":170,"./support/example-output.js":179,"./support/test-data.js":181,"lodash":3}]},{},[161])
+},{"../markdown/js/examples/tags-example":171,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}]},{},[161])

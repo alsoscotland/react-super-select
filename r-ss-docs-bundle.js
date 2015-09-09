@@ -31988,6 +31988,8 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":30}],158:[function(require,module,exports){
+'use strict';
+
 var downKey = require('./keys/down'),
     endKey = require('./keys/end'),
     enterKey = require('./keys/enter'),
@@ -31997,21 +31999,13 @@ var downKey = require('./keys/down'),
     tabKey = require('./keys/tab'),
     upKey = require('./keys/up');
 
-var allKeys = [
-  downKey,
-  endKey,
-  enterKey,
-  escapeKey,
-  homeKey,
-  spaceKey,
-  tabKey,
-  upKey
-];
+var allKeys = [downKey, endKey, enterKey, escapeKey, homeKey, spaceKey, tabKey, upKey];
 
 module.exports = allKeys;
 
-
 },{"./keys/down":162,"./keys/end":163,"./keys/enter":164,"./keys/escape":165,"./keys/home":166,"./keys/space":167,"./keys/tab":168,"./keys/up":169}],159:[function(require,module,exports){
+'use strict';
+
 var multiple = require('./properties/multiple'),
     searchable = require('./properties/searchable'),
     tags = require('./properties/tags'),
@@ -32038,99 +32032,125 @@ var multiple = require('./properties/multiple'),
     searchPlaceholder = require('./properties/searchPlaceholder'),
     tagRemoveLabelString = require('./properties/tagRemoveLabelString');
 
-var allProps = [
-  multiple,
-  searchable,
-  tags,
-  customClass,
-  customGroupHeadingClass,
-  customSearchIconClass,
-  customLoaderClass,
-  customTagClass,
-  onChange,
-  ajaxDataFetch,
-  dataSource,
-  initialValue,
-  optionLabelKey,
-  optionValueKey,
-  pageDataFetch,
-  hasMorePages,
-  groupBy,
-  customGroupHeadingTemplateFunction,
-  customFilterFunction,
-  customOptionTemplateFunction,
-  ajaxErrorString,
-  noResultsString,
-  placeholder,
-  searchPlaceholder,
-  tagRemoveLabelString
-];
+var allProps = [multiple, searchable, tags, customClass, customGroupHeadingClass, customSearchIconClass, customLoaderClass, customTagClass, onChange, ajaxDataFetch, dataSource, initialValue, optionLabelKey, optionValueKey, pageDataFetch, hasMorePages, groupBy, customGroupHeadingTemplateFunction, customFilterFunction, customOptionTemplateFunction, ajaxErrorString, noResultsString, placeholder, searchPlaceholder, tagRemoveLabelString];
 
 module.exports = allProps;
 
-
 },{"./properties/ajaxDataFetch":203,"./properties/ajaxErrorString":204,"./properties/customClass":205,"./properties/customFilterFunction":206,"./properties/customGroupHeadingClass":207,"./properties/customGroupHeadingTemplateFunction":208,"./properties/customLoaderClass":209,"./properties/customOptionTemplateFunction":210,"./properties/customSearchIconClass":211,"./properties/customTagClass":212,"./properties/dataSource":213,"./properties/groupBy":214,"./properties/hasMorePages":215,"./properties/initialValue":216,"./properties/multiple":217,"./properties/noResultsString":218,"./properties/onChange":219,"./properties/optionLabelKey":220,"./properties/optionValueKey":221,"./properties/pageDataFetch":222,"./properties/placeholder":223,"./properties/searchPlaceholder":224,"./properties/searchable":225,"./properties/tagRemoveLabelString":226,"./properties/tags":227}],160:[function(require,module,exports){
+'use strict';
+
 require('./props-app');
 require('./keyboard-navigation-app');
 require('./version-printer');
 
-
 },{"./keyboard-navigation-app":161,"./props-app":228,"./version-printer":229}],161:[function(require,module,exports){
+'use strict';
+
 var _ = require('lodash'),
     React = require('react');
 
 var allKeys = require('./all-keys');
 
-var KeyboardNavigationApp = React.createClass({displayName: "KeyboardNavigationApp",
+var KeyboardNavigationApp = React.createClass({
+  displayName: 'KeyboardNavigationApp',
 
-  _renderKeysLinks: function() {
-    var propsLinks = _.map(allKeys, function(key, index) {
+  _renderKeysLinks: function _renderKeysLinks() {
+    var propsLinks = _.map(allKeys, function (key, index) {
       var href = '#' + key.nameAttr;
       var reactKey = 'key_link_' + index;
-      return (React.createElement("li", {key: reactKey}, React.createElement("a", {href: href}, " ", key.nameAttr, " ")));
+      return React.createElement(
+        'li',
+        { key: reactKey },
+        React.createElement(
+          'a',
+          { href: href },
+          ' ',
+          key.nameAttr,
+          ' '
+        )
+      );
     });
 
     return propsLinks;
   },
 
-  _renderKeys: function() {
-    var articles = _.map(allKeys, function(key, index) {
-      var reactKey = "keyboard_" + index;
-      return( React.createElement("article", {key: reactKey, className: "api-item"}, 
-                React.createElement("h5", {className: "api-link"}, 
-                  React.createElement("a", {name: key.nameAttr}, key.displayName)
-                ), 
-                React.createElement("p", {dangerouslySetInnerHTML: {__html: key.renderString}}), 
-                React.createElement("a", {className: "top-return", href: "#index_top"}, "Back to Top"), 
-                React.createElement("a", {className: "top-return", href: "#keys_top"}, "Back to Keys Links")
-              ));
+  _renderKeys: function _renderKeys() {
+    var articles = _.map(allKeys, function (key, index) {
+      var reactKey = 'keyboard_' + index;
+      return React.createElement(
+        'article',
+        { key: reactKey, className: 'api-item' },
+        React.createElement(
+          'h5',
+          { className: 'api-link' },
+          React.createElement(
+            'a',
+            { name: key.nameAttr },
+            key.displayName
+          )
+        ),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: key.renderString } }),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#index_top' },
+          'Back to Top'
+        ),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#keys_top' },
+          'Back to Keys Links'
+        )
+      );
     });
 
     return articles;
   },
 
-  render: function() {
-    return( React.createElement("section", {className: "api-docs-section"}, 
-              React.createElement("a", {name: "keyboard"}, " "), 
-              React.createElement("h3", {className: "feature-heading"}, "Keyboard Navigation:"), 
-              React.createElement("a", {name: "keys_top"}, " "), 
-              React.createElement("h5", null, "Keyboard Navigation Links By Key:"), 
-              React.createElement("nav", {className: "api"}, 
-               React.createElement("ul", null, 
-                 this._renderKeysLinks()
-               )
-              ), 
-              this._renderKeys()
-            ));
+  render: function render() {
+    return React.createElement(
+      'section',
+      { className: 'api-docs-section' },
+      React.createElement(
+        'a',
+        { name: 'keyboard' },
+        ' '
+      ),
+      React.createElement(
+        'h3',
+        { className: 'feature-heading' },
+        'Keyboard Navigation:'
+      ),
+      React.createElement(
+        'a',
+        { name: 'keys_top' },
+        ' '
+      ),
+      React.createElement(
+        'h5',
+        null,
+        'Keyboard Navigation Links By Key:'
+      ),
+      React.createElement(
+        'nav',
+        { className: 'api' },
+        React.createElement(
+          'ul',
+          null,
+          this._renderKeysLinks()
+        )
+      ),
+      this._renderKeys()
+    );
   }
 });
 
 module.exports = KeyboardNavigationApp;
 React.render(React.createElement(KeyboardNavigationApp, null), document.getElementById('keyboard_docs'));
 
-
 },{"./all-keys":158,"lodash":2,"react":157}],162:[function(require,module,exports){
-var downMarkdown = require('../markdown/js/keys/down').body;
+"use strict";
+
+var downMarkdown = require("../markdown/js/keys/down").body;
 
 var downKey = {
 
@@ -32143,9 +32163,10 @@ var downKey = {
 
 module.exports = downKey;
 
-
 },{"../markdown/js/keys/down":170}],163:[function(require,module,exports){
-var endMarkdown = require('../markdown/js/keys/end').body;
+"use strict";
+
+var endMarkdown = require("../markdown/js/keys/end").body;
 
 var endKey = {
 
@@ -32158,9 +32179,10 @@ var endKey = {
 
 module.exports = endKey;
 
-
 },{"../markdown/js/keys/end":171}],164:[function(require,module,exports){
-var enterMarkdown = require('../markdown/js/keys/enter').body;
+"use strict";
+
+var enterMarkdown = require("../markdown/js/keys/enter").body;
 
 var enterKey = {
 
@@ -32173,9 +32195,10 @@ var enterKey = {
 
 module.exports = enterKey;
 
-
 },{"../markdown/js/keys/enter":172}],165:[function(require,module,exports){
-var escapeMarkdown = require('../markdown/js/keys/escape').body;
+"use strict";
+
+var escapeMarkdown = require("../markdown/js/keys/escape").body;
 
 var escapeKey = {
 
@@ -32188,9 +32211,10 @@ var escapeKey = {
 
 module.exports = escapeKey;
 
-
 },{"../markdown/js/keys/escape":173}],166:[function(require,module,exports){
-var homeMarkdown = require('../markdown/js/keys/home').body;
+"use strict";
+
+var homeMarkdown = require("../markdown/js/keys/home").body;
 
 var homeKey = {
 
@@ -32203,9 +32227,10 @@ var homeKey = {
 
 module.exports = homeKey;
 
-
 },{"../markdown/js/keys/home":174}],167:[function(require,module,exports){
-var spaceMarkdown = require('../markdown/js/keys/space').body;
+"use strict";
+
+var spaceMarkdown = require("../markdown/js/keys/space").body;
 
 var spaceKey = {
 
@@ -32218,9 +32243,10 @@ var spaceKey = {
 
 module.exports = spaceKey;
 
-
 },{"../markdown/js/keys/space":175}],168:[function(require,module,exports){
-var tabMarkdown = require('../markdown/js/keys/tab').body;
+"use strict";
+
+var tabMarkdown = require("../markdown/js/keys/tab").body;
 
 var tabKey = {
 
@@ -32233,9 +32259,10 @@ var tabKey = {
 
 module.exports = tabKey;
 
-
 },{"../markdown/js/keys/tab":176}],169:[function(require,module,exports){
-var upMarkdown = require('../markdown/js/keys/up').body;
+"use strict";
+
+var upMarkdown = require("../markdown/js/keys/up").body;
 
 var upKey = {
 
@@ -32247,7 +32274,6 @@ var upKey = {
 };
 
 module.exports = upKey;
-
 
 },{"../markdown/js/keys/up":177}],170:[function(require,module,exports){
 module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>open the option dropdown</strong></li>\n</ul>\n<p>When the control’s main element is focused.  Pressing the down arrow key will open the dropdown. (It can also be pressed with the alt-key with the same result)</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>navigation of options</strong></li>\n</ul>\n<p>Pressing the down-arrow key when the dropdown is open will move focus down to the next selectable option.  If the <strong>searchable</strong> prop is true, The first keypress of the down arrow will focus the search input field.</p>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select focused option and move focus down</strong></li>\n</ul>\n<p>If the down arrow is pressed with the shift-key in a <strong>multiselect</strong> or <strong>tags</strong> control, the focused option will be selected (or deselected if alreadySelected), and the focus will move down to the next available option.</p>\n"}
@@ -32316,7 +32342,9 @@ module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>tagRemoveLabelStri
 },{}],202:[function(require,module,exports){
 module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n"}
 },{}],203:[function(require,module,exports){
-var ajaxDataFetchMarkdown = require('../markdown/js/properties/ajaxDataFetch').body;
+"use strict";
+
+var ajaxDataFetchMarkdown = require("../markdown/js/properties/ajaxDataFetch").body;
 
 var ajaxDataFetchProp = {
 
@@ -32328,9 +32356,10 @@ var ajaxDataFetchProp = {
 
 module.exports = ajaxDataFetchProp;
 
-
 },{"../markdown/js/properties/ajaxDataFetch":178}],204:[function(require,module,exports){
-var ajaxErrorStringMarkdown = require('../markdown/js/properties/ajaxErrorString').body;
+"use strict";
+
+var ajaxErrorStringMarkdown = require("../markdown/js/properties/ajaxErrorString").body;
 
 var ajaxErrorStringProp = {
 
@@ -32342,9 +32371,10 @@ var ajaxErrorStringProp = {
 
 module.exports = ajaxErrorStringProp;
 
-
 },{"../markdown/js/properties/ajaxErrorString":179}],205:[function(require,module,exports){
-var customClassMarkdown = require('../markdown/js/properties/customClass').body;
+"use strict";
+
+var customClassMarkdown = require("../markdown/js/properties/customClass").body;
 
 var customClassProp = {
 
@@ -32356,9 +32386,10 @@ var customClassProp = {
 
 module.exports = customClassProp;
 
-
 },{"../markdown/js/properties/customClass":180}],206:[function(require,module,exports){
-var customFilterFunctionMarkdown = require('../markdown/js/properties/customFilterFunction').body;
+"use strict";
+
+var customFilterFunctionMarkdown = require("../markdown/js/properties/customFilterFunction").body;
 
 var customFilterFunctionProp = {
 
@@ -32370,9 +32401,10 @@ var customFilterFunctionProp = {
 
 module.exports = customFilterFunctionProp;
 
-
 },{"../markdown/js/properties/customFilterFunction":181}],207:[function(require,module,exports){
-var customGroupHeadingClassMarkdown = require('../markdown/js/properties/customGroupHeadingClass').body;
+"use strict";
+
+var customGroupHeadingClassMarkdown = require("../markdown/js/properties/customGroupHeadingClass").body;
 
 var customGroupHeadingClassProp = {
 
@@ -32384,9 +32416,10 @@ var customGroupHeadingClassProp = {
 
 module.exports = customGroupHeadingClassProp;
 
-
 },{"../markdown/js/properties/customGroupHeadingClass":182}],208:[function(require,module,exports){
-var customGroupHeadingTemplateFunctionMarkdown = require('../markdown/js/properties/customGroupHeadingTemplateFunction').body;
+"use strict";
+
+var customGroupHeadingTemplateFunctionMarkdown = require("../markdown/js/properties/customGroupHeadingTemplateFunction").body;
 
 var customGroupHeadingTemplateFunctionProp = {
 
@@ -32398,9 +32431,10 @@ var customGroupHeadingTemplateFunctionProp = {
 
 module.exports = customGroupHeadingTemplateFunctionProp;
 
-
 },{"../markdown/js/properties/customGroupHeadingTemplateFunction":183}],209:[function(require,module,exports){
-var customLoaderClassMarkdown = require('../markdown/js/properties/customLoaderClass').body;
+"use strict";
+
+var customLoaderClassMarkdown = require("../markdown/js/properties/customLoaderClass").body;
 
 var customLoaderClassProp = {
 
@@ -32412,9 +32446,10 @@ var customLoaderClassProp = {
 
 module.exports = customLoaderClassProp;
 
-
 },{"../markdown/js/properties/customLoaderClass":184}],210:[function(require,module,exports){
-var customOptionTemplateFunctionMarkdown = require('../markdown/js/properties/customOptionTemplateFunction').body;
+"use strict";
+
+var customOptionTemplateFunctionMarkdown = require("../markdown/js/properties/customOptionTemplateFunction").body;
 
 var customOptionTemplateFunctionProp = {
 
@@ -32426,9 +32461,10 @@ var customOptionTemplateFunctionProp = {
 
 module.exports = customOptionTemplateFunctionProp;
 
-
 },{"../markdown/js/properties/customOptionTemplateFunction":185}],211:[function(require,module,exports){
-var customSearchIconClassMarkdown = require('../markdown/js/properties/customSearchIconClass').body;
+"use strict";
+
+var customSearchIconClassMarkdown = require("../markdown/js/properties/customSearchIconClass").body;
 
 var customSearchIconClassProp = {
 
@@ -32440,9 +32476,10 @@ var customSearchIconClassProp = {
 
 module.exports = customSearchIconClassProp;
 
-
 },{"../markdown/js/properties/customSearchIconClass":186}],212:[function(require,module,exports){
-var customTagClassMarkdown = require('../markdown/js/properties/customTagClass').body;
+"use strict";
+
+var customTagClassMarkdown = require("../markdown/js/properties/customTagClass").body;
 
 var customTagClassProp = {
 
@@ -32454,9 +32491,10 @@ var customTagClassProp = {
 
 module.exports = customTagClassProp;
 
-
 },{"../markdown/js/properties/customTagClass":187}],213:[function(require,module,exports){
-var dataSourceMarkdown = require('../markdown/js/properties/dataSource').body;
+"use strict";
+
+var dataSourceMarkdown = require("../markdown/js/properties/dataSource").body;
 
 var dataSourceProp = {
 
@@ -32468,9 +32506,10 @@ var dataSourceProp = {
 
 module.exports = dataSourceProp;
 
-
 },{"../markdown/js/properties/dataSource":188}],214:[function(require,module,exports){
-var groupByMarkdown = require('../markdown/js/properties/groupBy').body;
+"use strict";
+
+var groupByMarkdown = require("../markdown/js/properties/groupBy").body;
 
 var groupByProp = {
 
@@ -32482,9 +32521,10 @@ var groupByProp = {
 
 module.exports = groupByProp;
 
-
 },{"../markdown/js/properties/groupBy":189}],215:[function(require,module,exports){
-var hasMorePagesMarkdown = require('../markdown/js/properties/hasMorePages').body;
+"use strict";
+
+var hasMorePagesMarkdown = require("../markdown/js/properties/hasMorePages").body;
 
 var hasMorePagesProp = {
 
@@ -32496,9 +32536,10 @@ var hasMorePagesProp = {
 
 module.exports = hasMorePagesProp;
 
-
 },{"../markdown/js/properties/hasMorePages":190}],216:[function(require,module,exports){
-var initialValueMarkdown = require('../markdown/js/properties/initialValue').body;
+"use strict";
+
+var initialValueMarkdown = require("../markdown/js/properties/initialValue").body;
 
 var initialValueProp = {
 
@@ -32510,9 +32551,10 @@ var initialValueProp = {
 
 module.exports = initialValueProp;
 
-
 },{"../markdown/js/properties/initialValue":191}],217:[function(require,module,exports){
-var multipleMarkdown = require('../markdown/js/properties/multiple').body;
+"use strict";
+
+var multipleMarkdown = require("../markdown/js/properties/multiple").body;
 
 var multipleProp = {
 
@@ -32524,9 +32566,10 @@ var multipleProp = {
 
 module.exports = multipleProp;
 
-
 },{"../markdown/js/properties/multiple":192}],218:[function(require,module,exports){
-var noResultsStringMarkdown = require('../markdown/js/properties/noResultsString').body;
+"use strict";
+
+var noResultsStringMarkdown = require("../markdown/js/properties/noResultsString").body;
 
 var noResultsStringProp = {
 
@@ -32538,9 +32581,10 @@ var noResultsStringProp = {
 
 module.exports = noResultsStringProp;
 
-
 },{"../markdown/js/properties/noResultsString":193}],219:[function(require,module,exports){
-var onChangeMarkdown = require('../markdown/js/properties/onChange').body;
+"use strict";
+
+var onChangeMarkdown = require("../markdown/js/properties/onChange").body;
 
 var onChangeProp = {
 
@@ -32552,9 +32596,10 @@ var onChangeProp = {
 
 module.exports = onChangeProp;
 
-
 },{"../markdown/js/properties/onChange":194}],220:[function(require,module,exports){
-var optionLabelKeyMarkdown = require('../markdown/js/properties/optionLabelKey').body;
+"use strict";
+
+var optionLabelKeyMarkdown = require("../markdown/js/properties/optionLabelKey").body;
 
 var optionLabelKeyProp = {
 
@@ -32566,9 +32611,10 @@ var optionLabelKeyProp = {
 
 module.exports = optionLabelKeyProp;
 
-
 },{"../markdown/js/properties/optionLabelKey":195}],221:[function(require,module,exports){
-var optionValueKeyMarkdown = require('../markdown/js/properties/optionValueKey').body;
+"use strict";
+
+var optionValueKeyMarkdown = require("../markdown/js/properties/optionValueKey").body;
 
 var optionValueKeyProp = {
 
@@ -32580,9 +32626,10 @@ var optionValueKeyProp = {
 
 module.exports = optionValueKeyProp;
 
-
 },{"../markdown/js/properties/optionValueKey":196}],222:[function(require,module,exports){
-var pageDataFetchMarkdown = require('../markdown/js/properties/pageDataFetch').body;
+"use strict";
+
+var pageDataFetchMarkdown = require("../markdown/js/properties/pageDataFetch").body;
 
 var pageDataFetchProp = {
 
@@ -32594,9 +32641,10 @@ var pageDataFetchProp = {
 
 module.exports = pageDataFetchProp;
 
-
 },{"../markdown/js/properties/pageDataFetch":197}],223:[function(require,module,exports){
-var placeholderMarkdown = require('../markdown/js/properties/placeholder').body;
+"use strict";
+
+var placeholderMarkdown = require("../markdown/js/properties/placeholder").body;
 
 var placeholderProp = {
 
@@ -32608,9 +32656,10 @@ var placeholderProp = {
 
 module.exports = placeholderProp;
 
-
 },{"../markdown/js/properties/placeholder":198}],224:[function(require,module,exports){
-var searchPlaceholderMarkdown = require('../markdown/js/properties/searchPlaceholder').body;
+"use strict";
+
+var searchPlaceholderMarkdown = require("../markdown/js/properties/searchPlaceholder").body;
 
 var searchPlaceholderProp = {
 
@@ -32622,9 +32671,10 @@ var searchPlaceholderProp = {
 
 module.exports = searchPlaceholderProp;
 
-
 },{"../markdown/js/properties/searchPlaceholder":199}],225:[function(require,module,exports){
-var searchableMarkdown = require('../markdown/js/properties/searchable').body;
+"use strict";
+
+var searchableMarkdown = require("../markdown/js/properties/searchable").body;
 
 var searchableProp = {
 
@@ -32636,9 +32686,10 @@ var searchableProp = {
 
 module.exports = searchableProp;
 
-
 },{"../markdown/js/properties/searchable":200}],226:[function(require,module,exports){
-var tagRemoveLabelStringMarkdown = require('../markdown/js/properties/tagRemoveLabelString').body;
+"use strict";
+
+var tagRemoveLabelStringMarkdown = require("../markdown/js/properties/tagRemoveLabelString").body;
 
 var tagRemoveLabelStringProp = {
 
@@ -32650,9 +32701,10 @@ var tagRemoveLabelStringProp = {
 
 module.exports = tagRemoveLabelStringProp;
 
-
 },{"../markdown/js/properties/tagRemoveLabelString":201}],227:[function(require,module,exports){
-var tagsMarkdown = require('../markdown/js/properties/tags').body;
+"use strict";
+
+var tagsMarkdown = require("../markdown/js/properties/tags").body;
 
 var tagsProp = {
 
@@ -32664,80 +32716,138 @@ var tagsProp = {
 
 module.exports = tagsProp;
 
-
 },{"../markdown/js/properties/tags":202}],228:[function(require,module,exports){
+'use strict';
+
 var _ = require('lodash'),
     React = require('react');
 
 var allProps = require('./all-props');
 
-var PropsApp = React.createClass({displayName: "PropsApp",
+var PropsApp = React.createClass({
+  displayName: 'PropsApp',
 
-  _renderPropsLinks: function() {
-    var sortedProps = allProps.sort(function(propA, propB) {
-      return (propA.nameAttr >= propB.nameAttr) ? 1 : -1;
+  _renderPropsLinks: function _renderPropsLinks() {
+    var sortedProps = allProps.sort(function (propA, propB) {
+      return propA.nameAttr >= propB.nameAttr ? 1 : -1;
     });
-    var propsLinks = _.map(sortedProps, function(prop, index) {
+    var propsLinks = _.map(sortedProps, function (prop, index) {
       var href = '#' + prop.nameAttr;
       var key = 'prop_link_' + index;
-      return (React.createElement("li", {key: key}, React.createElement("a", {href: href}, " ", prop.nameAttr, " ")));
+      return React.createElement(
+        'li',
+        { key: key },
+        React.createElement(
+          'a',
+          { href: href },
+          ' ',
+          prop.nameAttr,
+          ' '
+        )
+      );
     });
 
     return propsLinks;
-
   },
 
-  _renderProps: function() {
-    var articles = _.map(allProps, function(prop, index) {
-      var key = "api_prop_" + index;
-      return( React.createElement("article", {key: key, className: "api-item"}, 
-                React.createElement("h4", {className: "api-link"}, 
-                  React.createElement("a", {name: prop.nameAttr}, prop.nameAttr)
-                ), 
-                React.createElement("p", {dangerouslySetInnerHTML: {__html: prop.renderString}}), 
-                React.createElement("a", {className: "top-return", href: "#index_top"}, "Back to Top"), 
-                React.createElement("a", {className: "top-return", href: "#properties_top"}, "Back to API Documentation Links")
-              ));
+  _renderProps: function _renderProps() {
+    var articles = _.map(allProps, function (prop, index) {
+      var key = 'api_prop_' + index;
+      return React.createElement(
+        'article',
+        { key: key, className: 'api-item' },
+        React.createElement(
+          'h4',
+          { className: 'api-link' },
+          React.createElement(
+            'a',
+            { name: prop.nameAttr },
+            prop.nameAttr
+          )
+        ),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: prop.renderString } }),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#index_top' },
+          'Back to Top'
+        ),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#properties_top' },
+          'Back to API Documentation Links'
+        )
+      );
     });
 
     return articles;
   },
 
-  render: function() {
-    return( React.createElement("section", {className: "api-docs-section"}, 
-              React.createElement("a", {name: "apiDocs"}, " "), 
-              React.createElement("h3", {className: "feature-heading"}, "API documentation"), 
-              "you can also view the", 
-              React.createElement("a", {href: "annotated-source.html"}, " Annotated Source Code "), 
-              React.createElement("a", {name: "properties_top"}, " "), 
-              React.createElement("h5", null, "Component Property API Documentation Links:"), 
-              React.createElement("nav", {className: "api"}, 
-               React.createElement("ul", null, 
-                 this._renderPropsLinks()
-               )
-              ), 
-
-              this._renderProps()
-            ));
+  render: function render() {
+    return React.createElement(
+      'section',
+      { className: 'api-docs-section' },
+      React.createElement(
+        'a',
+        { name: 'apiDocs' },
+        ' '
+      ),
+      React.createElement(
+        'h3',
+        { className: 'feature-heading' },
+        'API documentation'
+      ),
+      'you can also view the',
+      React.createElement(
+        'a',
+        { href: 'annotated-source.html' },
+        ' Annotated Source Code '
+      ),
+      React.createElement(
+        'a',
+        { name: 'properties_top' },
+        ' '
+      ),
+      React.createElement(
+        'h5',
+        null,
+        'Component Property API Documentation Links:'
+      ),
+      React.createElement(
+        'nav',
+        { className: 'api' },
+        React.createElement(
+          'ul',
+          null,
+          this._renderPropsLinks()
+        )
+      ),
+      this._renderProps()
+    );
   }
 });
 
 module.exports = PropsApp;
 React.render(React.createElement(PropsApp, null), document.getElementById('props_docs'));
 
-
 },{"./all-props":159,"lodash":2,"react":157}],229:[function(require,module,exports){
-var RSS_VERSION = "0.1.16";
+'use strict';
+
+var RSS_VERSION = '0.1.17';
 var React = require('react');
 
-var VersionPrinter = React.createClass({displayName: "VersionPrinter",
-  render: function() {
-    return(React.createElement("span", null, RSS_VERSION));
+var VersionPrinter = React.createClass({
+  displayName: 'VersionPrinter',
+
+  render: function render() {
+    return React.createElement(
+      'span',
+      null,
+      RSS_VERSION
+    );
   }
 });
 
 module.exports = VersionPrinter;
 React.render(React.createElement(VersionPrinter, null), document.getElementById('r_ss_version'));
-
 
 },{"react":157}]},{},[160])
