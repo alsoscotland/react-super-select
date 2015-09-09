@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>react-super-select.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>react-super-select.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>© Scotland Stephenson 2015</p>
+<ul>
+<li><a href="https://github.com/alsoscotland/react-super-select">github</a></li>
+<li><a href="http://alsoscotland.github.io/react-super-select/">documentation</a></li>
+<li>freely distributed under the MIT license.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> _ = require(<span class="string">'lodash'</span>),
+    classNames = require(<span class="string">'classnames'</span>),
+    React = require(<span class="string">'react'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Dependencies</p>
+<ul>
+<li><a href="https://lodash.com/">Lodash</a></li>
+<li><a href="https://www.npmjs.com/package/classnames">classnames</a></li>
+<li><a href="https://facebook.github.io/react/index.html">React</a></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> ReactSuperSelect = React.createClass({</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="properties">Properties</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  propTypes: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="boolean-options">BOOLEAN OPTIONS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><strong>multiple</strong> (Boolean) <em>optional</em>  - Whether or not the control supports multi-selection. When using the <strong>tags</strong> display option, this option is redundant</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    multiple: React.PropTypes.bool,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><strong>searchable</strong> (Boolean) <em>optional</em> - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the <strong>dataSource</strong> options (by label key)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    searchable: React.PropTypes.bool,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><strong>tags</strong> (Boolean) <em>optional</em> - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the <strong>multiple</strong> option)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    tags: React.PropTypes.bool,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>triggerEnabled</strong> - Set to false to disable the trigger for the dropdown. Will force isOpen to be true and user will be presented with the dropdown on initialRender.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    triggerEnabled: React.PropTypes.bool,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h2 id="css-class-custom-styling-support-options">CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>customClass</strong> (String) <em>optional</em> - This value will be added as a css class to the control&#39;s main wrapping element.  You should be able to overide all styling by leading your rules with</p>
+<pre><code class="lang-css">.r-ss-wrap.{customClass}</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customClass: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>customGroupHeadingClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>groupBy</strong> option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customGroupHeadingClass: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>customSearchIconClass</strong> (String) <em>optional</em> - This value will be added as a css class to the icon element in the search-filtering bar (when <strong>searchable</strong> is true).  Allowing you to override the default search icon (default: a magnifying glass)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customSearchIconClass: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><strong>customLoaderClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>ajaxDataFetch</strong> option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customLoaderClass: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p><strong>customTagClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>tags</strong> option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with</p>
+<pre><code class="lang-css"> .r-ss-tag.{customTagClass}</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customTagClass: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h2 id="main-change-handler">MAIN CHANGE HANDLER</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p><strong>onChange</strong> (Function) <em>required</em> - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when <strong>multiple</strong> or <strong>tags</strong> an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    onChange: React.PropTypes.func.isRequired,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h2 id="option-data-related-props">OPTION DATA-RELATED PROPS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p><strong>ajaxDataFetch</strong> (Function) (<em>optional - but <strong>dataSource</strong> must be supplied if undefined</em>) - Your select dropdown&#39;s data may be fetched via ajax if you provide a function as the value for this option.
+The function takes no arguments, but it must return a <strong>promise</strong> object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. The <strong>dataSource</strong> option should be left undefined when using this option.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ajaxDataFetch: React.PropTypes.func,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><strong>dataSource</strong> (Array|Object|Collection Object) (<em>optional - but <strong>ajaxDataFetch</strong> must be supplied if undefined</em>) - The dataSource option provides the data for your options dropdown.
+The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type</p>
+<p> The parsing method supports dataSource values as:</p>
+<ul>
+<li>an array of option objects (will be directly assigned to state.data)</li>
+<li>an object with a collection property (object.collection will be assigned to state.data)</li>
+<li><p>an object with a get function (the return value of object.get(&#39;collection&#39;) will be assigned to state.data)</p>
+<p>Each option in the resulting collection must have the following properties:</p>
+</li>
+<li>a unique value corresponding to the key set by the <strong>optionValueKey</strong> or the default optionValueKey of <strong>id</strong></li>
+<li>a defined value corresponding to the key set by the <strong>optionLabelKey</strong> or the default optionLabelKey of <strong>name</strong></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    dataSource: React.PropTypes.oneOfType([
+              React.PropTypes.arrayOf(React.PropTypes.object),
+              React.PropTypes.object
+            ]),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p><strong>initialValue</strong> (Array|Object) <em>optional</em>
+The selected value the control will be initialized with
+must be an array of option items or a single option item from your dataSource collection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    initialValue: React.PropTypes.oneOfType([
+              React.PropTypes.arrayOf(React.PropTypes.object),
+              React.PropTypes.object
+            ]),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><strong>optionLabelKey</strong> (String) (<em>optional - defaults to using &#39;name&#39; as the key if undefined</em>) - This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value you would like displayed for each option.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    optionLabelKey: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><strong>optionValueKey</strong> (String) (<em>optional - defaults to using &#39;id&#39; as the key if undefined</em>) - This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that <strong>uniquely identifies</strong> that option across the <strong>dataSource</strong> collection.  Think of it in terms of the value attribute of a traditional html <code>&lt;select&gt;</code> element</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    optionValueKey: React.PropTypes.string, <span class="comment">// value this maps to should be unique in data source</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p><strong>pageDataFetch</strong> (Function) <em>optional</em> (A <em>hasMorePages</em> function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
+The function takes one argument, the value provided as the <strong>dataSource</strong> (or the return value of the <strong>ajaxDataSource</strong> function).
+It must return a <strong>promise</strong> object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation.
+The pageDataFetch function will be called based upon the user&#39;s scroll position in the dropdown.
+<em>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <em>*hasMorePages</em></em> evaluates to false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    pageDataFetch: React.PropTypes.func,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p><strong>hasMorePages</strong> (Function) <em>optional</em> (should be provided when using the <em>pageDataFetch</em> option) - A function that accepts one argument, a value as described by the <em>dataSource</em> option documentation, and returns a Boolean value.
+The value should indicate whether the option data collection has any more pages available for fetching</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    hasMorePages: React.PropTypes.func,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <h2 id="grouping-functionality">GROUPING FUNCTIONALITY</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p><strong>groupBy</strong> (String|Object|Function) <em>optional</em> - Allows you to sort your dropdown options into groups by leveraging Lodash&#39;s groupBy function.  Please reference the <a href="https://lodash.com/docs#groupBy">Lodash</a> documentation for behavior of <em>groupBy</em> when passed different argument types</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    groupBy: React.PropTypes.oneOfType([
+              React.PropTypes.string,
+              React.PropTypes.func,
+              React.PropTypes.object
+            ]),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p><strong>customGroupHeadingTemplateFunction</strong> (Function) <em>optional</em> (Used in conjunction with the <strong>groupBy</strong> option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group&#39;s object key (returned by the call of Lodash&#39;s groupBy when passed the value of your <strong>groupBy</strong> option)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customGroupHeadingTemplateFunction: React.PropTypes.func,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h2 id="rendering-option-iterator-functions">RENDERING (OPTION ITERATOR) FUNCTIONS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p><strong>customFilterFunction</strong> (Function) <em>optional</em> - Used in conjunction with the <strong>searchable</strong> option.  The function provided will serve as a replacement of the default search filter function.
+and will be called as the predicate function of <a href="https://lodash.com/docs#filter">Lodash&#39;s filter function</a></p>
+<p>The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current <strong>searchString</strong> (state variable)</p>
+<p>When left undefined the default filter function will be used.
+(Defaults To: A lowercase string comparison for text.  Matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown&#39;s search field).  The function is leveraged by <a href="https://lodash.com/docs#filter">Lodash&#39;s filter function</a> with your <strong>dataSource</strong> collection as its first argument.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customFilterFunction: React.PropTypes.func,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p><strong>customOptionTemplateFunction</strong> (Function) <em>optional</em> - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your <strong>dataSource</strong> collection and return your desired markup based on that object&#39;s properties.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    customOptionTemplateFunction: React.PropTypes.func,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h2 id="localization-strings">LOCALIZATION STRINGS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p><strong>ajaxErrorString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options) This string will be shown in the dropdown area when an ajax request fails</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ajaxErrorString: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p><strong>noResultsString</strong> (String) <em>optional</em> - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    noResultsString: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control when the user has no selected values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    placeholder: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area&#39;s search input field when a user has not entered any characters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    searchPlaceholder: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p><strong>tagRemoveLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>tags</strong> option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    tagRemoveLabelString: React.PropTypes.string
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <h2 id="constants">CONSTANTS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>used as the focusedID state variable value, when the search input field of a <strong>searchable</strong> control has focus.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  SEARCH_FOCUS_ID: -<span class="number">1</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>regular expression used to determine if event src options have selected class</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  SELECTED_OPTION_REGEX: <span class="regexp">/r-ss-selected/</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Default string values for localization options</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  DEFAULT_LOCALIZATIONS: {
+    ajaxErrorString: <span class="string">'An Error occured while fetching options'</span>,
+    noResultsString: <span class="string">'No Results Available'</span>,
+    placeholder: <span class="string">'Select an Option'</span>,
+    searchPlaceholder: <span class="string">'Search'</span>,
+    tagRemoveLabelString: <span class="string">'Remove Tag'</span>
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <h2 id="state-variables">STATE VARIABLES</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p><strong>ajaxError</strong> (Boolean) - Set to true when an ajax request fails</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      ajaxError: <span class="literal">false</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p><strong>controlId</strong> (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      controlId: _.uniqueId(<span class="string">'rss_'</span>),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p><strong>data</strong> (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      data: <span class="keyword">this</span>._configureDataSource(<span class="keyword">this</span>.props.dataSource),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p><strong>rawDataSource</strong> (Object|Array) The raw dataSource value the user supplies through the <em>dataSource</em> prop (or returned from <em>ajaxDataFetch</em> / <em>pageDataFetch</em>). This value is passed to the <em>pageDataFetch</em> callback</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      rawDataSource: <span class="keyword">this</span>.props.dataSource,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p><strong>isOpen</strong> (Boolean) - Whether or not the dropdown is open. The prop <strong>triggerEnabled</strong> will make the initial state true</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      isOpen: (_.isUndefined(<span class="keyword">this</span>.props.triggerEnabled)) ? <span class="literal">false</span> : !(<span class="keyword">this</span>.props.triggerEnabled),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p><strong>focusedId</strong> (Number) - Used to track keyboard focus for accessibility</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      focusedId: <span class="literal">undefined</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p><strong>labelKey</strong> (String) - The option object key that will be used to identify the value displayed as an option&#39;s label</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      labelKey: <span class="keyword">this</span>.props.optionLabelKey || <span class="string">'name'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p><strong>lastOptionId</strong> (Number) - Used in keyboard navigation to focus the last available option in the dropdown</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      lastOptionId: (_.isArray(<span class="keyword">this</span>.props.dataSource) &amp;&amp; (<span class="keyword">this</span>.props.dataSource.length &gt; <span class="number">0</span>)) ? <span class="keyword">this</span>.props.dataSource.length - <span class="number">1</span> : <span class="literal">undefined</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p><strong>searchString</strong> (String) - When the <strong>searchable</strong> option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key&#39;s value</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      searchString: <span class="literal">undefined</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <p><strong>value</strong> (Array) - An array that holds the current user-selected option(s)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      value: <span class="keyword">this</span>._buildInitialValue(),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p><strong>valueKey</strong> (String) - The option object key that will be used to identify the value used as an option&#39;s value property (values must be unique across data source)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      valueKey: <span class="keyword">this</span>.props.optionValueKey || <span class="string">'id'</span>
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <h2 id="keymap-constant">KEYMAP CONSTANT</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>A text-based lookup for keyboard navigation keys and their corresponding &#39;which&#39; keycode values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  keymap: {
+    <span class="string">'down'</span>: <span class="number">40</span>,
+    <span class="string">'end'</span>: <span class="number">35</span>, <span class="comment">// goto last option ?</span>
+    <span class="string">'enter'</span>: <span class="number">13</span>,
+    <span class="string">'esc'</span>: <span class="number">27</span>,
+    <span class="string">'home'</span>: <span class="number">36</span>, <span class="comment">// go to first option ?</span>
+    <span class="string">'space'</span>: <span class="number">32</span>,
+    <span class="string">'tab'</span>: <span class="number">9</span>,
+    <span class="string">'up'</span>: <span class="number">38</span>
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>NON-STATE VARS (no need to re-render based on these being set)</p>
+<p><strong>lastUserSelectedOptionData</strong> - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  lastUserSelectedOption: <span class="literal">undefined</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>If parent page updates the data source, reset all control state values which are derived from props.
+Reset some state defaults and dataSource related fields if dataSource changed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  componentWillReceiveProps: <span class="function"><span class="keyword">function</span><span class="params">(nextProps)</span> {</span>
+    <span class="keyword">var</span> newState = {};
+
+    <span class="keyword">if</span> (!_.isEqual(nextProps.initialValue, <span class="keyword">this</span>.props.initialValue)) {
+      newState.value = <span class="keyword">this</span>._buildInitialValue(nextProps);
+    }
+
+    <span class="keyword">if</span> (!_.isUndefined(nextProps.optionLabelKey) &amp;&amp; (nextProps.optionLabelKey !== <span class="keyword">this</span>.props.optionLabelKey)) {
+      newState.labelKey = nextProps.optionLabelKey;
+    }
+
+    <span class="keyword">if</span> (!_.isUndefined(nextProps.optionValueKey) &amp;&amp; (nextProps.optionValueKey !== <span class="keyword">this</span>.props.optionValueKey)) {
+      newState.valueKey = nextProps.optionValueKey;
+    }
+
+    <span class="keyword">if</span> (!_.isEqual(<span class="keyword">this</span>.props.dataSource, nextProps.dataSource)) {
+
+      <span class="keyword">this</span>.lastUserSelectedOption = <span class="literal">undefined</span>;
+
+      newState = _.extend(newState, {
+        data: <span class="keyword">this</span>._configureDataSource(nextProps.dataSource),
+        rawDataSource: nextProps.dataSource,
+        focusedId: <span class="literal">undefined</span>,
+        lastOptionId: (_.isArray(nextProps.dataSource) &amp;&amp; (nextProps.dataSource.length &gt; <span class="number">0</span>)) ? nextProps.dataSource.length - <span class="number">1</span> : <span class="literal">undefined</span>
+      });
+
+    }
+
+    <span class="keyword">if</span> (!_.isEmpty(newState)) {
+      <span class="keyword">this</span>.setState(newState);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>Update focused element after re-render</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  componentDidUpdate: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>._focusCurrentFocusedId();
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <p>main render method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> dropdownContent = <span class="keyword">this</span>._getDropdownContent(),
+        trigger = <span class="keyword">this</span>._getTriggerDiv(),
+        wrapClasses = classNames(<span class="string">"r-ss-wrap"</span>, <span class="keyword">this</span>.props.customClass, {
+          <span class="string">'r-ss-expanded'</span>: <span class="keyword">this</span>.state.isOpen
+        });
+
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">ref</span>=<span class="value">"rssControl"</span> <span class="attribute">id</span>=<span class="value">{this.state.controlId}</span> <span class="attribute">className</span>=<span class="value">{wrapClasses}</span>&gt;</span>
+        {trigger}
+        {dropdownContent}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>toggles the open-state of the dropdown
+sets focused option in callback after opening</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  toggleDropdown: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.setState({
+      <span class="string">'isOpen'</span>: !<span class="keyword">this</span>.state.isOpen
+    }, <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      <span class="keyword">if</span> (<span class="keyword">this</span>.state.isOpen) {
+        <span class="keyword">this</span>._setFocusOnOpen();
+      }
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>returns the unique DOM id for the currently focused option. Used for accessibility-related labeling</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _ariaGetActiveDescendentId: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> ariaActiveDescendantId = <span class="literal">null</span>,
+        optionRef = <span class="keyword">this</span>._getFocusedOptionKey();
+    <span class="keyword">if</span> (<span class="keyword">this</span>.refs[optionRef]) {
+      ariaActiveDescendantId = <span class="keyword">this</span>.refs[optionRef].props.id;
+    }
+    <span class="keyword">return</span> ariaActiveDescendantId;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>calculate the unique identifier for the options ul for aria compliance labeling usage</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _ariaGetListId: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>.state.controlId + <span class="string">'_list'</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _buildInitialValue: <span class="function"><span class="keyword">function</span><span class="params">(props)</span> {</span>
+    props = props || <span class="keyword">this</span>.props;
+    <span class="keyword">var</span> initialValue = [];
+
+    <span class="keyword">if</span> (!_.isUndefined(props.initialValue)) {
+      initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
+
+      <span class="keyword">if</span> (!<span class="keyword">this</span>._isMultiSelect()) {
+        initialValue = [_.first(initialValue)];
+      }
+    }
+
+    <span class="keyword">return</span> initialValue;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <p>close the dropdown
+resets focus to the main control trigger
+clear focused id</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _closeOnKeypress: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.isOpen) {
+      <span class="keyword">this</span>.setState({
+        isOpen: <span class="literal">false</span>,
+        focusedId: <span class="literal">undefined</span>
+      }, <span class="keyword">this</span>._focusTrigger);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>overloaded dataSource parser (Object|Array)
+case: (object) - look for a collection property which is an array, or runs an existing &#39;get&#39; function, get(&#39;collection&#39;), and determines if the return value is an array
+case: (Array) - return the dataSource array for use as this.state.data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _configureDataSource: <span class="function"><span class="keyword">function</span><span class="params">(dataSource)</span> {</span>
+    <span class="keyword">if</span> (_.isArray(dataSource)) {
+     <span class="keyword">return</span> dataSource;
+    }
+
+    <span class="keyword">if</span> (_.isObject(dataSource)) {
+      <span class="keyword">if</span> (_.isArray(dataSource.collection)) {
+        <span class="keyword">return</span> dataSource.collection;
+      }
+
+      <span class="keyword">if</span> (_.isFunction(dataSource.get)) {
+        <span class="keyword">var</span> collection = dataSource.get(<span class="string">'collection'</span>);
+        <span class="keyword">if</span> (_.isArray(collection)) {
+          <span class="keyword">return</span> collection;
+        }
+      }
+    }
+
+    <span class="keyword">return</span> [];
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>Used if no <strong>customFilterFunction</strong> provided for filtering the data options shown in a <strong>searchable</strong> control.
+Runs a lowercase string comparison with the <strong>searchString</strong> and the value corresponding to an option&#39;s <strong>optionLabelKey</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _defaultSearchFilter: <span class="function"><span class="keyword">function</span><span class="params">(option)</span> {</span>
+    <span class="keyword">var</span> search = <span class="keyword">this</span>.state.searchString.toLowerCase();
+    <span class="keyword">if</span> (!_.isString(option[<span class="keyword">this</span>.state.labelKey])) {
+      <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+    <span class="keyword">return</span> option[<span class="keyword">this</span>.state.labelKey].toLowerCase().indexOf(search) &gt; -<span class="number">1</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <p>fetch data source via ajax if <strong>ajaxDataFetch</strong> function provided
+handles success and failure for ajax call</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _fetchDataViaAjax: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> self = <span class="keyword">this</span>;
+    <span class="keyword">this</span>.props.ajaxDataFetch(<span class="keyword">this</span>.state.rawDataSource).then(<span class="function"><span class="keyword">function</span><span class="params">(dataSourceFromAjax)</span> {</span>
+      self.setState({
+        ajaxError: <span class="literal">false</span>,
+        data: self._configureDataSource(dataSourceFromAjax),
+        rawDataSource: dataSourceFromAjax
+      });
+    }, <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      self.setState({
+        ajaxError: <span class="literal">true</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>define as empty array on error so that _needsAjaxFetch will evaluate to false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        rawDataSource: []
+      });
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <p>Fetch the next page of options data if <strong>pageDataFetch</strong> function provided.
+Called onMouseMove if scroll position in dropdown exceeds threshold.
+Handles success and failure for ajax call</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _fetchNextPage: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> self = <span class="keyword">this</span>;
+    <span class="keyword">this</span>.props.pageDataFetch(<span class="keyword">this</span>.state.rawDataSource).then(<span class="function"><span class="keyword">function</span><span class="params">(dataSourceFromPageFetch)</span> {</span>
+      self.setState({
+        ajaxError: <span class="literal">false</span>,
+        data: self._configureDataSource(dataSourceFromPageFetch),
+        rawDataSource: dataSourceFromPageFetch,
+        isFetchingPage: <span class="literal">false</span>
+      });
+    }, <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        self.setState({
+          ajaxError: <span class="literal">true</span>
+        });
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>choose the appropriate search filter function and run the filter against the options data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _filterDataBySearchString: <span class="function"><span class="keyword">function</span><span class="params">(data)</span> {</span>
+    <span class="keyword">var</span> self = <span class="keyword">this</span>;
+    <span class="keyword">var</span> filterFunction = <span class="keyword">this</span>._defaultSearchFilter;
+    <span class="keyword">if</span> (_.isFunction(<span class="keyword">this</span>.props.customFilterFunction)) {
+      filterFunction = <span class="function"><span class="keyword">function</span><span class="params">(value, index, collection)</span> {</span>
+        <span class="keyword">return</span> self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
+      };
+    }
+    <span class="keyword">return</span> _.filter(data, filterFunction);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _findArrayOfOptionDataObjectsByValue: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+    <span class="keyword">var</span> valuesArray = _.isArray(value) ? _.pluck(value, <span class="keyword">this</span>.state.valueKey) : [value];
+    <span class="keyword">return</span> _.reject(<span class="keyword">this</span>.state.data, <span class="function"><span class="keyword">function</span><span class="params">(item)</span> {</span>
+      <span class="keyword">return</span> !_.contains(valuesArray, item[<span class="keyword">this</span>.state.valueKey]);
+    }, <span class="keyword">this</span>);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>determine whether to focus a option value in the DOM, or the search field</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _focusCurrentFocusedId: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.focusedId &lt; <span class="number">0</span>) {
+      <span class="keyword">this</span>._focusSearch();
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">this</span>._focusDOMOption();
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>focus the DOM option identified by the current state.focusedId</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _focusDOMOption: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> optionRef = <span class="keyword">this</span>._getFocusedOptionKey();
+    <span class="keyword">if</span> (<span class="keyword">this</span>.refs[optionRef]) {
+      <span class="keyword">if</span> (_.isFunction(<span class="keyword">this</span>.refs[optionRef].getDOMNode().focus)) {
+        <span class="keyword">this</span>.refs[optionRef].getDOMNode().focus();
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>focus the dropdown&#39;s search field if it exists</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _focusSearch: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>.refs.searchInput) {
+      <span class="keyword">this</span>.refs.searchInput.getDOMNode().focus();
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>focus the main trigger element of the control</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _focusTrigger: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>.refs.triggerDiv) {
+      <span class="keyword">this</span>.refs.triggerDiv.getDOMNode().focus();
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>choose whether to template the display of user-selected values normally, or as tags</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _generateValueDisplay: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.props.tags) {
+      <span class="keyword">return</span> <span class="keyword">this</span>._getNormalDisplayMarkup();
+    } <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="keyword">this</span>._getTagsDisplayMarkup();
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>render the content shown if an ajax error occurs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getAjaxErrorMarkup: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> errorString = <span class="keyword">this</span>.props.ajaxErrorString ? <span class="keyword">this</span>.props.ajaxErrorString : <span class="keyword">this</span>.DEFAULT_LOCALIZATIONS.ajaxErrorString;
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">li</span> <span class="attribute">className</span>=<span class="value">"r-ss-dropdown-option error"</span>&gt;</span><span class="tag">&lt;<span class="title">i</span> <span class="attribute">ref</span>=<span class="value">"errorDisplay"</span>&gt;</span>{errorString}<span class="tag">&lt;/<span class="title">i</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <p>calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getDataSource: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> data = _.isArray(<span class="keyword">this</span>.state.data) ? <span class="keyword">this</span>.state.data : [];
+    <span class="keyword">if</span> (_.isString(<span class="keyword">this</span>.state.searchString)) {
+      data = <span class="keyword">this</span>._filterDataBySearchString(data);
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.props.groupBy) {
+      data = _.groupBy(data, <span class="keyword">this</span>.props.groupBy);
+    }
+
+    <span class="keyword">return</span> data;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <p>render the trigger div
+can be removed if prop <strong>triggerEnabled</strong> is set to false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getTriggerDiv: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> triggerEnabled = (_.isUndefined(<span class="keyword">this</span>.props.triggerEnabled)) ? <span class="literal">true</span> : <span class="keyword">this</span>.props.triggerEnabled;
+    <span class="keyword">if</span>(triggerEnabled) {
+      <span class="keyword">var</span> placeholderString = <span class="keyword">this</span>.props.placeholder ? <span class="keyword">this</span>.props.placeholder : <span class="keyword">this</span>.DEFAULT_LOCALIZATIONS.placeholder;
+      <span class="keyword">var</span> triggerClasses = classNames(<span class="string">'r-ss-trigger'</span>, {
+        <span class="string">'r-ss-open'</span>: <span class="keyword">this</span>.state.isOpen,
+        <span class="string">'r-ss-placeholder'</span>: <span class="keyword">this</span>.state.value.length &lt; <span class="number">1</span>
+      });
+      <span class="keyword">var</span> caratClass = classNames(<span class="string">'carat'</span>, {
+        <span class="string">'down'</span>: !<span class="keyword">this</span>.state.isOpen,
+        <span class="string">'up'</span>: <span class="keyword">this</span>.state.isOpen
+      });
+      <span class="keyword">var</span> triggerDisplayContent = <span class="keyword">this</span>.state.value.length ? <span class="keyword">this</span>._generateValueDisplay() : placeholderString;
+      <span class="keyword">return</span> (
+        <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">ref</span>=<span class="value">"triggerDiv"</span>
+           <span class="attribute">className</span>=<span class="value">{triggerClasses}</span>
+           <span class="attribute">onClick</span>=<span class="value">{this.toggleDropdown}</span>
+           <span class="attribute">onKeyDown</span>=<span class="value">{this._handleKeyDown}</span>
+           <span class="attribute">role</span>=<span class="value">"combobox"</span>
+           <span class="attribute">aria-activedescendant</span>=<span class="value">{this._ariaGetActiveDescendentId()}</span>
+           <span class="attribute">aria-haspopup</span>=<span class="value">{true}</span>
+           <span class="attribute">aria-controls</span>=<span class="value">{this._ariaGetListId()}</span>
+           <span class="attribute">aria-label</span>=<span class="value">{placeholderString}</span>
+           <span class="attribute">aria-multiselectable</span>=<span class="value">{this._isMultiSelect()}</span>
+           <span class="attribute">tabIndex</span>=<span class="value">"1"</span>&gt;</span>
+            {triggerDisplayContent}
+            <span class="tag">&lt;<span class="title">span</span> <span class="attribute">ref</span>=<span class="value">"carat"</span> <span class="attribute">className</span>=<span class="value">{caratClass}</span>&gt;</span> <span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      );
+    }
+    return null;
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              <p>build and render the dropdown content
+will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if needed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getDropdownContent: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.state.isOpen) {
+      <span class="keyword">return</span> <span class="literal">null</span>;
+    }
+
+    <span class="keyword">var</span> searchContent = <span class="keyword">this</span>._getSearchContent(),
+        mouseMoveHandler,
+        pagingLi;
+
+    mouseMoveHandler = (<span class="keyword">this</span>.props.pageDataFetch) ? <span class="keyword">this</span>._onMouseMove : <span class="literal">null</span>;
+    pagingLi = <span class="keyword">this</span>.state.isFetchingPage ? <span class="keyword">this</span>._getPagingLi() : <span class="literal">null</span>;
+
+    <span class="keyword">return</span>(
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">ref</span>=<span class="value">"dropdownContent"</span> <span class="attribute">className</span>=<span class="value">"r-ss-dropdown"</span> <span class="attribute">onKeyDown</span>=<span class="value">{this._handleKeyDown}</span>&gt;</span>
+        {searchContent}
+        <span class="tag">&lt;<span class="title">div</span> <span class="attribute">ref</span>=<span class="value">"scrollWrap"</span> <span class="attribute">className</span>=<span class="value">"r-ss-options-wrap"</span> <span class="attribute">onMouseMove</span>=<span class="value">{mouseMoveHandler}</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">ul</span> <span class="attribute">className</span>=<span class="value">"r-ss-dropdown-options"</span>
+              <span class="attribute">ref</span>=<span class="value">"dropdownOptionsList"</span>
+              <span class="attribute">tabIndex</span>=<span class="value">"-1"</span>
+              <span class="attribute">id</span>=<span class="value">{this._ariaGetListId()}</span>
+              <span class="attribute">role</span>=<span class="value">"listbox"</span>
+              <span class="attribute">aria-expanded</span>=<span class="value">{this.state.isOpen}</span>&gt;</span>
+            {this._getOptionsMarkup()}
+          <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+          {pagingLi}
+        <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-82">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-82">&#182;</a>
+              </div>
+              <p>build the string used as a React component ref for each focusable option</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getFocusedOptionKey: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="string">'option_'</span> + <span class="keyword">this</span>.state.focusedId;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-83">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-83">&#182;</a>
+              </div>
+              <p>render a group heading, used if <strong>groupBy</strong> option is provided.
+renders a non-focusable list item for an option group heading</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getGroupHeadingMarkup: <span class="function"><span class="keyword">function</span><span class="params">(heading)</span> {</span>
+    <span class="keyword">if</span> (!heading) {
+      <span class="keyword">return</span> <span class="literal">null</span>;
+    }
+
+    <span class="keyword">var</span> headingClasses = classNames(<span class="string">"r-ss-option-group-heading"</span>, <span class="keyword">this</span>.props.customGroupHeadingClass),
+        headingKey = <span class="string">"heading_"</span> + heading,
+        headingMarkup = <span class="keyword">this</span>.props.customGroupHeadingTemplateFunction ? <span class="keyword">this</span>.props.customGroupHeadingTemplateFunction(heading) : heading;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-84">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-84">&#182;</a>
+              </div>
+              <p>currently, group headings are aria-hidden so they will not throw off the options count in voiceover
+in search of a better solution for announcing/navigating grouped listbox items as subgroups</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">return</span>(
+      <span class="xml"><span class="tag">&lt;<span class="title">li</span> <span class="attribute">tabIndex</span>=<span class="value">"-1"</span> <span class="attribute">className</span>=<span class="value">{headingClasses}</span> <span class="attribute">key</span>=<span class="value">{headingKey}</span> <span class="attribute">role</span>=<span class="value">"separator"</span> <span class="attribute">aria-label</span>=<span class="value">{heading}</span> <span class="attribute">aria-hidden</span>=<span class="value">{true}</span>&gt;</span>
+        {headingMarkup}
+      <span class="tag">&lt;/<span class="title">li</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-85">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-85">&#182;</a>
+              </div>
+              <p>render the content shown when no options are available</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getNoResultsMarkup: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> noResultsString = <span class="keyword">this</span>.props.noResultsString ? <span class="keyword">this</span>.props.noResultsString : <span class="keyword">this</span>.DEFAULT_LOCALIZATIONS.noResultsString;
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">li</span> <span class="attribute">className</span>=<span class="value">"r-ss-dropdown-option"</span> <span class="attribute">tabIndex</span>=<span class="value">"-1"</span>&gt;</span><span class="tag">&lt;<span class="title">i</span> <span class="attribute">ref</span>=<span class="value">"noResults"</span>&gt;</span>{noResultsString}<span class="tag">&lt;/<span class="title">i</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-86">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-86">&#182;</a>
+              </div>
+              <p>Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
+Choose whether to render using the default template or a provided <strong>customOptionTemplateFunction</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getNormalDisplayMarkup: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> _.map(<span class="keyword">this</span>.state.value, <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">var</span> selectedKey = <span class="string">"r_ss_selected_"</span> + value[<span class="keyword">this</span>.state.labelKey];
+      <span class="keyword">if</span> (<span class="keyword">this</span>.props.customOptionTemplateFunction) {
+        <span class="keyword">return</span> <span class="keyword">this</span>.props.customOptionTemplateFunction(value);
+      } <span class="keyword">else</span> {
+        <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">span</span> <span class="attribute">key</span>=<span class="value">{selectedKey}</span> <span class="attribute">className</span>=<span class="value">"r-ss-selected-label"</span>&gt;</span>{value[this.state.labelKey]}<span class="tag">&lt;/<span class="title">span</span>&gt;</span>);
+      }
+    }, this);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-87">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-87">&#182;</a>
+              </div>
+              <p>render a loading span (spinner gif), with <strong>customLoaderClass</strong> if provided</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getLoadingMarkup: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> loaderClasses = <span class="keyword">this</span>.props.customLoaderClass ? <span class="string">"r-ss-loader "</span> + <span class="keyword">this</span>.props.customLoaderClass : <span class="string">"r-ss-loader"</span>;
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">span</span> <span class="attribute">ref</span>=<span class="value">"loader"</span> <span class="attribute">className</span>=<span class="value">{loaderClasses}</span>&gt;</span><span class="tag">&lt;/<span class="title">span</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-88">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-88">&#182;</a>
+              </div>
+              <p>get the option Li element from a passed eventTarget.
+for key events = event.target
+for click events = event.currentTarget</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getOptionIndexFromTarget: <span class="function"><span class="keyword">function</span><span class="params">(targetLi)</span> {</span>
+    <span class="keyword">return</span> parseInt(targetLi.getAttribute(<span class="string">'data-option-index'</span>), <span class="number">10</span>);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-89">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-89">&#182;</a>
+              </div>
+              <p>render the data source as options,
+render loading if fetching
+render ajaxError markup when state.ajaxError is true</p>
+<ul>
+<li>when <strong>groupBy</strong> is set, data will be a javascript object.  Run with group heading renders in that case</li>
+<li>must track options count to maintain a single focusable index mapping across multiple groups of options</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getOptionsMarkup: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>._needsAjaxFetch()) {
+      <span class="keyword">this</span>._fetchDataViaAjax();
+      <span class="keyword">return</span> <span class="keyword">this</span>._getPagingLi();
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.ajaxError) {
+      <span class="keyword">return</span> <span class="keyword">this</span>._getAjaxErrorMarkup();
+    }
+
+    <span class="keyword">var</span> data = <span class="keyword">this</span>._getDataSource(),
+        options = [],
+        optionsCount = <span class="number">0</span>;
+
+    <span class="keyword">if</span> (!_.isArray(data)) {
+      _.forIn(data, <span class="function"><span class="keyword">function</span><span class="params">(groupedOptions, heading)</span> {</span>
+        options.push(<span class="keyword">this</span>._getGroupHeadingMarkup(heading));
+        options = options.concat(<span class="keyword">this</span>._getTemplatedOptions(groupedOptions, optionsCount));
+        optionsCount = optionsCount + groupedOptions.length;
+      }, <span class="keyword">this</span>);
+    } <span class="keyword">else</span> {
+      options = <span class="keyword">this</span>._getTemplatedOptions(data);
+    }
+
+    <span class="keyword">return</span> options;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-90">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-90">&#182;</a>
+              </div>
+              <p>render a list item with a loading indicator.  Shown while <strong>pageDataFetch</strong> or <strong>ajaxDataFetch</strong> functions run</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getPagingLi: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span>(<span class="xml"><span class="tag">&lt;<span class="title">li</span> <span class="attribute">key</span>=<span class="value">"page_loading"</span> <span class="attribute">className</span>=<span class="value">"r-ss-page-fetch-indicator"</span> <span class="attribute">tabIndex</span>=<span class="value">"-1"</span>&gt;</span>
+            {this._getLoadingMarkup()}
+          <span class="tag">&lt;/<span class="title">li</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-91">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-91">&#182;</a>
+              </div>
+              <p>render a search input bar with a search icon</p>
+<ul>
+<li>add localized <strong>searchPlaceholder</strong> if provided</li>
+<li>add <strong>customIconClass</strong> if provided</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getSearchContent: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.props.searchable) {
+      <span class="keyword">return</span> <span class="literal">null</span>;
+    }
+
+    <span class="keyword">var</span> magnifierClass = <span class="keyword">this</span>.props.customSearchIconClass ? <span class="keyword">this</span>.props.customSearchIconClass : <span class="string">"r-ss-magnifier"</span>,
+        searchPlaceholderString = <span class="keyword">this</span>.props.searchPlaceholder ? <span class="keyword">this</span>.props.searchPlaceholder : <span class="keyword">this</span>.DEFAULT_LOCALIZATIONS.searchPlaceholder,
+        searchAriaId = <span class="keyword">this</span>.state.controlId + <span class="string">'_search'</span>,
+        searchAriaIdLabel = searchAriaId + <span class="string">'_label'</span>;
+
+    <span class="keyword">return</span>(
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"r-ss-search-wrap"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"r-ss-search-inner"</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">label</span> <span class="attribute">ref</span>=<span class="value">"searchInputLabel"</span> <span class="attribute">id</span>=<span class="value">{searchAriaIdLabel}</span> <span class="attribute">className</span>=<span class="value">"r-ss-search-aria-label"</span> <span class="attribute">htmlFor</span>=<span class="value">{searchAriaId}</span>&gt;</span>{searchPlaceholderString}<span class="tag">&lt;/<span class="title">label</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">input</span> <span class="attribute">ref</span>=<span class="value">"searchInput"</span>
+                 <span class="attribute">placeholder</span>=<span class="value">{searchPlaceholderString}</span>
+                 <span class="attribute">onClick</span>=<span class="value">{this._setFocusIdToSearch}</span>
+                 <span class="attribute">onChange</span>=<span class="value">{this._handleSearch}</span>
+                 <span class="attribute">defaultValue</span>=<span class="value">{this.state.searchString}</span>
+                 <span class="attribute">name</span>=<span class="value">{searchAriaId}</span>
+                 <span class="attribute">id</span>=<span class="value">{searchAriaId}</span>
+                 <span class="attribute">aria-labelledby</span>=<span class="value">{searchAriaIdLabel}</span>
+                 <span class="attribute">aria-autocomplete</span>=<span class="value">"list"</span> /&gt;</span>
+          <span class="tag">&lt;<span class="title">i</span> <span class="attribute">className</span>=<span class="value">{magnifierClass}</span>&gt;</span>search<span class="tag">&lt;/<span class="title">i</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-92">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              <p>iterate over selected values and build tags markup for selected options display</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getTagsDisplayMarkup: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> _.map(<span class="keyword">this</span>.state.value, <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">this</span>._getTagMarkup(value);
+    }, <span class="keyword">this</span>);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
+              </div>
+              <p>render a tag for an individual selected value</p>
+<ul>
+<li>add <strong>customTagClass</strong> if provided</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getTagMarkup: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+    <span class="keyword">var</span> label = value[<span class="keyword">this</span>.state.labelKey],
+        displayValue = value[<span class="keyword">this</span>.state.valueKey],
+        tagKey = <span class="string">'tag_'</span> + displayValue,
+        buttonName = <span class="string">"RemoveTag_"</span> + displayValue,
+        tagRemoveIndex = <span class="keyword">this</span>._getTagRemoveIndex(displayValue),
+        tagRemoveButtonLabelString = <span class="keyword">this</span>.props.tagRemoveLabelString ? <span class="keyword">this</span>.props.tagRemoveLabelString : <span class="keyword">this</span>.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
+        tagWrapClass = <span class="keyword">this</span>.props.customTagClass ? <span class="string">"r-ss-tag "</span> + <span class="keyword">this</span>.props.customTagClass : <span class="string">"r-ss-tag"</span>;
+
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + <span class="string">" "</span> + label;
+
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">span</span> <span class="attribute">className</span>=<span class="value">{tagWrapClass}</span> <span class="attribute">key</span>=<span class="value">{tagKey}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">span</span> <span class="attribute">className</span>=<span class="value">"r-ss-tag-label"</span>&gt;</span>{label}<span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">button</span> <span class="attribute">aria-label</span>=<span class="value">{tagRemoveButtonLabelString}</span> <span class="attribute">ref</span>=<span class="value">{tagRemoveIndex}</span> <span class="attribute">name</span>=<span class="value">{buttonName}</span> <span class="attribute">type</span>=<span class="value">"button"</span> <span class="attribute">className</span>=<span class="value">"r-ss-tag-remove"</span> <span class="attribute">onClick</span>=<span class="value">{this._removeTagClick.bind(null,</span> <span class="attribute">value</span>)} <span class="attribute">onKeyDown</span>=<span class="value">{this._removeTagKeyPress.bind(null,</span> <span class="attribute">value</span>)}&gt;</span>
+          <span class="tag">&lt;<span class="title">span</span> /&gt;</span>
+        <span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">span</span>&gt;</span>);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-94">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-94">&#182;</a>
+              </div>
+              <p>tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getTagRemoveIndex: <span class="function"><span class="keyword">function</span><span class="params">(identifier)</span> {</span>
+    <span class="keyword">return</span> <span class="string">"tag_remove_"</span> + identifier;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-95">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-95">&#182;</a>
+              </div>
+              <p>choose a rendering function, either <strong>customOptionTemplateFunction</strong> if provided, or default</p>
+<ul>
+<li>render no results markup if no options result from map calls</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _getTemplatedOptions: <span class="function"><span class="keyword">function</span><span class="params">(data, indexStart)</span> {</span>
+    indexStart = indexStart || <span class="number">0</span>;
+    <span class="keyword">var</span> options = <span class="keyword">this</span>._mapDataToOptionsMarkup(data, indexStart);
+
+    <span class="keyword">if</span> (options.length === <span class="number">0</span>) {
+      options = <span class="keyword">this</span>._getNoResultsMarkup();
+    }
+
+    <span class="keyword">return</span> options;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-96">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-96">&#182;</a>
+              </div>
+              <p>main keyDown binding handler for keyboard navigation and selection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleKeyDown: <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>._isUserSearchTypingEvent(event)) {
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.isOpen || (event.which !== <span class="keyword">this</span>.keymap.tab)) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+
+    <span class="keyword">switch</span>(event.which) {
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.down:
+        <span class="keyword">this</span>._onDownKey(event);
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.end:
+        <span class="keyword">this</span>._onEndKey();
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.enter:
+        <span class="keyword">this</span>._onEnterKey(event);
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.esc:
+        <span class="keyword">this</span>._onEscKey();
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.home:
+        <span class="keyword">this</span>._onHomeKey();
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.space:
+        <span class="keyword">this</span>._onEnterKey(event); <span class="comment">// delegate to enter</span>
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.tab: <span class="comment">// delegate to enter (selection) handler</span>
+        <span class="keyword">if</span> (<span class="keyword">this</span>.state.isOpen) {
+          <span class="keyword">this</span>._onEnterKey(event);
+        }
+        <span class="keyword">break</span>;
+      <span class="keyword">case</span> <span class="keyword">this</span>.keymap.up:
+        <span class="keyword">this</span>._onUpKey(event);
+        <span class="keyword">break</span>;
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-97">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-97">&#182;</a>
+              </div>
+              <p>handler for searchInput&#39;s keyUp event</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleSearch: <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    event.stopPropagation();
+    event.preventDefault();
+    <span class="keyword">var</span> searchString = event.target.value;
+    <span class="keyword">this</span>._handleSearchDebounced.call(<span class="keyword">this</span>, searchString);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-98">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-98">&#182;</a>
+              </div>
+              <p>debounced handler for searchInput&#39;s keyUp event, reduces # of times the control re-renders</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleSearchDebounced: _.debounce(<span class="function"><span class="keyword">function</span><span class="params">(search)</span> {</span>
+    <span class="keyword">this</span>.setState({
+      searchString: search
+    });
+  }, <span class="number">300</span>),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-99">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-99">&#182;</a>
+              </div>
+              <p>return the boolean used to determine whether an option should have the &#39;r-ss-selected&#39; class</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _isCurrentlySelected: <span class="function"><span class="keyword">function</span><span class="params">(dataItem)</span> {</span>
+    <span class="keyword">if</span> (!_.isArray(<span class="keyword">this</span>.state.value)) {
+      <span class="keyword">return</span> _.isEqual(<span class="keyword">this</span>.state.value, dataItem);
+    }
+    <span class="keyword">return</span> !!(_.findWhere(<span class="keyword">this</span>.state.value, dataItem));
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-100">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-100">&#182;</a>
+              </div>
+              <p>tags and mutiple both provide multi-select behavior.  Returns true if either is set to true</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _isMultiSelect: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>.props.multiple || <span class="keyword">this</span>.props.tags;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-101">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-101">&#182;</a>
+              </div>
+              <p>user search events need to pass through the default keyDown handler</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _isUserSearchTypingEvent: <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.refs.searchInput || (event.which === <span class="keyword">this</span>.keymap.down) || ((event.which === <span class="keyword">this</span>.keymap.up) &amp;&amp; event.altKey) || (event.which === <span class="keyword">this</span>.keymap.esc)) {
+      <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+    <span class="keyword">return</span> (event.target === <span class="keyword">this</span>.refs.searchInput.getDOMNode());
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-102">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-102">&#182;</a>
+              </div>
+              <p>Render the option list-items.
+Leverage the <strong>customOptionTemplateFunction</strong> function if provided</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _mapDataToOptionsMarkup: <span class="function"><span class="keyword">function</span><span class="params">(data, indexStart)</span> {</span>
+    <span class="keyword">return</span> _.map(data, <span class="function"><span class="keyword">function</span><span class="params">(dataOption, index)</span> {</span>
+      index = indexStart + index;
+
+      <span class="keyword">var</span> isCurrentlySelected = <span class="keyword">this</span>._isCurrentlySelected(dataOption),
+          itemKey = <span class="string">"drop_li_"</span> + dataOption[<span class="keyword">this</span>.state.valueKey],
+          indexRef = <span class="string">'option_'</span> + index,
+          ariaDescendantId = <span class="keyword">this</span>.state.controlId + <span class="string">'_aria_'</span> + indexRef,
+          optionMarkup = _.isFunction(<span class="keyword">this</span>.props.customOptionTemplateFunction) ? <span class="keyword">this</span>.props.customOptionTemplateFunction(dataOption) : dataOption[<span class="keyword">this</span>.state.labelKey],
+          classes = classNames(<span class="string">'r-ss-dropdown-option'</span>, {
+            <span class="string">'r-ss-selected'</span>: isCurrentlySelected
+          });
+
+      <span class="keyword">return</span> (
+        <span class="xml"><span class="tag">&lt;<span class="title">li</span> <span class="attribute">ref</span>=<span class="value">{indexRef}</span>
+            <span class="attribute">id</span>=<span class="value">{ariaDescendantId}</span>
+            <span class="attribute">tabIndex</span>=<span class="value">"0"</span>
+            <span class="attribute">data-option-index</span>=<span class="value">{index}</span>
+            <span class="attribute">className</span>=<span class="value">{classes}</span>
+            <span class="attribute">aria-selected</span>=<span class="value">{isCurrentlySelected}</span>
+            <span class="attribute">key</span>=<span class="value">{itemKey}</span>
+            <span class="attribute">data-option-value</span>=<span class="value">{dataOption[this.state.valueKey]}</span>
+            <span class="attribute">onClick</span>=<span class="value">{this._selectItemOnOptionClick.bind(null,</span> <span class="attribute">dataOption</span>)}
+            <span class="attribute">role</span>=<span class="value">"option"</span>&gt;</span>
+          {optionMarkup}
+        <span class="tag">&lt;/<span class="title">li</span>&gt;</span>);
+    }, this);
+  },
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-103">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-103">&#182;</a>
+              </div>
+              <p>determines next focusedId prior to updateFocusedId call</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _moveFocusDown: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>._needsAjaxFetch()) {
+      <span class="keyword">return</span>;
+    }
+    <span class="keyword">var</span> nextId;
+
+    <span class="keyword">if</span> (_.isUndefined(<span class="keyword">this</span>.state.focusedId)) {
+      <span class="keyword">if</span> (<span class="keyword">this</span>.props.searchable) {
+        nextId = <span class="keyword">this</span>.SEARCH_FOCUS_ID;
+      } <span class="keyword">else</span> {
+        nextId = <span class="number">0</span>;
+      }
+    } <span class="keyword">else</span> {
+      nextId = (<span class="keyword">this</span>.state.lastOptionId === <span class="keyword">this</span>.state.focusedId) ? <span class="keyword">this</span>.state.lastOptionId : <span class="keyword">this</span>.state.focusedId + <span class="number">1</span>;
+    }
+
+    <span class="keyword">this</span>._updateFocusedId(nextId);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-104">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-104">&#182;</a>
+              </div>
+              <p>determines previous focusedId prior to updateFocusedId call</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _moveFocusUp: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> previousId;
+
+    <span class="keyword">if</span> (!_.isUndefined(<span class="keyword">this</span>.state.focusedId) &amp;&amp; (<span class="keyword">this</span>.state.focusedId !== <span class="keyword">this</span>.SEARCH_FOCUS_ID)) {
+      <span class="keyword">if</span> (<span class="keyword">this</span>.state.focusedId === <span class="number">0</span>) {
+        <span class="keyword">if</span> (<span class="keyword">this</span>.props.searchable) {
+          previousId = <span class="keyword">this</span>.SEARCH_FOCUS_ID;
+        }
+      } <span class="keyword">else</span> {
+        previousId = <span class="keyword">this</span>.state.focusedId - <span class="number">1</span>;
+      }
+    }
+    <span class="keyword">this</span>._updateFocusedId(previousId);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-105">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-105">&#182;</a>
+              </div>
+              <p>return boolean to determine if we have already received data from the <strong>ajaxDataFetch</strong> function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _needsAjaxFetch: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> (_.isUndefined(<span class="keyword">this</span>.state.rawDataSource) &amp;&amp; _.isFunction(<span class="keyword">this</span>.props.ajaxDataFetch));
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-106">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-106">&#182;</a>
+              </div>
+              <p>down key handler
+shift-keypress is used to select successive focus items for aria keyboard accessibility</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onDownKey: <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.state.isOpen) {
+      <span class="keyword">this</span>.toggleDropdown();
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">this</span>._moveFocusDown();
+    <span class="keyword">if</span> (<span class="keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+      <span class="keyword">this</span>._selectFocusedOption(event.target, <span class="literal">true</span>);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-107">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-107">&#182;</a>
+              </div>
+              <p>end key handler. Move focus to the last available option</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onEndKey: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.lastOptionId) {
+      <span class="keyword">this</span>._updateFocusedId(<span class="keyword">this</span>.state.lastOptionId);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-108">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-108">&#182;</a>
+              </div>
+              <p>Enter key handler.
+Opens the control when closed.
+Otherwise, makes selection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onEnterKey: <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.state.isOpen) {
+      <span class="keyword">this</span>.toggleDropdown();
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+      <span class="keyword">this</span>._selectAllOptionsToLastUserSelectedOption(event.target);
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">var</span> keepControlOpen = (<span class="keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey)),
+        alreadySelected = <span class="keyword">this</span>.SELECTED_OPTION_REGEX.test(event.target.getAttribute(<span class="string">'class'</span>));
+
+    <span class="keyword">if</span> (keepControlOpen &amp;&amp; alreadySelected) {
+      <span class="keyword">var</span> optionData = _.first(<span class="keyword">this</span>._findArrayOfOptionDataObjectsByValue(event.target.getAttribute(<span class="string">'data-option-value'</span>)));
+      <span class="keyword">this</span>._removeSelectedOptionByValue(optionData);
+    } <span class="keyword">else</span> {
+      <span class="keyword">if</span> (!alreadySelected) {
+        <span class="keyword">this</span>._selectFocusedOption(event.target, keepControlOpen);
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-109">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-109">&#182;</a>
+              </div>
+              <p>Escape key handler. Closes the dropdown unless triggerEnabled is set to false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onEscKey: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (_.isUndefined(<span class="keyword">this</span>.props.triggerEnabled) || <span class="keyword">this</span>.props.triggerEnabled) {
+      <span class="keyword">this</span>._closeOnKeypress();
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-110">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-110">&#182;</a>
+              </div>
+              <p>Home key handler. Moves focus to the first available option</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onHomeKey: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>._updateFocusedId(<span class="number">0</span>);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-111">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-111">&#182;</a>
+              </div>
+              <p>mouse move handler used when <strong>pageDataFetch</strong> is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onMouseMove: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-112">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-112">&#182;</a>
+              </div>
+              <p>do not fetch page if searching or already loading data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (<span class="keyword">this</span>.refs.loader || <span class="keyword">this</span>.state.searchString || !<span class="keyword">this</span>._pageFetchingComplete()) {
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">var</span> wrap = <span class="keyword">this</span>.refs.scrollWrap.getDOMNode();
+
+    <span class="keyword">if</span> ((wrap.scrollTop + wrap.offsetHeight) &gt;= wrap.scrollHeight) {
+      <span class="keyword">this</span>.setState({
+        isFetchingPage: <span class="literal">true</span>
+      }, <span class="keyword">this</span>._fetchNextPage);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-113">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-113">&#182;</a>
+              </div>
+              <p>Up key handler.
+Shift-click is used to select successive focus items for aria keyboard accessibility</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _onUpKey: <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    <span class="keyword">if</span> (event.altKey) {
+      <span class="keyword">this</span>._closeOnKeypress();
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.isOpen) {
+      <span class="keyword">this</span>._moveFocusUp();
+      <span class="keyword">if</span> (<span class="keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+        <span class="keyword">this</span>._selectFocusedOption(event.target, <span class="literal">true</span>);
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-114">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-114">&#182;</a>
+              </div>
+              <p>If hasMorePages option (Function) present, returns the value of its call.
+Otherwise, returns false so page fetch will not occur</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _pageFetchingComplete: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (!_.isFunction(<span class="keyword">this</span>.props.hasMorePages)) {
+      <span class="keyword">return</span> <span class="literal">false</span>;
+    } <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="keyword">this</span>.props.hasMorePages(<span class="keyword">this</span>.state.rawDataSource);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-115">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-115">&#182;</a>
+              </div>
+              <p>Used in shift selection when the event target was previously selected.
+Remove all options up to, but not including the option that raised the event.
+(So it behaves like a native browser form multi-select)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _removeAllOptionsInOptionIdRange: <span class="function"><span class="keyword">function</span><span class="params">(from, to)</span> {</span>
+    <span class="keyword">var</span> valuePropsToReject = [],
+        start = (from &lt;= to) ? from : to,
+        end = (to &gt;= from) ? to : from;
+
+    <span class="keyword">for</span> (<span class="keyword">var</span> i = start; i &lt;= end; i++) {
+      <span class="keyword">var</span> refString = <span class="string">'option_'</span> + i,
+      option = <span class="keyword">this</span>.refs[refString];
+      <span class="keyword">if</span> (<span class="keyword">this</span>.SELECTED_OPTION_REGEX.test(option.props.className)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-116">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-116">&#182;</a>
+              </div>
+              <p>do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (<span class="keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="string">'data-option-value'</span>) !== option.getDOMNode().getAttribute(<span class="string">'data-option-value'</span>)) {
+          valuePropsToReject.push(option.props[<span class="string">'data-option-value'</span>]);
+        }
+      }
+    }
+
+    <span class="keyword">var</span> remainingSelected = _.reject(<span class="keyword">this</span>.state.value, <span class="function"><span class="keyword">function</span><span class="params">(option)</span> {</span>
+        <span class="keyword">return</span> _.includes(valuePropsToReject, option[<span class="keyword">this</span>.state.valueKey]);
+      }, <span class="keyword">this</span>);
+
+    <span class="keyword">this</span>.props.onChange(remainingSelected);
+
+    <span class="keyword">this</span>.setState({
+      value: remainingSelected
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-117">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-117">&#182;</a>
+              </div>
+              <p>Remove an item from the state.value selected items array.
+The <em>value</em> arg represents a full dataSource option object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _removeSelectedOptionByValue: <span class="function"><span class="keyword">function</span><span class="params">(value, callback)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-118">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-118">&#182;</a>
+              </div>
+              <p>clear lastUserSelected if has been removed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (<span class="keyword">this</span>.lastUserSelectedOption &amp;&amp; (<span class="keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="string">'data-option-value'</span>) === value[<span class="keyword">this</span>.state.valueKey])) {
+      <span class="keyword">this</span>.lastUserSelectedOption = <span class="literal">undefined</span>;
+    }
+
+    <span class="keyword">var</span> SelectedAfterRemoval = _.reject(<span class="keyword">this</span>.state.value, <span class="function"><span class="keyword">function</span><span class="params">(option)</span> {</span>
+                                 <span class="keyword">return</span> option[<span class="keyword">this</span>.state.valueKey] === value[<span class="keyword">this</span>.state.valueKey];
+                               }, <span class="keyword">this</span>);
+
+    <span class="keyword">this</span>.props.onChange(SelectedAfterRemoval);
+
+    callback = _.isFunction(callback) ? callback :  _.noop;
+
+    <span class="keyword">this</span>.setState({
+      value: SelectedAfterRemoval
+    }, callback);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-119">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-119">&#182;</a>
+              </div>
+              <p>remove a selected tag on keyDown</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _removeTagKeyPress: <span class="function"><span class="keyword">function</span><span class="params">(value, event)</span> {</span>
+    <span class="keyword">var</span> isEnterKey = event.which === <span class="keyword">this</span>.keymap.enter,
+        isSpaceKey = event.which === <span class="keyword">this</span>.keymap.space;
+
+    <span class="keyword">if</span> (isEnterKey || isSpaceKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      <span class="keyword">this</span>._removeSelectedOptionByValue(value, <span class="keyword">this</span>._setFocusToTagRemovalIfPresent); <span class="comment">// delegate to removal handler</span>
+    }
+
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-120">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-120">&#182;</a>
+              </div>
+              <p>remove a selected tag on click</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _removeTagClick: <span class="function"><span class="keyword">function</span><span class="params">(value, event)</span> {</span>
+    event.preventDefault();
+    event.stopPropagation();
+
+    <span class="keyword">this</span>._removeSelectedOptionByValue(value);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-121">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-121">&#182;</a>
+              </div>
+              <p>used in shift-click range selections</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _selectAllOptionsInOptionIdRange: <span class="function"><span class="keyword">function</span><span class="params">(from, to)</span> {</span>
+    <span class="keyword">var</span> valuePropsToSelect = [],
+        start = (from &lt;= to) ? from : to,
+        end = (to &gt;= from) ? to : from;
+
+    <span class="keyword">for</span> (<span class="keyword">var</span> i = start; i &lt;= end; i++) {
+      <span class="keyword">var</span> refString = <span class="string">'option_'</span> + i,
+      option = <span class="keyword">this</span>.refs[refString];
+      <span class="keyword">if</span> (!<span class="keyword">this</span>.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        valuePropsToSelect.push(option.props[<span class="string">'data-option-value'</span>]);
+      }
+    }
+
+    <span class="keyword">var</span> optionsToSelect = _.reduce(<span class="keyword">this</span>.state.data, <span class="function"><span class="keyword">function</span><span class="params">(memo, option)</span> {</span>
+          <span class="keyword">if</span> (_.includes(valuePropsToSelect, option[<span class="keyword">this</span>.state.valueKey])) {
+            memo.push(option);
+          }
+          <span class="keyword">return</span> memo;
+        }, [], <span class="keyword">this</span>);
+    <span class="keyword">this</span>._selectItemByValues(optionsToSelect, <span class="literal">true</span>);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-122">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-122">&#182;</a>
+              </div>
+              <p>Used in shift-key selection.
+Select all options from the current eventTarget to the lastUserSelectedOption</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _selectAllOptionsToLastUserSelectedOption: <span class="function"><span class="keyword">function</span><span class="params">(eventTargetLi)</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.lastUserSelectedOption) {
+      <span class="keyword">this</span>.lastUserSelectedOption = eventTargetLi;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-123">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-123">&#182;</a>
+              </div>
+              <p>select all options from the first option to the clicked option</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">this</span>._selectAllOptionsInOptionIdRange(<span class="number">0</span>, <span class="keyword">this</span>._getOptionIndexFromTarget(eventTargetLi));
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">var</span> from = <span class="keyword">this</span>._getOptionIndexFromTarget(<span class="keyword">this</span>.lastUserSelectedOption),
+        to = <span class="keyword">this</span>._getOptionIndexFromTarget(eventTargetLi);
+
+    <span class="keyword">this</span>.lastUserSelectedOption = eventTargetLi;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-124">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-124">&#182;</a>
+              </div>
+              <p>if the option was already selected, this should trigger a removal operation, otherwise trigger an add</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (<span class="keyword">this</span>.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute(<span class="string">'class'</span>))) {
+      <span class="keyword">this</span>._removeAllOptionsInOptionIdRange(from, to);
+    } <span class="keyword">else</span> {
+      <span class="keyword">this</span>._selectAllOptionsInOptionIdRange(from, to);
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-125">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-125">&#182;</a>
+              </div>
+              <p>Make a user-selection of the option that is currently focused.
+Will close the dropDown when keepControlOpen is falsy</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _selectFocusedOption: <span class="function"><span class="keyword">function</span><span class="params">(eventTargetLi, keepControlOpen)</span> {</span>
+    keepControlOpen = keepControlOpen || <span class="literal">false</span>;
+
+    <span class="keyword">var</span> focusedOptionKey = <span class="keyword">this</span>._getFocusedOptionKey();
+    <span class="keyword">if</span> (<span class="keyword">this</span>.refs[focusedOptionKey]) {
+      <span class="keyword">var</span> optionValue = <span class="keyword">this</span>.refs[focusedOptionKey].props[<span class="string">'data-option-value'</span>];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-126">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-126">&#182;</a>
+              </div>
+              <p>store as last userSelected</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">this</span>.lastUserSelectedOption = eventTargetLi;
+
+      <span class="keyword">if</span> (keepControlOpen &amp;&amp; <span class="keyword">this</span>.SELECTED_OPTION_REGEX.test(<span class="keyword">this</span>.refs[focusedOptionKey].props.className)) {
+        <span class="keyword">var</span> optionFullFromValueProp = _.first(<span class="keyword">this</span>._findArrayOfOptionDataObjectsByValue(optionValue));
+        <span class="keyword">this</span>._removeSelectedOptionByValue(optionFullFromValueProp);
+      } <span class="keyword">else</span> {
+        <span class="keyword">this</span>._selectItemByValues(optionValue, keepControlOpen);
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-127">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-127">&#182;</a>
+              </div>
+              <p>Handle selection of an option or array of options.
+Track last selection the user made.
+Close dropdown on the setState callback if not a non control-closing selection</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _selectItemByValues: <span class="function"><span class="keyword">function</span> <span class="title">_selectItemByValues</span><span class="params">(value, keepControlOpen)</span> {</span>
+    <span class="keyword">var</span> objectValues = <span class="keyword">this</span>._findArrayOfOptionDataObjectsByValue(value);
+
+    <span class="keyword">if</span>(<span class="keyword">this</span>._isMultiSelect()) {
+      objectValues = <span class="keyword">this</span>.state.value.concat(objectValues);
+    }
+
+    <span class="keyword">var</span> outputValue = <span class="keyword">this</span>._isMultiSelect() ? objectValues : _.first(objectValues);
+    <span class="keyword">this</span>.props.onChange(outputValue);
+
+    <span class="keyword">var</span> func = keepControlOpen ? <span class="literal">null</span> : <span class="keyword">this</span>._closeOnKeypress;
+    <span class="keyword">this</span>.setState({
+      value: outputValue
+    }, func);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-128">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-128">&#182;</a>
+              </div>
+              <p>handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _selectItemOnOptionClick: <span class="function"><span class="keyword">function</span><span class="params">(value, event)</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
+      <span class="keyword">this</span>._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
+      <span class="keyword">return</span>;
+    }
+    <span class="keyword">var</span> keepControlOpen = (<span class="keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey) || <span class="keyword">this</span>.props.triggerEnabled === <span class="literal">false</span>),
+        alreadySelected = <span class="keyword">this</span>.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute(<span class="string">'class'</span>));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-129">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-129">&#182;</a>
+              </div>
+              <p>store clicked option as the lastUserSelected</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">this</span>.lastUserSelectedOption = event.currentTarget;
+
+    <span class="keyword">if</span> (keepControlOpen &amp;&amp; alreadySelected) {
+      <span class="keyword">this</span>._removeSelectedOptionByValue(value);
+    } <span class="keyword">else</span> {
+      <span class="keyword">if</span> (!alreadySelected) {
+        <span class="keyword">this</span>._selectItemByValues(value[<span class="keyword">this</span>.state.valueKey], keepControlOpen);
+      }
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-130">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-130">&#182;</a>
+              </div>
+              <p>set the focusId to the SEARCH_FOCUS_ID constant value</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _setFocusIdToSearch: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>._updateFocusedId(<span class="keyword">this</span>.SEARCH_FOCUS_ID);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-131">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-131">&#182;</a>
+              </div>
+              <p>if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _setFocusOnOpen: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (<span class="keyword">this</span>.lastUserSelectedOption) {
+      <span class="keyword">this</span>._updateFocusedId(parseInt(<span class="keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="string">'data-option-index'</span>), <span class="number">10</span>));
+    } <span class="keyword">else</span> {
+      <span class="keyword">this</span>._moveFocusDown();
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-132">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-132">&#182;</a>
+              </div>
+              <p>DOM focus for tag removal buttons will get lost after a tag removal.
+After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _setFocusToTagRemovalIfPresent: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.props.tags || (<span class="keyword">this</span>.state.value.length === <span class="number">0</span>)) {
+      <span class="keyword">return</span> <span class="literal">false</span>;
+    }
+
+    <span class="keyword">var</span> firstValue = _.first(<span class="keyword">this</span>.state.value)[<span class="keyword">this</span>.state.valueKey],
+        firstTag = <span class="keyword">this</span>.refs[<span class="keyword">this</span>._getTagRemoveIndex(firstValue)];
+
+    <span class="keyword">if</span> (firstTag) {
+      <span class="keyword">if</span> (_.isFunction(firstTag.getDOMNode().focus)) {
+        firstTag.getDOMNode().focus();
+        <span class="keyword">return</span> <span class="literal">true</span>;
+      }
+    }
+    <span class="keyword">return</span> <span class="literal">false</span>;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-133">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-133">&#182;</a>
+              </div>
+              <p>Sets the current focusedId.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _updateFocusedId: <span class="function"><span class="keyword">function</span><span class="params">(id)</span> {</span>
+    <span class="keyword">this</span>.setState({
+      focusedId: id
+    });
+  }
+
+});
+
+module.exports = ReactSuperSelect;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

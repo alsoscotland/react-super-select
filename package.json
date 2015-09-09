@@ -1,10 +1,6 @@
 {
   "name": "react-super-select",
-<<<<<<< HEAD
-  "version": "0.1.16",
-=======
   "version": "0.1.18",
->>>>>>> upstream/master
   "description": "A flexible replacement for the html select control built with React",
   "main": "./lib/react-super-select.js",
   "author": "Scotland Stephenson",
@@ -64,13 +60,10 @@
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4",
     "jest-cli": ">=0.4.0",
-<<<<<<< HEAD
     "jshint-stylish": "^1.0.0",
     "react-tools": ">=0.13.0",
     "reactify": "^1.1.1",
-=======
     "react": "^0.13.3",
->>>>>>> upstream/master
     "run-sequence": "^1.1.0",
     "vinyl-source-stream": "^1.1.0"
   },
