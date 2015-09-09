@@ -331,6 +331,34 @@ describe('ReactSuperSelect', function() {
     });
   });
 
+  describe('triggerEnabled set to false', function() {
+
+    var el;
+
+    beforeEach(function() {
+      el = renderComponent({triggerEnabled: false});
+    });
+
+    it('will not render the trigger div if the triggerEnabled property is set to false', function() {
+      var trigger = el.refs.triggerDiv;
+
+      expect(trigger).toBeFalsy();
+    });
+
+    it('will have an initial state of isOpen = true if triggerEnabled property is set to false', function() {
+      expect(el.state.isOpen).toBeTruthy();
+    });
+
+    it('will not close the dropdown on the press of the escape key', function() {
+      TestUtils.Simulate.keyDown(el.refs.dropdownContent.getDOMNode(), {
+        which: el.keymap.esc
+      });
+
+      expect(el.state.isOpen).toBeTruthy();
+    });
+
+  });
+
   describe('focus handling', function() {
     it('focuses searchbox when searchable and expanded by keypress', function() {
       var el = renderComponent({
@@ -526,7 +554,8 @@ describe('ReactSuperSelect', function() {
       mockFocusForTriggerDiv(el);
 
       TestUtils.Simulate.click(options[1]);
-      expect(el.state.value[0]).toBe(mockData[1]);
+
+      expect(el.state.value).toBe(mockData[1]);
     });
 
     it('selects item by keyDown for enter', function() {
@@ -539,7 +568,7 @@ describe('ReactSuperSelect', function() {
         which: el.keymap.enter
       });
 
-      expect(el.state.value[0]).toBe(mockData[0]);
+      expect(el.state.value).toBe(mockData[0]);
       expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
 
@@ -554,7 +583,7 @@ describe('ReactSuperSelect', function() {
         which: el.keymap.space
       });
 
-      expect(el.state.value[0]).toBe(mockData[0]);
+      expect(el.state.value).toBe(mockData[0]);
       expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
   });
@@ -826,8 +855,7 @@ describe('ReactSuperSelect', function() {
           which: el.keymap.enter
         }, options[3].id);
 
-        expect(el.state.value.length).toBe(1);
-        expect(el.state.value[0]).toBe(mockData[3]);
+        expect(el.state.value).toBe(mockData[3]);
       });
 
       it('selects multiple sequential options on shift-click in a up-list direction', function() {

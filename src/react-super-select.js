@@ -28,6 +28,8 @@ var ReactSuperSelect = React.createClass({
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
+    // **triggerEnabled** - Set to false to disable the trigger for the dropdown. Will force isOpen to be true and user will be presented with the dropdown on initialRender.
+    triggerEnabled: React.PropTypes.bool,
 
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
@@ -190,8 +192,8 @@ var ReactSuperSelect = React.createClass({
       // **rawDataSource** (Object|Array) The raw dataSource value the user supplies through the *dataSource* prop (or returned from *ajaxDataFetch* / *pageDataFetch*). This value is passed to the *pageDataFetch* callback
       rawDataSource: this.props.dataSource,
 
-      // **isOpen** (Boolean) - Whether or not the dropdown is open
-      isOpen: false,
+      // **isOpen** (Boolean) - Whether or not the dropdown is open. The prop **triggerEnabled** will make the initial state true
+      isOpen: (_.isUndefined(this.props.triggerEnabled)) ? false : !(this.props.triggerEnabled),
 
       // **focusedId** (Number) - Used to track keyboard focus for accessibility
       focusedId: undefined,
@@ -275,43 +277,14 @@ var ReactSuperSelect = React.createClass({
   // main render method
   render: function() {
     var dropdownContent = this._getDropdownContent(),
-        placeholderString,
-        triggerDisplayContent,
-        triggerClasses,
-        caratClass = classNames('carat', {
-          'down': !this.state.isOpen,
-          'up': this.state.isOpen
-        }),
-        wrapClasses;
-
-    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
-      'r-ss-expanded': this.state.isOpen
-    });
-
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen,
-      'r-ss-placeholder': this.state.value.length < 1
-    });
-
-    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+        trigger = this._getTriggerDiv(),
+        wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
+          'r-ss-expanded': this.state.isOpen
+        });
 
     return (
       <div ref="rssControl" id={this.state.controlId} className={wrapClasses}>
-        <div ref="triggerDiv"
-           className={triggerClasses}
-           onClick={this.toggleDropdown}
-           onKeyDown={this._handleKeyDown}
-           role="combobox"
-           aria-activedescendant={this._ariaGetActiveDescendentId()}
-           aria-haspopup={true}
-           aria-controls={this._ariaGetListId()}
-           aria-label={placeholderString}
-           aria-multiselectable={this._isMultiSelect()}
-           tabIndex="1">
-            {triggerDisplayContent}
-            <span ref="carat" className={caratClass}> </span>
-        </div>
+        {trigger}
         {dropdownContent}
       </div>);
   },
@@ -524,6 +497,41 @@ var ReactSuperSelect = React.createClass({
     }
 
     return data;
+  },
+
+  // render the trigger div
+  // can be removed if prop **triggerEnabled** is set to false
+  _getTriggerDiv: function() {
+    var triggerEnabled = (_.isUndefined(this.props.triggerEnabled)) ? true : this.props.triggerEnabled;
+    if(triggerEnabled) {
+      var placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
+      var triggerClasses = classNames('r-ss-trigger', {
+        'r-ss-open': this.state.isOpen,
+        'r-ss-placeholder': this.state.value.length < 1
+      });
+      var caratClass = classNames('carat', {
+        'down': !this.state.isOpen,
+        'up': this.state.isOpen
+      });
+      var triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+      return (
+        <div ref="triggerDiv"
+           className={triggerClasses}
+           onClick={this.toggleDropdown}
+           onKeyDown={this._handleKeyDown}
+           role="combobox"
+           aria-activedescendant={this._ariaGetActiveDescendentId()}
+           aria-haspopup={true}
+           aria-controls={this._ariaGetListId()}
+           aria-label={placeholderString}
+           aria-multiselectable={this._isMultiSelect()}
+           tabIndex="1">
+            {triggerDisplayContent}
+            <span ref="carat" className={caratClass}> </span>
+        </div>
+      );
+    }
+    return null;
   },
 
   // build and render the dropdown content
@@ -929,9 +937,11 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
-  // Escape key handler. Closes the dropdown
+  // Escape key handler. Closes the dropdown unless triggerEnabled is set to false
   _onEscKey: function() {
-    this._closeOnKeypress();
+    if (_.isUndefined(this.props.triggerEnabled) || this.props.triggerEnabled) {
+      this._closeOnKeypress();
+    }
   },
 
   // Home key handler. Moves focus to the first available option
@@ -1123,25 +1133,20 @@ var ReactSuperSelect = React.createClass({
   // Handle selection of an option or array of options.
   // Track last selection the user made.
   // Close dropdown on the setState callback if not a non control-closing selection
-  _selectItemByValues: function(value, keepControlOpen) {
-   var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+  _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
+    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (this._isMultiSelect() || (keepControlOpen && this.state.value)) {
+    if(this._isMultiSelect()) {
       objectValues = this.state.value.concat(objectValues);
     }
 
     var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
     this.props.onChange(outputValue);
 
-    if (keepControlOpen) {
-      this.setState({
-        value: objectValues
-      });
-    } else {
-      this.setState({
-        value: objectValues
-      }, this._closeOnKeypress);
-    }
+    var func = keepControlOpen ? null : this._closeOnKeypress;
+    this.setState({
+      value: outputValue
+    }, func);
   },
 
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
@@ -1150,7 +1155,7 @@ var ReactSuperSelect = React.createClass({
       this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
     }
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey) || this.props.triggerEnabled === false),
         alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
 
     // store clicked option as the lastUserSelected

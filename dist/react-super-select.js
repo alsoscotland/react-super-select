@@ -10,7 +10,7 @@
 
 var _ = require('lodash'),
     classNames = require('classnames'),
-    React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
+    React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 
 // Dependencies
 //  - [Lodash](https://lodash.com/)
@@ -33,6 +33,8 @@ var ReactSuperSelect = React.createClass({
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
+    // **triggerEnabled** - Set to false to disable the trigger for the dropdown. Will force isOpen to be true and user will be presented with the dropdown on initialRender.
+    triggerEnabled: React.PropTypes.bool,
 
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
@@ -183,8 +185,8 @@ var ReactSuperSelect = React.createClass({
       // **rawDataSource** (Object|Array) The raw dataSource value the user supplies through the *dataSource* prop (or returned from *ajaxDataFetch* / *pageDataFetch*). This value is passed to the *pageDataFetch* callback
       rawDataSource: this.props.dataSource,
 
-      // **isOpen** (Boolean) - Whether or not the dropdown is open
-      isOpen: false,
+      // **isOpen** (Boolean) - Whether or not the dropdown is open. The prop **triggerEnabled** will make the initial state true
+      isOpen: _.isUndefined(this.props.triggerEnabled) ? false : !this.props.triggerEnabled,
 
       // **focusedId** (Number) - Used to track keyboard focus for accessibility
       focusedId: undefined,
@@ -267,50 +269,15 @@ var ReactSuperSelect = React.createClass({
   // main render method
   render: function render() {
     var dropdownContent = this._getDropdownContent(),
-        placeholderString,
-        triggerDisplayContent,
-        triggerClasses,
-        caratClass = classNames('carat', {
-      'down': !this.state.isOpen,
-      'up': this.state.isOpen
-    }),
-        wrapClasses;
-
-    wrapClasses = classNames('r-ss-wrap', this.props.customClass, {
+        trigger = this._getTriggerDiv(),
+        wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
       'r-ss-expanded': this.state.isOpen
     });
 
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen,
-      'r-ss-placeholder': this.state.value.length < 1
-    });
-
-    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
-
     return React.createElement(
       'div',
-      { ref: 'rssControl', id: this.state.controlId, className: wrapClasses },
-      React.createElement(
-        'div',
-        { ref: 'triggerDiv',
-          className: triggerClasses,
-          onClick: this.toggleDropdown,
-          onKeyDown: this._handleKeyDown,
-          role: 'combobox',
-          'aria-activedescendant': this._ariaGetActiveDescendentId(),
-          'aria-haspopup': true,
-          'aria-controls': this._ariaGetListId(),
-          'aria-label': placeholderString,
-          'aria-multiselectable': this._isMultiSelect(),
-          tabIndex: '1' },
-        triggerDisplayContent,
-        React.createElement(
-          'span',
-          { ref: 'carat', className: caratClass },
-          ' '
-        )
-      ),
+      { ref: "rssControl", id: this.state.controlId, className: wrapClasses },
+      trigger,
       dropdownContent
     );
   },
@@ -510,10 +477,10 @@ var ReactSuperSelect = React.createClass({
     var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
     return React.createElement(
       'li',
-      { className: 'r-ss-dropdown-option error' },
+      { className: "r-ss-dropdown-option error" },
       React.createElement(
         'i',
-        { ref: 'errorDisplay' },
+        { ref: "errorDisplay" },
         errorString
       )
     );
@@ -533,6 +500,45 @@ var ReactSuperSelect = React.createClass({
     return data;
   },
 
+  // render the trigger div
+  // can be removed if prop **triggerEnabled** is set to false
+  _getTriggerDiv: function _getTriggerDiv() {
+    var triggerEnabled = _.isUndefined(this.props.triggerEnabled) ? true : this.props.triggerEnabled;
+    if (triggerEnabled) {
+      var placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
+      var triggerClasses = classNames('r-ss-trigger', {
+        'r-ss-open': this.state.isOpen,
+        'r-ss-placeholder': this.state.value.length < 1
+      });
+      var caratClass = classNames('carat', {
+        'down': !this.state.isOpen,
+        'up': this.state.isOpen
+      });
+      var triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+      return React.createElement(
+        'div',
+        { ref: "triggerDiv",
+          className: triggerClasses,
+          onClick: this.toggleDropdown,
+          onKeyDown: this._handleKeyDown,
+          role: "combobox",
+          'aria-activedescendant': this._ariaGetActiveDescendentId(),
+          'aria-haspopup': true,
+          'aria-controls': this._ariaGetListId(),
+          'aria-label': placeholderString,
+          'aria-multiselectable': this._isMultiSelect(),
+          tabIndex: "1" },
+        triggerDisplayContent,
+        React.createElement(
+          'span',
+          { ref: "carat", className: caratClass },
+          ' '
+        )
+      );
+    }
+    return null;
+  },
+
   // build and render the dropdown content
   // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
   _getDropdownContent: function _getDropdownContent() {
@@ -549,18 +555,18 @@ var ReactSuperSelect = React.createClass({
 
     return React.createElement(
       'div',
-      { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown },
+      { ref: "dropdownContent", className: "r-ss-dropdown", onKeyDown: this._handleKeyDown },
       searchContent,
       React.createElement(
         'div',
-        { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler },
+        { ref: "scrollWrap", className: "r-ss-options-wrap", onMouseMove: mouseMoveHandler },
         React.createElement(
           'ul',
-          { className: 'r-ss-dropdown-options',
-            ref: 'dropdownOptionsList',
-            tabIndex: '-1',
+          { className: "r-ss-dropdown-options",
+            ref: "dropdownOptionsList",
+            tabIndex: "-1",
             id: this._ariaGetListId(),
-            role: 'listbox',
+            role: "listbox",
             'aria-expanded': this.state.isOpen },
           this._getOptionsMarkup()
         ),
@@ -581,15 +587,15 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var headingClasses = classNames('r-ss-option-group-heading', this.props.customGroupHeadingClass),
-        headingKey = 'heading_' + heading,
+    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
+        headingKey = "heading_" + heading,
         headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
 
     // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
     // in search of a better solution for announcing/navigating grouped listbox items as subgroups
     return React.createElement(
       'li',
-      { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true },
+      { tabIndex: "-1", className: headingClasses, key: headingKey, role: "separator", 'aria-label': heading, 'aria-hidden': true },
       headingMarkup
     );
   },
@@ -599,10 +605,10 @@ var ReactSuperSelect = React.createClass({
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
     return React.createElement(
       'li',
-      { className: 'r-ss-dropdown-option', tabIndex: '-1' },
+      { className: "r-ss-dropdown-option", tabIndex: "-1" },
       React.createElement(
         'i',
-        { ref: 'noResults' },
+        { ref: "noResults" },
         noResultsString
       )
     );
@@ -612,13 +618,13 @@ var ReactSuperSelect = React.createClass({
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function _getNormalDisplayMarkup() {
     return _.map(this.state.value, function (value) {
-      var selectedKey = 'r_ss_selected_' + value[this.state.labelKey];
+      var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
         return React.createElement(
           'span',
-          { key: selectedKey, className: 'r-ss-selected-label' },
+          { key: selectedKey, className: "r-ss-selected-label" },
           value[this.state.labelKey]
         );
       }
@@ -627,8 +633,8 @@ var ReactSuperSelect = React.createClass({
 
   // render a loading span (spinner gif), with **customLoaderClass** if provided
   _getLoadingMarkup: function _getLoadingMarkup() {
-    var loaderClasses = this.props.customLoaderClass ? 'r-ss-loader ' + this.props.customLoaderClass : 'r-ss-loader';
-    return React.createElement('span', { ref: 'loader', className: loaderClasses });
+    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
+    return React.createElement('span', { ref: "loader", className: loaderClasses });
   },
 
   // get the option Li element from a passed eventTarget.
@@ -674,7 +680,7 @@ var ReactSuperSelect = React.createClass({
   _getPagingLi: function _getPagingLi() {
     return React.createElement(
       'li',
-      { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1' },
+      { key: "page_loading", className: "r-ss-page-fetch-indicator", tabIndex: "-1" },
       this._getLoadingMarkup()
     );
   },
@@ -687,23 +693,23 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : 'r-ss-magnifier',
+    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
         searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
 
     return React.createElement(
       'div',
-      { className: 'r-ss-search-wrap' },
+      { className: "r-ss-search-wrap" },
       React.createElement(
         'div',
-        { className: 'r-ss-search-inner' },
+        { className: "r-ss-search-inner" },
         React.createElement(
           'label',
-          { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId },
+          { ref: "searchInputLabel", id: searchAriaIdLabel, className: "r-ss-search-aria-label", htmlFor: searchAriaId },
           searchPlaceholderString
         ),
-        React.createElement('input', { ref: 'searchInput',
+        React.createElement('input', { ref: "searchInput",
           placeholder: searchPlaceholderString,
           onClick: this._setFocusIdToSearch,
           onChange: this._handleSearch,
@@ -711,7 +717,7 @@ var ReactSuperSelect = React.createClass({
           name: searchAriaId,
           id: searchAriaId,
           'aria-labelledby': searchAriaIdLabel,
-          'aria-autocomplete': 'list' }),
+          'aria-autocomplete': "list" }),
         React.createElement(
           'i',
           { className: magnifierClass },
@@ -734,24 +740,24 @@ var ReactSuperSelect = React.createClass({
     var label = value[this.state.labelKey],
         displayValue = value[this.state.valueKey],
         tagKey = 'tag_' + displayValue,
-        buttonName = 'RemoveTag_' + displayValue,
+        buttonName = "RemoveTag_" + displayValue,
         tagRemoveIndex = this._getTagRemoveIndex(displayValue),
         tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
-        tagWrapClass = this.props.customTagClass ? 'r-ss-tag ' + this.props.customTagClass : 'r-ss-tag';
+        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
-    tagRemoveButtonLabelString = tagRemoveButtonLabelString + ' ' + label;
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
 
     return React.createElement(
       'span',
       { className: tagWrapClass, key: tagKey },
       React.createElement(
         'span',
-        { className: 'r-ss-tag-label' },
+        { className: "r-ss-tag-label" },
         label
       ),
       React.createElement(
         'button',
-        { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
+        { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: "button", className: "r-ss-tag-remove", onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
         React.createElement('span', null)
       )
     );
@@ -759,7 +765,7 @@ var ReactSuperSelect = React.createClass({
 
   // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
   _getTagRemoveIndex: function _getTagRemoveIndex(identifier) {
-    return 'tag_remove_' + identifier;
+    return "tag_remove_" + identifier;
   },
 
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
@@ -860,7 +866,7 @@ var ReactSuperSelect = React.createClass({
       index = indexStart + index;
 
       var isCurrentlySelected = this._isCurrentlySelected(dataOption),
-          itemKey = 'drop_li_' + dataOption[this.state.valueKey],
+          itemKey = "drop_li_" + dataOption[this.state.valueKey],
           indexRef = 'option_' + index,
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
           optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
@@ -872,14 +878,14 @@ var ReactSuperSelect = React.createClass({
         'li',
         { ref: indexRef,
           id: ariaDescendantId,
-          tabIndex: '0',
+          tabIndex: "0",
           'data-option-index': index,
           className: classes,
           'aria-selected': isCurrentlySelected,
           key: itemKey,
           'data-option-value': dataOption[this.state.valueKey],
           onClick: this._selectItemOnOptionClick.bind(null, dataOption),
-          role: 'option' },
+          role: "option" },
         optionMarkup
       );
     }, this);
@@ -974,9 +980,11 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
-  // Escape key handler. Closes the dropdown
+  // Escape key handler. Closes the dropdown unless triggerEnabled is set to false
   _onEscKey: function _onEscKey() {
-    this._closeOnKeypress();
+    if (_.isUndefined(this.props.triggerEnabled) || this.props.triggerEnabled) {
+      this._closeOnKeypress();
+    }
   },
 
   // Home key handler. Moves focus to the first available option
@@ -1170,22 +1178,17 @@ var ReactSuperSelect = React.createClass({
   _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
     var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (this._isMultiSelect() || keepControlOpen && this.state.value) {
+    if (this._isMultiSelect()) {
       objectValues = this.state.value.concat(objectValues);
     }
 
     var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
     this.props.onChange(outputValue);
 
-    if (keepControlOpen) {
-      this.setState({
-        value: objectValues
-      });
-    } else {
-      this.setState({
-        value: objectValues
-      }, this._closeOnKeypress);
-    }
+    var func = keepControlOpen ? null : this._closeOnKeypress;
+    this.setState({
+      value: outputValue
+    }, func);
   },
 
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
@@ -1194,7 +1197,7 @@ var ReactSuperSelect = React.createClass({
       this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
     }
-    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey),
+    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey) || this.props.triggerEnabled === false,
         alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
 
     // store clicked option as the lastUserSelected
