@@ -10,7 +10,7 @@
 
 var _ = require('lodash'),
     classNames = require('classnames'),
-    React = typeof window !== 'undefined' ? window.React : typeof global !== 'undefined' ? global.React : null;
+    React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 
 // Dependencies
 //  - [Lodash](https://lodash.com/)
@@ -288,17 +288,31 @@ var ReactSuperSelect = React.createClass({
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
     triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
 
-    return React.createElement('div', { ref: 'rssControl', id: this.state.controlId, className: wrapClasses }, React.createElement('div', { ref: 'triggerDiv',
-      className: triggerClasses,
-      onClick: this.toggleDropdown,
-      onKeyDown: this._handleKeyDown,
-      role: 'combobox',
-      'aria-activedescendant': this._ariaGetActiveDescendentId(),
-      'aria-haspopup': true,
-      'aria-controls': this._ariaGetListId(),
-      'aria-label': placeholderString,
-      'aria-multiselectable': this._isMultiSelect(),
-      tabIndex: '1' }, triggerDisplayContent, React.createElement('span', { ref: 'carat', className: caratClass }, ' ')), dropdownContent);
+    return React.createElement(
+      'div',
+      { ref: 'rssControl', id: this.state.controlId, className: wrapClasses },
+      React.createElement(
+        'div',
+        { ref: 'triggerDiv',
+          className: triggerClasses,
+          onClick: this.toggleDropdown,
+          onKeyDown: this._handleKeyDown,
+          role: 'combobox',
+          'aria-activedescendant': this._ariaGetActiveDescendentId(),
+          'aria-haspopup': true,
+          'aria-controls': this._ariaGetListId(),
+          'aria-label': placeholderString,
+          'aria-multiselectable': this._isMultiSelect(),
+          tabIndex: '1' },
+        triggerDisplayContent,
+        React.createElement(
+          'span',
+          { ref: 'carat', className: caratClass },
+          ' '
+        )
+      ),
+      dropdownContent
+    );
   },
 
   // toggles the open-state of the dropdown
@@ -494,7 +508,15 @@ var ReactSuperSelect = React.createClass({
   // render the content shown if an ajax error occurs
   _getAjaxErrorMarkup: function _getAjaxErrorMarkup() {
     var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
-    return React.createElement('li', { className: 'r-ss-dropdown-option error' }, React.createElement('i', { ref: 'errorDisplay' }, errorString));
+    return React.createElement(
+      'li',
+      { className: 'r-ss-dropdown-option error' },
+      React.createElement(
+        'i',
+        { ref: 'errorDisplay' },
+        errorString
+      )
+    );
   },
 
   // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
@@ -525,12 +547,26 @@ var ReactSuperSelect = React.createClass({
     mouseMoveHandler = this.props.pageDataFetch ? this._onMouseMove : null;
     pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
 
-    return React.createElement('div', { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown }, searchContent, React.createElement('div', { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler }, React.createElement('ul', { className: 'r-ss-dropdown-options',
-      ref: 'dropdownOptionsList',
-      tabIndex: '-1',
-      id: this._ariaGetListId(),
-      role: 'listbox',
-      'aria-expanded': this.state.isOpen }, this._getOptionsMarkup()), pagingLi));
+    return React.createElement(
+      'div',
+      { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown },
+      searchContent,
+      React.createElement(
+        'div',
+        { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler },
+        React.createElement(
+          'ul',
+          { className: 'r-ss-dropdown-options',
+            ref: 'dropdownOptionsList',
+            tabIndex: '-1',
+            id: this._ariaGetListId(),
+            role: 'listbox',
+            'aria-expanded': this.state.isOpen },
+          this._getOptionsMarkup()
+        ),
+        pagingLi
+      )
+    );
   },
 
   // build the string used as a React component ref for each focusable option
@@ -551,13 +587,25 @@ var ReactSuperSelect = React.createClass({
 
     // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
     // in search of a better solution for announcing/navigating grouped listbox items as subgroups
-    return React.createElement('li', { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true }, headingMarkup);
+    return React.createElement(
+      'li',
+      { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true },
+      headingMarkup
+    );
   },
 
   // render the content shown when no options are available
   _getNoResultsMarkup: function _getNoResultsMarkup() {
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
-    return React.createElement('li', { className: 'r-ss-dropdown-option', tabIndex: '-1' }, React.createElement('i', { ref: 'noResults' }, noResultsString));
+    return React.createElement(
+      'li',
+      { className: 'r-ss-dropdown-option', tabIndex: '-1' },
+      React.createElement(
+        'i',
+        { ref: 'noResults' },
+        noResultsString
+      )
+    );
   },
 
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
@@ -568,7 +616,11 @@ var ReactSuperSelect = React.createClass({
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
-        return React.createElement('span', { key: selectedKey, className: 'r-ss-selected-label' }, value[this.state.labelKey]);
+        return React.createElement(
+          'span',
+          { key: selectedKey, className: 'r-ss-selected-label' },
+          value[this.state.labelKey]
+        );
       }
     }, this);
   },
@@ -620,7 +672,11 @@ var ReactSuperSelect = React.createClass({
 
   // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
   _getPagingLi: function _getPagingLi() {
-    return React.createElement('li', { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1' }, this._getLoadingMarkup());
+    return React.createElement(
+      'li',
+      { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1' },
+      this._getLoadingMarkup()
+    );
   },
 
   // render a search input bar with a search icon
@@ -636,15 +692,33 @@ var ReactSuperSelect = React.createClass({
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
 
-    return React.createElement('div', { className: 'r-ss-search-wrap' }, React.createElement('div', { className: 'r-ss-search-inner' }, React.createElement('label', { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId }, searchPlaceholderString), React.createElement('input', { ref: 'searchInput',
-      placeholder: searchPlaceholderString,
-      onClick: this._setFocusIdToSearch,
-      onChange: this._handleSearch,
-      defaultValue: this.state.searchString,
-      name: searchAriaId,
-      id: searchAriaId,
-      'aria-labelledby': searchAriaIdLabel,
-      'aria-autocomplete': 'list' }), React.createElement('i', { className: magnifierClass }, 'search')));
+    return React.createElement(
+      'div',
+      { className: 'r-ss-search-wrap' },
+      React.createElement(
+        'div',
+        { className: 'r-ss-search-inner' },
+        React.createElement(
+          'label',
+          { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId },
+          searchPlaceholderString
+        ),
+        React.createElement('input', { ref: 'searchInput',
+          placeholder: searchPlaceholderString,
+          onClick: this._setFocusIdToSearch,
+          onChange: this._handleSearch,
+          defaultValue: this.state.searchString,
+          name: searchAriaId,
+          id: searchAriaId,
+          'aria-labelledby': searchAriaIdLabel,
+          'aria-autocomplete': 'list' }),
+        React.createElement(
+          'i',
+          { className: magnifierClass },
+          'search'
+        )
+      )
+    );
   },
 
   // iterate over selected values and build tags markup for selected options display
@@ -667,7 +741,20 @@ var ReactSuperSelect = React.createClass({
 
     tagRemoveButtonLabelString = tagRemoveButtonLabelString + ' ' + label;
 
-    return React.createElement('span', { className: tagWrapClass, key: tagKey }, React.createElement('span', { className: 'r-ss-tag-label' }, label), React.createElement('button', { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) }, React.createElement('span', null)));
+    return React.createElement(
+      'span',
+      { className: tagWrapClass, key: tagKey },
+      React.createElement(
+        'span',
+        { className: 'r-ss-tag-label' },
+        label
+      ),
+      React.createElement(
+        'button',
+        { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
+        React.createElement('span', null)
+      )
+    );
   },
 
   // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
@@ -781,16 +868,20 @@ var ReactSuperSelect = React.createClass({
         'r-ss-selected': isCurrentlySelected
       });
 
-      return React.createElement('li', { ref: indexRef,
-        id: ariaDescendantId,
-        tabIndex: '0',
-        'data-option-index': index,
-        className: classes,
-        'aria-selected': isCurrentlySelected,
-        key: itemKey,
-        'data-option-value': dataOption[this.state.valueKey],
-        onClick: this._selectItemOnOptionClick.bind(null, dataOption),
-        role: 'option' }, optionMarkup);
+      return React.createElement(
+        'li',
+        { ref: indexRef,
+          id: ariaDescendantId,
+          tabIndex: '0',
+          'data-option-index': index,
+          className: classes,
+          'aria-selected': isCurrentlySelected,
+          key: itemKey,
+          'data-option-value': dataOption[this.state.valueKey],
+          onClick: this._selectItemOnOptionClick.bind(null, dataOption),
+          role: 'option' },
+        optionMarkup
+      );
     }, this);
   },
 
