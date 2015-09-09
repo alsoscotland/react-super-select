@@ -13,6 +13,5 @@ tmp/
 *.sublime-*
 .idea/
 *.DS_Store
-test-page.html
 .rvmrc
 
