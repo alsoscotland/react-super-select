@@ -29,7 +29,6 @@ module.exports = {
     lint: {
       js: [
         './src/**/*-spec.js',
-        './tmp/jsx/**/*.js',
         'gulpfile.js'
       ],
       less: [
@@ -49,9 +48,7 @@ module.exports = {
   documentation: {
     clean: [
       './src_docs/markdown/js/**/*',
-      'docs_generated/*',
-      'tmp_docs/cache',
-      'tmp_docs/jsx*'
+      'docs_generated/*'
     ],
     docs_bundle: [
       './src_docs/index-bundle.js'
@@ -77,8 +74,7 @@ module.exports = {
     css_vendor: ['./src_docs/stylesheets/docco.css'],
     lint: {
       js: [
-        './src_docs/all-*.js',
-        './tmp_docs/jsx/**/*.js'
+        './src_docs/all-*.js'
       ]
     },
     markdown: {

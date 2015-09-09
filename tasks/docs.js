@@ -1,14 +1,14 @@
 var browserify = require('gulp-browserify'),
     concat = require('gulp-concat'),
     del = require('del'),
+    exec = require('child_process').exec,
     gutil = require('gulp-util'),
     less = require('gulp-less'),
     markdownToJson = require('gulp-markdown-to-json'),
     minifyCss = require('gulp-minify-css'),
     reactify = require('reactify'),
     rename = require("gulp-rename"),
-    runSequence = require('run-sequence'),
-    shell = require('gulp-shell');
+    runSequence = require('run-sequence');
 
 module.exports = function(gulp, config) {
 
@@ -33,15 +33,29 @@ module.exports = function(gulp, config) {
   var rssversion = JSON.parse(require('fs').readFileSync('./package.json')).version;
   var rssversionVar = 'var RSS_VERSION = \\"' + rssversion + '\\";';
   var rssVersionShellCmd = 'echo "' + rssversionVar +'"|cat - ./scripts/support/version-printer-base.txt > ./tmp/version_tmp && mv ./tmp/version_tmp '+ config.documentation.version_printer;
-  gulp.task('docs_add_version', shell.task([rssVersionShellCmd]));
 
-  // Generate Annotated Source documentation with docco
-  gulp.task('docs_annotate_source', shell.task([
-    'source ./scripts/docco_clean.sh',
-    'source ./scripts/docco_build.sh',
-    'source ./scripts/copy_docco_docs.sh',
-    'source ./scripts/docco_clean.sh'
-  ]));
+  gulp.task('docs_add_version', function(cb) {
+    exec(rssVersionShellCmd, function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
+  });
+
+  var doccoTasks = [
+      'source ./scripts/docco_clean.sh',
+      'source ./scripts/docco_build.sh',
+      'source ./scripts/copy_docco_docs.sh',
+      'source ./scripts/docco_clean.sh'
+    ].join(' && ');
+
+  gulp.task('docs_annotate_source', function(cb) {
+    exec(doccoTasks, function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
+  });
 
   // clean docs
   gulp.task('docs_clean', function(done) {
@@ -50,9 +64,7 @@ module.exports = function(gulp, config) {
 
   gulp.task('docs_js_bundled', function() {
     return gulp.src(config.documentation.docs_bundle)
-          .pipe(browserify({
-            transform: [reactify]
-          }))
+          .pipe(browserify())
           .on('error', gutil.log)
           .pipe(rename('r-ss-docs-bundle.js'))
           .pipe(gulp.dest(config.documentation.example.dist));
@@ -60,9 +72,7 @@ module.exports = function(gulp, config) {
 
   gulp.task('live_examples_js_bundled', function() {
     return gulp.src(config.documentation.live_examples_bundle)
-          .pipe(browserify({
-            transform: [reactify]
-          }))
+          .pipe(browserify())
           .on('error', gutil.log)
           .pipe(rename('r-ss-live-examples-bundle.js'))
           .pipe(gulp.dest(config.documentation.example.dist));

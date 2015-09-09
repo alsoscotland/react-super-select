@@ -124,6 +124,12 @@ var ReactSuperSelect = React.createClass({
     // -------------------------------------
 
     // **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** option.  The function provided will serve as a replacement of the default search filter function.
+    // and will be called as the predicate function of [Lodash's filter function](https://lodash.com/docs#filter)
+
+
+    // The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current **searchString** (state variable)
+
+
     // When left undefined the default filter function will be used.
     //(Defaults To: A lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is leveraged by [Lodash's filter function](https://lodash.com/docs#filter) with your **dataSource** collection as its first argument.
     customFilterFunction: React.PropTypes.func,
@@ -232,7 +238,7 @@ var ReactSuperSelect = React.createClass({
     var newState = {};
 
     if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
-      newState.value = this._buildInitialValue(nextProps)
+      newState.value = this._buildInitialValue(nextProps);
     }
 
     if (!_.isUndefined(nextProps.optionLabelKey) && (nextProps.optionLabelKey !== this.props.optionLabelKey)) {
@@ -251,7 +257,7 @@ var ReactSuperSelect = React.createClass({
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: undefined,
-        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined,
+        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined
       });
 
     }
@@ -439,7 +445,13 @@ var ReactSuperSelect = React.createClass({
 
   // choose the appropriate search filter function and run the filter against the options data
   _filterDataBySearchString: function(data) {
-    var filterFunction = _.isFunction(this.props.customFilterFunction) ? this.props.customFilterFunction : this._defaultSearchFilter;
+    var self = this;
+    var filterFunction = this._defaultSearchFilter;
+    if (_.isFunction(this.props.customFilterFunction)) {
+      filterFunction = function(value, index, collection) {
+        return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
+      };
+    }
     return _.filter(data, filterFunction);
   },
 

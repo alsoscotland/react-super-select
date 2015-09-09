@@ -1,4 +1,4 @@
-var jshint = require('gulp-jshint'),
+var eslint = require('gulp-eslint'),
     less = require('gulp-less'),
     recess = require('gulp-recess'),
     runSequence = require('run-sequence');
@@ -23,10 +23,11 @@ module.exports = function(gulp, config) {
     gulp.watch([config.tasks.lint.js], ['lint:tasks']);
   });
 
-  gulp.task('lint-js', ['jsx'], function() {
+  gulp.task('lint-js', function() {
     return gulp.src(config.component.lint.js)
-      .pipe(jshint())
-      .pipe(jshint.reporter('jshint-stylish'));
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failOnError());
   });
 
   gulp.task('lint-less', function () {
@@ -51,29 +52,25 @@ module.exports = function(gulp, config) {
   });
 
   gulp.task('watch:examples-lint', function() {
-    runSequence(  'jsx',
-                  'lint-js',
+    runSequence(  'lint-js',
                   'lint-less',
                   'less-compile',
                   function() {
-                    gulp.watch([config.component.js], ['jsx']);
                     gulp.watch([config.component.lint.js], ['lint-js']);
                     gulp.watch([config.component.lint.less], ['lint-less']);
                   });
   });
 
-  gulp.task('docs_lint-js', ['jsx'], function() {
+  gulp.task('docs_lint-js', function() {
     return gulp.src(config.documentation.lint.js)
-      .pipe(jshint())
-      .pipe(jshint.reporter('jshint-stylish'));
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failOnError());
   });
 
   gulp.task('docs_watch', [
-    'docs_jsx',
     'docs_lint-js',
   ], function() {
-    gulp.watch([config.documentation.docs_bundle], ['docs_jsx']);
-    gulp.watch([config.documentation.live_examples_bundle], ['docs_jsx']);
     gulp.watch([config.documentation.lint.js], ['docs_lint-js']);
     gulp.watch([config.documentation.css], ['docs_css']);
     gulp.watch([config.documentation.markdown.files], ['docs_markdown']);

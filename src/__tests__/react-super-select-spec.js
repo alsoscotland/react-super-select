@@ -502,15 +502,15 @@ describe('ReactSuperSelect', function() {
       expect(optionElements.length).toBe(1);
     });
 
-    it('filters by custom filter function', function() {
+    it('filters by custom filter function and searchString', function() {
       var el = renderComponent({
-        customFilterFunction: function(option) {
-          return (option.name.indexOf('option t') === 0);
+        customFilterFunction: function(option, index, collection, searchTerm) {
+          return (option.type === searchTerm);
         }
       });
       el.setState({
         'isOpen': true,
-        'searchString': 'three'
+        'searchString': 'whatzit'
       });
 
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
