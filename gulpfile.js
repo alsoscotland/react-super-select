@@ -1,16 +1,15 @@
-var config = require('./gulpconfig'),
-    gulp = require('gulp');
+var _ = require('lodash'),
+    config = require('./gulpconfig'),
+    fs = require('fs'),
+    gulp = require('gulp'),
+    taskListing = require('gulp-task-listing');
 
-function initRssGulp(gulp, config) {
-  require('./tasks/bump')(gulp);
-  require('./tasks/jsx')(gulp);
-  require('./tasks/linting')(gulp, config);
-  require('./tasks/docs')(gulp, config);
-  require('./tasks/dist')(gulp, config);
-  require('./tasks/lib')(gulp, config);
-  require('./tasks/release')(gulp, config);
-  require('./tasks/build')(gulp);
-  require('./tasks/dev')(gulp, config);
+function initRssGulp() {
+  var externalTasks = fs.readdirSync('./tasks');
+  _.each(externalTasks, function(task) {
+    require('./tasks/' + task)(gulp, config);
+  });
 }
 
-initRssGulp(gulp, config);
+initRssGulp();
+gulp.task('help', taskListing);

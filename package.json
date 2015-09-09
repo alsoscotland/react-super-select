@@ -1,6 +1,10 @@
 {
   "name": "react-super-select",
+<<<<<<< HEAD
   "version": "0.1.16",
+=======
+  "version": "0.1.18",
+>>>>>>> upstream/master
   "description": "A flexible replacement for the html select control built with React",
   "main": "./lib/react-super-select.js",
   "author": "Scotland Stephenson",
@@ -23,7 +27,7 @@
     "lib/"
   ],
   "jest": {
-    "scriptPreprocessor": "./preprocessor.js",
+    "scriptPreprocessor": "./node_modules/babel-jest",
     "unmockedModulePathPatterns": [
       "./node_modules/react"
     ],
@@ -33,37 +37,42 @@
   },
   "devDependencies": {
     "babel-core": "^5.4.7",
-    "babel-plugin-object-assign": "^1.1.0",
+    "babel-eslint": "^4.1.1",
+    "babel-jest": "^5.3.0",
     "babelify": "^6.1.1",
     "browserify": "^10.2.0",
     "browserify-shim": "^3.8.7",
-    "concat": "^1.0.0",
     "del": "^1.1.1",
+    "eslint": "^1.3.1",
+    "eslint-plugin-react": "^3.3.1",
     "gulp": "^3.8.10",
     "gulp-babel": "^5.1.0",
     "gulp-browserify": "^0.5.1",
     "gulp-bump": "^0.3.1",
     "gulp-concat": "^2.5.2",
     "gulp-connect": "^2.2.0",
+    "gulp-eslint": "^1.0.0",
     "gulp-gh-pages": "^0.5.1",
     "gulp-git": "^1.2.4",
-    "gulp-jshint": "^1.9.2",
     "gulp-less": "^3.0.3",
     "gulp-markdown-to-json": "^0.2.1",
     "gulp-minify-css": "^1.1.1",
     "gulp-recess": "^1.1.2",
     "gulp-rename": "^1.2.2",
-    "gulp-shell": "^0.3.0",
     "gulp-streamify": "0.0.5",
+    "gulp-task-listing": "^1.0.1",
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.4",
     "jest-cli": ">=0.4.0",
+<<<<<<< HEAD
     "jshint-stylish": "^1.0.0",
     "react-tools": ">=0.13.0",
     "reactify": "^1.1.1",
+=======
+    "react": "^0.13.3",
+>>>>>>> upstream/master
     "run-sequence": "^1.1.0",
-    "vinyl-source-stream": "^1.1.0",
-    "vinyl-transform": "^1.0.0"
+    "vinyl-source-stream": "^1.1.0"
   },
   "browserify-shim": {
     "react": "global:React"

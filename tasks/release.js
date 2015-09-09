@@ -34,8 +34,7 @@ module.exports = function(gulp, config) {
   if (config.documentation.example.dist) {
     gulp.task('publish:docs', function() {
       return gulp.src(config.documentation.example.dist + '/**/*').pipe(deploy({
-        branch: "gh-pages",
-        force: true
+        branch: "gh-pages"
       }));
     });
 
