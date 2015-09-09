@@ -67,11 +67,6 @@
   "browserify-shim": {
     "react": "global:React"
   },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ]
-  },
   "scripts": {
     "test": "$(npm bin)/jest"
   },
