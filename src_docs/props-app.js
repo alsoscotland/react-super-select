@@ -1,4 +1,5 @@
 var _ = require('lodash'),
+    classNames = require('classnames'),
     React = require('react');
 
 var allProps = require('./all-props');
