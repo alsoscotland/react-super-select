@@ -1,4 +1,5 @@
 var _ = require('lodash'),
+    classNames = require('classnames'),
     React = require('react'),
     ReactSuperSelect = require('../src/react-super-select'),
     TestPageExampleOptionTemplate = require('./super-selects/support/test-page-example-option-template');

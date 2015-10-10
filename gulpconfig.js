@@ -7,11 +7,11 @@ var COMPONENT_NAME = 'react-super-select';
 // Read the package.json to detect the package name and dependencies
 var pkg = JSON.parse(require('fs').readFileSync('./package.json'));
 
-// Default dependencies from package.json, except reactify (which is used for
-// the build). Dependencies can be customised by hard-coding this array.
+// Globally-shimmed dependencies from package.json
+// dependencies will need to be available in global scopes by their shimmed values
 var dependencies = [];
-Object.keys(pkg.dependencies).forEach(function(i) {
-  if (i !== 'reactify') dependencies.push(i);
+Object.keys(pkg["browserify-shim"]).forEach(function(i) {
+  dependencies.push(i);
 });
 
 module.exports = {

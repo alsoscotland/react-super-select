@@ -8,8 +8,8 @@
 
 'use strict';
 
-var _ = require('lodash'),
-    classNames = require('classnames'),
+var _ = (typeof window !== "undefined" ? window._ : typeof global !== "undefined" ? global._ : null),
+    classNames = (typeof window !== "undefined" ? window.classNames : typeof global !== "undefined" ? global.classNames : null),
     React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 
 // Dependencies
@@ -1254,5 +1254,5 @@ var ReactSuperSelect = React.createClass({
 module.exports = ReactSuperSelect;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"classnames":undefined,"lodash":undefined}]},{},[1])(1)
+},{}]},{},[1])(1)
 });
