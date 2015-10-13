@@ -1,4 +1,15 @@
 TASKS
+1) fix build sequence via npm
+2) clear selection button
+  - need to figure out keyboard nav for it with clearing (this and tags)
+
+keyboard nav needs some love
+3) spec for clear search
+
+4) research other aria control options 
+
+
+TENTATIVE
 1) list groups should be separately focus-able and navigable?
 Change groups to http://www.w3.org/TR/WCAG20-TECHS/H85.html
 ex: <optgroup label="Fruits"

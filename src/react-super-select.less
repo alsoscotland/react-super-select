@@ -24,13 +24,13 @@
 @tagBackgroundColor: @lightGreyBackground;
 @tagColor: @paleGreyFallback;
 @tagShadowColor: @paleGreyFallback;
-@tagRemoveBackground: @white;
-@tagRemoveColor: @paleGreyFallback;
-@tagRemoveHoverBackground: @red;
-@tagRemoveHoverColor: @white;
+@removeButtonBackground: @white;
+@removeButtonColor: @paleGreyFallback;
+@removeButtonHoverBackground: @red;
+@removeButtonHoverColor: @white;
 @tagRemoveBorderColor: @black;
 @tagBorderRadius: 4px;
-@tagRemoveBorderRadius: 2px;
+@removeButtonBorderRadius: 2px;
 
 .background-clip(@argument: padding-box) {
   -moz-background-clip: @argument;
@@ -50,6 +50,38 @@
   -moz-box-sizing: @sizing;
   -webkit-box-sizing: @sizing;
   box-sizing: @sizing;
+}
+
+.r-ss-remove-button {
+  opacity: .25;
+  position: absolute;
+  padding: 0;
+  color: @removeButtonColor;
+  background-color: @removeButtonBackground;
+  font-size: 10px;
+  border: 1px solid @removeButtonColor;
+  cursor: pointer;
+  z-index: 1;
+  .border-radius(@removeButtonBorderRadius, @removeButtonBorderRadius, @removeButtonBorderRadius, @removeButtonBorderRadius);
+
+  > span {
+
+    &:before {
+      position: aboslute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      content: 'X';
+    }
+  }
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+    color: @removeButtonHoverColor;
+    background-color: @removeButtonHoverBackground;
+  }
 }
 
 // control
@@ -115,6 +147,26 @@
     border-color: black;
   }
 
+  .r-ss-selection-clear {
+    display: inline-block;
+    padding: .25rem;
+    margin: 0 .25rem;
+    color: @removeButtonColor;
+    background-color: @removeButtonBackground;
+    font-size: 12px;
+    border: 1px solid @removeButtonColor;
+    cursor: pointer;
+    z-index: 1;
+    .border-radius(@removeButtonBorderRadius, @removeButtonBorderRadius, @removeButtonBorderRadius, @removeButtonBorderRadius);
+
+    &:hover,
+    &:focus {
+      color: @removeButtonHoverColor;
+      background-color: @removeButtonHoverBackground;
+    }
+
+  }
+
   .carat {
     position: absolute;
     right: .25rem;
@@ -155,6 +207,14 @@
     width: 100%;
     height: 30px;
     padding: .25rem @inputWithIconPadding .25rem .25rem;
+  }
+
+  .r-ss-search-clear {
+    top: 7px;
+    right: 28px;
+    width: 18px;
+    height: 18px;
+    .r-ss-remove-button;
   }
 
   .r-ss-magnifier {
@@ -332,38 +392,10 @@
   }
 
   .r-ss-tag-remove {
-    opacity: .25;
-    position: absolute;
     top: 2px;
     right: 2px;
     width: 14px;
     height: 14px;
-    padding: 0;
-    color: @tagRemoveColor;
-    background-color: @tagRemoveBackground;
-    font-size: 10px;
-    border: 1px solid @tagRemoveColor;
-    cursor: pointer;
-    z-index: 1;
-    .border-radius(@tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius, @tagRemoveBorderRadius);
-
-    > span {
-
-      &:before {
-        position: aboslute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        content: 'X';
-      }
-    }
-
-    &:hover,
-    &:focus {
-      opacity: 1;
-      color: @tagRemoveHoverColor;
-      background-color: @tagRemoveHoverBackground;
-    }
+    .r-ss-remove-button;
   }
 }

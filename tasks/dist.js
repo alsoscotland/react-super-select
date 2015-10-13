@@ -2,7 +2,7 @@
 // https://github.com/JedWatson/react-component-gulp-tasks
 var babelify = require('babelify'),
     browserify = require('browserify'),
-    del = require('del'),
+    exec = require('child_process').exec,
     gutil = require('gulp-util'),
     less = require('gulp-less'),
     rename = require('gulp-rename'),
@@ -13,11 +13,17 @@ var babelify = require('babelify'),
 
 module.exports = function(gulp, config) {
 
-  gulp.task('clean:dist', function(done) {
-    del([config.component.dist], done);
+  // clean is run via npm
+
+  gulp.task('dist:build', function(cb) {
+    exec('npm run dist:build', function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
   });
 
-  gulp.task('build:dist:scripts', ['clean:dist'], function() {
+  gulp.task('build:dist:scripts', function() {
 
     var standalone = browserify('./' + config.component.src + '/' + config.component.file, {
         standalone: config.component.name
@@ -46,7 +52,7 @@ module.exports = function(gulp, config) {
   var buildTasks = ['build:dist:scripts'];
 
   if (config.component.less) {
-    gulp.task('build:dist:css', ['clean:dist'], function() {
+    gulp.task('build:dist:css', function() {
       return gulp.src(config.component.less)
         .pipe(less())
         .pipe(gulp.dest('dist'));
@@ -54,6 +60,6 @@ module.exports = function(gulp, config) {
     buildTasks.push('build:dist:css');
   }
 
-  gulp.task('build:dist', buildTasks);
+  gulp.task('build:dist-gulp-sequence', buildTasks);
 
 };
