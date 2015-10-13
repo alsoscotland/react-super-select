@@ -1,1 +1,0 @@
-{"body":"<!-- customSearchIconClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>This value will be added as a css class to the icon element in the search-filtering bar (when <strong>searchable</strong> is true). \nThis allows you to override the default search icon.</p>\n<p>(By default the icon will be a magnifying glass)</p>\n"}

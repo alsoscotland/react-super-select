@@ -1,1 +1,0 @@
-{"body":"<!-- customClass -->\n<p>(<strong>String</strong>) <em>optional</em> </p>\n<p>This value will be added as a css class to the control’s main wrapping element.You should be able to overide all styling by leading your rules with</p>\n<pre><code class=\"lang-css\">.r-ss-wrap.{customClass}\n</code></pre>\n"}

@@ -1,1 +1,0 @@
-{"body":"<!-- ajaxErrorString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options)</p>\n<p>This string will be shown as a message in the dropdown area in the event that an ajax request for options data fails</p>\n"}

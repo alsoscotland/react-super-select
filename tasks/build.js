@@ -4,9 +4,9 @@ module.exports = function(gulp) {
 
   gulp.task('build', function() {
     runSequence('jsx',
-                'build:docs',
                 'build:dist',
-                'build:lib');
+                'build:lib',
+                'build:docs');
   });
 
 };
