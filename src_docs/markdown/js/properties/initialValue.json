@@ -1,1 +1,0 @@
-{"body":"<!-- initialValue property -->\n<p>(<strong>Array</strong>|<strong>Object</strong>) <em>optional</em></p>\n<p>The selected value the control will be initialized with</p>\n<p>Must be either an array of option objects or a single option object from your dataSource collection</p>\n"}

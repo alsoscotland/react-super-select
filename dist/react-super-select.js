@@ -263,6 +263,14 @@ var ReactSuperSelect = React.createClass({
     this._focusCurrentFocusedId();
   },
 
+  componentWillMount: function componentWillMount() {
+    window.addEventListener('click', this._handleClick);
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    window.removeEventListener('click', this._handleClick);
+  },
+
   // main render method
   render: function render() {
     var dropdownContent = this._getDropdownContent(),
@@ -833,6 +841,12 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
+  _handleClick: function _handleClick(e) {
+    if (e instanceof MouseEvent && !React.findDOMNode(this.refs.rssControl).contains(e.target)) {
+      this._onEscKey();
+    }
+  },
+
   // handler for searchInput's keyUp event
   _handleSearch: function _handleSearch(event) {
     event.stopPropagation();
@@ -1219,7 +1233,9 @@ var ReactSuperSelect = React.createClass({
     if (keepControlOpen && alreadySelected) {
       this._removeSelectedOptionByValue(value);
     } else {
-      if (!alreadySelected) {
+      if (alreadySelected) {
+        this._onEscKey();
+      } else {
         this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
       }
     }
