@@ -297,6 +297,7 @@ var ReactSuperSelect = React.createClass({
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen,
       'r-ss-placeholder': this.state.value.length < 1,
+      'r-ss-disabled': this.props.disabled,
       'r-ss-clearable': this.props.clearable
     });
 
@@ -327,6 +328,9 @@ var ReactSuperSelect = React.createClass({
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
   toggleDropdown: function() {
+    if (this.props.disabled) {
+      return;
+    }
     this.setState({
       'isOpen': !this.state.isOpen
     }, function() {
