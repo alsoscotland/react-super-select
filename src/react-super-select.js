@@ -22,6 +22,9 @@ var ReactSuperSelect = React.createClass({
     // BOOLEAN OPTIONS
     // ---------------
 
+    // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
+    clearable: React.PropTypes.bool,
+
     // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
     multiple: React.PropTypes.bool,
     // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
@@ -143,6 +146,12 @@ var ReactSuperSelect = React.createClass({
     // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
     ajaxErrorString: React.PropTypes.string,
 
+    // **clearSearchLabelString** (String) *optional* - (Used in conjunction with the **clearable** option) This string will be used as an aria-label for the clear selection button
+    clearSelectionLabelString: React.PropTypes.string,
+
+    // **clearSelectionsLabelString** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be used as an aria-label for the clear search button
+    clearSearchLabelString: React.PropTypes.string,
+
     // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
     noResultsString: React.PropTypes.string,
 
@@ -168,6 +177,8 @@ var ReactSuperSelect = React.createClass({
   // Default string values for localization options
   DEFAULT_LOCALIZATIONS: {
     ajaxErrorString: 'An Error occured while fetching options',
+    clearSelectionLabelString: 'Clear Selection',
+    clearSearchLabelString: 'Clear Search Field',
     noResultsString: 'No Results Available',
     placeholder: 'Select an Option',
     searchPlaceholder: 'Search',
@@ -274,7 +285,9 @@ var ReactSuperSelect = React.createClass({
 
   // main render method
   render: function() {
-    var dropdownContent = this._getDropdownContent(),
+    var clearSelectionButton = null,
+        clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.DEFAULT_LOCALIZATIONS.clearSelectionLabelString,
+        dropdownContent = this._getDropdownContent(),
         placeholderString,
         triggerDisplayContent,
         triggerClasses,
@@ -296,6 +309,12 @@ var ReactSuperSelect = React.createClass({
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
     triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
 
+    if (!_.isEmpty(this.state.value) && (this.props.clearable !== false)) {
+      clearSelectionButton = (<button aria-label={clearSelectionLabelString} ref="selectionClear" name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}>
+                                <span />
+                             </button>);
+    }
+
     return (
       <div ref="rssControl" id={this.state.controlId} className={wrapClasses}>
         <div ref="triggerDiv"
@@ -310,6 +329,7 @@ var ReactSuperSelect = React.createClass({
            aria-multiselectable={this._isMultiSelect()}
            tabIndex="1">
             {triggerDisplayContent}
+            {clearSelectionButton}
             <span ref="carat" className={caratClass}> </span>
         </div>
         {dropdownContent}
@@ -343,6 +363,12 @@ var ReactSuperSelect = React.createClass({
     return this.state.controlId + '_list';
   },
 
+  // helper for stopping event propagation
+  _arrestEvent: function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+  },
+
   // calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps
   _buildInitialValue: function(props) {
     props = props || this.props;
@@ -357,6 +383,25 @@ var ReactSuperSelect = React.createClass({
     }
 
     return initialValue;
+  },
+
+  // clear the searchString value
+  // for **searchable** controls
+  _clearSearchString: function() {
+    this.setState({
+      searchString: undefined
+    }, this._setFocusIdToSearch);
+  },
+
+  // clear the selected options
+  // for **clearable** controls
+  _clearSelection: function(event) {
+    if ((event.which === this.keymap.enter) || (event.which === this.keymap.space) || (event.type === "click")) {
+      event.stopPropagation();
+      this.setState({
+        value: []
+      }, this._focusTrigger);
+    }
   },
 
   // close the dropdown
@@ -488,6 +533,35 @@ var ReactSuperSelect = React.createClass({
     if (this.refs.searchInput) {
       this.refs.searchInput.getDOMNode().focus();
     }
+  },
+
+  // shift focus from dropdown trigger to any removal/clear buttons
+  // for keyboard navigation and accessibility
+  _focusRemovalButtons: function(event) {
+    var triggerContainer = this.refs.triggerDiv.getDOMNode(),
+        buttons = triggerContainer.getElementsByTagName('button'),
+        currentlyFocusedRemoveButtonIndex,
+        nextButtonIndexToFocus;
+
+    if (buttons.length) {
+      for (let i=0; i< buttons.length; i++) {
+        if (buttons[i] === document.activeElement) {
+          currentlyFocusedRemoveButtonIndex = i;
+          nextButtonIndexToFocus = event.shiftKey ? i-1 : i+1;
+        }
+      }
+    }
+
+    if (buttons[nextButtonIndexToFocus]) {
+      this._arrestEvent(event);
+      buttons[nextButtonIndexToFocus].focus();
+    } else if(nextButtonIndexToFocus && (nextButtonIndexToFocus < 0)) {
+      this._focusTrigger();
+    } else if(buttons[0] && !_.isNumber(currentlyFocusedRemoveButtonIndex)) {
+      this._arrestEvent(event);
+      buttons[0].focus();
+    }
+
   },
 
   // focus the main trigger element of the control
@@ -661,10 +735,18 @@ var ReactSuperSelect = React.createClass({
       return null;
     }
 
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
+    var clearSearch = null,
+        clearSearchLabelString = this.props.clearSearchLabelString ? this.props.clearSearchLabelString : this.DEFAULT_LOCALIZATIONS.clearSearchLabelString,
+        magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
         searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
+
+    if (_.isString(this.state.searchString)) {
+      clearSearch = (<button aria-label={clearSearchLabelString} ref="searchClear" name="clearSearch" type="button" className="r-ss-search-clear" onClick={this._clearSearchString} onKeyDown={this._clearSearchString}>
+                       <span />
+                     </button>);
+    }
 
     return(
       <div className="r-ss-search-wrap">
@@ -674,11 +756,12 @@ var ReactSuperSelect = React.createClass({
                  placeholder={searchPlaceholderString}
                  onClick={this._setFocusIdToSearch}
                  onChange={this._handleSearch}
-                 defaultValue={this.state.searchString}
+                 value={this.state.searchString}
                  name={searchAriaId}
                  id={searchAriaId}
                  aria-labelledby={searchAriaIdLabel}
                  aria-autocomplete="list" />
+          {clearSearch}
           <i className={magnifierClass}>search</i>
         </div>
       </div>
@@ -739,8 +822,7 @@ var ReactSuperSelect = React.createClass({
     }
 
     if (this.state.isOpen || (event.which !== this.keymap.tab)) {
-      event.stopPropagation();
-      event.preventDefault();
+      this._arrestEvent(event);
     }
 
     switch(event.which) {
@@ -765,6 +847,8 @@ var ReactSuperSelect = React.createClass({
       case this.keymap.tab: // delegate to enter (selection) handler
         if (this.state.isOpen) {
           this._onEnterKey(event);
+        } else {
+          this._focusRemovalButtons(event);
         }
         break;
       case this.keymap.up:
@@ -775,8 +859,7 @@ var ReactSuperSelect = React.createClass({
 
   // handler for searchInput's keyUp event
   _handleSearch: function(event) {
-    event.stopPropagation();
-    event.preventDefault();
+    this._arrestEvent(event);
     var searchString = event.target.value;
     this._handleSearchDebounced.call(this, searchString);
   },
@@ -916,17 +999,9 @@ var ReactSuperSelect = React.createClass({
       return;
     }
 
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
-        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.target.getAttribute('class'));
+    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey));
 
-    if (keepControlOpen && alreadySelected) {
-      var optionData = _.first(this._findArrayOfOptionDataObjectsByValue(event.target.getAttribute('data-option-value')));
-      this._removeSelectedOptionByValue(optionData);
-    } else {
-      if (!alreadySelected) {
-        this._selectFocusedOption(event.target, keepControlOpen);
-      }
-    }
+    this._selectFocusedOption(event.target, keepControlOpen);
   },
 
   // Escape key handler. Closes the dropdown
@@ -1000,8 +1075,8 @@ var ReactSuperSelect = React.createClass({
       }
     }
 
-    var remainingSelected = _.reject(this.state.value, function(option) {
-        return _.includes(valuePropsToReject, option[this.state.valueKey]);
+    var remainingSelected = _.reject(this.state.value, function(opt) {
+        return _.includes(valuePropsToReject, opt[this.state.valueKey]);
       }, this);
 
     this.props.onChange(remainingSelected);
@@ -1038,8 +1113,7 @@ var ReactSuperSelect = React.createClass({
         isSpaceKey = event.which === this.keymap.space;
 
     if (isEnterKey || isSpaceKey) {
-      event.preventDefault();
-      event.stopPropagation();
+      this._arrestEvent(event);
       this._removeSelectedOptionByValue(value, this._setFocusToTagRemovalIfPresent); // delegate to removal handler
     }
 
@@ -1047,8 +1121,7 @@ var ReactSuperSelect = React.createClass({
 
   // remove a selected tag on click
   _removeTagClick: function(value, event) {
-    event.preventDefault();
-    event.stopPropagation();
+    this._arrestEvent(event);
 
     this._removeSelectedOptionByValue(value);
   },
@@ -1067,9 +1140,9 @@ var ReactSuperSelect = React.createClass({
       }
     }
 
-    var optionsToSelect = _.reduce(this.state.data, function(memo, option) {
-          if (_.includes(valuePropsToSelect, option[this.state.valueKey])) {
-            memo.push(option);
+    var optionsToSelect = _.reduce(this.state.data, function(memo, opt) {
+          if (_.includes(valuePropsToSelect, opt[this.state.valueKey])) {
+            memo.push(opt);
           }
           return memo;
         }, [], this);
@@ -1102,7 +1175,6 @@ var ReactSuperSelect = React.createClass({
   // Make a user-selection of the option that is currently focused.
   // Will close the dropDown when keepControlOpen is falsy
   _selectFocusedOption: function(eventTargetLi, keepControlOpen) {
-    keepControlOpen = keepControlOpen || false;
 
     var focusedOptionKey = this._getFocusedOptionKey();
     if (this.refs[focusedOptionKey]) {
@@ -1111,10 +1183,11 @@ var ReactSuperSelect = React.createClass({
       // store as last userSelected
       this.lastUserSelectedOption = eventTargetLi;
 
-      if (keepControlOpen && this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
+      if (this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
         var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
         this._removeSelectedOptionByValue(optionFullFromValueProp);
       } else {
+        keepControlOpen = keepControlOpen || false;
         this._selectItemByValues(optionValue, keepControlOpen);
       }
     }
@@ -1156,12 +1229,10 @@ var ReactSuperSelect = React.createClass({
     // store clicked option as the lastUserSelected
     this.lastUserSelectedOption = event.currentTarget;
 
-    if (keepControlOpen && alreadySelected) {
+    if (alreadySelected) {
       this._removeSelectedOptionByValue(value);
     } else {
-      if (!alreadySelected) {
-        this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
-      }
+      this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
     }
   },
 

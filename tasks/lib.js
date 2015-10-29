@@ -4,11 +4,9 @@ var babel = require('gulp-babel'),
 
 module.exports = function(gulp, config) {
 
-  gulp.task('clean:lib', function(done) {
-    del([config.component.lib], done);
-  });
+  // clean is run via npm script
 
-  gulp.task('build:lib:js', ['clean:lib'], function() {
+  gulp.task('build:lib:js', function() {
     return gulp.src([
         config.component.src + '/**/*.js',
         '!**/__tests__/**/*'
@@ -22,7 +20,7 @@ module.exports = function(gulp, config) {
   var libTasks = ['build:lib:js'];
 
   if (config.component.less) {
-    gulp.task('build:lib:css', ['clean:lib'], function() {
+    gulp.task('build:lib:css', function() {
       return gulp.src(config.component.less)
         .pipe(less())
         .pipe(gulp.dest('lib'));
@@ -30,6 +28,6 @@ module.exports = function(gulp, config) {
     libTasks.push('build:lib:css');
   }
 
-  gulp.task('build:lib', libTasks);
+  gulp.task('build:lib-gulp-sequence', libTasks);
 
 };

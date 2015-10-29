@@ -1,21 +1,27 @@
 var babelify = require('babelify'),
     browserify = require('gulp-browserify'),
     concat = require('gulp-concat'),
-    del = require('del'),
     exec = require('child_process').exec,
     gutil = require('gulp-util'),
     less = require('gulp-less'),
     markdownToJson = require('gulp-markdown-to-json'),
     minifyCss = require('gulp-minify-css'),
-    reactify = require('reactify'),
     rename = require("gulp-rename"),
     runSequence = require('run-sequence');
 
 module.exports = function(gulp, config) {
 
-  gulp.task('build:docs', function() {
-    runSequence('docs_clean',
-                'docs_annotate_source',
+  gulp.task('docs:build', function(cb) {
+    exec('npm run docs:build', function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
+  });
+
+  // TODO - get docs_clean running again
+  gulp.task('build:docs-gulp-sequence', function(callback) {
+    runSequence('docs_annotate_source',
                 'docs_add_version',
                 'docs_markdown',
                 'docs_js_unbundled',
@@ -27,7 +33,7 @@ module.exports = function(gulp, config) {
                 'docs_css-vendor',
                 'test_page_js_bundled',
                 'live_examples_js_bundled',
-                'docs_js_bundled');
+                'docs_js_bundled', callback);
   });
 
   // Version Printer Component, leveraged by documentation pages
@@ -58,10 +64,7 @@ module.exports = function(gulp, config) {
     });
   });
 
-  // clean docs
-  gulp.task('docs_clean', function(done) {
-    del(config.documentation.clean, done);
-  });
+  // clean docs is run via npm
 
   gulp.task('docs_js_bundled', function() {
     return gulp.src(config.documentation.docs_bundle)
