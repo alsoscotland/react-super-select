@@ -1,4 +1,54 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = '';
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes += ' ' + arg;
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes += ' ' + key;
+					}
+				}
+			}
+		}
+
+		return classes.substr(1);
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+},{}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -63,11 +113,930 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+'use strict';
+
+var downKey = require('./keys/down'),
+    endKey = require('./keys/end'),
+    enterKey = require('./keys/enter'),
+    escapeKey = require('./keys/escape'),
+    homeKey = require('./keys/home'),
+    spaceKey = require('./keys/space'),
+    tabKey = require('./keys/tab'),
+    upKey = require('./keys/up');
+
+var allKeys = [downKey, endKey, enterKey, escapeKey, homeKey, spaceKey, tabKey, upKey];
+
+module.exports = allKeys;
+
+},{"./keys/down":7,"./keys/end":8,"./keys/enter":9,"./keys/escape":10,"./keys/home":11,"./keys/space":12,"./keys/tab":13,"./keys/up":14}],4:[function(require,module,exports){
+'use strict';
+
+var multiple = require('./properties/multiple'),
+    searchable = require('./properties/searchable'),
+    tags = require('./properties/tags'),
+    clearable = require('./properties/clearable'),
+    clearSearchLabelString = require('./properties/clearSearchLabelString'),
+    clearSelectionLabelString = require('./properties/clearSelectionLabelString'),
+    customClass = require('./properties/customClass'),
+    customGroupHeadingClass = require('./properties/customGroupHeadingClass'),
+    customSearchIconClass = require('./properties/customSearchIconClass'),
+    customLoaderClass = require('./properties/customLoaderClass'),
+    customTagClass = require('./properties/customTagClass'),
+    onChange = require('./properties/onChange'),
+    ajaxDataFetch = require('./properties/ajaxDataFetch'),
+    dataSource = require('./properties/dataSource'),
+    initialValue = require('./properties/initialValue'),
+    optionLabelKey = require('./properties/optionLabelKey'),
+    optionValueKey = require('./properties/optionValueKey'),
+    pageDataFetch = require('./properties/pageDataFetch'),
+    hasMorePages = require('./properties/hasMorePages'),
+    groupBy = require('./properties/groupBy'),
+    customGroupHeadingTemplateFunction = require('./properties/customGroupHeadingTemplateFunction'),
+    customFilterFunction = require('./properties/customFilterFunction'),
+    customOptionTemplateFunction = require('./properties/customOptionTemplateFunction'),
+    ajaxErrorString = require('./properties/ajaxErrorString'),
+    noResultsString = require('./properties/noResultsString'),
+    placeholder = require('./properties/placeholder'),
+    searchPlaceholder = require('./properties/searchPlaceholder'),
+    tagRemoveLabelString = require('./properties/tagRemoveLabelString');
+
+var allProps = [multiple, searchable, tags, clearable, clearSearchLabelString, clearSelectionLabelString, customClass, customGroupHeadingClass, customSearchIconClass, customLoaderClass, customTagClass, onChange, ajaxDataFetch, dataSource, initialValue, optionLabelKey, optionValueKey, pageDataFetch, hasMorePages, groupBy, customGroupHeadingTemplateFunction, customFilterFunction, customOptionTemplateFunction, ajaxErrorString, noResultsString, placeholder, searchPlaceholder, tagRemoveLabelString];
+
+module.exports = allProps;
+
+},{"./properties/ajaxDataFetch":51,"./properties/ajaxErrorString":52,"./properties/clearSearchLabelString":53,"./properties/clearSelectionLabelString":54,"./properties/clearable":55,"./properties/customClass":56,"./properties/customFilterFunction":57,"./properties/customGroupHeadingClass":58,"./properties/customGroupHeadingTemplateFunction":59,"./properties/customLoaderClass":60,"./properties/customOptionTemplateFunction":61,"./properties/customSearchIconClass":62,"./properties/customTagClass":63,"./properties/dataSource":64,"./properties/groupBy":65,"./properties/hasMorePages":66,"./properties/initialValue":67,"./properties/multiple":68,"./properties/noResultsString":69,"./properties/onChange":70,"./properties/optionLabelKey":71,"./properties/optionValueKey":72,"./properties/pageDataFetch":73,"./properties/placeholder":74,"./properties/searchPlaceholder":75,"./properties/searchable":76,"./properties/tagRemoveLabelString":77,"./properties/tags":78}],5:[function(require,module,exports){
+'use strict';
+
+require('./props-app');
+require('./keyboard-navigation-app');
+require('./version-printer');
+
+},{"./keyboard-navigation-app":6,"./props-app":79,"./version-printer":80}],6:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    classNames = require('classnames'),
+    React = require('react');
+
+var allKeys = require('./all-keys');
+
+var KeyboardNavigationApp = React.createClass({
+  displayName: 'KeyboardNavigationApp',
+
+  _renderKeysLinks: function _renderKeysLinks() {
+    var propsLinks = _.map(allKeys, function (key, index) {
+      var href = '#' + key.nameAttr;
+      var reactKey = 'key_link_' + index;
+      return React.createElement(
+        'li',
+        { key: reactKey },
+        React.createElement(
+          'a',
+          { href: href },
+          ' ',
+          key.nameAttr,
+          ' '
+        )
+      );
+    });
+
+    return propsLinks;
+  },
+
+  _renderKeys: function _renderKeys() {
+    var articles = _.map(allKeys, function (key, index) {
+      var reactKey = "keyboard_" + index;
+      return React.createElement(
+        'article',
+        { key: reactKey, className: 'api-item' },
+        React.createElement(
+          'h5',
+          { className: 'api-link' },
+          React.createElement(
+            'a',
+            { name: key.nameAttr },
+            key.displayName
+          )
+        ),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: key.renderString } }),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#index_top' },
+          'Back to Top'
+        ),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#keys_top' },
+          'Back to Keys Links'
+        )
+      );
+    });
+
+    return articles;
+  },
+
+  render: function render() {
+    return React.createElement(
+      'section',
+      { className: 'api-docs-section' },
+      React.createElement(
+        'a',
+        { name: 'keyboard' },
+        ' '
+      ),
+      React.createElement(
+        'h3',
+        { className: 'feature-heading' },
+        'Keyboard Navigation:'
+      ),
+      React.createElement(
+        'a',
+        { name: 'keys_top' },
+        ' '
+      ),
+      React.createElement(
+        'h5',
+        null,
+        'Keyboard Navigation Links By Key:'
+      ),
+      React.createElement(
+        'nav',
+        { className: 'api' },
+        React.createElement(
+          'ul',
+          null,
+          this._renderKeysLinks()
+        )
+      ),
+      this._renderKeys()
+    );
+  }
+});
+
+module.exports = KeyboardNavigationApp;
+React.render(React.createElement(KeyboardNavigationApp, null), document.getElementById('keyboard_docs'));
+
+},{"./all-keys":3,"classnames":1,"lodash":81,"react":236}],7:[function(require,module,exports){
+"use strict";
+
+var downMarkdown = require('../markdown/js/keys/down').body;
+
+var downKey = {
+
+  nameAttr: "down",
+  displayName: "Down Arrow Key",
+
+  renderString: downMarkdown
+
+};
+
+module.exports = downKey;
+
+},{"../markdown/js/keys/down":15}],8:[function(require,module,exports){
+"use strict";
+
+var endMarkdown = require('../markdown/js/keys/end').body;
+
+var endKey = {
+
+  nameAttr: "end",
+  displayName: "End Key",
+
+  renderString: endMarkdown
+
+};
+
+module.exports = endKey;
+
+},{"../markdown/js/keys/end":16}],9:[function(require,module,exports){
+"use strict";
+
+var enterMarkdown = require('../markdown/js/keys/enter').body;
+
+var enterKey = {
+
+  nameAttr: "enter",
+  displayName: "Enter Key",
+
+  renderString: enterMarkdown
+
+};
+
+module.exports = enterKey;
+
+},{"../markdown/js/keys/enter":17}],10:[function(require,module,exports){
+"use strict";
+
+var escapeMarkdown = require('../markdown/js/keys/escape').body;
+
+var escapeKey = {
+
+  nameAttr: "escape",
+  displayName: "Escape Key",
+
+  renderString: escapeMarkdown
+
+};
+
+module.exports = escapeKey;
+
+},{"../markdown/js/keys/escape":18}],11:[function(require,module,exports){
+"use strict";
+
+var homeMarkdown = require('../markdown/js/keys/home').body;
+
+var homeKey = {
+
+  nameAttr: "home",
+  displayName: "Home Key",
+
+  renderString: homeMarkdown
+
+};
+
+module.exports = homeKey;
+
+},{"../markdown/js/keys/home":19}],12:[function(require,module,exports){
+"use strict";
+
+var spaceMarkdown = require('../markdown/js/keys/space').body;
+
+var spaceKey = {
+
+  nameAttr: "space",
+  displayName: "Space Bar Key",
+
+  renderString: spaceMarkdown
+
+};
+
+module.exports = spaceKey;
+
+},{"../markdown/js/keys/space":20}],13:[function(require,module,exports){
+"use strict";
+
+var tabMarkdown = require('../markdown/js/keys/tab').body;
+
+var tabKey = {
+
+  nameAttr: "tab",
+  displayName: "Tab Key",
+
+  renderString: tabMarkdown
+
+};
+
+module.exports = tabKey;
+
+},{"../markdown/js/keys/tab":21}],14:[function(require,module,exports){
+"use strict";
+
+var upMarkdown = require('../markdown/js/keys/up').body;
+
+var upKey = {
+
+  nameAttr: "up",
+  displayName: "Up Arrow Key",
+
+  renderString: upMarkdown
+
+};
+
+module.exports = upKey;
+
+},{"../markdown/js/keys/up":22}],15:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>open the option dropdown</strong></li>\n</ul>\n<p>When the control’s main element is focused.  Pressing the down arrow key will open the dropdown. (It can also be pressed with the alt-key with the same result)</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>navigation of options</strong></li>\n</ul>\n<p>Pressing the down-arrow key when the dropdown is open will move focus down to the next selectable option.  If the <strong>searchable</strong> prop is true, The first keypress of the down arrow will focus the search input field.</p>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select focused option and move focus down</strong></li>\n</ul>\n<p>If the down arrow is pressed with the shift-key in a <strong>multiselect</strong> or <strong>tags</strong> control, the focused option will be selected (or deselected if alreadySelected), and the focus will move down to the next available option.</p>\n"}
+},{}],16:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Move focus to the last available option</strong></li>\n</ul>\n<p>Pressing the end key moves focus to the last option in the dropdown</p>\n"}
+},{}],17:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>open the dropdown</strong></li>\n</ul>\n<p>Pressing enter when the the control has focus will open the dropdown.</p>\n<h4 id=\"-closed-control-state-when-tag-removal-button-focused-\">(Closed Control State - when tag removal button focused)</h4>\n<ul>\n<li><strong>remove the focused tag</strong> (only applicable to controls with the <strong>tags</strong> property set to true) </li>\n</ul>\n<p>Pressing enter when a tag removal button has focus will remove the tag from the selected values.  After the tag has been removed, focus is moved to the first-available tag removal button.</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Select the currently focused option</strong></li>\n</ul>\n<p>Pressing the enter key selects the option that currently has focus.  In a non-multiselect control, the dropdown will close after the selection is made.</p>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-ctrl-key-or-meta-key-held-down-\">(With ctrl-key or meta-key held down)</h4>\n<ul>\n<li><strong>toggle selection state of the currently focused option</strong></li>\n</ul>\n<p>When the enter key is pressed along with the ctrl-key or meta-key. The currently focused option will be selected, or deselected if it was already selected when clicked</p>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select a range of options from last selected to currently focused option</strong></li>\n</ul>\n<p>When the enter key is pressed along with the shift-key while a option has focus, All values in the range from the last selected option to the currently focused option will be selected.  </p>\n<p>If no option was previously selected, all options from the first option to the focused option will be selected.</p>\n<ul>\n<li><strong>deselect a range up to but not including the focused option</strong></li>\n</ul>\n<p>If the focused option has already been selected when the user clicks enter along with the shift-key, any selected options in the range between the last selected option and the focused option will be deselected.  The focused option will remain selected in this case.</p>\n"}
+},{}],18:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Close the dropdown</strong></li>\n</ul>\n"}
+},{}],19:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Move focus to first available option</strong></li>\n</ul>\n<p>Pressing the home key moves focus to the first option in the dropdown</p>\n"}
+},{}],20:[function(require,module,exports){
+module.exports={"body":"<p>The space key mimics the behavior of the <a href=\"#enter\">enter</a> key</p>\n"}
+},{}],21:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>tab away from the control</strong></li>\n</ul>\n<p>Pressing enter when the the control has focus will open the dropdown.</p>\n<h4 id=\"-closed-control-state-when-tag-removal-button-focused-\">(Closed Control State - when tag removal button focused)</h4>\n<ul>\n<li><strong>move focus to the next avaliable tag removal button</strong> (only applicable to controls with the <strong>tags</strong> property set to true) </li>\n</ul>\n<p>Pressing tab when a tag removal button has focus will move focus to the next available tag removal button.  If the focused-tag removal button is the last one available, focus will move away from the control.</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<p>In an open control, the tab key mimics the behavior of the <a href=\"#enter\">enter</a> key</p>\n"}
+},{}],22:[function(require,module,exports){
+module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>navigation of options</strong></li>\n</ul>\n<p>Pressing the up-arrow key when the dropdown is open will move focus up to the next selectable option.  If the focus reaches the first option, or the search input field in a <strong>searchable</strong> control, no action will occur.</p>\n<h4 id=\"-with-alt-key-held-down-\">(With alt-key held down)</h4>\n<ul>\n<li><strong>close the drop down</strong>\nAn alt-key press of the up-arrow will close the dropdown</li>\n</ul>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select focused option and move focus up</strong></li>\n</ul>\n<p>If the up arrow is pressed with the shift-key in a <strong>multiselect</strong> or <strong>tags</strong> control, the focused option will be selected (or deselected if alreadySelected), and the focus will move up to the next available option.</p>\n"}
+},{}],23:[function(require,module,exports){
+module.exports={"body":"<!-- ajaxDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(<strong>dataSource</strong> must be supplied if left undefined)</p>\n<p>Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function will be passed one argument, the dataSource that was provided to\nthe <strong>dataSource prop</strong></p>\n<p>The return value of the function must be a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The <strong>dataSource</strong> option should be left undefined when using this option.</p>\n"}
+},{}],24:[function(require,module,exports){
+module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options)</p>\n<p>This string will be shown as a message in the dropdown area in the event that an ajax request for options data fails</p>\n"}
+},{}],25:[function(require,module,exports){
+module.exports={"body":"<!-- clearSearchLabelString -->\n<p>(<strong>clearSearchLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option - which defaults to true)</p>\n<p>This string will be used as an aria-label for the clear search button when a user has entered a value into the search field (for accesibility).</p>\n"}
+},{}],26:[function(require,module,exports){
+module.exports={"body":"<!-- clearSelectionLabelString -->\n<p>(<strong>clearSelectionLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>clearable</strong> option - which defaults to true)</p>\n<p>This string will be used as an aria-label for the clear selection button (for accesibility).</p>\n"}
+},{}],27:[function(require,module,exports){
+module.exports={"body":"<!-- clearable property -->\n<p>(<strong>Boolean</strong>) <strong>(Default: true)</strong> <em>optional</em></p>\n<p>Whether or not the control will render a button in the dropdown trigger which will clear its selected values</p>\n"}
+},{}],28:[function(require,module,exports){
+module.exports={"body":"<!-- customClass -->\n<p>(<strong>String</strong>) <em>optional</em> </p>\n<p>This value will be added as a css class to the control’s main wrapping element.You should be able to overide all styling by leading your rules with</p>\n<pre><code class=\"lang-css\">.r-ss-wrap.{customClass}\n</code></pre>\n"}
+},{}],29:[function(require,module,exports){
+module.exports={"body":"<!-- customFilterFunction -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option)</p>\n<p>The function provided will serve as a replacement of the default search filter function. </p>\n<p>(If left undefined the default filter function will be used) </p>\n<p>The Default Filtering function is a lowercase string comparison for text. It matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown’s search field). The function leverages Lodash’s filter function with your dataSource collection as its first argument</p>\n"}
+},{}],30:[function(require,module,exports){
+module.exports={"body":"<!-- customGroupHeadingClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>Used in conjunction with the <strong>groupBy</strong> option.</p>\n<p>This string value will be added as a custom css class to the group headings which are rendered into the dropdown</p>\n"}
+},{}],31:[function(require,module,exports){
+module.exports={"body":"<!-- customGroupHeadingTemplateFunction -->\n<p>(<strong>Function</strong>) <em>optional</em> </p>\n<p>(Used in conjunction with the <strong>groupBy</strong> option)</p>\n<p>This function provides custom templating capability for your dropdown heading options. </p>\n<p>The function will be called with the value returned as each group’s object key as its first argument. (This is the value returned by Lodash’s groupBy when passed the value of your groupBy option). It should return your desired group heading markup</p>\n"}
+},{}],32:[function(require,module,exports){
+module.exports={"body":"<!-- customLoaderClass -->\n<p>(<strong>String</strong>) <em>optional</em> </p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> and <strong>pageDataFetch</strong> options) </p>\n<p>This string value will be added as a css class to the loading icon allowing css overrides. </p>\n<p>(By default the control uses an animated gif spinner which is a base64 background image in css)</p>\n"}
+},{}],33:[function(require,module,exports){
+module.exports={"body":"<!-- customOptionTemplateFunction -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>This function provides custom templating capability for your dropdown options. It will be used to render the display of selected values in the case of a <strong>multiple</strong> select control which does not have <strong>tags</strong> set to true. </p>\n<p>The function should accept a single option object from your dataSource collection and return your desired markup based on that object’s properties</p>\n"}
+},{}],34:[function(require,module,exports){
+module.exports={"body":"<!-- customSearchIconClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>This value will be added as a css class to the icon element in the search-filtering bar (when <strong>searchable</strong> is true). \nThis allows you to override the default search icon.</p>\n<p>(By default the icon will be a magnifying glass)</p>\n"}
+},{}],35:[function(require,module,exports){
+module.exports={"body":"<!-- customTagClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This value will be added as a css class to the wrapper of user-selected options display element when it is displayed as a tag. </p>\n<p>You should be able to overide all tag styling by leading your css rules with</p>\n<pre><code class=\"lang-css\">.r-ss-tag.{customTagClass}\n</code></pre>\n"}
+},{}],36:[function(require,module,exports){
+module.exports={"body":"<!-- dataSource -->\n<p>(<strong>Array</strong>|<strong>Object</strong>|<strong>Collection Object</strong>) <em>optional</em> </p>\n<p>(<strong>ajaxDataFetch</strong>must be supplied if left undefined)</p>\n<p>The dataSource option provides the data for your options dropdown. The value provided will be passed to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type</p>\n<p>The parsing method supports dataSource values as:</p>\n<ul>\n<li>an array of option objects (will be directly assigned to state.data)</li>\n<li>an object with a collection property (object.collection will be assigned to state.data)</li>\n<li>an object with a get function (the return value of object.get(‘collection’) will be assigned to state.data)</li>\n</ul>\n<p>Each option in the resulting collection must have the following properties:</p>\n<ul>\n<li>a unique value corresponding to the key set by the <strong>optionValueKey</strong> or the default optionValueKey of ‘id’</li>\n<li>a defined value corresponding to the key set by the <strong>optionLabelKey</strong> or the default optionLabelKey of ‘name’</li>\n</ul>\n"}
+},{}],37:[function(require,module,exports){
+module.exports={"body":"<!-- groupBy -->\n<p>(<strong>String</strong>|<strong>Object</strong>|<strong>Function</strong>) <em>optional</em></p>\n<p>Allows you to sort your dropdown options into groups by leveraging Lodash’s groupBy function. </p>\n<p>Please reference the <a href=\"https://lodash.com/docs#groupBy\">Lodash documentation</a> for behavior of groupBy when passed different argument types</p>\n"}
+},{}],38:[function(require,module,exports){
+module.exports={"body":"<!-- hasMorePages -->\n<p> (<strong>Function</strong>) <em>optional</em></p>\n<p> (should be provided when using the <strong>pageDataFetch</strong> option)</p>\n<p> This function accepts one argument, a value as described by the <strong>dataSource</strong> option documentation.</p>\n<p>It should return a Boolean value that indicates whether the option data collection has any more pages available for fetching</p>\n"}
+},{}],39:[function(require,module,exports){
+module.exports={"body":"<!-- initialValue property -->\n<p>(<strong>Array</strong>|<strong>Object</strong>) <em>optional</em></p>\n<p>The selected value the control will be initialized with</p>\n<p>Must be either an array of option objects or a single option object from your dataSource collection</p>\n"}
+},{}],40:[function(require,module,exports){
+module.exports={"body":"<!-- multiple property -->\n<p>(<strong>Boolean</strong>) <em>optional</em></p>\n<p>Whether or not the control supports multi-selection.</p>\n<p>When using the <strong>tags</strong> display option, this option is redundant</p>\n"}
+},{}],41:[function(require,module,exports){
+module.exports={"body":"<!-- noResultsString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>A string value which will be displayed when your dropdown shows no results. (i.e. <strong>dataSource</strong> collection is empty , or <strong>ajaxDataFetch</strong> returns an empty collection)</p>\n"}
+},{}],42:[function(require,module,exports){
+module.exports={"body":"<!-- onChange -->\n<p>(<strong>Function</strong>) <em>required</em></p>\n<p>This is the main callback handler for the control. </p>\n<p>When a user makes selection(s), this handler will be called, the selected option (or when multiple or tags an array of selected values) will be passed to the handler as an argument. </p>\n<p>(The values passed are option objects from the dataSource collection)</p>\n"}
+},{}],43:[function(require,module,exports){
+module.exports={"body":"<!-- optionLabelKey -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(defaults to using ‘name’ as the key if left undefined)</p>\n<p>This value represents the key in each option object (from the <strong>dataSource</strong> collection) </p>\n<p>This key should map to the value you would like displayed as a label for each option.</p>\n"}
+},{}],44:[function(require,module,exports){
+module.exports={"body":"<!-- optionValueKey -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> (defaults to using ‘id’ as the key if left undefined)</p>\n<p>  This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that uniquely identifies that option across the dataSource collection. </p>\n<p>  Think of it in terms of the value attribute of the html option tag (inside a select)</p>\n<pre><code class=\"lang-html\">  &lt;select&gt;\n    &lt;option value=&quot;?&quot;&gt;\n</code></pre>\n"}
+},{}],45:[function(require,module,exports){
+module.exports={"body":"<!-- pageDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(A <strong>hasMorePages</strong> function should be provided when using this option)</p>\n<p>Additional pages of data can be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function takes one argument, the value provided as the dataSource (or the return value of the ajaxDataSource function). </p>\n<p>It must return a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The pageDataFetch function will be called based upon the user’s scroll position in the dropdown (reaching a threshold close enough to the end of the dropdown’s results list). </p>\n<p>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <strong>hasMorePages</strong> evaluates to false</p>\n"}
+},{}],46:[function(require,module,exports){
+module.exports={"body":"<!-- placeholder -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> This string value will be displayed in the main display area of your control when the user has no selected values</p>\n"}
+},{}],47:[function(require,module,exports){
+module.exports={"body":"<!-- searchPlaceholder -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option)</p>\n<p>This string will be shown in the dropdown area’s search input field when a user has not entered any characters</p>\n"}
+},{}],48:[function(require,module,exports){
+module.exports={"body":"<!-- searchable -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to show a search bar in the dropdown area which offers text-based filtering of the dataSource options (by label <strong>optionLabelKey</strong>)</p>\n"}
+},{}],49:[function(require,module,exports){
+module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>tagRemoveLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>\n"}
+},{}],50:[function(require,module,exports){
+module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n"}
+},{}],51:[function(require,module,exports){
+"use strict";
+
+var ajaxDataFetchMarkdown = require('../markdown/js/properties/ajaxDataFetch').body;
+
+var ajaxDataFetchProp = {
+
+  nameAttr: "ajaxDataFetch",
+
+  renderString: ajaxDataFetchMarkdown
+
+};
+
+module.exports = ajaxDataFetchProp;
+
+},{"../markdown/js/properties/ajaxDataFetch":23}],52:[function(require,module,exports){
+"use strict";
+
+var ajaxErrorStringMarkdown = require('../markdown/js/properties/ajaxErrorString').body;
+
+var ajaxErrorStringProp = {
+
+  nameAttr: "ajaxErrorString",
+
+  renderString: ajaxErrorStringMarkdown
+
+};
+
+module.exports = ajaxErrorStringProp;
+
+},{"../markdown/js/properties/ajaxErrorString":24}],53:[function(require,module,exports){
+"use strict";
+
+var clearSearchLabelStringMarkdown = require('../markdown/js/properties/clearSearchLabelString').body;
+
+var clearSearchLabelStringProp = {
+
+  nameAttr: "clearSearchLabelString",
+
+  renderString: clearSearchLabelStringMarkdown
+
+};
+
+module.exports = clearSearchLabelStringProp;
+
+},{"../markdown/js/properties/clearSearchLabelString":25}],54:[function(require,module,exports){
+"use strict";
+
+var clearSelectionLabelStringMarkdown = require('../markdown/js/properties/clearSelectionLabelString').body;
+
+var clearSelectionLabelStringProp = {
+
+  nameAttr: "clearSelectionLabelString",
+
+  renderString: clearSelectionLabelStringMarkdown
+
+};
+
+module.exports = clearSelectionLabelStringProp;
+
+},{"../markdown/js/properties/clearSelectionLabelString":26}],55:[function(require,module,exports){
+"use strict";
+
+var clearableMarkdown = require('../markdown/js/properties/clearable').body;
+
+var clearableProp = {
+
+  nameAttr: "clearable",
+
+  renderString: clearableMarkdown
+
+};
+
+module.exports = clearableProp;
+
+},{"../markdown/js/properties/clearable":27}],56:[function(require,module,exports){
+"use strict";
+
+var customClassMarkdown = require('../markdown/js/properties/customClass').body;
+
+var customClassProp = {
+
+  nameAttr: "customClass",
+
+  renderString: customClassMarkdown
+
+};
+
+module.exports = customClassProp;
+
+},{"../markdown/js/properties/customClass":28}],57:[function(require,module,exports){
+"use strict";
+
+var customFilterFunctionMarkdown = require('../markdown/js/properties/customFilterFunction').body;
+
+var customFilterFunctionProp = {
+
+  nameAttr: "customFilterFunction",
+
+  renderString: customFilterFunctionMarkdown
+
+};
+
+module.exports = customFilterFunctionProp;
+
+},{"../markdown/js/properties/customFilterFunction":29}],58:[function(require,module,exports){
+"use strict";
+
+var customGroupHeadingClassMarkdown = require('../markdown/js/properties/customGroupHeadingClass').body;
+
+var customGroupHeadingClassProp = {
+
+  nameAttr: "customGroupHeadingClass",
+
+  renderString: customGroupHeadingClassMarkdown
+
+};
+
+module.exports = customGroupHeadingClassProp;
+
+},{"../markdown/js/properties/customGroupHeadingClass":30}],59:[function(require,module,exports){
+"use strict";
+
+var customGroupHeadingTemplateFunctionMarkdown = require('../markdown/js/properties/customGroupHeadingTemplateFunction').body;
+
+var customGroupHeadingTemplateFunctionProp = {
+
+  nameAttr: "customGroupHeadingTemplateFunction",
+
+  renderString: customGroupHeadingTemplateFunctionMarkdown
+
+};
+
+module.exports = customGroupHeadingTemplateFunctionProp;
+
+},{"../markdown/js/properties/customGroupHeadingTemplateFunction":31}],60:[function(require,module,exports){
+"use strict";
+
+var customLoaderClassMarkdown = require('../markdown/js/properties/customLoaderClass').body;
+
+var customLoaderClassProp = {
+
+  nameAttr: "customLoaderClass",
+
+  renderString: customLoaderClassMarkdown
+
+};
+
+module.exports = customLoaderClassProp;
+
+},{"../markdown/js/properties/customLoaderClass":32}],61:[function(require,module,exports){
+"use strict";
+
+var customOptionTemplateFunctionMarkdown = require('../markdown/js/properties/customOptionTemplateFunction').body;
+
+var customOptionTemplateFunctionProp = {
+
+  nameAttr: "customOptionTemplateFunction",
+
+  renderString: customOptionTemplateFunctionMarkdown
+
+};
+
+module.exports = customOptionTemplateFunctionProp;
+
+},{"../markdown/js/properties/customOptionTemplateFunction":33}],62:[function(require,module,exports){
+"use strict";
+
+var customSearchIconClassMarkdown = require('../markdown/js/properties/customSearchIconClass').body;
+
+var customSearchIconClassProp = {
+
+  nameAttr: "customSearchIconClass",
+
+  renderString: customSearchIconClassMarkdown
+
+};
+
+module.exports = customSearchIconClassProp;
+
+},{"../markdown/js/properties/customSearchIconClass":34}],63:[function(require,module,exports){
+"use strict";
+
+var customTagClassMarkdown = require('../markdown/js/properties/customTagClass').body;
+
+var customTagClassProp = {
+
+  nameAttr: "customTagClass",
+
+  renderString: customTagClassMarkdown
+
+};
+
+module.exports = customTagClassProp;
+
+},{"../markdown/js/properties/customTagClass":35}],64:[function(require,module,exports){
+"use strict";
+
+var dataSourceMarkdown = require('../markdown/js/properties/dataSource').body;
+
+var dataSourceProp = {
+
+  nameAttr: "dataSource",
+
+  renderString: dataSourceMarkdown
+
+};
+
+module.exports = dataSourceProp;
+
+},{"../markdown/js/properties/dataSource":36}],65:[function(require,module,exports){
+"use strict";
+
+var groupByMarkdown = require('../markdown/js/properties/groupBy').body;
+
+var groupByProp = {
+
+  nameAttr: "groupBy",
+
+  renderString: groupByMarkdown
+
+};
+
+module.exports = groupByProp;
+
+},{"../markdown/js/properties/groupBy":37}],66:[function(require,module,exports){
+"use strict";
+
+var hasMorePagesMarkdown = require('../markdown/js/properties/hasMorePages').body;
+
+var hasMorePagesProp = {
+
+  nameAttr: "hasMorePages",
+
+  renderString: hasMorePagesMarkdown
+
+};
+
+module.exports = hasMorePagesProp;
+
+},{"../markdown/js/properties/hasMorePages":38}],67:[function(require,module,exports){
+"use strict";
+
+var initialValueMarkdown = require('../markdown/js/properties/initialValue').body;
+
+var initialValueProp = {
+
+  nameAttr: "initialValue",
+
+  renderString: initialValueMarkdown
+
+};
+
+module.exports = initialValueProp;
+
+},{"../markdown/js/properties/initialValue":39}],68:[function(require,module,exports){
+"use strict";
+
+var multipleMarkdown = require('../markdown/js/properties/multiple').body;
+
+var multipleProp = {
+
+  nameAttr: "multiple",
+
+  renderString: multipleMarkdown
+
+};
+
+module.exports = multipleProp;
+
+},{"../markdown/js/properties/multiple":40}],69:[function(require,module,exports){
+"use strict";
+
+var noResultsStringMarkdown = require('../markdown/js/properties/noResultsString').body;
+
+var noResultsStringProp = {
+
+  nameAttr: "noResultsString",
+
+  renderString: noResultsStringMarkdown
+
+};
+
+module.exports = noResultsStringProp;
+
+},{"../markdown/js/properties/noResultsString":41}],70:[function(require,module,exports){
+"use strict";
+
+var onChangeMarkdown = require('../markdown/js/properties/onChange').body;
+
+var onChangeProp = {
+
+  nameAttr: "onChange",
+
+  renderString: onChangeMarkdown
+
+};
+
+module.exports = onChangeProp;
+
+},{"../markdown/js/properties/onChange":42}],71:[function(require,module,exports){
+"use strict";
+
+var optionLabelKeyMarkdown = require('../markdown/js/properties/optionLabelKey').body;
+
+var optionLabelKeyProp = {
+
+  nameAttr: "optionLabelKey",
+
+  renderString: optionLabelKeyMarkdown
+
+};
+
+module.exports = optionLabelKeyProp;
+
+},{"../markdown/js/properties/optionLabelKey":43}],72:[function(require,module,exports){
+"use strict";
+
+var optionValueKeyMarkdown = require('../markdown/js/properties/optionValueKey').body;
+
+var optionValueKeyProp = {
+
+  nameAttr: "optionValueKey",
+
+  renderString: optionValueKeyMarkdown
+
+};
+
+module.exports = optionValueKeyProp;
+
+},{"../markdown/js/properties/optionValueKey":44}],73:[function(require,module,exports){
+"use strict";
+
+var pageDataFetchMarkdown = require('../markdown/js/properties/pageDataFetch').body;
+
+var pageDataFetchProp = {
+
+  nameAttr: "pageDataFetch",
+
+  renderString: pageDataFetchMarkdown
+
+};
+
+module.exports = pageDataFetchProp;
+
+},{"../markdown/js/properties/pageDataFetch":45}],74:[function(require,module,exports){
+"use strict";
+
+var placeholderMarkdown = require('../markdown/js/properties/placeholder').body;
+
+var placeholderProp = {
+
+  nameAttr: "placeholder",
+
+  renderString: placeholderMarkdown
+
+};
+
+module.exports = placeholderProp;
+
+},{"../markdown/js/properties/placeholder":46}],75:[function(require,module,exports){
+"use strict";
+
+var searchPlaceholderMarkdown = require('../markdown/js/properties/searchPlaceholder').body;
+
+var searchPlaceholderProp = {
+
+  nameAttr: "searchPlaceholder",
+
+  renderString: searchPlaceholderMarkdown
+
+};
+
+module.exports = searchPlaceholderProp;
+
+},{"../markdown/js/properties/searchPlaceholder":47}],76:[function(require,module,exports){
+"use strict";
+
+var searchableMarkdown = require('../markdown/js/properties/searchable').body;
+
+var searchableProp = {
+
+  nameAttr: "searchable",
+
+  renderString: searchableMarkdown
+
+};
+
+module.exports = searchableProp;
+
+},{"../markdown/js/properties/searchable":48}],77:[function(require,module,exports){
+"use strict";
+
+var tagRemoveLabelStringMarkdown = require('../markdown/js/properties/tagRemoveLabelString').body;
+
+var tagRemoveLabelStringProp = {
+
+  nameAttr: "tagRemoveLabelString",
+
+  renderString: tagRemoveLabelStringMarkdown
+
+};
+
+module.exports = tagRemoveLabelStringProp;
+
+},{"../markdown/js/properties/tagRemoveLabelString":49}],78:[function(require,module,exports){
+"use strict";
+
+var tagsMarkdown = require('../markdown/js/properties/tags').body;
+
+var tagsProp = {
+
+  nameAttr: "tags",
+
+  renderString: tagsMarkdown
+
+};
+
+module.exports = tagsProp;
+
+},{"../markdown/js/properties/tags":50}],79:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    classNames = require('classnames'),
+    React = require('react');
+
+var allProps = require('./all-props');
+
+var PropsApp = React.createClass({
+  displayName: 'PropsApp',
+
+  _renderPropsLinks: function _renderPropsLinks() {
+    var sortedProps = allProps.sort(function (propA, propB) {
+      return propA.nameAttr >= propB.nameAttr ? 1 : -1;
+    });
+    var propsLinks = _.map(sortedProps, function (prop, index) {
+      var href = '#' + prop.nameAttr;
+      var key = 'prop_link_' + index;
+      return React.createElement(
+        'li',
+        { key: key },
+        React.createElement(
+          'a',
+          { href: href },
+          ' ',
+          prop.nameAttr,
+          ' '
+        )
+      );
+    });
+
+    return propsLinks;
+  },
+
+  _renderProps: function _renderProps() {
+    var articles = _.map(allProps, function (prop, index) {
+      var key = "api_prop_" + index;
+      return React.createElement(
+        'article',
+        { key: key, className: 'api-item' },
+        React.createElement(
+          'h4',
+          { className: 'api-link' },
+          React.createElement(
+            'a',
+            { name: prop.nameAttr },
+            prop.nameAttr
+          )
+        ),
+        React.createElement('p', { dangerouslySetInnerHTML: { __html: prop.renderString } }),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#index_top' },
+          'Back to Top'
+        ),
+        React.createElement(
+          'a',
+          { className: 'top-return', href: '#properties_top' },
+          'Back to API Documentation Links'
+        )
+      );
+    });
+
+    return articles;
+  },
+
+  render: function render() {
+    return React.createElement(
+      'section',
+      { className: 'api-docs-section' },
+      React.createElement(
+        'a',
+        { name: 'apiDocs' },
+        ' '
+      ),
+      React.createElement(
+        'h3',
+        { className: 'feature-heading' },
+        'API documentation'
+      ),
+      'you can also view the',
+      React.createElement(
+        'a',
+        { href: 'annotated-source.html' },
+        ' Annotated Source Code '
+      ),
+      React.createElement(
+        'a',
+        { name: 'properties_top' },
+        ' '
+      ),
+      React.createElement(
+        'h5',
+        null,
+        'Component Property API Documentation Links:'
+      ),
+      React.createElement(
+        'nav',
+        { className: 'api' },
+        React.createElement(
+          'ul',
+          null,
+          this._renderPropsLinks()
+        )
+      ),
+      this._renderProps()
+    );
+  }
+});
+
+module.exports = PropsApp;
+React.render(React.createElement(PropsApp, null), document.getElementById('props_docs'));
+
+},{"./all-props":4,"classnames":1,"lodash":81,"react":236}],80:[function(require,module,exports){
+'use strict';
+
+var RSS_VERSION = "0.1.18";
+var React = require('react');
+
+var VersionPrinter = React.createClass({
+  displayName: 'VersionPrinter',
+
+  render: function render() {
+    return React.createElement(
+      'span',
+      null,
+      RSS_VERSION
+    );
+  }
+});
+
+module.exports = VersionPrinter;
+React.render(React.createElement(VersionPrinter, null), document.getElementById('r_ss_version'));
+
+},{"react":236}],81:[function(require,module,exports){
 (function (global){
 /**
  * @license
- * lodash 3.8.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.7.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -d -o ./index.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -80,7 +1049,7 @@ process.chdir = function (dir) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.8.0';
+  var VERSION = '3.7.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -155,7 +1124,7 @@ process.chdir = function (dir) {
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match property names within property paths. */
-  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
+  var reIsDeepProp = /\.|\[(?:[^[\]]+|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
       reIsPlainProp = /^\w*$/,
       rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
 
@@ -346,6 +1315,8 @@ process.chdir = function (dir) {
    * restricted `window` object, otherwise the `window` object is used.
    */
   var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
+
+  /*--------------------------------------------------------------------------*/
 
   /**
    * The base implementation of `compareAscending` which compares values and
@@ -717,6 +1688,8 @@ process.chdir = function (dir) {
     return htmlUnescapes[chr];
   }
 
+  /*--------------------------------------------------------------------------*/
+
   /**
    * Create a new pristine `lodash` function using the given `context` object.
    *
@@ -812,7 +1785,7 @@ process.chdir = function (dir) {
         getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         push = arrayProto.push,
-        preventExtensions = isNative(preventExtensions = Object.preventExtensions) && preventExtensions,
+        preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
@@ -840,19 +1813,12 @@ process.chdir = function (dir) {
       //
       // Use `Object.preventExtensions` on a plain object instead of simply using
       // `Object('x')` because Chrome and IE fail to throw an error when attempting
-      // to assign values to readonly indexes of strings.
-      var func = preventExtensions && isNative(func = Object.assign) && func;
-      try {
-        if (func) {
-          var object = preventExtensions({ '1': 0 });
-          object[0] = 1;
-        }
-      } catch(e) {
-        // Only attempt in strict mode.
-        try { func(object, 'xo'); } catch(e) {}
-        return !object[1] && func;
-      }
-      return false;
+      // to assign values to readonly indexes of strings in strict mode.
+      var object = { '1': 0 },
+          func = preventExtensions && isNative(func = Object.assign) && func;
+
+      try { func(preventExtensions(object), 'xo'); } catch(e) {}
+      return !object[1] && func;
     }());
 
     /* Native method references for those with the same name as other `lodash` methods. */
@@ -873,7 +1839,7 @@ process.chdir = function (dir) {
 
     /** Used as references for the maximum length and index of an array. */
     var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-        MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
+        MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1,
         HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
     /** Used as the size, in bytes, of each `Float64Array` element. */
@@ -890,6 +1856,8 @@ process.chdir = function (dir) {
 
     /** Used to lookup unminified function names. */
     var realNames = {};
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a `lodash` object which wraps `value` to enable implicit chaining.
@@ -1030,7 +1998,6 @@ process.chdir = function (dir) {
 
     (function(x) {
       var Ctor = function() { this.x = x; },
-          args = arguments,
           object = { '0': x, 'length': x },
           props = [];
 
@@ -1080,7 +2047,7 @@ process.chdir = function (dir) {
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !propertyIsEnumerable.call(args, 1);
+        support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
       } catch(e) {
         support.nonEnumArgs = true;
       }
@@ -1146,6 +2113,8 @@ process.chdir = function (dir) {
         '_': lodash
       }
     };
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
@@ -1275,6 +2244,8 @@ process.chdir = function (dir) {
       return result;
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Creates a cache object to store key/value pairs.
      *
@@ -1343,6 +2314,8 @@ process.chdir = function (dir) {
       return this;
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      *
      * Creates a cache object to store unique values.
@@ -1391,6 +2364,8 @@ process.chdir = function (dir) {
         data.hash[value] = true;
       }
     }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Copies the values of `source` to `array`.
@@ -1735,9 +2710,8 @@ process.chdir = function (dir) {
      */
     function baseAt(collection, props) {
       var index = -1,
-          isNil = collection == null,
-          isArr = !isNil && isArrayLike(collection),
-          length = isArr && collection.length,
+          length = collection.length,
+          isArr = isLength(length),
           propsLength = props.length,
           result = Array(propsLength);
 
@@ -1746,7 +2720,7 @@ process.chdir = function (dir) {
         if (isArr) {
           result[index] = isIndex(key, length) ? collection[key] : undefined;
         } else {
-          result[index] = isNil ? undefined : collection[key];
+          result[index] = collection[key];
         }
       }
       return result;
@@ -2073,8 +3047,8 @@ process.chdir = function (dir) {
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isDeep] Specify a deep flatten.
-     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+     * @param {boolean} isDeep Specify a deep flatten.
+     * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isDeep, isStrict) {
@@ -2085,8 +3059,8 @@ process.chdir = function (dir) {
 
       while (++index < length) {
         var value = array[index];
-        if (isObjectLike(value) && isArrayLike(value) &&
-            (isStrict || isArray(value) || isArguments(value))) {
+
+        if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
             value = baseFlatten(value, isDeep, isStrict);
@@ -2094,6 +3068,7 @@ process.chdir = function (dir) {
           var valIndex = -1,
               valLength = value.length;
 
+          result.length += valLength;
           while (++valIndex < valLength) {
             result[++resIndex] = value[valIndex];
           }
@@ -2214,9 +3189,9 @@ process.chdir = function (dir) {
           length = path.length;
 
       while (object != null && ++index < length) {
-        object = object[path[index]];
+        var result = object = object[path[index]];
       }
-      return (index && index == length) ? object : undefined;
+      return result;
     }
 
     /**
@@ -2235,7 +3210,8 @@ process.chdir = function (dir) {
     function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
       // Exit early for identical values.
       if (value === other) {
-        return true;
+        // Treat `+0` vs. `-0` as not equal.
+        return value !== 0 || (1 / value == 1 / other);
       }
       var valType = typeof value,
           othType = typeof other;
@@ -2384,7 +3360,8 @@ process.chdir = function (dir) {
      */
     function baseMap(collection, iteratee) {
       var index = -1,
-          result = isArrayLike(collection) ? Array(collection.length) : [];
+          length = getLength(collection),
+          result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value, key, collection) {
         result[++index] = iteratee(value, key, collection);
@@ -2483,7 +3460,7 @@ process.chdir = function (dir) {
       if (!isObject(object)) {
         return object;
       }
-      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
+      var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
       if (!isSrcArr) {
         var props = keys(source);
         push.apply(props, getSymbols(source));
@@ -2546,10 +3523,10 @@ process.chdir = function (dir) {
 
       if (isCommon) {
         result = srcValue;
-        if (isArrayLike(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
+        if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
           result = isArray(value)
             ? value
-            : (isArrayLike(value) ? arrayCopy(value) : []);
+            : (getLength(value) ? arrayCopy(value) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
@@ -2611,7 +3588,7 @@ process.chdir = function (dir) {
      * @returns {Array} Returns `array`.
      */
     function basePullAt(array, indexes) {
-      var length = array ? indexes.length : 0;
+      var length = indexes.length;
       while (length--) {
         var index = parseFloat(indexes[length]);
         if (index != previous && isIndex(index)) {
@@ -3097,12 +4074,12 @@ process.chdir = function (dir) {
       while (++argsIndex < argsLength) {
         result[argsIndex] = args[argsIndex];
       }
-      var offset = argsIndex;
+      var pad = argsIndex;
       while (++rightIndex < rightLength) {
-        result[offset + rightIndex] = partials[rightIndex];
+        result[pad + rightIndex] = partials[rightIndex];
       }
       while (++holdersIndex < holdersLength) {
-        result[offset + holders[holdersIndex]] = args[argsIndex++];
+        result[pad + holders[holdersIndex]] = args[argsIndex++];
       }
       return result;
     }
@@ -3370,7 +4347,7 @@ process.chdir = function (dir) {
           return index > -1 ? collection[index] : undefined;
         }
         return baseFind(collection, predicate, eachFunc);
-      };
+      }
     }
 
     /**
@@ -3436,7 +4413,7 @@ process.chdir = function (dir) {
           funcName = getFuncName(func);
 
           var data = funcName == 'wrapper' ? getData(func) : null;
-          if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
+          if (data && isLaziable(data[0])) {
             wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
           } else {
             wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);
@@ -3507,28 +4484,6 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Creates a function for `_.mapKeys` or `_.mapValues`.
-     *
-     * @private
-     * @param {boolean} [isMapKeys] Specify mapping keys instead of values.
-     * @returns {Function} Returns the new map function.
-     */
-    function createObjectMapper(isMapKeys) {
-      return function(object, iteratee, thisArg) {
-        var result = {};
-        iteratee = getCallback(iteratee, thisArg, 3);
-
-        baseForOwn(object, function(value, key, object) {
-          var mapped = iteratee(value, key, object);
-          key = isMapKeys ? mapped : key;
-          value = isMapKeys ? value : mapped;
-          result[key] = value;
-        });
-        return result;
-      };
-    }
-
-    /**
      * Creates a function for `_.padLeft` or `_.padRight`.
      *
      * @private
@@ -3538,7 +4493,7 @@ process.chdir = function (dir) {
     function createPadDir(fromRight) {
       return function(string, length, chars) {
         string = baseToString(string);
-        return (fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string);
+        return string && ((fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string));
       };
     }
 
@@ -3884,7 +4839,8 @@ process.chdir = function (dir) {
           // Treat `NaN` vs. `NaN` as equal.
           return (object != +object)
             ? other != +other
-            : object == +other;
+            // But, treat `-0` vs. `+0` as not equal.
+            : (object == 0 ? ((1 / object) == (1 / other)) : object == +other);
 
         case regexpTag:
         case stringTag:
@@ -4064,7 +5020,7 @@ process.chdir = function (dir) {
      * Gets the "length" property value of `object`.
      *
      * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-     * that affects Safari on at least iOS 8.1-8.3 ARM64.
+     * in Safari on iOS 8.1 ARM64.
      *
      * @private
      * @param {Object} object The object to query.
@@ -4204,17 +5160,6 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Checks if `value` is array-like.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-     */
-    function isArrayLike(value) {
-      return value != null && isLength(getLength(value));
-    }
-
-    /**
      * Checks if `value` is a valid array-like index.
      *
      * @private
@@ -4242,9 +5187,13 @@ process.chdir = function (dir) {
         return false;
       }
       var type = typeof index;
-      if (type == 'number'
-          ? (isArrayLike(object) && isIndex(index, object.length))
-          : (type == 'string' && index in object)) {
+      if (type == 'number') {
+        var length = getLength(object),
+            prereq = isLength(length) && isIndex(index, length);
+      } else {
+        prereq = type == 'string' && index in object;
+      }
+      if (prereq) {
         var other = object[index];
         return value === value ? (value === other) : (other !== other);
       }
@@ -4305,7 +5254,7 @@ process.chdir = function (dir) {
      *  equality comparisons, else `false`.
      */
     function isStrictComparable(value) {
-      return value === value && !isObject(value);
+      return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
     }
 
     /**
@@ -4379,7 +5328,7 @@ process.chdir = function (dir) {
     }
 
     /**
-     * A specialized version of `_.pick` which picks `object` properties specified
+     * A specialized version of `_.pick` that picks `object` properties specified
      * by `props`.
      *
      * @private
@@ -4404,7 +5353,7 @@ process.chdir = function (dir) {
     }
 
     /**
-     * A specialized version of `_.pick` which picks `object` properties `predicate`
+     * A specialized version of `_.pick` that picks `object` properties `predicate`
      * returns truthy for.
      *
      * @private
@@ -4549,7 +5498,7 @@ process.chdir = function (dir) {
       if (value == null) {
         return [];
       }
-      if (!isArrayLike(value)) {
+      if (!isLength(getLength(value))) {
         return values(value);
       }
       return isObject(value) ? value : Object(value);
@@ -4596,6 +5545,8 @@ process.chdir = function (dir) {
         ? wrapper.clone()
         : new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
     }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates an array of elements split into groups the length of `size`.
@@ -4665,8 +5616,11 @@ process.chdir = function (dir) {
 
     /**
      * Creates an array excluding all values of the provided arrays using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -4680,7 +5634,7 @@ process.chdir = function (dir) {
      * // => [1, 3]
      */
     var difference = restParam(function(array, values) {
-      return isArrayLike(array)
+      return (isArray(array) || isArguments(array))
         ? baseDifference(array, baseFlatten(values, false, true))
         : [];
     });
@@ -5075,10 +6029,13 @@ process.chdir = function (dir) {
 
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
-     * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
-     * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
-     * performs a faster binary search.
+     * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
+     * it is used as the offset from the end of `array`. If `array` is sorted
+     * providing `true` for `fromIndex` performs a faster binary search.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5138,9 +6095,12 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Creates an array of unique values in all provided arrays using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * Creates an array of unique values in all provided arrays using `SameValueZero`
      * for equality comparisons.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5162,7 +6122,7 @@ process.chdir = function (dir) {
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
-        if (isArrayLike(value)) {
+        if (isArray(value) || isArguments(value)) {
           args.push(value);
           caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
         }
@@ -5267,11 +6227,14 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Removes all provided values from `array` using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * Removes all provided values from `array` using `SameValueZero` for equality
+     * comparisons.
      *
-     * **Note:** Unlike `_.without`, this method mutates `array`.
+     * **Notes:**
+     *  - Unlike `_.without`, this method mutates `array`
+     *  - [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     *    comparisons are like strict equality comparisons, e.g. `===`, except
+     *    that `NaN` matches `NaN`
      *
      * @static
      * @memberOf _
@@ -5335,6 +6298,7 @@ process.chdir = function (dir) {
      * // => [10, 20]
      */
     var pullAt = restParam(function(array, indexes) {
+      array || (array = []);
       indexes = baseFlatten(indexes);
 
       var result = baseAt(array, indexes);
@@ -5701,8 +6665,11 @@ process.chdir = function (dir) {
 
     /**
      * Creates an array of unique values, in order, of the provided arrays using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5719,9 +6686,8 @@ process.chdir = function (dir) {
     });
 
     /**
-     * Creates a duplicate-free version of an array, using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons, in which only the first occurence of each element
+     * Creates a duplicate-free version of an array, using `SameValueZero` for
+     * equality comparisons, in which only the first occurence of each element
      * is kept. Providing `true` for `isSorted` performs a faster search algorithm
      * for sorted arrays. If an iteratee function is provided it is invoked for
      * each element in the array to generate the criterion by which uniqueness
@@ -5738,6 +6704,10 @@ process.chdir = function (dir) {
      * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5788,7 +6758,7 @@ process.chdir = function (dir) {
 
     /**
      * This method is like `_.zip` except that it accepts an array of grouped
-     * elements and creates an array regrouping the elements to their pre-zip
+     * elements and creates an array regrouping the elements to their pre-`_.zip`
      * configuration.
      *
      * @static
@@ -5805,19 +6775,10 @@ process.chdir = function (dir) {
      * // => [['fred', 'barney'], [30, 40], [true, false]]
      */
     function unzip(array) {
-      if (!(array && array.length)) {
-        return [];
-      }
       var index = -1,
-          length = 0;
+          length = (array && array.length && arrayMax(arrayMap(array, getLength))) >>> 0,
+          result = Array(length);
 
-      array = arrayFilter(array, function(group) {
-        if (isArrayLike(group)) {
-          length = nativeMax(group.length, length);
-          return true;
-        }
-      });
-      var result = Array(length);
       while (++index < length) {
         result[index] = arrayMap(array, baseProperty(index));
       }
@@ -5825,44 +6786,12 @@ process.chdir = function (dir) {
     }
 
     /**
-     * This method is like `_.unzip` except that it accepts an iteratee to specify
-     * how regrouped values should be combined. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments: (accumulator, value, index, group).
+     * Creates an array excluding all provided values using `SameValueZero` for
+     * equality comparisons.
      *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} array The array of grouped elements to process.
-     * @param {Function} [iteratee] The function to combine regrouped values.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Array} Returns the new array of regrouped elements.
-     * @example
-     *
-     * var zipped = _.zip([1, 2], [10, 20], [100, 200]);
-     * // => [[1, 10, 100], [2, 20, 200]]
-     *
-     * _.unzipWith(zipped, _.add);
-     * // => [3, 30, 300]
-     */
-    function unzipWith(array, iteratee, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      var result = unzip(array);
-      if (iteratee == null) {
-        return result;
-      }
-      iteratee = bindCallback(iteratee, thisArg, 4);
-      return arrayMap(result, function(group) {
-        return arrayReduce(group, iteratee, undefined, true);
-      });
-    }
-
-    /**
-     * Creates an array excluding all provided values using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5876,7 +6805,7 @@ process.chdir = function (dir) {
      * // => [3]
      */
     var without = restParam(function(array, values) {
-      return isArrayLike(array)
+      return (isArray(array) || isArguments(array))
         ? baseDifference(array, values)
         : [];
     });
@@ -5901,7 +6830,7 @@ process.chdir = function (dir) {
 
       while (++index < length) {
         var array = arguments[index];
-        if (isArrayLike(array)) {
+        if (isArray(array) || isArguments(array)) {
           var result = result
             ? baseDifference(result, array).concat(baseDifference(array, result))
             : array;
@@ -5967,37 +6896,7 @@ process.chdir = function (dir) {
       return result;
     }
 
-    /**
-     * This method is like `_.zip` except that it accepts an iteratee to specify
-     * how grouped values should be combined. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments: (accumulator, value, index, group).
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {...Array} [arrays] The arrays to process.
-     * @param {Function} [iteratee] The function to combine grouped values.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Array} Returns the new array of grouped elements.
-     * @example
-     *
-     * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
-     * // => [111, 222]
-     */
-    var zipWith = restParam(function(arrays) {
-      var length = arrays.length,
-          iteratee = arrays[length - 2],
-          thisArg = arrays[length - 1];
-
-      if (length > 2 && typeof iteratee == 'function') {
-        length -= 2;
-      } else {
-        iteratee = (length > 1 && typeof thisArg == 'function') ? (--length, thisArg) : undefined;
-        thisArg = undefined;
-      }
-      arrays.length = length;
-      return unzipWith(arrays, iteratee, thisArg);
-    });
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a `lodash` object that wraps `value` with explicit method
@@ -6249,6 +7148,8 @@ process.chdir = function (dir) {
       return baseWrapperValue(this.__wrapped__, this.__actions__);
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Creates an array of elements corresponding to the given keys, or indexes,
      * of `collection`. Keys may be specified as individual arguments or as arrays
@@ -6270,6 +7171,10 @@ process.chdir = function (dir) {
      * // => ['barney', 'pebbles']
      */
     var at = restParam(function(collection, props) {
+      var length = collection ? getLength(collection) : 0;
+      if (isLength(length)) {
+        collection = toIterable(collection);
+      }
       return baseAt(collection, baseFlatten(props));
     });
 
@@ -6642,10 +7547,13 @@ process.chdir = function (dir) {
     });
 
     /**
-     * Checks if `value` is in `collection` using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
-     * from the end of `collection`.
+     * Checks if `value` is in `collection` using `SameValueZero` for equality
+     * comparisons. If `fromIndex` is negative, it is used as the offset from
+     * the end of `collection`.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -6765,7 +7673,8 @@ process.chdir = function (dir) {
       var index = -1,
           isFunc = typeof path == 'function',
           isProp = isKey(path),
-          result = isArrayLike(collection) ? Array(collection.length) : [];
+          length = getLength(collection),
+          result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
         var func = isFunc ? path : (isProp && value != null && value[path]);
@@ -6794,11 +7703,10 @@ process.chdir = function (dir) {
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`,
-     * `drop`, `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`,
-     * `parseInt`, `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`,
-     * `trimLeft`, `trimRight`, `trunc`, `random`, `range`, `sample`, `some`,
-     * `sum`, `uniq`, and `words`
+     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`, `drop`,
+     * `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`, `parseInt`,
+     * `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`,
+     * `trimRight`, `trunc`, `random`, `range`, `sample`, `some`, `uniq`, and `words`
      *
      * @static
      * @memberOf _
@@ -6986,11 +7894,22 @@ process.chdir = function (dir) {
      * }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
-    var reduceRight = createReduce(arrayReduceRight, baseEachRight);
+    var reduceRight =  createReduce(arrayReduceRight, baseEachRight);
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
      * that `predicate` does **not** return truthy for.
+     *
+     * If a property name is provided for `predicate` the created `_.property`
+     * style callback returns the property value of the given element.
+     *
+     * If a value is also provided for `thisArg` the created `_.matchesProperty`
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
+     * If an object is provided for `predicate` the created `_.matches` style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -7370,6 +8289,8 @@ process.chdir = function (dir) {
       return filter(collection, baseMatches(source));
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Gets the number of milliseconds that have elapsed since the Unix epoch
      * (1 January 1970 00:00:00 UTC).
@@ -7387,6 +8308,8 @@ process.chdir = function (dir) {
     var now = nativeNow || function() {
       return new Date().getTime();
     };
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * The opposite of `_.before`; this method creates a function that invokes
@@ -8367,6 +9290,8 @@ process.chdir = function (dir) {
       return createWrapper(wrapper, PARTIAL_FLAG, null, [value], []);
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
      * otherwise they are assigned by reference. If `customizer` is provided it is
@@ -8498,7 +9423,8 @@ process.chdir = function (dir) {
      * // => false
      */
     function isArguments(value) {
-      return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
+      var length = isObjectLike(value) ? value.length : undefined;
+      return isLength(length) && objToString.call(value) == argsTag;
     }
 
     /**
@@ -8619,9 +9545,10 @@ process.chdir = function (dir) {
       if (value == null) {
         return true;
       }
-      if (isArrayLike(value) && (isArray(value) || isString(value) || isArguments(value) ||
+      var length = getLength(value);
+      if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
           (isObjectLike(value) && isFunction(value.splice)))) {
-        return !value.length;
+        return !length;
       }
       return !keys(value).length;
     }
@@ -9011,7 +9938,7 @@ process.chdir = function (dir) {
      * // => false
      */
     function isRegExp(value) {
-      return isObjectLike(value) && objToString.call(value) == regexpTag;
+      return (isObjectLike(value) && objToString.call(value) == regexpTag) || false;
     }
 
     /**
@@ -9127,6 +10054,8 @@ process.chdir = function (dir) {
       return baseCopy(value, keysIn(value));
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
@@ -9136,6 +10065,7 @@ process.chdir = function (dir) {
      *
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
+     *
      *
      * @static
      * @memberOf _
@@ -9608,9 +10538,12 @@ process.chdir = function (dir) {
      * // => ['0', '1']
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      var Ctor = object != null && object.constructor;
+      if (object) {
+        var Ctor = object.constructor,
+            length = object.length;
+      }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-          (typeof object != 'function' && isArrayLike(object))) {
+          (typeof object != 'function' && isLength(length))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -9668,28 +10601,6 @@ process.chdir = function (dir) {
     }
 
     /**
-     * The opposite of `_.mapValues`; this method creates an object with the
-     * same values as `object` and keys generated by running each own enumerable
-     * property of `object` through `iteratee`.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
-     *  per iteration.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Object} Returns the new mapped object.
-     * @example
-     *
-     * _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
-     *   return key + value;
-     * });
-     * // => { 'a1': 1, 'b2': 2 }
-     */
-    var mapKeys = createObjectMapper(true);
-
-    /**
      * Creates an object with the same keys as `object` and values generated by
      * running each own enumerable property of `object` through `iteratee`. The
      * iteratee function is bound to `thisArg` and invoked with three arguments:
@@ -9730,7 +10641,15 @@ process.chdir = function (dir) {
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
-    var mapValues = createObjectMapper();
+    function mapValues(object, iteratee, thisArg) {
+      var result = {};
+      iteratee = getCallback(iteratee, thisArg, 3);
+
+      baseForOwn(object, function(value, key, object) {
+        result[key] = iteratee(value, key, object);
+      });
+      return result;
+    }
 
     /**
      * Recursively merges own enumerable properties of the source object(s), that
@@ -9785,6 +10704,11 @@ process.chdir = function (dir) {
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
      * own and inherited enumerable properties of `object` that are not omitted.
+     * Property names may be specified as individual arguments or as arrays of
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` omitting the properties `predicate` returns truthy for. The
+     * predicate is bound to `thisArg` and invoked with three arguments:
+     * (value, key, object).
      *
      * @static
      * @memberOf _
@@ -10078,6 +11002,8 @@ process.chdir = function (dir) {
       return baseValues(object, keysIn(object));
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
      * `end` is not specified it is set to `start` with `start` then set to `0`.
@@ -10181,6 +11107,8 @@ process.chdir = function (dir) {
       }
       return baseRandom(min, max);
     }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
@@ -11047,6 +11975,8 @@ process.chdir = function (dir) {
       return string.match(pattern || reWords) || [];
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Attempts to invoke `func`, returning either the result or the caught error
      * object. Any additional arguments are provided to `func` when it is invoked.
@@ -11117,9 +12047,7 @@ process.chdir = function (dir) {
       if (guard && isIterateeCall(func, thisArg, guard)) {
         thisArg = null;
       }
-      return isObjectLike(func)
-        ? matches(func)
-        : baseCallback(func, thisArg);
+      return baseCallback(func, thisArg);
     }
 
     /**
@@ -11244,7 +12172,7 @@ process.chdir = function (dir) {
     var method = restParam(function(path, args) {
       return function(object) {
         return invokePath(object, path, args);
-      };
+      }
     });
 
     /**
@@ -11581,6 +12509,8 @@ process.chdir = function (dir) {
       return baseToString(prefix) + id;
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Adds two numbers.
      *
@@ -11745,6 +12675,8 @@ process.chdir = function (dir) {
         : baseSum(collection, iteratee);
     }
 
+    /*------------------------------------------------------------------------*/
+
     // Ensure wrappers are instances of `baseLodash`.
     lodash.prototype = baseLodash.prototype;
 
@@ -11815,7 +12747,6 @@ process.chdir = function (dir) {
     lodash.keys = keys;
     lodash.keysIn = keysIn;
     lodash.map = map;
-    lodash.mapKeys = mapKeys;
     lodash.mapValues = mapValues;
     lodash.matches = matches;
     lodash.matchesProperty = matchesProperty;
@@ -11864,7 +12795,6 @@ process.chdir = function (dir) {
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.unzip = unzip;
-    lodash.unzipWith = unzipWith;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.where = where;
@@ -11873,7 +12803,6 @@ process.chdir = function (dir) {
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
-    lodash.zipWith = zipWith;
 
     // Add aliases.
     lodash.backflow = flowRight;
@@ -11891,6 +12820,8 @@ process.chdir = function (dir) {
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);
+
+    /*------------------------------------------------------------------------*/
 
     // Add functions that return unwrapped values when chaining.
     lodash.add = add;
@@ -11995,6 +12926,8 @@ process.chdir = function (dir) {
       return source;
     }()), false);
 
+    /*------------------------------------------------------------------------*/
+
     // Add functions capable of returning wrapped and unwrapped values when chaining.
     lodash.sample = sample;
 
@@ -12006,6 +12939,8 @@ process.chdir = function (dir) {
         return sample(value, n);
       });
     };
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * The semantic version number.
@@ -12117,13 +13052,8 @@ process.chdir = function (dir) {
 
     LazyWrapper.prototype.slice = function(start, end) {
       start = start == null ? 0 : (+start || 0);
+      var result = start < 0 ? this.takeRight(-start) : this.drop(start);
 
-      var result = this;
-      if (start < 0) {
-        result = this.takeRight(-start);
-      } else if (start) {
-        result = this.drop(start);
-      }
       if (end !== undefined) {
         end = (+end || 0);
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
@@ -12146,6 +13076,7 @@ process.chdir = function (dir) {
 
       lodash.prototype[methodName] = function() {
         var args = arguments,
+            length = args.length,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
@@ -12234,6 +13165,8 @@ process.chdir = function (dir) {
     return lodash;
   }
 
+  /*--------------------------------------------------------------------------*/
+
   // Export lodash.
   var _ = runInContext();
 
@@ -12269,7 +13202,7 @@ process.chdir = function (dir) {
 }.call(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12296,7 +13229,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":121}],4:[function(require,module,exports){
+},{"./focusNode":200}],83:[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -12791,7 +13724,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":16,"./EventPropagators":21,"./ExecutionEnvironment":22,"./FallbackCompositionState":23,"./SyntheticCompositionEvent":95,"./SyntheticInputEvent":99,"./keyOf":143}],5:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPropagators":100,"./ExecutionEnvironment":101,"./FallbackCompositionState":102,"./SyntheticCompositionEvent":174,"./SyntheticInputEvent":178,"./keyOf":222}],84:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12916,7 +13849,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],6:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13098,7 +14031,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./CSSProperty":5,"./ExecutionEnvironment":22,"./camelizeStyleName":110,"./dangerousStyleValue":115,"./hyphenateStyleName":135,"./memoizeStringOnly":145,"./warning":156,"1YiZ5S":1}],7:[function(require,module,exports){
+},{"./CSSProperty":84,"./ExecutionEnvironment":101,"./camelizeStyleName":189,"./dangerousStyleValue":194,"./hyphenateStyleName":214,"./memoizeStringOnly":224,"./warning":235,"1YiZ5S":2}],86:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13198,7 +14131,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./PooledClass":29,"./invariant":137,"1YiZ5S":1}],8:[function(require,module,exports){
+},{"./Object.assign":107,"./PooledClass":108,"./invariant":216,"1YiZ5S":2}],87:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13580,7 +14513,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":16,"./EventPluginHub":18,"./EventPropagators":21,"./ExecutionEnvironment":22,"./ReactUpdates":89,"./SyntheticEvent":97,"./isEventSupported":138,"./isTextInputElement":140,"./keyOf":143}],9:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPluginHub":97,"./EventPropagators":100,"./ExecutionEnvironment":101,"./ReactUpdates":168,"./SyntheticEvent":176,"./isEventSupported":217,"./isTextInputElement":219,"./keyOf":222}],88:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13605,7 +14538,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],10:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13743,7 +14676,7 @@ var DOMChildrenOperations = {
 module.exports = DOMChildrenOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./Danger":13,"./ReactMultiChildUpdateTypes":74,"./invariant":137,"./setTextContent":151,"1YiZ5S":1}],11:[function(require,module,exports){
+},{"./Danger":92,"./ReactMultiChildUpdateTypes":153,"./invariant":216,"./setTextContent":230,"1YiZ5S":2}],90:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14042,7 +14975,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],12:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],91:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14234,7 +15167,7 @@ var DOMPropertyOperations = {
 module.exports = DOMPropertyOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./DOMProperty":11,"./quoteAttributeValueForBrowser":149,"./warning":156,"1YiZ5S":1}],13:[function(require,module,exports){
+},{"./DOMProperty":90,"./quoteAttributeValueForBrowser":228,"./warning":235,"1YiZ5S":2}],92:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14421,7 +15354,7 @@ var Danger = {
 module.exports = Danger;
 
 }).call(this,require("1YiZ5S"))
-},{"./ExecutionEnvironment":22,"./createNodesFromMarkup":114,"./emptyFunction":116,"./getMarkupWrap":129,"./invariant":137,"1YiZ5S":1}],14:[function(require,module,exports){
+},{"./ExecutionEnvironment":101,"./createNodesFromMarkup":193,"./emptyFunction":195,"./getMarkupWrap":208,"./invariant":216,"1YiZ5S":2}],93:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14460,7 +15393,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":143}],15:[function(require,module,exports){
+},{"./keyOf":222}],94:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14600,7 +15533,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":16,"./EventPropagators":21,"./ReactMount":72,"./SyntheticMouseEvent":101,"./keyOf":143}],16:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPropagators":100,"./ReactMount":151,"./SyntheticMouseEvent":180,"./keyOf":222}],95:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14672,7 +15605,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":142}],17:[function(require,module,exports){
+},{"./keyMirror":221}],96:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14762,7 +15695,7 @@ var EventListener = {
 module.exports = EventListener;
 
 }).call(this,require("1YiZ5S"))
-},{"./emptyFunction":116,"1YiZ5S":1}],18:[function(require,module,exports){
+},{"./emptyFunction":195,"1YiZ5S":2}],97:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15040,7 +15973,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventPluginRegistry":19,"./EventPluginUtils":20,"./accumulateInto":107,"./forEachAccumulated":122,"./invariant":137,"1YiZ5S":1}],19:[function(require,module,exports){
+},{"./EventPluginRegistry":98,"./EventPluginUtils":99,"./accumulateInto":186,"./forEachAccumulated":201,"./invariant":216,"1YiZ5S":2}],98:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15320,7 +16253,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],20:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],99:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15541,7 +16474,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventConstants":16,"./invariant":137,"1YiZ5S":1}],21:[function(require,module,exports){
+},{"./EventConstants":95,"./invariant":216,"1YiZ5S":2}],100:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15683,7 +16616,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventConstants":16,"./EventPluginHub":18,"./accumulateInto":107,"./forEachAccumulated":122,"1YiZ5S":1}],22:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPluginHub":97,"./accumulateInto":186,"./forEachAccumulated":201,"1YiZ5S":2}],101:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15727,7 +16660,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],23:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15818,7 +16751,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
 
-},{"./Object.assign":28,"./PooledClass":29,"./getTextContentAccessor":132}],24:[function(require,module,exports){
+},{"./Object.assign":107,"./PooledClass":108,"./getTextContentAccessor":211}],103:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16029,7 +16962,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":11,"./ExecutionEnvironment":22}],25:[function(require,module,exports){
+},{"./DOMProperty":90,"./ExecutionEnvironment":101}],104:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16185,7 +17118,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactPropTypes":80,"./invariant":137,"1YiZ5S":1}],26:[function(require,module,exports){
+},{"./ReactPropTypes":159,"./invariant":216,"1YiZ5S":2}],105:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -16242,7 +17175,7 @@ var LocalEventTrapMixin = {
 module.exports = LocalEventTrapMixin;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactBrowserEventEmitter":32,"./accumulateInto":107,"./forEachAccumulated":122,"./invariant":137,"1YiZ5S":1}],27:[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":111,"./accumulateInto":186,"./forEachAccumulated":201,"./invariant":216,"1YiZ5S":2}],106:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16300,7 +17233,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":16,"./emptyFunction":116}],28:[function(require,module,exports){
+},{"./EventConstants":95,"./emptyFunction":195}],107:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -16349,7 +17282,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],29:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16465,7 +17398,7 @@ var PooledClass = {
 module.exports = PooledClass;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],30:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],109:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16577,7 +17510,7 @@ if ("production" !== process.env.NODE_ENV) {
       if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
         console.debug(
           'Download the React DevTools for a better development experience: ' +
-          'https://fb.me/react-devtools'
+          'http://fb.me/react-devtools'
         );
       }
     }
@@ -16604,7 +17537,7 @@ if ("production" !== process.env.NODE_ENV) {
       if (!expectedFeatures[i]) {
         console.error(
           'One or more ES5 shim/shams expected by React are not available: ' +
-          'https://fb.me/react-warning-polyfills'
+          'http://fb.me/react-warning-polyfills'
         );
         break;
       }
@@ -16612,12 +17545,12 @@ if ("production" !== process.env.NODE_ENV) {
   }
 }
 
-React.version = '0.13.3';
+React.version = '0.13.2';
 
 module.exports = React;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventPluginUtils":20,"./ExecutionEnvironment":22,"./Object.assign":28,"./ReactChildren":34,"./ReactClass":35,"./ReactComponent":36,"./ReactContext":40,"./ReactCurrentOwner":41,"./ReactDOM":42,"./ReactDOMTextComponent":53,"./ReactDefaultInjection":56,"./ReactElement":59,"./ReactElementValidator":60,"./ReactInstanceHandles":68,"./ReactMount":72,"./ReactPerf":77,"./ReactPropTypes":80,"./ReactReconciler":83,"./ReactServerRendering":86,"./findDOMNode":119,"./onlyChild":146,"1YiZ5S":1}],31:[function(require,module,exports){
+},{"./EventPluginUtils":99,"./ExecutionEnvironment":101,"./Object.assign":107,"./ReactChildren":113,"./ReactClass":114,"./ReactComponent":115,"./ReactContext":119,"./ReactCurrentOwner":120,"./ReactDOM":121,"./ReactDOMTextComponent":132,"./ReactDefaultInjection":135,"./ReactElement":138,"./ReactElementValidator":139,"./ReactInstanceHandles":147,"./ReactMount":151,"./ReactPerf":156,"./ReactPropTypes":159,"./ReactReconciler":162,"./ReactServerRendering":165,"./findDOMNode":198,"./onlyChild":225,"1YiZ5S":2}],110:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16648,7 +17581,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 
-},{"./findDOMNode":119}],32:[function(require,module,exports){
+},{"./findDOMNode":198}],111:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17001,7 +17934,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":16,"./EventPluginHub":18,"./EventPluginRegistry":19,"./Object.assign":28,"./ReactEventEmitterMixin":63,"./ViewportMetrics":106,"./isEventSupported":138}],33:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPluginHub":97,"./EventPluginRegistry":98,"./Object.assign":107,"./ReactEventEmitterMixin":142,"./ViewportMetrics":185,"./isEventSupported":217}],112:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -17128,7 +18061,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 
-},{"./ReactReconciler":83,"./flattenChildren":120,"./instantiateReactComponent":136,"./shouldUpdateReactComponent":153}],34:[function(require,module,exports){
+},{"./ReactReconciler":162,"./flattenChildren":199,"./instantiateReactComponent":215,"./shouldUpdateReactComponent":232}],113:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17281,7 +18214,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 }).call(this,require("1YiZ5S"))
-},{"./PooledClass":29,"./ReactFragment":65,"./traverseAllChildren":155,"./warning":156,"1YiZ5S":1}],35:[function(require,module,exports){
+},{"./PooledClass":108,"./ReactFragment":144,"./traverseAllChildren":234,"./warning":235,"1YiZ5S":2}],114:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18119,7 +19052,7 @@ var ReactClass = {
         ("production" !== process.env.NODE_ENV ? warning(
           this instanceof Constructor,
           'Something is calling a React component directly. Use a factory or ' +
-          'JSX instead. See: https://fb.me/react-legacyfactory'
+          'JSX instead. See: http://fb.me/react-legacyfactory'
         ) : null);
       }
 
@@ -18227,7 +19160,7 @@ var ReactClass = {
 module.exports = ReactClass;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./ReactComponent":36,"./ReactCurrentOwner":41,"./ReactElement":59,"./ReactErrorUtils":62,"./ReactInstanceMap":69,"./ReactLifeCycle":70,"./ReactPropTypeLocationNames":78,"./ReactPropTypeLocations":79,"./ReactUpdateQueue":88,"./invariant":137,"./keyMirror":142,"./keyOf":143,"./warning":156,"1YiZ5S":1}],36:[function(require,module,exports){
+},{"./Object.assign":107,"./ReactComponent":115,"./ReactCurrentOwner":120,"./ReactElement":138,"./ReactErrorUtils":141,"./ReactInstanceMap":148,"./ReactLifeCycle":149,"./ReactPropTypeLocationNames":157,"./ReactPropTypeLocations":158,"./ReactUpdateQueue":167,"./invariant":216,"./keyMirror":221,"./keyOf":222,"./warning":235,"1YiZ5S":2}],115:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18331,38 +19264,20 @@ ReactComponent.prototype.forceUpdate = function(callback) {
  */
 if ("production" !== process.env.NODE_ENV) {
   var deprecatedAPIs = {
-    getDOMNode: [
-      'getDOMNode',
-      'Use React.findDOMNode(component) instead.'
-    ],
-    isMounted: [
-      'isMounted',
-      'Instead, make sure to clean up subscriptions and pending requests in ' +
-      'componentWillUnmount to prevent memory leaks.'
-    ],
-    replaceProps: [
-      'replaceProps',
-      'Instead, call React.render again at the top level.'
-    ],
-    replaceState: [
-      'replaceState',
-      'Refactor your code to use setState instead (see ' +
-      'https://github.com/facebook/react/issues/3236).'
-    ],
-    setProps: [
-      'setProps',
-      'Instead, call React.render again at the top level.'
-    ]
+    getDOMNode: 'getDOMNode',
+    isMounted: 'isMounted',
+    replaceProps: 'replaceProps',
+    replaceState: 'replaceState',
+    setProps: 'setProps'
   };
-  var defineDeprecationWarning = function(methodName, info) {
+  var defineDeprecationWarning = function(methodName, displayName) {
     try {
       Object.defineProperty(ReactComponent.prototype, methodName, {
         get: function() {
           ("production" !== process.env.NODE_ENV ? warning(
             false,
-            '%s(...) is deprecated in plain JavaScript React classes. %s',
-            info[0],
-            info[1]
+            '%s(...) is deprecated in plain JavaScript React classes.',
+            displayName
           ) : null);
           return undefined;
         }
@@ -18381,7 +19296,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactUpdateQueue":88,"./invariant":137,"./warning":156,"1YiZ5S":1}],37:[function(require,module,exports){
+},{"./ReactUpdateQueue":167,"./invariant":216,"./warning":235,"1YiZ5S":2}],116:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18428,7 +19343,7 @@ var ReactComponentBrowserEnvironment = {
 
 module.exports = ReactComponentBrowserEnvironment;
 
-},{"./ReactDOMIDOperations":46,"./ReactMount":72}],38:[function(require,module,exports){
+},{"./ReactDOMIDOperations":125,"./ReactMount":151}],117:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -18489,7 +19404,7 @@ var ReactComponentEnvironment = {
 module.exports = ReactComponentEnvironment;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],39:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],118:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18711,7 +19626,6 @@ var ReactCompositeComponentMixin = {
     this._pendingReplaceState = false;
     this._pendingForceUpdate = false;
 
-    var childContext;
     var renderedElement;
 
     var previouslyMounting = ReactLifeCycle.currentlyMountingInstance;
@@ -18726,8 +19640,7 @@ var ReactCompositeComponentMixin = {
         }
       }
 
-      childContext = this._getValidatedChildContext(context);
-      renderedElement = this._renderValidatedComponent(childContext);
+      renderedElement = this._renderValidatedComponent();
     } finally {
       ReactLifeCycle.currentlyMountingInstance = previouslyMounting;
     }
@@ -18741,7 +19654,7 @@ var ReactCompositeComponentMixin = {
       this._renderedComponent,
       rootID,
       transaction,
-      this._mergeChildContext(context, childContext)
+      this._processChildContext(context)
     );
     if (inst.componentDidMount) {
       transaction.getReactMountReady().enqueue(inst.componentDidMount, inst);
@@ -18871,7 +19784,7 @@ var ReactCompositeComponentMixin = {
    * @return {object}
    * @private
    */
-  _getValidatedChildContext: function(currentContext) {
+  _processChildContext: function(currentContext) {
     var inst = this._instance;
     var childContext = inst.getChildContext && inst.getChildContext();
     if (childContext) {
@@ -18896,13 +19809,6 @@ var ReactCompositeComponentMixin = {
           name
         ) : invariant(name in inst.constructor.childContextTypes));
       }
-      return childContext;
-    }
-    return null;
-  },
-
-  _mergeChildContext: function(currentContext, childContext) {
-    if (childContext) {
       return assign({}, currentContext, childContext);
     }
     return currentContext;
@@ -19162,10 +20068,6 @@ var ReactCompositeComponentMixin = {
       return inst.state;
     }
 
-    if (replace && queue.length === 1) {
-      return queue[0];
-    }
-
     var nextState = assign({}, replace ? queue[0] : inst.state);
     for (var i = replace ? 1 : 0; i < queue.length; i++) {
       var partial = queue[i];
@@ -19235,14 +20137,13 @@ var ReactCompositeComponentMixin = {
   _updateRenderedComponent: function(transaction, context) {
     var prevComponentInstance = this._renderedComponent;
     var prevRenderedElement = prevComponentInstance._currentElement;
-    var childContext = this._getValidatedChildContext();
-    var nextRenderedElement = this._renderValidatedComponent(childContext);
+    var nextRenderedElement = this._renderValidatedComponent();
     if (shouldUpdateReactComponent(prevRenderedElement, nextRenderedElement)) {
       ReactReconciler.receiveComponent(
         prevComponentInstance,
         nextRenderedElement,
         transaction,
-        this._mergeChildContext(context, childContext)
+        this._processChildContext(context)
       );
     } else {
       // These two IDs are actually the same! But nothing should rely on that.
@@ -19258,7 +20159,7 @@ var ReactCompositeComponentMixin = {
         this._renderedComponent,
         thisID,
         transaction,
-        this._mergeChildContext(context, childContext)
+        this._processChildContext(context)
       );
       this._replaceNodeWithMarkupByID(prevComponentID, nextMarkup);
     }
@@ -19296,12 +20197,11 @@ var ReactCompositeComponentMixin = {
   /**
    * @private
    */
-  _renderValidatedComponent: function(childContext) {
+  _renderValidatedComponent: function() {
     var renderedComponent;
     var previousContext = ReactContext.current;
-    ReactContext.current = this._mergeChildContext(
-      this._currentElement._context,
-      childContext
+    ReactContext.current = this._processChildContext(
+      this._currentElement._context
     );
     ReactCurrentOwner.current = this;
     try {
@@ -19402,7 +20302,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./ReactComponentEnvironment":38,"./ReactContext":40,"./ReactCurrentOwner":41,"./ReactElement":59,"./ReactElementValidator":60,"./ReactInstanceMap":69,"./ReactLifeCycle":70,"./ReactNativeComponent":75,"./ReactPerf":77,"./ReactPropTypeLocationNames":78,"./ReactPropTypeLocations":79,"./ReactReconciler":83,"./ReactUpdates":89,"./emptyObject":117,"./invariant":137,"./shouldUpdateReactComponent":153,"./warning":156,"1YiZ5S":1}],40:[function(require,module,exports){
+},{"./Object.assign":107,"./ReactComponentEnvironment":117,"./ReactContext":119,"./ReactCurrentOwner":120,"./ReactElement":138,"./ReactElementValidator":139,"./ReactInstanceMap":148,"./ReactLifeCycle":149,"./ReactNativeComponent":154,"./ReactPerf":156,"./ReactPropTypeLocationNames":157,"./ReactPropTypeLocations":158,"./ReactReconciler":162,"./ReactUpdates":168,"./emptyObject":196,"./invariant":216,"./shouldUpdateReactComponent":232,"./warning":235,"1YiZ5S":2}],119:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19480,7 +20380,7 @@ var ReactContext = {
 module.exports = ReactContext;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./emptyObject":117,"./warning":156,"1YiZ5S":1}],41:[function(require,module,exports){
+},{"./Object.assign":107,"./emptyObject":196,"./warning":235,"1YiZ5S":2}],120:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19514,7 +20414,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],42:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19670,7 +20570,6 @@ var ReactDOM = mapObject({
 
   // SVG
   circle: 'circle',
-  clipPath: 'clipPath',
   defs: 'defs',
   ellipse: 'ellipse',
   g: 'g',
@@ -19693,7 +20592,7 @@ var ReactDOM = mapObject({
 module.exports = ReactDOM;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":59,"./ReactElementValidator":60,"./mapObject":144,"1YiZ5S":1}],43:[function(require,module,exports){
+},{"./ReactElement":138,"./ReactElementValidator":139,"./mapObject":223,"1YiZ5S":2}],122:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19757,7 +20656,7 @@ var ReactDOMButton = ReactClass.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":3,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59,"./keyMirror":142}],44:[function(require,module,exports){
+},{"./AutoFocusMixin":82,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138,"./keyMirror":221}],123:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19822,13 +20721,11 @@ function assertValidProps(props) {
       'Can only set one of `children` or `props.dangerouslySetInnerHTML`.'
     ) : invariant(props.children == null));
     ("production" !== process.env.NODE_ENV ? invariant(
-      typeof props.dangerouslySetInnerHTML === 'object' &&
-      '__html' in props.dangerouslySetInnerHTML,
+      props.dangerouslySetInnerHTML.__html != null,
       '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. ' +
-      'Please visit https://fb.me/react-invariant-dangerously-set-inner-html ' +
+      'Please visit http://fb.me/react-invariant-dangerously-set-inner-html ' +
       'for more information.'
-    ) : invariant(typeof props.dangerouslySetInnerHTML === 'object' &&
-    '__html' in props.dangerouslySetInnerHTML));
+    ) : invariant(props.dangerouslySetInnerHTML.__html != null));
   }
   if ("production" !== process.env.NODE_ENV) {
     ("production" !== process.env.NODE_ENV ? warning(
@@ -20267,7 +21164,7 @@ ReactDOMComponent.injection = {
 module.exports = ReactDOMComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./CSSPropertyOperations":6,"./DOMProperty":11,"./DOMPropertyOperations":12,"./Object.assign":28,"./ReactBrowserEventEmitter":32,"./ReactComponentBrowserEnvironment":37,"./ReactMount":72,"./ReactMultiChild":73,"./ReactPerf":77,"./escapeTextContentForBrowser":118,"./invariant":137,"./isEventSupported":138,"./keyOf":143,"./warning":156,"1YiZ5S":1}],45:[function(require,module,exports){
+},{"./CSSPropertyOperations":85,"./DOMProperty":90,"./DOMPropertyOperations":91,"./Object.assign":107,"./ReactBrowserEventEmitter":111,"./ReactComponentBrowserEnvironment":116,"./ReactMount":151,"./ReactMultiChild":152,"./ReactPerf":156,"./escapeTextContentForBrowser":197,"./invariant":216,"./isEventSupported":217,"./keyOf":222,"./warning":235,"1YiZ5S":2}],124:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20316,7 +21213,7 @@ var ReactDOMForm = ReactClass.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":16,"./LocalEventTrapMixin":26,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59}],46:[function(require,module,exports){
+},{"./EventConstants":95,"./LocalEventTrapMixin":105,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138}],125:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20484,7 +21381,7 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 module.exports = ReactDOMIDOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./CSSPropertyOperations":6,"./DOMChildrenOperations":10,"./DOMPropertyOperations":12,"./ReactMount":72,"./ReactPerf":77,"./invariant":137,"./setInnerHTML":150,"1YiZ5S":1}],47:[function(require,module,exports){
+},{"./CSSPropertyOperations":85,"./DOMChildrenOperations":89,"./DOMPropertyOperations":91,"./ReactMount":151,"./ReactPerf":156,"./invariant":216,"./setInnerHTML":229,"1YiZ5S":2}],126:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20529,7 +21426,7 @@ var ReactDOMIframe = ReactClass.createClass({
 
 module.exports = ReactDOMIframe;
 
-},{"./EventConstants":16,"./LocalEventTrapMixin":26,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59}],48:[function(require,module,exports){
+},{"./EventConstants":95,"./LocalEventTrapMixin":105,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138}],127:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20575,7 +21472,7 @@ var ReactDOMImg = ReactClass.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":16,"./LocalEventTrapMixin":26,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59}],49:[function(require,module,exports){
+},{"./EventConstants":95,"./LocalEventTrapMixin":105,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138}],128:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20752,7 +21649,7 @@ var ReactDOMInput = ReactClass.createClass({
 module.exports = ReactDOMInput;
 
 }).call(this,require("1YiZ5S"))
-},{"./AutoFocusMixin":3,"./DOMPropertyOperations":12,"./LinkedValueUtils":25,"./Object.assign":28,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59,"./ReactMount":72,"./ReactUpdates":89,"./invariant":137,"1YiZ5S":1}],50:[function(require,module,exports){
+},{"./AutoFocusMixin":82,"./DOMPropertyOperations":91,"./LinkedValueUtils":104,"./Object.assign":107,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138,"./ReactMount":151,"./ReactUpdates":168,"./invariant":216,"1YiZ5S":2}],129:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20804,7 +21701,7 @@ var ReactDOMOption = ReactClass.createClass({
 module.exports = ReactDOMOption;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59,"./warning":156,"1YiZ5S":1}],51:[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138,"./warning":235,"1YiZ5S":2}],130:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20982,7 +21879,7 @@ var ReactDOMSelect = ReactClass.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":3,"./LinkedValueUtils":25,"./Object.assign":28,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59,"./ReactUpdates":89}],52:[function(require,module,exports){
+},{"./AutoFocusMixin":82,"./LinkedValueUtils":104,"./Object.assign":107,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138,"./ReactUpdates":168}],131:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21195,7 +22092,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":22,"./getNodeForCharacterOffset":130,"./getTextContentAccessor":132}],53:[function(require,module,exports){
+},{"./ExecutionEnvironment":101,"./getNodeForCharacterOffset":209,"./getTextContentAccessor":211}],132:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21312,7 +22209,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 
-},{"./DOMPropertyOperations":12,"./Object.assign":28,"./ReactComponentBrowserEnvironment":37,"./ReactDOMComponent":44,"./escapeTextContentForBrowser":118}],54:[function(require,module,exports){
+},{"./DOMPropertyOperations":91,"./Object.assign":107,"./ReactComponentBrowserEnvironment":116,"./ReactDOMComponent":123,"./escapeTextContentForBrowser":197}],133:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21452,7 +22349,7 @@ var ReactDOMTextarea = ReactClass.createClass({
 module.exports = ReactDOMTextarea;
 
 }).call(this,require("1YiZ5S"))
-},{"./AutoFocusMixin":3,"./DOMPropertyOperations":12,"./LinkedValueUtils":25,"./Object.assign":28,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactElement":59,"./ReactUpdates":89,"./invariant":137,"./warning":156,"1YiZ5S":1}],55:[function(require,module,exports){
+},{"./AutoFocusMixin":82,"./DOMPropertyOperations":91,"./LinkedValueUtils":104,"./Object.assign":107,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactElement":138,"./ReactUpdates":168,"./invariant":216,"./warning":235,"1YiZ5S":2}],134:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21525,7 +22422,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":28,"./ReactUpdates":89,"./Transaction":105,"./emptyFunction":116}],56:[function(require,module,exports){
+},{"./Object.assign":107,"./ReactUpdates":168,"./Transaction":184,"./emptyFunction":195}],135:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21684,7 +22581,7 @@ module.exports = {
 };
 
 }).call(this,require("1YiZ5S"))
-},{"./BeforeInputEventPlugin":4,"./ChangeEventPlugin":8,"./ClientReactRootIndex":9,"./DefaultEventPluginOrder":14,"./EnterLeaveEventPlugin":15,"./ExecutionEnvironment":22,"./HTMLDOMPropertyConfig":24,"./MobileSafariClickEventPlugin":27,"./ReactBrowserComponentMixin":31,"./ReactClass":35,"./ReactComponentBrowserEnvironment":37,"./ReactDOMButton":43,"./ReactDOMComponent":44,"./ReactDOMForm":45,"./ReactDOMIDOperations":46,"./ReactDOMIframe":47,"./ReactDOMImg":48,"./ReactDOMInput":49,"./ReactDOMOption":50,"./ReactDOMSelect":51,"./ReactDOMTextComponent":53,"./ReactDOMTextarea":54,"./ReactDefaultBatchingStrategy":55,"./ReactDefaultPerf":57,"./ReactElement":59,"./ReactEventListener":64,"./ReactInjection":66,"./ReactInstanceHandles":68,"./ReactMount":72,"./ReactReconcileTransaction":82,"./SVGDOMPropertyConfig":90,"./SelectEventPlugin":91,"./ServerReactRootIndex":92,"./SimpleEventPlugin":93,"./createFullPageComponent":113,"1YiZ5S":1}],57:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":83,"./ChangeEventPlugin":87,"./ClientReactRootIndex":88,"./DefaultEventPluginOrder":93,"./EnterLeaveEventPlugin":94,"./ExecutionEnvironment":101,"./HTMLDOMPropertyConfig":103,"./MobileSafariClickEventPlugin":106,"./ReactBrowserComponentMixin":110,"./ReactClass":114,"./ReactComponentBrowserEnvironment":116,"./ReactDOMButton":122,"./ReactDOMComponent":123,"./ReactDOMForm":124,"./ReactDOMIDOperations":125,"./ReactDOMIframe":126,"./ReactDOMImg":127,"./ReactDOMInput":128,"./ReactDOMOption":129,"./ReactDOMSelect":130,"./ReactDOMTextComponent":132,"./ReactDOMTextarea":133,"./ReactDefaultBatchingStrategy":134,"./ReactDefaultPerf":136,"./ReactElement":138,"./ReactEventListener":143,"./ReactInjection":145,"./ReactInstanceHandles":147,"./ReactMount":151,"./ReactReconcileTransaction":161,"./SVGDOMPropertyConfig":169,"./SelectEventPlugin":170,"./ServerReactRootIndex":171,"./SimpleEventPlugin":172,"./createFullPageComponent":192,"1YiZ5S":2}],136:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21950,7 +22847,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":11,"./ReactDefaultPerfAnalysis":58,"./ReactMount":72,"./ReactPerf":77,"./performanceNow":148}],58:[function(require,module,exports){
+},{"./DOMProperty":90,"./ReactDefaultPerfAnalysis":137,"./ReactMount":151,"./ReactPerf":156,"./performanceNow":227}],137:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22156,7 +23053,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":28}],59:[function(require,module,exports){
+},{"./Object.assign":107}],138:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22464,7 +23361,7 @@ ReactElement.isValidElement = function(object) {
 module.exports = ReactElement;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./ReactContext":40,"./ReactCurrentOwner":41,"./warning":156,"1YiZ5S":1}],60:[function(require,module,exports){
+},{"./Object.assign":107,"./ReactContext":119,"./ReactCurrentOwner":120,"./warning":235,"1YiZ5S":2}],139:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22634,7 +23531,7 @@ function warnAndMonitorForKeyUse(message, element, parentType) {
 
   ("production" !== process.env.NODE_ENV ? warning(
     false,
-    message + '%s%s See https://fb.me/react-warning-keys for more information.',
+    message + '%s%s See http://fb.me/react-warning-keys for more information.',
     parentOrOwnerAddendum,
     childOwnerAddendum
   ) : null);
@@ -22929,7 +23826,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactCurrentOwner":41,"./ReactElement":59,"./ReactFragment":65,"./ReactNativeComponent":75,"./ReactPropTypeLocationNames":78,"./ReactPropTypeLocations":79,"./getIteratorFn":128,"./invariant":137,"./warning":156,"1YiZ5S":1}],61:[function(require,module,exports){
+},{"./ReactCurrentOwner":120,"./ReactElement":138,"./ReactFragment":144,"./ReactNativeComponent":154,"./ReactPropTypeLocationNames":157,"./ReactPropTypeLocations":158,"./getIteratorFn":207,"./invariant":216,"./warning":235,"1YiZ5S":2}],140:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -23024,7 +23921,7 @@ var ReactEmptyComponent = {
 module.exports = ReactEmptyComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":59,"./ReactInstanceMap":69,"./invariant":137,"1YiZ5S":1}],62:[function(require,module,exports){
+},{"./ReactElement":138,"./ReactInstanceMap":148,"./invariant":216,"1YiZ5S":2}],141:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23056,7 +23953,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],63:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23106,7 +24003,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":18}],64:[function(require,module,exports){
+},{"./EventPluginHub":97}],143:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23289,7 +24186,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":17,"./ExecutionEnvironment":22,"./Object.assign":28,"./PooledClass":29,"./ReactInstanceHandles":68,"./ReactMount":72,"./ReactUpdates":89,"./getEventTarget":127,"./getUnboundedScrollPosition":133}],65:[function(require,module,exports){
+},{"./EventListener":96,"./ExecutionEnvironment":101,"./Object.assign":107,"./PooledClass":108,"./ReactInstanceHandles":147,"./ReactMount":151,"./ReactUpdates":168,"./getEventTarget":206,"./getUnboundedScrollPosition":212}],144:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -23474,7 +24371,7 @@ var ReactFragment = {
 module.exports = ReactFragment;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":59,"./warning":156,"1YiZ5S":1}],66:[function(require,module,exports){
+},{"./ReactElement":138,"./warning":235,"1YiZ5S":2}],145:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23516,7 +24413,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":11,"./EventPluginHub":18,"./ReactBrowserEventEmitter":32,"./ReactClass":35,"./ReactComponentEnvironment":38,"./ReactDOMComponent":44,"./ReactEmptyComponent":61,"./ReactNativeComponent":75,"./ReactPerf":77,"./ReactRootIndex":85,"./ReactUpdates":89}],67:[function(require,module,exports){
+},{"./DOMProperty":90,"./EventPluginHub":97,"./ReactBrowserEventEmitter":111,"./ReactClass":114,"./ReactComponentEnvironment":117,"./ReactDOMComponent":123,"./ReactEmptyComponent":140,"./ReactNativeComponent":154,"./ReactPerf":156,"./ReactRootIndex":164,"./ReactUpdates":168}],146:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23651,7 +24548,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":52,"./containsNode":111,"./focusNode":121,"./getActiveElement":123}],68:[function(require,module,exports){
+},{"./ReactDOMSelection":131,"./containsNode":190,"./focusNode":200,"./getActiveElement":202}],147:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23987,7 +24884,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactRootIndex":85,"./invariant":137,"1YiZ5S":1}],69:[function(require,module,exports){
+},{"./ReactRootIndex":164,"./invariant":216,"1YiZ5S":2}],148:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24036,7 +24933,7 @@ var ReactInstanceMap = {
 
 module.exports = ReactInstanceMap;
 
-},{}],70:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 /**
  * Copyright 2015, Facebook, Inc.
  * All rights reserved.
@@ -24073,7 +24970,7 @@ var ReactLifeCycle = {
 
 module.exports = ReactLifeCycle;
 
-},{}],71:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24121,7 +25018,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":108}],72:[function(require,module,exports){
+},{"./adler32":187}],151:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25012,7 +25909,7 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 module.exports = ReactMount;
 
 }).call(this,require("1YiZ5S"))
-},{"./DOMProperty":11,"./ReactBrowserEventEmitter":32,"./ReactCurrentOwner":41,"./ReactElement":59,"./ReactElementValidator":60,"./ReactEmptyComponent":61,"./ReactInstanceHandles":68,"./ReactInstanceMap":69,"./ReactMarkupChecksum":71,"./ReactPerf":77,"./ReactReconciler":83,"./ReactUpdateQueue":88,"./ReactUpdates":89,"./containsNode":111,"./emptyObject":117,"./getReactRootElementInContainer":131,"./instantiateReactComponent":136,"./invariant":137,"./setInnerHTML":150,"./shouldUpdateReactComponent":153,"./warning":156,"1YiZ5S":1}],73:[function(require,module,exports){
+},{"./DOMProperty":90,"./ReactBrowserEventEmitter":111,"./ReactCurrentOwner":120,"./ReactElement":138,"./ReactElementValidator":139,"./ReactEmptyComponent":140,"./ReactInstanceHandles":147,"./ReactInstanceMap":148,"./ReactMarkupChecksum":150,"./ReactPerf":156,"./ReactReconciler":162,"./ReactUpdateQueue":167,"./ReactUpdates":168,"./containsNode":190,"./emptyObject":196,"./getReactRootElementInContainer":210,"./instantiateReactComponent":215,"./invariant":216,"./setInnerHTML":229,"./shouldUpdateReactComponent":232,"./warning":235,"1YiZ5S":2}],152:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25442,7 +26339,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactChildReconciler":33,"./ReactComponentEnvironment":38,"./ReactMultiChildUpdateTypes":74,"./ReactReconciler":83}],74:[function(require,module,exports){
+},{"./ReactChildReconciler":112,"./ReactComponentEnvironment":117,"./ReactMultiChildUpdateTypes":153,"./ReactReconciler":162}],153:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25475,7 +26372,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":142}],75:[function(require,module,exports){
+},{"./keyMirror":221}],154:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -25582,7 +26479,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./invariant":137,"1YiZ5S":1}],76:[function(require,module,exports){
+},{"./Object.assign":107,"./invariant":216,"1YiZ5S":2}],155:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25694,7 +26591,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],77:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],156:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25798,7 +26695,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":1}],78:[function(require,module,exports){
+},{"1YiZ5S":2}],157:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25826,7 +26723,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":1}],79:[function(require,module,exports){
+},{"1YiZ5S":2}],158:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25850,7 +26747,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":142}],80:[function(require,module,exports){
+},{"./keyMirror":221}],159:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26199,7 +27096,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":59,"./ReactFragment":65,"./ReactPropTypeLocationNames":78,"./emptyFunction":116}],81:[function(require,module,exports){
+},{"./ReactElement":138,"./ReactFragment":144,"./ReactPropTypeLocationNames":157,"./emptyFunction":195}],160:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26255,7 +27152,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":28,"./PooledClass":29,"./ReactBrowserEventEmitter":32}],82:[function(require,module,exports){
+},{"./Object.assign":107,"./PooledClass":108,"./ReactBrowserEventEmitter":111}],161:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26431,7 +27328,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":7,"./Object.assign":28,"./PooledClass":29,"./ReactBrowserEventEmitter":32,"./ReactInputSelection":67,"./ReactPutListenerQueue":81,"./Transaction":105}],83:[function(require,module,exports){
+},{"./CallbackQueue":86,"./Object.assign":107,"./PooledClass":108,"./ReactBrowserEventEmitter":111,"./ReactInputSelection":146,"./ReactPutListenerQueue":160,"./Transaction":184}],162:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26555,7 +27452,7 @@ var ReactReconciler = {
 module.exports = ReactReconciler;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElementValidator":60,"./ReactRef":84,"1YiZ5S":1}],84:[function(require,module,exports){
+},{"./ReactElementValidator":139,"./ReactRef":163,"1YiZ5S":2}],163:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26626,7 +27523,7 @@ ReactRef.detachRefs = function(instance, element) {
 
 module.exports = ReactRef;
 
-},{"./ReactOwner":76}],85:[function(require,module,exports){
+},{"./ReactOwner":155}],164:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26657,7 +27554,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],86:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26739,7 +27636,7 @@ module.exports = {
 };
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":59,"./ReactInstanceHandles":68,"./ReactMarkupChecksum":71,"./ReactServerRenderingTransaction":87,"./emptyObject":117,"./instantiateReactComponent":136,"./invariant":137,"1YiZ5S":1}],87:[function(require,module,exports){
+},{"./ReactElement":138,"./ReactInstanceHandles":147,"./ReactMarkupChecksum":150,"./ReactServerRenderingTransaction":166,"./emptyObject":196,"./instantiateReactComponent":215,"./invariant":216,"1YiZ5S":2}],166:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -26852,7 +27749,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":7,"./Object.assign":28,"./PooledClass":29,"./ReactPutListenerQueue":81,"./Transaction":105,"./emptyFunction":116}],88:[function(require,module,exports){
+},{"./CallbackQueue":86,"./Object.assign":107,"./PooledClass":108,"./ReactPutListenerQueue":160,"./Transaction":184,"./emptyFunction":195}],167:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -27151,7 +28048,7 @@ var ReactUpdateQueue = {
 module.exports = ReactUpdateQueue;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./ReactCurrentOwner":41,"./ReactElement":59,"./ReactInstanceMap":69,"./ReactLifeCycle":70,"./ReactUpdates":89,"./invariant":137,"./warning":156,"1YiZ5S":1}],89:[function(require,module,exports){
+},{"./Object.assign":107,"./ReactCurrentOwner":120,"./ReactElement":138,"./ReactInstanceMap":148,"./ReactLifeCycle":149,"./ReactUpdates":168,"./invariant":216,"./warning":235,"1YiZ5S":2}],168:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27433,7 +28330,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 
 }).call(this,require("1YiZ5S"))
-},{"./CallbackQueue":7,"./Object.assign":28,"./PooledClass":29,"./ReactCurrentOwner":41,"./ReactPerf":77,"./ReactReconciler":83,"./Transaction":105,"./invariant":137,"./warning":156,"1YiZ5S":1}],90:[function(require,module,exports){
+},{"./CallbackQueue":86,"./Object.assign":107,"./PooledClass":108,"./ReactCurrentOwner":120,"./ReactPerf":156,"./ReactReconciler":162,"./Transaction":184,"./invariant":216,"./warning":235,"1YiZ5S":2}],169:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27455,7 +28352,6 @@ var MUST_USE_ATTRIBUTE = DOMProperty.injection.MUST_USE_ATTRIBUTE;
 
 var SVGDOMPropertyConfig = {
   Properties: {
-    clipPath: MUST_USE_ATTRIBUTE,
     cx: MUST_USE_ATTRIBUTE,
     cy: MUST_USE_ATTRIBUTE,
     d: MUST_USE_ATTRIBUTE,
@@ -27501,7 +28397,6 @@ var SVGDOMPropertyConfig = {
     y: MUST_USE_ATTRIBUTE
   },
   DOMAttributeNames: {
-    clipPath: 'clip-path',
     fillOpacity: 'fill-opacity',
     fontFamily: 'font-family',
     fontSize: 'font-size',
@@ -27527,7 +28422,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":11}],91:[function(require,module,exports){
+},{"./DOMProperty":90}],170:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27722,7 +28617,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":16,"./EventPropagators":21,"./ReactInputSelection":67,"./SyntheticEvent":97,"./getActiveElement":123,"./isTextInputElement":140,"./keyOf":143,"./shallowEqual":152}],92:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPropagators":100,"./ReactInputSelection":146,"./SyntheticEvent":176,"./getActiveElement":202,"./isTextInputElement":219,"./keyOf":222,"./shallowEqual":231}],171:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27753,7 +28648,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],93:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -28181,7 +29076,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventConstants":16,"./EventPluginUtils":20,"./EventPropagators":21,"./SyntheticClipboardEvent":94,"./SyntheticDragEvent":96,"./SyntheticEvent":97,"./SyntheticFocusEvent":98,"./SyntheticKeyboardEvent":100,"./SyntheticMouseEvent":101,"./SyntheticTouchEvent":102,"./SyntheticUIEvent":103,"./SyntheticWheelEvent":104,"./getEventCharCode":124,"./invariant":137,"./keyOf":143,"./warning":156,"1YiZ5S":1}],94:[function(require,module,exports){
+},{"./EventConstants":95,"./EventPluginUtils":99,"./EventPropagators":100,"./SyntheticClipboardEvent":173,"./SyntheticDragEvent":175,"./SyntheticEvent":176,"./SyntheticFocusEvent":177,"./SyntheticKeyboardEvent":179,"./SyntheticMouseEvent":180,"./SyntheticTouchEvent":181,"./SyntheticUIEvent":182,"./SyntheticWheelEvent":183,"./getEventCharCode":203,"./invariant":216,"./keyOf":222,"./warning":235,"1YiZ5S":2}],173:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28226,7 +29121,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
 
-},{"./SyntheticEvent":97}],95:[function(require,module,exports){
+},{"./SyntheticEvent":176}],174:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28271,7 +29166,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticCompositionEvent;
 
-},{"./SyntheticEvent":97}],96:[function(require,module,exports){
+},{"./SyntheticEvent":176}],175:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28310,7 +29205,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":101}],97:[function(require,module,exports){
+},{"./SyntheticMouseEvent":180}],176:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28476,7 +29371,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":28,"./PooledClass":29,"./emptyFunction":116,"./getEventTarget":127}],98:[function(require,module,exports){
+},{"./Object.assign":107,"./PooledClass":108,"./emptyFunction":195,"./getEventTarget":206}],177:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28515,7 +29410,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":103}],99:[function(require,module,exports){
+},{"./SyntheticUIEvent":182}],178:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28561,7 +29456,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticInputEvent;
 
-},{"./SyntheticEvent":97}],100:[function(require,module,exports){
+},{"./SyntheticEvent":176}],179:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28648,7 +29543,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":103,"./getEventCharCode":124,"./getEventKey":125,"./getEventModifierState":126}],101:[function(require,module,exports){
+},{"./SyntheticUIEvent":182,"./getEventCharCode":203,"./getEventKey":204,"./getEventModifierState":205}],180:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28729,7 +29624,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":103,"./ViewportMetrics":106,"./getEventModifierState":126}],102:[function(require,module,exports){
+},{"./SyntheticUIEvent":182,"./ViewportMetrics":185,"./getEventModifierState":205}],181:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28777,7 +29672,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":103,"./getEventModifierState":126}],103:[function(require,module,exports){
+},{"./SyntheticUIEvent":182,"./getEventModifierState":205}],182:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28839,7 +29734,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":97,"./getEventTarget":127}],104:[function(require,module,exports){
+},{"./SyntheticEvent":176,"./getEventTarget":206}],183:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28900,7 +29795,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":101}],105:[function(require,module,exports){
+},{"./SyntheticMouseEvent":180}],184:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29141,7 +30036,7 @@ var Transaction = {
 module.exports = Transaction;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],106:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],185:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29170,7 +30065,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{}],107:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -29236,7 +30131,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],108:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],187:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29270,7 +30165,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],109:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29302,7 +30197,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],110:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29344,7 +30239,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":109}],111:[function(require,module,exports){
+},{"./camelize":188}],190:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29388,7 +30283,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":141}],112:[function(require,module,exports){
+},{"./isTextNode":220}],191:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29474,7 +30369,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 
-},{"./toArray":154}],113:[function(require,module,exports){
+},{"./toArray":233}],192:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29536,7 +30431,7 @@ function createFullPageComponent(tag) {
 module.exports = createFullPageComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactClass":35,"./ReactElement":59,"./invariant":137,"1YiZ5S":1}],114:[function(require,module,exports){
+},{"./ReactClass":114,"./ReactElement":138,"./invariant":216,"1YiZ5S":2}],193:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29626,7 +30521,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 
 }).call(this,require("1YiZ5S"))
-},{"./ExecutionEnvironment":22,"./createArrayFromMixed":112,"./getMarkupWrap":129,"./invariant":137,"1YiZ5S":1}],115:[function(require,module,exports){
+},{"./ExecutionEnvironment":101,"./createArrayFromMixed":191,"./getMarkupWrap":208,"./invariant":216,"1YiZ5S":2}],194:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29684,7 +30579,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":5}],116:[function(require,module,exports){
+},{"./CSSProperty":84}],195:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29718,7 +30613,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],117:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29742,7 +30637,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = emptyObject;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":1}],118:[function(require,module,exports){
+},{"1YiZ5S":2}],197:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29782,7 +30677,7 @@ function escapeTextContentForBrowser(text) {
 
 module.exports = escapeTextContentForBrowser;
 
-},{}],119:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29855,7 +30750,7 @@ function findDOMNode(componentOrElement) {
 module.exports = findDOMNode;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactCurrentOwner":41,"./ReactInstanceMap":69,"./ReactMount":72,"./invariant":137,"./isNode":139,"./warning":156,"1YiZ5S":1}],120:[function(require,module,exports){
+},{"./ReactCurrentOwner":120,"./ReactInstanceMap":148,"./ReactMount":151,"./invariant":216,"./isNode":218,"./warning":235,"1YiZ5S":2}],199:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29913,7 +30808,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 
 }).call(this,require("1YiZ5S"))
-},{"./traverseAllChildren":155,"./warning":156,"1YiZ5S":1}],121:[function(require,module,exports){
+},{"./traverseAllChildren":234,"./warning":235,"1YiZ5S":2}],200:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29942,7 +30837,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],122:[function(require,module,exports){
+},{}],201:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29973,7 +30868,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],123:[function(require,module,exports){
+},{}],202:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30002,7 +30897,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],124:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30054,7 +30949,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],125:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30159,7 +31054,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":124}],126:[function(require,module,exports){
+},{"./getEventCharCode":203}],205:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30206,7 +31101,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],127:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30237,7 +31132,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],128:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30281,7 +31176,7 @@ function getIteratorFn(maybeIterable) {
 
 module.exports = getIteratorFn;
 
-},{}],129:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30314,7 +31209,6 @@ var shouldWrap = {
   // Force wrapping for SVG elements because if they get created inside a <div>,
   // they will be initialized in the wrong namespace (and will not display).
   'circle': true,
-  'clipPath': true,
   'defs': true,
   'ellipse': true,
   'g': true,
@@ -30357,7 +31251,6 @@ var markupWrap = {
   'th': trWrap,
 
   'circle': svgWrap,
-  'clipPath': svgWrap,
   'defs': svgWrap,
   'ellipse': svgWrap,
   'g': svgWrap,
@@ -30400,7 +31293,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 
 }).call(this,require("1YiZ5S"))
-},{"./ExecutionEnvironment":22,"./invariant":137,"1YiZ5S":1}],130:[function(require,module,exports){
+},{"./ExecutionEnvironment":101,"./invariant":216,"1YiZ5S":2}],209:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30475,7 +31368,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],131:[function(require,module,exports){
+},{}],210:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30510,7 +31403,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],132:[function(require,module,exports){
+},{}],211:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30547,7 +31440,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":22}],133:[function(require,module,exports){
+},{"./ExecutionEnvironment":101}],212:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30587,7 +31480,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],134:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30620,7 +31513,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],135:[function(require,module,exports){
+},{}],214:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30661,7 +31554,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":134}],136:[function(require,module,exports){
+},{"./hyphenate":213}],215:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30799,7 +31692,7 @@ function instantiateReactComponent(node, parentCompositeType) {
 module.exports = instantiateReactComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":28,"./ReactCompositeComponent":39,"./ReactEmptyComponent":61,"./ReactNativeComponent":75,"./invariant":137,"./warning":156,"1YiZ5S":1}],137:[function(require,module,exports){
+},{"./Object.assign":107,"./ReactCompositeComponent":118,"./ReactEmptyComponent":140,"./ReactNativeComponent":154,"./invariant":216,"./warning":235,"1YiZ5S":2}],216:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30856,7 +31749,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":1}],138:[function(require,module,exports){
+},{"1YiZ5S":2}],217:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30921,7 +31814,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":22}],139:[function(require,module,exports){
+},{"./ExecutionEnvironment":101}],218:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30948,7 +31841,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],140:[function(require,module,exports){
+},{}],219:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30991,7 +31884,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],141:[function(require,module,exports){
+},{}],220:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31016,7 +31909,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":139}],142:[function(require,module,exports){
+},{"./isNode":218}],221:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31071,7 +31964,7 @@ var keyMirror = function(obj) {
 module.exports = keyMirror;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],143:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],222:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31107,7 +32000,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],144:[function(require,module,exports){
+},{}],223:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31160,7 +32053,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],145:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31193,7 +32086,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],146:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31233,7 +32126,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":59,"./invariant":137,"1YiZ5S":1}],147:[function(require,module,exports){
+},{"./ReactElement":138,"./invariant":216,"1YiZ5S":2}],226:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31261,7 +32154,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":22}],148:[function(require,module,exports){
+},{"./ExecutionEnvironment":101}],227:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31289,7 +32182,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":147}],149:[function(require,module,exports){
+},{"./performance":226}],228:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31317,7 +32210,7 @@ function quoteAttributeValueForBrowser(value) {
 
 module.exports = quoteAttributeValueForBrowser;
 
-},{"./escapeTextContentForBrowser":118}],150:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":197}],229:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31406,7 +32299,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":22}],151:[function(require,module,exports){
+},{"./ExecutionEnvironment":101}],230:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31448,7 +32341,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setTextContent;
 
-},{"./ExecutionEnvironment":22,"./escapeTextContentForBrowser":118,"./setInnerHTML":150}],152:[function(require,module,exports){
+},{"./ExecutionEnvironment":101,"./escapeTextContentForBrowser":197,"./setInnerHTML":229}],231:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31492,7 +32385,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],153:[function(require,module,exports){
+},{}],232:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31596,7 +32489,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 module.exports = shouldUpdateReactComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./warning":156,"1YiZ5S":1}],154:[function(require,module,exports){
+},{"./warning":235,"1YiZ5S":2}],233:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31668,7 +32561,7 @@ function toArray(obj) {
 module.exports = toArray;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":137,"1YiZ5S":1}],155:[function(require,module,exports){
+},{"./invariant":216,"1YiZ5S":2}],234:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31921,7 +32814,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":59,"./ReactFragment":65,"./ReactInstanceHandles":68,"./getIteratorFn":128,"./invariant":137,"./warning":156,"1YiZ5S":1}],156:[function(require,module,exports){
+},{"./ReactElement":138,"./ReactFragment":144,"./ReactInstanceHandles":147,"./getIteratorFn":207,"./invariant":216,"./warning":235,"1YiZ5S":2}],235:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31984,870 +32877,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = warning;
 
 }).call(this,require("1YiZ5S"))
-},{"./emptyFunction":116,"1YiZ5S":1}],157:[function(require,module,exports){
+},{"./emptyFunction":195,"1YiZ5S":2}],236:[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":30}],158:[function(require,module,exports){
-'use strict';
-
-var downKey = require('./keys/down'),
-    endKey = require('./keys/end'),
-    enterKey = require('./keys/enter'),
-    escapeKey = require('./keys/escape'),
-    homeKey = require('./keys/home'),
-    spaceKey = require('./keys/space'),
-    tabKey = require('./keys/tab'),
-    upKey = require('./keys/up');
-
-var allKeys = [downKey, endKey, enterKey, escapeKey, homeKey, spaceKey, tabKey, upKey];
-
-module.exports = allKeys;
-
-},{"./keys/down":162,"./keys/end":163,"./keys/enter":164,"./keys/escape":165,"./keys/home":166,"./keys/space":167,"./keys/tab":168,"./keys/up":169}],159:[function(require,module,exports){
-'use strict';
-
-var multiple = require('./properties/multiple'),
-    searchable = require('./properties/searchable'),
-    tags = require('./properties/tags'),
-    customClass = require('./properties/customClass'),
-    customGroupHeadingClass = require('./properties/customGroupHeadingClass'),
-    customSearchIconClass = require('./properties/customSearchIconClass'),
-    customLoaderClass = require('./properties/customLoaderClass'),
-    customTagClass = require('./properties/customTagClass'),
-    onChange = require('./properties/onChange'),
-    ajaxDataFetch = require('./properties/ajaxDataFetch'),
-    dataSource = require('./properties/dataSource'),
-    initialValue = require('./properties/initialValue'),
-    optionLabelKey = require('./properties/optionLabelKey'),
-    optionValueKey = require('./properties/optionValueKey'),
-    pageDataFetch = require('./properties/pageDataFetch'),
-    hasMorePages = require('./properties/hasMorePages'),
-    groupBy = require('./properties/groupBy'),
-    customGroupHeadingTemplateFunction = require('./properties/customGroupHeadingTemplateFunction'),
-    customFilterFunction = require('./properties/customFilterFunction'),
-    customOptionTemplateFunction = require('./properties/customOptionTemplateFunction'),
-    ajaxErrorString = require('./properties/ajaxErrorString'),
-    noResultsString = require('./properties/noResultsString'),
-    placeholder = require('./properties/placeholder'),
-    searchPlaceholder = require('./properties/searchPlaceholder'),
-    tagRemoveLabelString = require('./properties/tagRemoveLabelString');
-
-var allProps = [multiple, searchable, tags, customClass, customGroupHeadingClass, customSearchIconClass, customLoaderClass, customTagClass, onChange, ajaxDataFetch, dataSource, initialValue, optionLabelKey, optionValueKey, pageDataFetch, hasMorePages, groupBy, customGroupHeadingTemplateFunction, customFilterFunction, customOptionTemplateFunction, ajaxErrorString, noResultsString, placeholder, searchPlaceholder, tagRemoveLabelString];
-
-module.exports = allProps;
-
-},{"./properties/ajaxDataFetch":203,"./properties/ajaxErrorString":204,"./properties/customClass":205,"./properties/customFilterFunction":206,"./properties/customGroupHeadingClass":207,"./properties/customGroupHeadingTemplateFunction":208,"./properties/customLoaderClass":209,"./properties/customOptionTemplateFunction":210,"./properties/customSearchIconClass":211,"./properties/customTagClass":212,"./properties/dataSource":213,"./properties/groupBy":214,"./properties/hasMorePages":215,"./properties/initialValue":216,"./properties/multiple":217,"./properties/noResultsString":218,"./properties/onChange":219,"./properties/optionLabelKey":220,"./properties/optionValueKey":221,"./properties/pageDataFetch":222,"./properties/placeholder":223,"./properties/searchPlaceholder":224,"./properties/searchable":225,"./properties/tagRemoveLabelString":226,"./properties/tags":227}],160:[function(require,module,exports){
-'use strict';
-
-require('./props-app');
-require('./keyboard-navigation-app');
-require('./version-printer');
-
-},{"./keyboard-navigation-app":161,"./props-app":228,"./version-printer":229}],161:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    React = require('react');
-
-var allKeys = require('./all-keys');
-
-var KeyboardNavigationApp = React.createClass({
-  displayName: 'KeyboardNavigationApp',
-
-  _renderKeysLinks: function _renderKeysLinks() {
-    var propsLinks = _.map(allKeys, function (key, index) {
-      var href = '#' + key.nameAttr;
-      var reactKey = 'key_link_' + index;
-      return React.createElement(
-        'li',
-        { key: reactKey },
-        React.createElement(
-          'a',
-          { href: href },
-          ' ',
-          key.nameAttr,
-          ' '
-        )
-      );
-    });
-
-    return propsLinks;
-  },
-
-  _renderKeys: function _renderKeys() {
-    var articles = _.map(allKeys, function (key, index) {
-      var reactKey = 'keyboard_' + index;
-      return React.createElement(
-        'article',
-        { key: reactKey, className: 'api-item' },
-        React.createElement(
-          'h5',
-          { className: 'api-link' },
-          React.createElement(
-            'a',
-            { name: key.nameAttr },
-            key.displayName
-          )
-        ),
-        React.createElement('p', { dangerouslySetInnerHTML: { __html: key.renderString } }),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#index_top' },
-          'Back to Top'
-        ),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#keys_top' },
-          'Back to Keys Links'
-        )
-      );
-    });
-
-    return articles;
-  },
-
-  render: function render() {
-    return React.createElement(
-      'section',
-      { className: 'api-docs-section' },
-      React.createElement(
-        'a',
-        { name: 'keyboard' },
-        ' '
-      ),
-      React.createElement(
-        'h3',
-        { className: 'feature-heading' },
-        'Keyboard Navigation:'
-      ),
-      React.createElement(
-        'a',
-        { name: 'keys_top' },
-        ' '
-      ),
-      React.createElement(
-        'h5',
-        null,
-        'Keyboard Navigation Links By Key:'
-      ),
-      React.createElement(
-        'nav',
-        { className: 'api' },
-        React.createElement(
-          'ul',
-          null,
-          this._renderKeysLinks()
-        )
-      ),
-      this._renderKeys()
-    );
-  }
-});
-
-module.exports = KeyboardNavigationApp;
-React.render(React.createElement(KeyboardNavigationApp, null), document.getElementById('keyboard_docs'));
-
-},{"./all-keys":158,"lodash":2,"react":157}],162:[function(require,module,exports){
-"use strict";
-
-var downMarkdown = require("../markdown/js/keys/down").body;
-
-var downKey = {
-
-  nameAttr: "down",
-  displayName: "Down Arrow Key",
-
-  renderString: downMarkdown
-
-};
-
-module.exports = downKey;
-
-},{"../markdown/js/keys/down":170}],163:[function(require,module,exports){
-"use strict";
-
-var endMarkdown = require("../markdown/js/keys/end").body;
-
-var endKey = {
-
-  nameAttr: "end",
-  displayName: "End Key",
-
-  renderString: endMarkdown
-
-};
-
-module.exports = endKey;
-
-},{"../markdown/js/keys/end":171}],164:[function(require,module,exports){
-"use strict";
-
-var enterMarkdown = require("../markdown/js/keys/enter").body;
-
-var enterKey = {
-
-  nameAttr: "enter",
-  displayName: "Enter Key",
-
-  renderString: enterMarkdown
-
-};
-
-module.exports = enterKey;
-
-},{"../markdown/js/keys/enter":172}],165:[function(require,module,exports){
-"use strict";
-
-var escapeMarkdown = require("../markdown/js/keys/escape").body;
-
-var escapeKey = {
-
-  nameAttr: "escape",
-  displayName: "Escape Key",
-
-  renderString: escapeMarkdown
-
-};
-
-module.exports = escapeKey;
-
-},{"../markdown/js/keys/escape":173}],166:[function(require,module,exports){
-"use strict";
-
-var homeMarkdown = require("../markdown/js/keys/home").body;
-
-var homeKey = {
-
-  nameAttr: "home",
-  displayName: "Home Key",
-
-  renderString: homeMarkdown
-
-};
-
-module.exports = homeKey;
-
-},{"../markdown/js/keys/home":174}],167:[function(require,module,exports){
-"use strict";
-
-var spaceMarkdown = require("../markdown/js/keys/space").body;
-
-var spaceKey = {
-
-  nameAttr: "space",
-  displayName: "Space Bar Key",
-
-  renderString: spaceMarkdown
-
-};
-
-module.exports = spaceKey;
-
-},{"../markdown/js/keys/space":175}],168:[function(require,module,exports){
-"use strict";
-
-var tabMarkdown = require("../markdown/js/keys/tab").body;
-
-var tabKey = {
-
-  nameAttr: "tab",
-  displayName: "Tab Key",
-
-  renderString: tabMarkdown
-
-};
-
-module.exports = tabKey;
-
-},{"../markdown/js/keys/tab":176}],169:[function(require,module,exports){
-"use strict";
-
-var upMarkdown = require("../markdown/js/keys/up").body;
-
-var upKey = {
-
-  nameAttr: "up",
-  displayName: "Up Arrow Key",
-
-  renderString: upMarkdown
-
-};
-
-module.exports = upKey;
-
-},{"../markdown/js/keys/up":177}],170:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>open the option dropdown</strong></li>\n</ul>\n<p>When the control’s main element is focused.  Pressing the down arrow key will open the dropdown. (It can also be pressed with the alt-key with the same result)</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>navigation of options</strong></li>\n</ul>\n<p>Pressing the down-arrow key when the dropdown is open will move focus down to the next selectable option.  If the <strong>searchable</strong> prop is true, The first keypress of the down arrow will focus the search input field.</p>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select focused option and move focus down</strong></li>\n</ul>\n<p>If the down arrow is pressed with the shift-key in a <strong>multiselect</strong> or <strong>tags</strong> control, the focused option will be selected (or deselected if alreadySelected), and the focus will move down to the next available option.</p>\n"}
-},{}],171:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Move focus to the last available option</strong></li>\n</ul>\n<p>Pressing the end key moves focus to the last option in the dropdown</p>\n"}
-},{}],172:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>open the dropdown</strong></li>\n</ul>\n<p>Pressing enter when the the control has focus will open the dropdown.</p>\n<h4 id=\"-closed-control-state-when-tag-removal-button-focused-\">(Closed Control State - when tag removal button focused)</h4>\n<ul>\n<li><strong>remove the focused tag</strong> (only applicable to controls with the <strong>tags</strong> property set to true) </li>\n</ul>\n<p>Pressing enter when a tag removal button has focus will remove the tag from the selected values.  After the tag has been removed, focus is moved to the first-available tag removal button.</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Select the currently focused option</strong></li>\n</ul>\n<p>Pressing the enter key selects the option that currently has focus.  In a non-multiselect control, the dropdown will close after the selection is made.</p>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-ctrl-key-or-meta-key-held-down-\">(With ctrl-key or meta-key held down)</h4>\n<ul>\n<li><strong>toggle selection state of the currently focused option</strong></li>\n</ul>\n<p>When the enter key is pressed along with the ctrl-key or meta-key. The currently focused option will be selected, or deselected if it was already selected when clicked</p>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select a range of options from last selected to currently focused option</strong></li>\n</ul>\n<p>When the enter key is pressed along with the shift-key while a option has focus, All values in the range from the last selected option to the currently focused option will be selected.  </p>\n<p>If no option was previously selected, all options from the first option to the focused option will be selected.</p>\n<ul>\n<li><strong>deselect a range up to but not including the focused option</strong></li>\n</ul>\n<p>If the focused option has already been selected when the user clicks enter along with the shift-key, any selected options in the range between the last selected option and the focused option will be deselected.  The focused option will remain selected in this case.</p>\n"}
-},{}],173:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Close the dropdown</strong></li>\n</ul>\n"}
-},{}],174:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>Move focus to first available option</strong></li>\n</ul>\n<p>Pressing the home key moves focus to the first option in the dropdown</p>\n"}
-},{}],175:[function(require,module,exports){
-module.exports={"body":"<p>The space key mimics the behavior of the <a href=\"#enter\">enter</a> key</p>\n"}
-},{}],176:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><strong>tab away from the control</strong></li>\n</ul>\n<p>Pressing enter when the the control has focus will open the dropdown.</p>\n<h4 id=\"-closed-control-state-when-tag-removal-button-focused-\">(Closed Control State - when tag removal button focused)</h4>\n<ul>\n<li><strong>move focus to the next avaliable tag removal button</strong> (only applicable to controls with the <strong>tags</strong> property set to true) </li>\n</ul>\n<p>Pressing tab when a tag removal button has focus will move focus to the next available tag removal button.  If the focused-tag removal button is the last one available, focus will move away from the control.</p>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<p>In an open control, the tab key mimics the behavior of the <a href=\"#enter\">enter</a> key</p>\n"}
-},{}],177:[function(require,module,exports){
-module.exports={"body":"<h4 id=\"-closed-control-state-\">(Closed Control State)</h4>\n<ul>\n<li><em>no effect</em></li>\n</ul>\n<h4 id=\"-opened-control-state-\">(Opened Control State)</h4>\n<ul>\n<li><strong>navigation of options</strong></li>\n</ul>\n<p>Pressing the up-arrow key when the dropdown is open will move focus up to the next selectable option.  If the focus reaches the first option, or the search input field in a <strong>searchable</strong> control, no action will occur.</p>\n<h4 id=\"-with-alt-key-held-down-\">(With alt-key held down)</h4>\n<ul>\n<li><strong>close the drop down</strong>\nAn alt-key press of the up-arrow will close the dropdown</li>\n</ul>\n<h4 id=\"multiselect-specific-behaviors\">Multiselect Specific Behaviors</h4>\n<h4 id=\"-with-shift-key-held-down-\">(With shift-key held down)</h4>\n<ul>\n<li><strong>select focused option and move focus up</strong></li>\n</ul>\n<p>If the up arrow is pressed with the shift-key in a <strong>multiselect</strong> or <strong>tags</strong> control, the focused option will be selected (or deselected if alreadySelected), and the focus will move up to the next available option.</p>\n"}
-},{}],178:[function(require,module,exports){
-module.exports={"body":"<!-- ajaxDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(<strong>dataSource</strong> must be supplied if left undefined)</p>\n<p>Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function will be passed one argument, the dataSource that was provided to\nthe <strong>dataSource prop</strong></p>\n<p>The return value of the function must be a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The <strong>dataSource</strong> option should be left undefined when using this option.</p>\n"}
-},{}],179:[function(require,module,exports){
-module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options)</p>\n<p>This string will be shown as a message in the dropdown area in the event that an ajax request for options data fails</p>\n"}
-},{}],180:[function(require,module,exports){
-module.exports={"body":"<!-- customClass -->\n<p>(<strong>String</strong>) <em>optional</em> </p>\n<p>This value will be added as a css class to the control’s main wrapping element.You should be able to overide all styling by leading your rules with</p>\n<pre><code class=\"lang-css\">.r-ss-wrap.{customClass}\n</code></pre>\n"}
-},{}],181:[function(require,module,exports){
-module.exports={"body":"<!-- customFilterFunction -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option)</p>\n<p>The function provided will serve as a replacement of the default search filter function. </p>\n<p>(If left undefined the default filter function will be used) </p>\n<p>The Default Filtering function is a lowercase string comparison for text. It matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown’s search field). The function leverages Lodash’s filter function with your dataSource collection as its first argument</p>\n"}
-},{}],182:[function(require,module,exports){
-module.exports={"body":"<!-- customGroupHeadingClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>Used in conjunction with the <strong>groupBy</strong> option.</p>\n<p>This string value will be added as a custom css class to the group headings which are rendered into the dropdown</p>\n"}
-},{}],183:[function(require,module,exports){
-module.exports={"body":"<!-- customGroupHeadingTemplateFunction -->\n<p>(<strong>Function</strong>) <em>optional</em> </p>\n<p>(Used in conjunction with the <strong>groupBy</strong> option)</p>\n<p>This function provides custom templating capability for your dropdown heading options. </p>\n<p>The function will be called with the value returned as each group’s object key as its first argument. (This is the value returned by Lodash’s groupBy when passed the value of your groupBy option). It should return your desired group heading markup</p>\n"}
-},{}],184:[function(require,module,exports){
-module.exports={"body":"<!-- customLoaderClass -->\n<p>(<strong>String</strong>) <em>optional</em> </p>\n<p>(Used in conjunction with the <strong>ajaxDataFetch</strong> and <strong>pageDataFetch</strong> options) </p>\n<p>This string value will be added as a css class to the loading icon allowing css overrides. </p>\n<p>(By default the control uses an animated gif spinner which is a base64 background image in css)</p>\n"}
-},{}],185:[function(require,module,exports){
-module.exports={"body":"<!-- customOptionTemplateFunction -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>This function provides custom templating capability for your dropdown options. It will be used to render the display of selected values in the case of a <strong>multiple</strong> select control which does not have <strong>tags</strong> set to true. </p>\n<p>The function should accept a single option object from your dataSource collection and return your desired markup based on that object’s properties</p>\n"}
-},{}],186:[function(require,module,exports){
-module.exports={"body":"<!-- customSearchIconClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>This value will be added as a css class to the icon element in the search-filtering bar (when <strong>searchable</strong> is true). \nThis allows you to override the default search icon.</p>\n<p>(By default the icon will be a magnifying glass)</p>\n"}
-},{}],187:[function(require,module,exports){
-module.exports={"body":"<!-- customTagClass -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This value will be added as a css class to the wrapper of user-selected options display element when it is displayed as a tag. </p>\n<p>You should be able to overide all tag styling by leading your css rules with</p>\n<pre><code class=\"lang-css\">.r-ss-tag.{customTagClass}\n</code></pre>\n"}
-},{}],188:[function(require,module,exports){
-module.exports={"body":"<!-- dataSource -->\n<p>(<strong>Array</strong>|<strong>Object</strong>|<strong>Collection Object</strong>) <em>optional</em> </p>\n<p>(<strong>ajaxDataFetch</strong>must be supplied if left undefined)</p>\n<p>The dataSource option provides the data for your options dropdown. The value provided will be passed to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type</p>\n<p>The parsing method supports dataSource values as:</p>\n<ul>\n<li>an array of option objects (will be directly assigned to state.data)</li>\n<li>an object with a collection property (object.collection will be assigned to state.data)</li>\n<li>an object with a get function (the return value of object.get(‘collection’) will be assigned to state.data)</li>\n</ul>\n<p>Each option in the resulting collection must have the following properties:</p>\n<ul>\n<li>a unique value corresponding to the key set by the <strong>optionValueKey</strong> or the default optionValueKey of ‘id’</li>\n<li>a defined value corresponding to the key set by the <strong>optionLabelKey</strong> or the default optionLabelKey of ‘name’</li>\n</ul>\n"}
-},{}],189:[function(require,module,exports){
-module.exports={"body":"<!-- groupBy -->\n<p>(<strong>String</strong>|<strong>Object</strong>|<strong>Function</strong>) <em>optional</em></p>\n<p>Allows you to sort your dropdown options into groups by leveraging Lodash’s groupBy function. </p>\n<p>Please reference the <a href=\"https://lodash.com/docs#groupBy\">Lodash documentation</a> for behavior of groupBy when passed different argument types</p>\n"}
-},{}],190:[function(require,module,exports){
-module.exports={"body":"<!-- hasMorePages -->\n<p> (<strong>Function</strong>) <em>optional</em></p>\n<p> (should be provided when using the <strong>pageDataFetch</strong> option)</p>\n<p> This function accepts one argument, a value as described by the <strong>dataSource</strong> option documentation.</p>\n<p>It should return a Boolean value that indicates whether the option data collection has any more pages available for fetching</p>\n"}
-},{}],191:[function(require,module,exports){
-module.exports={"body":"<!-- initialValue property -->\n<p>(<strong>Array</strong>|<strong>Object</strong>) <em>optional</em></p>\n<p>The selected value the control will be initialized with</p>\n<p>Must be either an array of option objects or a single option object from your dataSource collection</p>\n"}
-},{}],192:[function(require,module,exports){
-module.exports={"body":"<!-- multiple property -->\n<p>(<strong>Boolean</strong>) <em>optional</em></p>\n<p>Whether or not the control supports multi-selection.</p>\n<p>When using the <strong>tags</strong> display option, this option is redundant</p>\n"}
-},{}],193:[function(require,module,exports){
-module.exports={"body":"<!-- noResultsString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>A string value which will be displayed when your dropdown shows no results. (i.e. <strong>dataSource</strong> collection is empty , or <strong>ajaxDataFetch</strong> returns an empty collection)</p>\n"}
-},{}],194:[function(require,module,exports){
-module.exports={"body":"<!-- onChange -->\n<p>(<strong>Function</strong>) <em>required</em></p>\n<p>This is the main callback handler for the control. </p>\n<p>When a user makes selection(s), this handler will be called, the selected option (or when multiple or tags an array of selected values) will be passed to the handler as an argument. </p>\n<p>(The values passed are option objects from the dataSource collection)</p>\n"}
-},{}],195:[function(require,module,exports){
-module.exports={"body":"<!-- optionLabelKey -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(defaults to using ‘name’ as the key if left undefined)</p>\n<p>This value represents the key in each option object (from the <strong>dataSource</strong> collection) </p>\n<p>This key should map to the value you would like displayed as a label for each option.</p>\n"}
-},{}],196:[function(require,module,exports){
-module.exports={"body":"<!-- optionValueKey -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> (defaults to using ‘id’ as the key if left undefined)</p>\n<p>  This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that uniquely identifies that option across the dataSource collection. </p>\n<p>  Think of it in terms of the value attribute of the html option tag (inside a select)</p>\n<pre><code class=\"lang-html\">  &lt;select&gt;\n    &lt;option value=&quot;?&quot;&gt;\n</code></pre>\n"}
-},{}],197:[function(require,module,exports){
-module.exports={"body":"<!-- pageDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(A <strong>hasMorePages</strong> function should be provided when using this option)</p>\n<p>Additional pages of data can be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function takes one argument, the value provided as the dataSource (or the return value of the ajaxDataSource function). </p>\n<p>It must return a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The pageDataFetch function will be called based upon the user’s scroll position in the dropdown (reaching a threshold close enough to the end of the dropdown’s results list). </p>\n<p>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <strong>hasMorePages</strong> evaluates to false</p>\n"}
-},{}],198:[function(require,module,exports){
-module.exports={"body":"<!-- placeholder -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> This string value will be displayed in the main display area of your control when the user has no selected values</p>\n"}
-},{}],199:[function(require,module,exports){
-module.exports={"body":"<!-- searchPlaceholder -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option)</p>\n<p>This string will be shown in the dropdown area’s search input field when a user has not entered any characters</p>\n"}
-},{}],200:[function(require,module,exports){
-module.exports={"body":"<!-- searchable -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to show a search bar in the dropdown area which offers text-based filtering of the dataSource options (by label <strong>optionLabelKey</strong>)</p>\n"}
-},{}],201:[function(require,module,exports){
-module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>tagRemoveLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>\n"}
-},{}],202:[function(require,module,exports){
-module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n"}
-},{}],203:[function(require,module,exports){
-"use strict";
-
-var ajaxDataFetchMarkdown = require("../markdown/js/properties/ajaxDataFetch").body;
-
-var ajaxDataFetchProp = {
-
-  nameAttr: "ajaxDataFetch",
-
-  renderString: ajaxDataFetchMarkdown
-
-};
-
-module.exports = ajaxDataFetchProp;
-
-},{"../markdown/js/properties/ajaxDataFetch":178}],204:[function(require,module,exports){
-"use strict";
-
-var ajaxErrorStringMarkdown = require("../markdown/js/properties/ajaxErrorString").body;
-
-var ajaxErrorStringProp = {
-
-  nameAttr: "ajaxErrorString",
-
-  renderString: ajaxErrorStringMarkdown
-
-};
-
-module.exports = ajaxErrorStringProp;
-
-},{"../markdown/js/properties/ajaxErrorString":179}],205:[function(require,module,exports){
-"use strict";
-
-var customClassMarkdown = require("../markdown/js/properties/customClass").body;
-
-var customClassProp = {
-
-  nameAttr: "customClass",
-
-  renderString: customClassMarkdown
-
-};
-
-module.exports = customClassProp;
-
-},{"../markdown/js/properties/customClass":180}],206:[function(require,module,exports){
-"use strict";
-
-var customFilterFunctionMarkdown = require("../markdown/js/properties/customFilterFunction").body;
-
-var customFilterFunctionProp = {
-
-  nameAttr: "customFilterFunction",
-
-  renderString: customFilterFunctionMarkdown
-
-};
-
-module.exports = customFilterFunctionProp;
-
-},{"../markdown/js/properties/customFilterFunction":181}],207:[function(require,module,exports){
-"use strict";
-
-var customGroupHeadingClassMarkdown = require("../markdown/js/properties/customGroupHeadingClass").body;
-
-var customGroupHeadingClassProp = {
-
-  nameAttr: "customGroupHeadingClass",
-
-  renderString: customGroupHeadingClassMarkdown
-
-};
-
-module.exports = customGroupHeadingClassProp;
-
-},{"../markdown/js/properties/customGroupHeadingClass":182}],208:[function(require,module,exports){
-"use strict";
-
-var customGroupHeadingTemplateFunctionMarkdown = require("../markdown/js/properties/customGroupHeadingTemplateFunction").body;
-
-var customGroupHeadingTemplateFunctionProp = {
-
-  nameAttr: "customGroupHeadingTemplateFunction",
-
-  renderString: customGroupHeadingTemplateFunctionMarkdown
-
-};
-
-module.exports = customGroupHeadingTemplateFunctionProp;
-
-},{"../markdown/js/properties/customGroupHeadingTemplateFunction":183}],209:[function(require,module,exports){
-"use strict";
-
-var customLoaderClassMarkdown = require("../markdown/js/properties/customLoaderClass").body;
-
-var customLoaderClassProp = {
-
-  nameAttr: "customLoaderClass",
-
-  renderString: customLoaderClassMarkdown
-
-};
-
-module.exports = customLoaderClassProp;
-
-},{"../markdown/js/properties/customLoaderClass":184}],210:[function(require,module,exports){
-"use strict";
-
-var customOptionTemplateFunctionMarkdown = require("../markdown/js/properties/customOptionTemplateFunction").body;
-
-var customOptionTemplateFunctionProp = {
-
-  nameAttr: "customOptionTemplateFunction",
-
-  renderString: customOptionTemplateFunctionMarkdown
-
-};
-
-module.exports = customOptionTemplateFunctionProp;
-
-},{"../markdown/js/properties/customOptionTemplateFunction":185}],211:[function(require,module,exports){
-"use strict";
-
-var customSearchIconClassMarkdown = require("../markdown/js/properties/customSearchIconClass").body;
-
-var customSearchIconClassProp = {
-
-  nameAttr: "customSearchIconClass",
-
-  renderString: customSearchIconClassMarkdown
-
-};
-
-module.exports = customSearchIconClassProp;
-
-},{"../markdown/js/properties/customSearchIconClass":186}],212:[function(require,module,exports){
-"use strict";
-
-var customTagClassMarkdown = require("../markdown/js/properties/customTagClass").body;
-
-var customTagClassProp = {
-
-  nameAttr: "customTagClass",
-
-  renderString: customTagClassMarkdown
-
-};
-
-module.exports = customTagClassProp;
-
-},{"../markdown/js/properties/customTagClass":187}],213:[function(require,module,exports){
-"use strict";
-
-var dataSourceMarkdown = require("../markdown/js/properties/dataSource").body;
-
-var dataSourceProp = {
-
-  nameAttr: "dataSource",
-
-  renderString: dataSourceMarkdown
-
-};
-
-module.exports = dataSourceProp;
-
-},{"../markdown/js/properties/dataSource":188}],214:[function(require,module,exports){
-"use strict";
-
-var groupByMarkdown = require("../markdown/js/properties/groupBy").body;
-
-var groupByProp = {
-
-  nameAttr: "groupBy",
-
-  renderString: groupByMarkdown
-
-};
-
-module.exports = groupByProp;
-
-},{"../markdown/js/properties/groupBy":189}],215:[function(require,module,exports){
-"use strict";
-
-var hasMorePagesMarkdown = require("../markdown/js/properties/hasMorePages").body;
-
-var hasMorePagesProp = {
-
-  nameAttr: "hasMorePages",
-
-  renderString: hasMorePagesMarkdown
-
-};
-
-module.exports = hasMorePagesProp;
-
-},{"../markdown/js/properties/hasMorePages":190}],216:[function(require,module,exports){
-"use strict";
-
-var initialValueMarkdown = require("../markdown/js/properties/initialValue").body;
-
-var initialValueProp = {
-
-  nameAttr: "initialValue",
-
-  renderString: initialValueMarkdown
-
-};
-
-module.exports = initialValueProp;
-
-},{"../markdown/js/properties/initialValue":191}],217:[function(require,module,exports){
-"use strict";
-
-var multipleMarkdown = require("../markdown/js/properties/multiple").body;
-
-var multipleProp = {
-
-  nameAttr: "multiple",
-
-  renderString: multipleMarkdown
-
-};
-
-module.exports = multipleProp;
-
-},{"../markdown/js/properties/multiple":192}],218:[function(require,module,exports){
-"use strict";
-
-var noResultsStringMarkdown = require("../markdown/js/properties/noResultsString").body;
-
-var noResultsStringProp = {
-
-  nameAttr: "noResultsString",
-
-  renderString: noResultsStringMarkdown
-
-};
-
-module.exports = noResultsStringProp;
-
-},{"../markdown/js/properties/noResultsString":193}],219:[function(require,module,exports){
-"use strict";
-
-var onChangeMarkdown = require("../markdown/js/properties/onChange").body;
-
-var onChangeProp = {
-
-  nameAttr: "onChange",
-
-  renderString: onChangeMarkdown
-
-};
-
-module.exports = onChangeProp;
-
-},{"../markdown/js/properties/onChange":194}],220:[function(require,module,exports){
-"use strict";
-
-var optionLabelKeyMarkdown = require("../markdown/js/properties/optionLabelKey").body;
-
-var optionLabelKeyProp = {
-
-  nameAttr: "optionLabelKey",
-
-  renderString: optionLabelKeyMarkdown
-
-};
-
-module.exports = optionLabelKeyProp;
-
-},{"../markdown/js/properties/optionLabelKey":195}],221:[function(require,module,exports){
-"use strict";
-
-var optionValueKeyMarkdown = require("../markdown/js/properties/optionValueKey").body;
-
-var optionValueKeyProp = {
-
-  nameAttr: "optionValueKey",
-
-  renderString: optionValueKeyMarkdown
-
-};
-
-module.exports = optionValueKeyProp;
-
-},{"../markdown/js/properties/optionValueKey":196}],222:[function(require,module,exports){
-"use strict";
-
-var pageDataFetchMarkdown = require("../markdown/js/properties/pageDataFetch").body;
-
-var pageDataFetchProp = {
-
-  nameAttr: "pageDataFetch",
-
-  renderString: pageDataFetchMarkdown
-
-};
-
-module.exports = pageDataFetchProp;
-
-},{"../markdown/js/properties/pageDataFetch":197}],223:[function(require,module,exports){
-"use strict";
-
-var placeholderMarkdown = require("../markdown/js/properties/placeholder").body;
-
-var placeholderProp = {
-
-  nameAttr: "placeholder",
-
-  renderString: placeholderMarkdown
-
-};
-
-module.exports = placeholderProp;
-
-},{"../markdown/js/properties/placeholder":198}],224:[function(require,module,exports){
-"use strict";
-
-var searchPlaceholderMarkdown = require("../markdown/js/properties/searchPlaceholder").body;
-
-var searchPlaceholderProp = {
-
-  nameAttr: "searchPlaceholder",
-
-  renderString: searchPlaceholderMarkdown
-
-};
-
-module.exports = searchPlaceholderProp;
-
-},{"../markdown/js/properties/searchPlaceholder":199}],225:[function(require,module,exports){
-"use strict";
-
-var searchableMarkdown = require("../markdown/js/properties/searchable").body;
-
-var searchableProp = {
-
-  nameAttr: "searchable",
-
-  renderString: searchableMarkdown
-
-};
-
-module.exports = searchableProp;
-
-},{"../markdown/js/properties/searchable":200}],226:[function(require,module,exports){
-"use strict";
-
-var tagRemoveLabelStringMarkdown = require("../markdown/js/properties/tagRemoveLabelString").body;
-
-var tagRemoveLabelStringProp = {
-
-  nameAttr: "tagRemoveLabelString",
-
-  renderString: tagRemoveLabelStringMarkdown
-
-};
-
-module.exports = tagRemoveLabelStringProp;
-
-},{"../markdown/js/properties/tagRemoveLabelString":201}],227:[function(require,module,exports){
-"use strict";
-
-var tagsMarkdown = require("../markdown/js/properties/tags").body;
-
-var tagsProp = {
-
-  nameAttr: "tags",
-
-  renderString: tagsMarkdown
-
-};
-
-module.exports = tagsProp;
-
-},{"../markdown/js/properties/tags":202}],228:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    React = require('react');
-
-var allProps = require('./all-props');
-
-var PropsApp = React.createClass({
-  displayName: 'PropsApp',
-
-  _renderPropsLinks: function _renderPropsLinks() {
-    var sortedProps = allProps.sort(function (propA, propB) {
-      return propA.nameAttr >= propB.nameAttr ? 1 : -1;
-    });
-    var propsLinks = _.map(sortedProps, function (prop, index) {
-      var href = '#' + prop.nameAttr;
-      var key = 'prop_link_' + index;
-      return React.createElement(
-        'li',
-        { key: key },
-        React.createElement(
-          'a',
-          { href: href },
-          ' ',
-          prop.nameAttr,
-          ' '
-        )
-      );
-    });
-
-    return propsLinks;
-  },
-
-  _renderProps: function _renderProps() {
-    var articles = _.map(allProps, function (prop, index) {
-      var key = 'api_prop_' + index;
-      return React.createElement(
-        'article',
-        { key: key, className: 'api-item' },
-        React.createElement(
-          'h4',
-          { className: 'api-link' },
-          React.createElement(
-            'a',
-            { name: prop.nameAttr },
-            prop.nameAttr
-          )
-        ),
-        React.createElement('p', { dangerouslySetInnerHTML: { __html: prop.renderString } }),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#index_top' },
-          'Back to Top'
-        ),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#properties_top' },
-          'Back to API Documentation Links'
-        )
-      );
-    });
-
-    return articles;
-  },
-
-  render: function render() {
-    return React.createElement(
-      'section',
-      { className: 'api-docs-section' },
-      React.createElement(
-        'a',
-        { name: 'apiDocs' },
-        ' '
-      ),
-      React.createElement(
-        'h3',
-        { className: 'feature-heading' },
-        'API documentation'
-      ),
-      'you can also view the',
-      React.createElement(
-        'a',
-        { href: 'annotated-source.html' },
-        ' Annotated Source Code '
-      ),
-      React.createElement(
-        'a',
-        { name: 'properties_top' },
-        ' '
-      ),
-      React.createElement(
-        'h5',
-        null,
-        'Component Property API Documentation Links:'
-      ),
-      React.createElement(
-        'nav',
-        { className: 'api' },
-        React.createElement(
-          'ul',
-          null,
-          this._renderPropsLinks()
-        )
-      ),
-      this._renderProps()
-    );
-  }
-});
-
-module.exports = PropsApp;
-React.render(React.createElement(PropsApp, null), document.getElementById('props_docs'));
-
-},{"./all-props":159,"lodash":2,"react":157}],229:[function(require,module,exports){
-'use strict';
-
-var RSS_VERSION = '0.1.18';
-var React = require('react');
-
-var VersionPrinter = React.createClass({
-  displayName: 'VersionPrinter',
-
-  render: function render() {
-    return React.createElement(
-      'span',
-      null,
-      RSS_VERSION
-    );
-  }
-});
-
-module.exports = VersionPrinter;
-React.render(React.createElement(VersionPrinter, null), document.getElementById('r_ss_version'));
-
-},{"react":157}]},{},[160])
+},{"./lib/React":109}]},{},[5])

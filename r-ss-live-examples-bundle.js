@@ -4,44 +4,49 @@
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
+/* global define */
 
-function classNames() {
-	var classes = '';
-	var arg;
+(function () {
+	'use strict';
 
-	for (var i = 0; i < arguments.length; i++) {
-		arg = arguments[i];
-		if (!arg) {
-			continue;
-		}
+	var hasOwn = {}.hasOwnProperty;
 
-		if ('string' === typeof arg || 'number' === typeof arg) {
-			classes += ' ' + arg;
-		} else if (Object.prototype.toString.call(arg) === '[object Array]') {
-			classes += ' ' + classNames.apply(null, arg);
-		} else if ('object' === typeof arg) {
-			for (var key in arg) {
-				if (!arg.hasOwnProperty(key) || !arg[key]) {
-					continue;
+	function classNames () {
+		var classes = '';
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes += ' ' + arg;
+			} else if (Array.isArray(arg)) {
+				classes += ' ' + classNames.apply(null, arg);
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes += ' ' + key;
+					}
 				}
-				classes += ' ' + key;
 			}
 		}
+
+		return classes.substr(1);
 	}
-	return classes.substr(1);
-}
 
-// safely export classNames for node / browserify
-if (typeof module !== 'undefined' && module.exports) {
-	module.exports = classNames;
-}
-
-// safely export classNames for RequireJS
-if (typeof define !== 'undefined' && define.amd) {
-	define('classnames', [], function() {
-		return classNames;
-	});
-}
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
 
 },{}],2:[function(require,module,exports){
 // shim for using process in browser
@@ -109,10 +114,2323 @@ process.chdir = function (dir) {
 };
 
 },{}],3:[function(require,module,exports){
+// © Scotland Stephenson 2015
+
+// - [github](https://github.com/alsoscotland/react-super-select)
+// - [documentation](http://alsoscotland.github.io/react-super-select/)
+// - freely distributed under the MIT license.
+
+'use strict';
+
+var _ = require('lodash'),
+    classNames = require('classnames'),
+    React = require('react');
+
+// Dependencies
+//  - [Lodash](https://lodash.com/)
+//  - [classnames](https://www.npmjs.com/package/classnames)
+//  - [React](https://facebook.github.io/react/index.html)
+
+var ReactSuperSelect = React.createClass({
+  displayName: 'ReactSuperSelect',
+
+  // Properties
+  // ------
+  propTypes: {
+
+    // BOOLEAN OPTIONS
+    // ---------------
+
+    // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
+    clearable: React.PropTypes.bool,
+
+    // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
+    multiple: React.PropTypes.bool,
+    // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
+    searchable: React.PropTypes.bool,
+    // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
+    tags: React.PropTypes.bool,
+
+    // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
+    // -----------------------------------
+
+    // **customClass** (String) *optional* - This value will be added as a css class to the control's main wrapping element.  You should be able to overide all styling by leading your rules with
+    // ```css
+    // .r-ss-wrap.{customClass}
+    // ```
+    customClass: React.PropTypes.string,
+
+    // **customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown
+    customGroupHeadingClass: React.PropTypes.string,
+
+    // **customSearchIconClass** (String) *optional* - This value will be added as a css class to the icon element in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
+    customSearchIconClass: React.PropTypes.string,
+
+    // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataFetch** option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
+    customLoaderClass: React.PropTypes.string,
+
+    // **customTagClass** (String) *optional* - Used in conjunction with the **tags** option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with
+    // ```css
+    //  .r-ss-tag.{customTagClass}
+    //  ```
+    customTagClass: React.PropTypes.string,
+
+    // MAIN CHANGE HANDLER
+    // -------------------
+
+    // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
+    onChange: React.PropTypes.func.isRequired,
+
+    // OPTION DATA-RELATED PROPS
+    // -------------------------
+
+    // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
+    // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the **dataSource** option documentation. The **dataSource** option should be left undefined when using this option.
+    ajaxDataFetch: React.PropTypes.func,
+
+    // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
+    // The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type
+
+    //  The parsing method supports dataSource values as:
+    //  - an array of option objects (will be directly assigned to state.data)
+    //  - an object with a collection property (object.collection will be assigned to state.data)
+    //  - an object with a get function (the return value of object.get('collection') will be assigned to state.data)
+
+    //  Each option in the resulting collection must have the following properties:
+    //  - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of **id**
+    //  - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
+    dataSource: React.PropTypes.oneOfType([React.PropTypes.arrayOf(React.PropTypes.object), React.PropTypes.object]),
+
+    // **initialValue** (Array|Object) *optional*
+    // The selected value the control will be initialized with
+    // must be an array of option items or a single option item from your dataSource collection
+    initialValue: React.PropTypes.oneOfType([React.PropTypes.arrayOf(React.PropTypes.object), React.PropTypes.object]),
+
+    // **optionLabelKey** (String) (*optional - defaults to using 'name' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value you would like displayed for each option.
+    optionLabelKey: React.PropTypes.string,
+
+    // **optionValueKey** (String) (*optional - defaults to using 'id' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value that **uniquely identifies** that option across the **dataSource** collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
+    optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
+
+    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
+    // The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
+    // It must return a **promise** object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the **dataSource** option documentation.
+    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.
+    // *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
+    pageDataFetch: React.PropTypes.func,
+
+    // **hasMorePages** (Function) *optional* (should be provided when using the *pageDataFetch* option) - A function that accepts one argument, a value as described by the *dataSource* option documentation, and returns a Boolean value.
+    // The value should indicate whether the option data collection has any more pages available for fetching
+    hasMorePages: React.PropTypes.func,
+
+    // GROUPING FUNCTIONALITY
+    // ----------------------
+
+    // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference the [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
+    groupBy: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func, React.PropTypes.object]),
+
+    // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
+    customGroupHeadingTemplateFunction: React.PropTypes.func,
+
+    // RENDERING (OPTION ITERATOR) FUNCTIONS
+    // -------------------------------------
+
+    // **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** option.  The function provided will serve as a replacement of the default search filter function.
+    // and will be called as the predicate function of [Lodash's filter function](https://lodash.com/docs#filter)
+
+    // The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current **searchString** (state variable)
+
+    // When left undefined the default filter function will be used.
+    //(Defaults To: A lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is leveraged by [Lodash's filter function](https://lodash.com/docs#filter) with your **dataSource** collection as its first argument.
+    customFilterFunction: React.PropTypes.func,
+
+    // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
+    customOptionTemplateFunction: React.PropTypes.func,
+
+    // LOCALIZATION STRINGS
+    // --------------------
+
+    // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
+    ajaxErrorString: React.PropTypes.string,
+
+    // **clearSearchLabelString** (String) *optional* - (Used in conjunction with the **clearable** option) This string will be used as an aria-label for the clear selection button
+    clearSelectionLabelString: React.PropTypes.string,
+
+    // **clearSelectionsLabelString** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be used as an aria-label for the clear search button
+    clearSearchLabelString: React.PropTypes.string,
+
+    // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
+    noResultsString: React.PropTypes.string,
+
+    // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control when the user has no selected values
+    placeholder: React.PropTypes.string,
+
+    // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's search input field when a user has not entered any characters.
+    searchPlaceholder: React.PropTypes.string,
+
+    // **tagRemoveLabelString** (String) *optional* - (Used in conjunction with the **tags** option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).
+    tagRemoveLabelString: React.PropTypes.string
+  },
+
+  // CONSTANTS
+  // ---------
+
+  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
+  SEARCH_FOCUS_ID: -1,
+
+  // regular expression used to determine if event src options have selected class
+  SELECTED_OPTION_REGEX: /r-ss-selected/,
+
+  // Default string values for localization options
+  DEFAULT_LOCALIZATIONS: {
+    ajaxErrorString: 'An Error occured while fetching options',
+    clearSelectionLabelString: 'Clear Selection',
+    clearSearchLabelString: 'Clear Search Field',
+    noResultsString: 'No Results Available',
+    placeholder: 'Select an Option',
+    searchPlaceholder: 'Search',
+    tagRemoveLabelString: 'Remove Tag'
+  },
+
+  // STATE VARIABLES
+  // ---------------
+  getInitialState: function getInitialState() {
+    return {
+      // **ajaxError** (Boolean) - Set to true when an ajax request fails
+      ajaxError: false,
+
+      // **controlId** (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels
+      controlId: _.uniqueId('rss_'),
+
+      // **data** (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected
+      data: this._configureDataSource(this.props.dataSource),
+
+      // **rawDataSource** (Object|Array) The raw dataSource value the user supplies through the *dataSource* prop (or returned from *ajaxDataFetch* / *pageDataFetch*). This value is passed to the *pageDataFetch* callback
+      rawDataSource: this.props.dataSource,
+
+      // **isOpen** (Boolean) - Whether or not the dropdown is open
+      isOpen: false,
+
+      // **focusedId** (Number) - Used to track keyboard focus for accessibility
+      focusedId: undefined,
+
+      // **labelKey** (String) - The option object key that will be used to identify the value displayed as an option's label
+      labelKey: this.props.optionLabelKey || 'name',
+
+      // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option in the dropdown
+      lastOptionId: _.isArray(this.props.dataSource) && this.props.dataSource.length > 0 ? this.props.dataSource.length - 1 : undefined,
+
+      // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
+      searchString: undefined,
+
+      // **value** (Array) - An array that holds the current user-selected option(s)
+      value: this._buildInitialValue(),
+
+      // **valueKey** (String) - The option object key that will be used to identify the value used as an option's value property (values must be unique across data source)
+      valueKey: this.props.optionValueKey || 'id'
+    };
+  },
+
+  // KEYMAP CONSTANT
+  // ------
+  // A text-based lookup for keyboard navigation keys and their corresponding 'which' keycode values
+  keymap: {
+    'down': 40,
+    'end': 35, // goto last option ?
+    'enter': 13,
+    'esc': 27,
+    'home': 36, // go to first option ?
+    'space': 32,
+    'tab': 9,
+    'up': 38
+  },
+
+  // NON-STATE VARS (no need to re-render based on these being set)
+
+  // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
+  lastUserSelectedOption: undefined,
+
+  // If parent page updates the data source, reset all control state values which are derived from props.
+  // Reset some state defaults and dataSource related fields if dataSource changed.
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    var newState = {};
+
+    if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
+      newState.value = this._buildInitialValue(nextProps);
+    }
+
+    if (!_.isUndefined(nextProps.optionLabelKey) && nextProps.optionLabelKey !== this.props.optionLabelKey) {
+      newState.labelKey = nextProps.optionLabelKey;
+    }
+
+    if (!_.isUndefined(nextProps.optionValueKey) && nextProps.optionValueKey !== this.props.optionValueKey) {
+      newState.valueKey = nextProps.optionValueKey;
+    }
+
+    if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
+
+      this.lastUserSelectedOption = undefined;
+
+      newState = _.extend(newState, {
+        data: this._configureDataSource(nextProps.dataSource),
+        rawDataSource: nextProps.dataSource,
+        focusedId: undefined,
+        lastOptionId: _.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
+      });
+    }
+
+    if (!_.isEmpty(newState)) {
+      this.setState(newState);
+    }
+  },
+
+  // Update focused element after re-render
+  componentDidUpdate: function componentDidUpdate() {
+    this._focusCurrentFocusedId();
+  },
+
+  // main render method
+  render: function render() {
+    var clearSelectionButton = null,
+        clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.DEFAULT_LOCALIZATIONS.clearSelectionLabelString,
+        dropdownContent = this._getDropdownContent(),
+        placeholderString,
+        triggerDisplayContent,
+        triggerClasses,
+        caratClass = classNames('carat', {
+      'down': !this.state.isOpen,
+      'up': this.state.isOpen
+    }),
+        wrapClasses;
+
+    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
+      'r-ss-expanded': this.state.isOpen
+    });
+
+    triggerClasses = classNames('r-ss-trigger', {
+      'r-ss-open': this.state.isOpen,
+      'r-ss-placeholder': this.state.value.length < 1
+    });
+
+    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
+    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+
+    if (!_.isEmpty(this.state.value) && this.props.clearable !== false) {
+      clearSelectionButton = React.createElement(
+        'button',
+        { 'aria-label': clearSelectionLabelString, ref: 'selectionClear', name: 'clearSelection', type: 'button', className: 'r-ss-selection-clear', onClick: this._clearSelection, onKeyDown: this._clearSelection },
+        React.createElement('span', null)
+      );
+    }
+
+    return React.createElement(
+      'div',
+      { ref: 'rssControl', id: this.state.controlId, className: wrapClasses },
+      React.createElement(
+        'div',
+        { ref: 'triggerDiv',
+          className: triggerClasses,
+          onClick: this.toggleDropdown,
+          onKeyDown: this._handleKeyDown,
+          role: 'combobox',
+          'aria-activedescendant': this._ariaGetActiveDescendentId(),
+          'aria-haspopup': true,
+          'aria-controls': this._ariaGetListId(),
+          'aria-label': placeholderString,
+          'aria-multiselectable': this._isMultiSelect(),
+          tabIndex: '1' },
+        triggerDisplayContent,
+        clearSelectionButton,
+        React.createElement(
+          'span',
+          { ref: 'carat', className: caratClass },
+          ' '
+        )
+      ),
+      dropdownContent
+    );
+  },
+
+  // toggles the open-state of the dropdown
+  // sets focused option in callback after opening
+  toggleDropdown: function toggleDropdown() {
+    this.setState({
+      'isOpen': !this.state.isOpen
+    }, function () {
+      if (this.state.isOpen) {
+        this._setFocusOnOpen();
+      }
+    });
+  },
+
+  // returns the unique DOM id for the currently focused option. Used for accessibility-related labeling
+  _ariaGetActiveDescendentId: function _ariaGetActiveDescendentId() {
+    var ariaActiveDescendantId = null,
+        optionRef = this._getFocusedOptionKey();
+    if (this.refs[optionRef]) {
+      ariaActiveDescendantId = this.refs[optionRef].props.id;
+    }
+    return ariaActiveDescendantId;
+  },
+
+  // calculate the unique identifier for the options ul for aria compliance labeling usage
+  _ariaGetListId: function _ariaGetListId() {
+    return this.state.controlId + '_list';
+  },
+
+  // helper for stopping event propagation
+  _arrestEvent: function _arrestEvent(event) {
+    event.stopPropagation();
+    event.preventDefault();
+  },
+
+  // calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps
+  _buildInitialValue: function _buildInitialValue(props) {
+    props = props || this.props;
+    var initialValue = [];
+
+    if (!_.isUndefined(props.initialValue)) {
+      initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
+
+      if (!this._isMultiSelect()) {
+        initialValue = [_.first(initialValue)];
+      }
+    }
+
+    return initialValue;
+  },
+
+  // clear the searchString value
+  // for **searchable** controls
+  _clearSearchString: function _clearSearchString() {
+    this.setState({
+      searchString: undefined
+    }, this._setFocusIdToSearch);
+  },
+
+  // clear the selected options
+  // for **clearable** controls
+  _clearSelection: function _clearSelection(event) {
+    if (event.which === this.keymap.enter || event.which === this.keymap.space || event.type === "click") {
+      event.stopPropagation();
+      this.setState({
+        value: []
+      }, this._focusTrigger);
+    }
+  },
+
+  // close the dropdown
+  // resets focus to the main control trigger
+  // clear focused id
+  _closeOnKeypress: function _closeOnKeypress() {
+    if (this.state.isOpen) {
+      this.setState({
+        isOpen: false,
+        focusedId: undefined
+      }, this._focusTrigger);
+    }
+  },
+
+  // overloaded dataSource parser (Object|Array)
+  // case: (object) - look for a collection property which is an array, or runs an existing 'get' function, get('collection'), and determines if the return value is an array
+  // case: (Array) - return the dataSource array for use as this.state.data
+  _configureDataSource: function _configureDataSource(dataSource) {
+    if (_.isArray(dataSource)) {
+      return dataSource;
+    }
+
+    if (_.isObject(dataSource)) {
+      if (_.isArray(dataSource.collection)) {
+        return dataSource.collection;
+      }
+
+      if (_.isFunction(dataSource.get)) {
+        var collection = dataSource.get('collection');
+        if (_.isArray(collection)) {
+          return collection;
+        }
+      }
+    }
+
+    return [];
+  },
+
+  // Used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control.
+  // Runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
+  _defaultSearchFilter: function _defaultSearchFilter(option) {
+    var search = this.state.searchString.toLowerCase();
+    if (!_.isString(option[this.state.labelKey])) {
+      return false;
+    }
+    return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
+  },
+
+  // fetch data source via ajax if **ajaxDataFetch** function provided
+  // handles success and failure for ajax call
+  _fetchDataViaAjax: function _fetchDataViaAjax() {
+    var self = this;
+    this.props.ajaxDataFetch(this.state.rawDataSource).then(function (dataSourceFromAjax) {
+      self.setState({
+        ajaxError: false,
+        data: self._configureDataSource(dataSourceFromAjax),
+        rawDataSource: dataSourceFromAjax
+      });
+    }, function () {
+      self.setState({
+        ajaxError: true,
+        // define as empty array on error so that _needsAjaxFetch will evaluate to false
+        rawDataSource: []
+      });
+    });
+  },
+
+  // Fetch the next page of options data if **pageDataFetch** function provided.
+  // Called onMouseMove if scroll position in dropdown exceeds threshold.
+  // Handles success and failure for ajax call
+  _fetchNextPage: function _fetchNextPage() {
+    var self = this;
+    this.props.pageDataFetch(this.state.rawDataSource).then(function (dataSourceFromPageFetch) {
+      self.setState({
+        ajaxError: false,
+        data: self._configureDataSource(dataSourceFromPageFetch),
+        rawDataSource: dataSourceFromPageFetch,
+        isFetchingPage: false
+      });
+    }, function () {
+      self.setState({
+        ajaxError: true
+      });
+    });
+  },
+
+  // choose the appropriate search filter function and run the filter against the options data
+  _filterDataBySearchString: function _filterDataBySearchString(data) {
+    var self = this;
+    var filterFunction = this._defaultSearchFilter;
+    if (_.isFunction(this.props.customFilterFunction)) {
+      filterFunction = function (value, index, collection) {
+        return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
+      };
+    }
+    return _.filter(data, filterFunction);
+  },
+
+  // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
+  _findArrayOfOptionDataObjectsByValue: function _findArrayOfOptionDataObjectsByValue(value) {
+    var valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
+    return _.reject(this.state.data, function (item) {
+      return !_.contains(valuesArray, item[this.state.valueKey]);
+    }, this);
+  },
+
+  // determine whether to focus a option value in the DOM, or the search field
+  _focusCurrentFocusedId: function _focusCurrentFocusedId() {
+    if (this.state.focusedId < 0) {
+      this._focusSearch();
+      return;
+    }
+
+    this._focusDOMOption();
+  },
+
+  // focus the DOM option identified by the current state.focusedId
+  _focusDOMOption: function _focusDOMOption() {
+    var optionRef = this._getFocusedOptionKey();
+    if (this.refs[optionRef]) {
+      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
+        this.refs[optionRef].getDOMNode().focus();
+      }
+    }
+  },
+
+  // focus the dropdown's search field if it exists
+  _focusSearch: function _focusSearch() {
+    if (this.refs.searchInput) {
+      this.refs.searchInput.getDOMNode().focus();
+    }
+  },
+
+  // shift focus from dropdown trigger to any removal/clear buttons
+  // for keyboard navigation and accessibility
+  _focusRemovalButtons: function _focusRemovalButtons(event) {
+    var triggerContainer = this.refs.triggerDiv.getDOMNode(),
+        buttons = triggerContainer.getElementsByTagName('button'),
+        currentlyFocusedRemoveButtonIndex,
+        nextButtonIndexToFocus;
+
+    if (buttons.length) {
+      for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i] === document.activeElement) {
+          currentlyFocusedRemoveButtonIndex = i;
+          nextButtonIndexToFocus = event.shiftKey ? i - 1 : i + 1;
+        }
+      }
+    }
+
+    if (buttons[nextButtonIndexToFocus]) {
+      this._arrestEvent(event);
+      buttons[nextButtonIndexToFocus].focus();
+    } else if (nextButtonIndexToFocus && nextButtonIndexToFocus < 0) {
+      this._focusTrigger();
+    } else if (buttons[0] && !_.isNumber(currentlyFocusedRemoveButtonIndex)) {
+      this._arrestEvent(event);
+      buttons[0].focus();
+    }
+  },
+
+  // focus the main trigger element of the control
+  _focusTrigger: function _focusTrigger() {
+    if (this.refs.triggerDiv) {
+      this.refs.triggerDiv.getDOMNode().focus();
+    }
+  },
+
+  // choose whether to template the display of user-selected values normally, or as tags
+  _generateValueDisplay: function _generateValueDisplay() {
+    if (!this.props.tags) {
+      return this._getNormalDisplayMarkup();
+    } else {
+      return this._getTagsDisplayMarkup();
+    }
+  },
+
+  // render the content shown if an ajax error occurs
+  _getAjaxErrorMarkup: function _getAjaxErrorMarkup() {
+    var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
+    return React.createElement(
+      'li',
+      { className: 'r-ss-dropdown-option error' },
+      React.createElement(
+        'i',
+        { ref: 'errorDisplay' },
+        errorString
+      )
+    );
+  },
+
+  // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
+  _getDataSource: function _getDataSource() {
+    var data = _.isArray(this.state.data) ? this.state.data : [];
+    if (_.isString(this.state.searchString)) {
+      data = this._filterDataBySearchString(data);
+    }
+
+    if (this.props.groupBy) {
+      data = _.groupBy(data, this.props.groupBy);
+    }
+
+    return data;
+  },
+
+  // build and render the dropdown content
+  // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
+  _getDropdownContent: function _getDropdownContent() {
+    if (!this.state.isOpen) {
+      return null;
+    }
+
+    var searchContent = this._getSearchContent(),
+        mouseMoveHandler,
+        pagingLi;
+
+    mouseMoveHandler = this.props.pageDataFetch ? this._onMouseMove : null;
+    pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
+
+    return React.createElement(
+      'div',
+      { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown },
+      searchContent,
+      React.createElement(
+        'div',
+        { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler },
+        React.createElement(
+          'ul',
+          { className: 'r-ss-dropdown-options',
+            ref: 'dropdownOptionsList',
+            tabIndex: '-1',
+            id: this._ariaGetListId(),
+            role: 'listbox',
+            'aria-expanded': this.state.isOpen },
+          this._getOptionsMarkup()
+        ),
+        pagingLi
+      )
+    );
+  },
+
+  // build the string used as a React component ref for each focusable option
+  _getFocusedOptionKey: function _getFocusedOptionKey() {
+    return 'option_' + this.state.focusedId;
+  },
+
+  // render a group heading, used if **groupBy** option is provided.
+  // renders a non-focusable list item for an option group heading
+  _getGroupHeadingMarkup: function _getGroupHeadingMarkup(heading) {
+    if (!heading) {
+      return null;
+    }
+
+    var headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
+        headingKey = "heading_" + heading,
+        headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
+
+    // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
+    // in search of a better solution for announcing/navigating grouped listbox items as subgroups
+    return React.createElement(
+      'li',
+      { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true },
+      headingMarkup
+    );
+  },
+
+  // render the content shown when no options are available
+  _getNoResultsMarkup: function _getNoResultsMarkup() {
+    var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
+    return React.createElement(
+      'li',
+      { className: 'r-ss-dropdown-option', tabIndex: '-1' },
+      React.createElement(
+        'i',
+        { ref: 'noResults' },
+        noResultsString
+      )
+    );
+  },
+
+  // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
+  // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
+  _getNormalDisplayMarkup: function _getNormalDisplayMarkup() {
+    return _.map(this.state.value, function (value) {
+      var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
+      if (this.props.customOptionTemplateFunction) {
+        return this.props.customOptionTemplateFunction(value);
+      } else {
+        return React.createElement(
+          'span',
+          { key: selectedKey, className: 'r-ss-selected-label' },
+          value[this.state.labelKey]
+        );
+      }
+    }, this);
+  },
+
+  // render a loading span (spinner gif), with **customLoaderClass** if provided
+  _getLoadingMarkup: function _getLoadingMarkup() {
+    var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
+    return React.createElement('span', { ref: 'loader', className: loaderClasses });
+  },
+
+  // get the option Li element from a passed eventTarget.
+  // for key events = event.target
+  // for click events = event.currentTarget
+  _getOptionIndexFromTarget: function _getOptionIndexFromTarget(targetLi) {
+    return parseInt(targetLi.getAttribute('data-option-index'), 10);
+  },
+
+  // render the data source as options,
+  // render loading if fetching
+  // render ajaxError markup when state.ajaxError is true
+  // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
+  // - must track options count to maintain a single focusable index mapping across multiple groups of options
+  _getOptionsMarkup: function _getOptionsMarkup() {
+    if (this._needsAjaxFetch()) {
+      this._fetchDataViaAjax();
+      return this._getPagingLi();
+    }
+
+    if (this.state.ajaxError) {
+      return this._getAjaxErrorMarkup();
+    }
+
+    var data = this._getDataSource(),
+        options = [],
+        optionsCount = 0;
+
+    if (!_.isArray(data)) {
+      _.forIn(data, function (groupedOptions, heading) {
+        options.push(this._getGroupHeadingMarkup(heading));
+        options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
+        optionsCount = optionsCount + groupedOptions.length;
+      }, this);
+    } else {
+      options = this._getTemplatedOptions(data);
+    }
+
+    return options;
+  },
+
+  // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
+  _getPagingLi: function _getPagingLi() {
+    return React.createElement(
+      'li',
+      { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1' },
+      this._getLoadingMarkup()
+    );
+  },
+
+  // render a search input bar with a search icon
+  // - add localized **searchPlaceholder** if provided
+  // - add **customIconClass** if provided
+  _getSearchContent: function _getSearchContent() {
+    if (!this.props.searchable) {
+      return null;
+    }
+
+    var clearSearch = null,
+        clearSearchLabelString = this.props.clearSearchLabelString ? this.props.clearSearchLabelString : this.DEFAULT_LOCALIZATIONS.clearSearchLabelString,
+        magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
+        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
+        searchAriaId = this.state.controlId + '_search',
+        searchAriaIdLabel = searchAriaId + '_label';
+
+    if (_.isString(this.state.searchString)) {
+      clearSearch = React.createElement(
+        'button',
+        { 'aria-label': clearSearchLabelString, ref: 'searchClear', name: 'clearSearch', type: 'button', className: 'r-ss-search-clear', onClick: this._clearSearchString, onKeyDown: this._clearSearchString },
+        React.createElement('span', null)
+      );
+    }
+
+    return React.createElement(
+      'div',
+      { className: 'r-ss-search-wrap' },
+      React.createElement(
+        'div',
+        { className: 'r-ss-search-inner' },
+        React.createElement(
+          'label',
+          { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId },
+          searchPlaceholderString
+        ),
+        React.createElement('input', { ref: 'searchInput',
+          placeholder: searchPlaceholderString,
+          onClick: this._setFocusIdToSearch,
+          onChange: this._handleSearch,
+          value: this.state.searchString,
+          name: searchAriaId,
+          id: searchAriaId,
+          'aria-labelledby': searchAriaIdLabel,
+          'aria-autocomplete': 'list' }),
+        clearSearch,
+        React.createElement(
+          'i',
+          { className: magnifierClass },
+          'search'
+        )
+      )
+    );
+  },
+
+  // iterate over selected values and build tags markup for selected options display
+  _getTagsDisplayMarkup: function _getTagsDisplayMarkup() {
+    return _.map(this.state.value, function (value) {
+      return this._getTagMarkup(value);
+    }, this);
+  },
+
+  // render a tag for an individual selected value
+  // - add **customTagClass** if provided
+  _getTagMarkup: function _getTagMarkup(value) {
+    var label = value[this.state.labelKey],
+        displayValue = value[this.state.valueKey],
+        tagKey = 'tag_' + displayValue,
+        buttonName = "RemoveTag_" + displayValue,
+        tagRemoveIndex = this._getTagRemoveIndex(displayValue),
+        tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
+        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+
+    tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
+
+    return React.createElement(
+      'span',
+      { className: tagWrapClass, key: tagKey },
+      React.createElement(
+        'span',
+        { className: 'r-ss-tag-label' },
+        label
+      ),
+      React.createElement(
+        'button',
+        { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
+        React.createElement('span', null)
+      )
+    );
+  },
+
+  // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
+  _getTagRemoveIndex: function _getTagRemoveIndex(identifier) {
+    return "tag_remove_" + identifier;
+  },
+
+  // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
+  // - render no results markup if no options result from map calls
+  _getTemplatedOptions: function _getTemplatedOptions(data, indexStart) {
+    indexStart = indexStart || 0;
+    var options = this._mapDataToOptionsMarkup(data, indexStart);
+
+    if (options.length === 0) {
+      options = this._getNoResultsMarkup();
+    }
+
+    return options;
+  },
+
+  // main keyDown binding handler for keyboard navigation and selection
+  _handleKeyDown: function _handleKeyDown(event) {
+    if (this._isUserSearchTypingEvent(event)) {
+      return;
+    }
+
+    if (this.state.isOpen || event.which !== this.keymap.tab) {
+      this._arrestEvent(event);
+    }
+
+    switch (event.which) {
+      case this.keymap.down:
+        this._onDownKey(event);
+        break;
+      case this.keymap.end:
+        this._onEndKey();
+        break;
+      case this.keymap.enter:
+        this._onEnterKey(event);
+        break;
+      case this.keymap.esc:
+        this._onEscKey();
+        break;
+      case this.keymap.home:
+        this._onHomeKey();
+        break;
+      case this.keymap.space:
+        this._onEnterKey(event); // delegate to enter
+        break;
+      case this.keymap.tab:
+        // delegate to enter (selection) handler
+        if (this.state.isOpen) {
+          this._onEnterKey(event);
+        } else {
+          this._focusRemovalButtons(event);
+        }
+        break;
+      case this.keymap.up:
+        this._onUpKey(event);
+        break;
+    }
+  },
+
+  // handler for searchInput's keyUp event
+  _handleSearch: function _handleSearch(event) {
+    this._arrestEvent(event);
+    var searchString = event.target.value;
+    this._handleSearchDebounced.call(this, searchString);
+  },
+
+  // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
+  _handleSearchDebounced: _.debounce(function (search) {
+    this.setState({
+      searchString: search
+    });
+  }, 300),
+
+  // return the boolean used to determine whether an option should have the 'r-ss-selected' class
+  _isCurrentlySelected: function _isCurrentlySelected(dataItem) {
+    if (!_.isArray(this.state.value)) {
+      return _.isEqual(this.state.value, dataItem);
+    }
+    return !!_.findWhere(this.state.value, dataItem);
+  },
+
+  // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
+  _isMultiSelect: function _isMultiSelect() {
+    return this.props.multiple || this.props.tags;
+  },
+
+  // user search events need to pass through the default keyDown handler
+  _isUserSearchTypingEvent: function _isUserSearchTypingEvent(event) {
+    if (!this.refs.searchInput || event.which === this.keymap.down || event.which === this.keymap.up && event.altKey || event.which === this.keymap.esc) {
+      return false;
+    }
+    return event.target === this.refs.searchInput.getDOMNode();
+  },
+
+  // Render the option list-items.
+  // Leverage the **customOptionTemplateFunction** function if provided
+  _mapDataToOptionsMarkup: function _mapDataToOptionsMarkup(data, indexStart) {
+    return _.map(data, function (dataOption, index) {
+      index = indexStart + index;
+
+      var isCurrentlySelected = this._isCurrentlySelected(dataOption),
+          itemKey = "drop_li_" + dataOption[this.state.valueKey],
+          indexRef = 'option_' + index,
+          ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
+          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
+          classes = classNames('r-ss-dropdown-option', {
+        'r-ss-selected': isCurrentlySelected
+      });
+
+      return React.createElement(
+        'li',
+        { ref: indexRef,
+          id: ariaDescendantId,
+          tabIndex: '0',
+          'data-option-index': index,
+          className: classes,
+          'aria-selected': isCurrentlySelected,
+          key: itemKey,
+          'data-option-value': dataOption[this.state.valueKey],
+          onClick: this._selectItemOnOptionClick.bind(null, dataOption),
+          role: 'option' },
+        optionMarkup
+      );
+    }, this);
+  },
+
+  // determines next focusedId prior to updateFocusedId call
+  _moveFocusDown: function _moveFocusDown() {
+    if (this._needsAjaxFetch()) {
+      return;
+    }
+    var nextId;
+
+    if (_.isUndefined(this.state.focusedId)) {
+      if (this.props.searchable) {
+        nextId = this.SEARCH_FOCUS_ID;
+      } else {
+        nextId = 0;
+      }
+    } else {
+      nextId = this.state.lastOptionId === this.state.focusedId ? this.state.lastOptionId : this.state.focusedId + 1;
+    }
+
+    this._updateFocusedId(nextId);
+  },
+
+  // determines previous focusedId prior to updateFocusedId call
+  _moveFocusUp: function _moveFocusUp() {
+    var previousId;
+
+    if (!_.isUndefined(this.state.focusedId) && this.state.focusedId !== this.SEARCH_FOCUS_ID) {
+      if (this.state.focusedId === 0) {
+        if (this.props.searchable) {
+          previousId = this.SEARCH_FOCUS_ID;
+        }
+      } else {
+        previousId = this.state.focusedId - 1;
+      }
+    }
+    this._updateFocusedId(previousId);
+  },
+
+  // return boolean to determine if we have already received data from the **ajaxDataFetch** function
+  _needsAjaxFetch: function _needsAjaxFetch() {
+    return _.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch);
+  },
+
+  // down key handler
+  // shift-keypress is used to select successive focus items for aria keyboard accessibility
+  _onDownKey: function _onDownKey(event) {
+    if (!this.state.isOpen) {
+      this.toggleDropdown();
+      return;
+    }
+
+    this._moveFocusDown();
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectFocusedOption(event.target, true);
+    }
+  },
+
+  // end key handler. Move focus to the last available option
+  _onEndKey: function _onEndKey() {
+    if (this.state.lastOptionId) {
+      this._updateFocusedId(this.state.lastOptionId);
+    }
+  },
+
+  // Enter key handler.
+  // Opens the control when closed.
+  // Otherwise, makes selection
+  _onEnterKey: function _onEnterKey(event) {
+    if (!this.state.isOpen) {
+      this.toggleDropdown();
+      return;
+    }
+
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectAllOptionsToLastUserSelectedOption(event.target);
+      return;
+    }
+
+    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey);
+
+    this._selectFocusedOption(event.target, keepControlOpen);
+  },
+
+  // Escape key handler. Closes the dropdown
+  _onEscKey: function _onEscKey() {
+    this._closeOnKeypress();
+  },
+
+  // Home key handler. Moves focus to the first available option
+  _onHomeKey: function _onHomeKey() {
+    this._updateFocusedId(0);
+  },
+
+  // mouse move handler used when **pageDataFetch** is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown
+  _onMouseMove: function _onMouseMove() {
+    // do not fetch page if searching or already loading data
+    if (this.refs.loader || this.state.searchString || !this._pageFetchingComplete()) {
+      return;
+    }
+
+    var wrap = this.refs.scrollWrap.getDOMNode();
+
+    if (wrap.scrollTop + wrap.offsetHeight >= wrap.scrollHeight) {
+      this.setState({
+        isFetchingPage: true
+      }, this._fetchNextPage);
+    }
+  },
+
+  // Up key handler.
+  // Shift-click is used to select successive focus items for aria keyboard accessibility
+  _onUpKey: function _onUpKey(event) {
+    if (event.altKey) {
+      this._closeOnKeypress();
+      return;
+    }
+
+    if (this.state.isOpen) {
+      this._moveFocusUp();
+      if (this._isMultiSelect() && event.shiftKey) {
+        this._selectFocusedOption(event.target, true);
+      }
+    }
+  },
+
+  // If hasMorePages option (Function) present, returns the value of its call.
+  // Otherwise, returns false so page fetch will not occur
+  _pageFetchingComplete: function _pageFetchingComplete() {
+    if (!_.isFunction(this.props.hasMorePages)) {
+      return false;
+    } else {
+      return this.props.hasMorePages(this.state.rawDataSource);
+    }
+  },
+
+  // Used in shift selection when the event target was previously selected.
+  // Remove all options up to, but not including the option that raised the event.
+  // (So it behaves like a native browser form multi-select)
+  _removeAllOptionsInOptionIdRange: function _removeAllOptionsInOptionIdRange(from, to) {
+    var valuePropsToReject = [],
+        start = from <= to ? from : to,
+        end = to >= from ? to : from;
+
+    for (var i = start; i <= end; i++) {
+      var refString = 'option_' + i,
+          option = this.refs[refString];
+      if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
+        if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getDOMNode().getAttribute('data-option-value')) {
+          valuePropsToReject.push(option.props['data-option-value']);
+        }
+      }
+    }
+
+    var remainingSelected = _.reject(this.state.value, function (opt) {
+      return _.includes(valuePropsToReject, opt[this.state.valueKey]);
+    }, this);
+
+    this.props.onChange(remainingSelected);
+
+    this.setState({
+      value: remainingSelected
+    });
+  },
+
+  // Remove an item from the state.value selected items array.
+  // The *value* arg represents a full dataSource option object
+  _removeSelectedOptionByValue: function _removeSelectedOptionByValue(value, callback) {
+    // clear lastUserSelected if has been removed
+    if (this.lastUserSelectedOption && this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey]) {
+      this.lastUserSelectedOption = undefined;
+    }
+
+    var SelectedAfterRemoval = _.reject(this.state.value, function (option) {
+      return option[this.state.valueKey] === value[this.state.valueKey];
+    }, this);
+
+    this.props.onChange(SelectedAfterRemoval);
+
+    callback = _.isFunction(callback) ? callback : _.noop;
+
+    this.setState({
+      value: SelectedAfterRemoval
+    }, callback);
+  },
+
+  // remove a selected tag on keyDown
+  _removeTagKeyPress: function _removeTagKeyPress(value, event) {
+    var isEnterKey = event.which === this.keymap.enter,
+        isSpaceKey = event.which === this.keymap.space;
+
+    if (isEnterKey || isSpaceKey) {
+      this._arrestEvent(event);
+      this._removeSelectedOptionByValue(value, this._setFocusToTagRemovalIfPresent); // delegate to removal handler
+    }
+  },
+
+  // remove a selected tag on click
+  _removeTagClick: function _removeTagClick(value, event) {
+    this._arrestEvent(event);
+
+    this._removeSelectedOptionByValue(value);
+  },
+
+  // used in shift-click range selections
+  _selectAllOptionsInOptionIdRange: function _selectAllOptionsInOptionIdRange(from, to) {
+    var valuePropsToSelect = [],
+        start = from <= to ? from : to,
+        end = to >= from ? to : from;
+
+    for (var i = start; i <= end; i++) {
+      var refString = 'option_' + i,
+          option = this.refs[refString];
+      if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+        valuePropsToSelect.push(option.props['data-option-value']);
+      }
+    }
+
+    var optionsToSelect = _.reduce(this.state.data, function (memo, opt) {
+      if (_.includes(valuePropsToSelect, opt[this.state.valueKey])) {
+        memo.push(opt);
+      }
+      return memo;
+    }, [], this);
+    this._selectItemByValues(optionsToSelect, true);
+  },
+
+  // Used in shift-key selection.
+  // Select all options from the current eventTarget to the lastUserSelectedOption
+  _selectAllOptionsToLastUserSelectedOption: function _selectAllOptionsToLastUserSelectedOption(eventTargetLi) {
+    if (!this.lastUserSelectedOption) {
+      this.lastUserSelectedOption = eventTargetLi;
+      // select all options from the first option to the clicked option
+      this._selectAllOptionsInOptionIdRange(0, this._getOptionIndexFromTarget(eventTargetLi));
+      return;
+    }
+
+    var from = this._getOptionIndexFromTarget(this.lastUserSelectedOption),
+        to = this._getOptionIndexFromTarget(eventTargetLi);
+
+    this.lastUserSelectedOption = eventTargetLi;
+
+    // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
+    if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
+      this._removeAllOptionsInOptionIdRange(from, to);
+    } else {
+      this._selectAllOptionsInOptionIdRange(from, to);
+    }
+  },
+
+  // Make a user-selection of the option that is currently focused.
+  // Will close the dropDown when keepControlOpen is falsy
+  _selectFocusedOption: function _selectFocusedOption(eventTargetLi, keepControlOpen) {
+
+    var focusedOptionKey = this._getFocusedOptionKey();
+    if (this.refs[focusedOptionKey]) {
+      var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
+
+      // store as last userSelected
+      this.lastUserSelectedOption = eventTargetLi;
+
+      if (this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
+        var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        this._removeSelectedOptionByValue(optionFullFromValueProp);
+      } else {
+        keepControlOpen = keepControlOpen || false;
+        this._selectItemByValues(optionValue, keepControlOpen);
+      }
+    }
+  },
+
+  // Handle selection of an option or array of options.
+  // Track last selection the user made.
+  // Close dropdown on the setState callback if not a non control-closing selection
+  _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
+    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+
+    if (this._isMultiSelect() || keepControlOpen && this.state.value) {
+      objectValues = this.state.value.concat(objectValues);
+    }
+
+    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
+    this.props.onChange(outputValue);
+
+    if (keepControlOpen) {
+      this.setState({
+        value: objectValues
+      });
+    } else {
+      this.setState({
+        value: objectValues
+      }, this._closeOnKeypress);
+    }
+  },
+
+  // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
+  _selectItemOnOptionClick: function _selectItemOnOptionClick(value, event) {
+    if (this._isMultiSelect() && event.shiftKey) {
+      this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
+      return;
+    }
+    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey),
+        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
+
+    // store clicked option as the lastUserSelected
+    this.lastUserSelectedOption = event.currentTarget;
+
+    if (alreadySelected) {
+      this._removeSelectedOptionByValue(value);
+    } else {
+      this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
+    }
+  },
+
+  // set the focusId to the SEARCH_FOCUS_ID constant value
+  _setFocusIdToSearch: function _setFocusIdToSearch() {
+    this._updateFocusedId(this.SEARCH_FOCUS_ID);
+  },
+
+  // if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown
+  _setFocusOnOpen: function _setFocusOnOpen() {
+    if (this.lastUserSelectedOption) {
+      this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
+    } else {
+      this._moveFocusDown();
+    }
+  },
+
+  // DOM focus for tag removal buttons will get lost after a tag removal.
+  // After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove
+  _setFocusToTagRemovalIfPresent: function _setFocusToTagRemovalIfPresent() {
+    if (!this.props.tags || this.state.value.length === 0) {
+      return false;
+    }
+
+    var firstValue = _.first(this.state.value)[this.state.valueKey],
+        firstTag = this.refs[this._getTagRemoveIndex(firstValue)];
+
+    if (firstTag) {
+      if (_.isFunction(firstTag.getDOMNode().focus)) {
+        firstTag.getDOMNode().focus();
+        return true;
+      }
+    }
+    return false;
+  },
+
+  // Sets the current focusedId.
+  _updateFocusedId: function _updateFocusedId(id) {
+    this.setState({
+      focusedId: id
+    });
+  }
+
+});
+
+module.exports = ReactSuperSelect;
+
+},{"classnames":1,"lodash":29,"react":184}],4:[function(require,module,exports){
+'use strict';
+
+var basicAjaxExample = require('./super-selects/basic-ajax'),
+    basicExample = require('./super-selects/basic-example'),
+    basicSearchable = require('./super-selects/basic-searchable'),
+    customFilterFunction = require('./super-selects/custom-filter-function'),
+    customTemplate = require('./super-selects/custom-template'),
+    groupBy = require('./super-selects/group-by'),
+    localized = require('./super-selects/localized'),
+    multiselect = require('./super-selects/multiselect'),
+    paging = require('./super-selects/paging'),
+    tagsExample = require('./super-selects/tags-example');
+
+var allExamples = [basicExample, basicAjaxExample, basicSearchable, customFilterFunction, customTemplate, groupBy, localized, multiselect, paging, tagsExample];
+
+module.exports = allExamples;
+
+},{"./super-selects/basic-ajax":16,"./super-selects/basic-example":17,"./super-selects/basic-searchable":18,"./super-selects/custom-filter-function":19,"./super-selects/custom-template":20,"./super-selects/group-by":21,"./super-selects/localized":22,"./super-selects/multiselect":23,"./super-selects/paging":24,"./super-selects/tags-example":28}],5:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    classNames = require('classnames'),
+    React = require('react'),
+    ReactSuperSelect = require('../src/react-super-select');
+
+var allExamples = require('./all-examples');
+
+var RSSExamples = React.createClass({
+  displayName: 'RSSExamples',
+
+  _renderExampleLinks: function _renderExampleLinks() {
+    var exampleLinks = _.map(allExamples, function (example, index) {
+      var href = '#' + example.nameAttr;
+      return React.createElement(
+        'li',
+        { key: index },
+        React.createElement(
+          'a',
+          { href: href },
+          ' ',
+          example.displayName,
+          ' '
+        )
+      );
+    });
+
+    return React.createElement(
+      'div',
+      { className: 'example-links' },
+      React.createElement(
+        'h1',
+        null,
+        'React-Super-Select Live Examples'
+      ),
+      React.createElement(
+        'h2',
+        null,
+        ' Quick Links: '
+      ),
+      React.createElement(
+        'nav',
+        { className: 'api' },
+        React.createElement(
+          'ul',
+          null,
+          exampleLinks
+        )
+      )
+    );
+  },
+
+  _renderExampleSections: function _renderExampleSections() {
+    var exampleSections = _.map(allExamples, function (example, index) {
+      var superSelect = React.createElement(ReactSuperSelect, example.props),
+          outputId = example.nameAttr + '_output';
+
+      return React.createElement(
+        'li',
+        { key: index, className: 'example-sections' },
+        React.createElement(
+          'article',
+          { className: 'api-item' },
+          React.createElement(
+            'h3',
+            { className: 'api-link' },
+            React.createElement(
+              'a',
+              { name: example.nameAttr },
+              ' ',
+              example.displayName,
+              ' '
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'rss-live-example' },
+            superSelect
+          ),
+          React.createElement(
+            'div',
+            { className: 'rss-output-example' },
+            'onChange Output'
+          ),
+          React.createElement('pre', { className: 'example-output', id: outputId }),
+          React.createElement(
+            'div',
+            null,
+            React.createElement('aside', { className: 'rss-example-markdown', dangerouslySetInnerHTML: { __html: example.renderString } })
+          ),
+          React.createElement(
+            'a',
+            { className: 'top-return', href: '#top' },
+            'Back to Top'
+          )
+        )
+      );
+    });
+
+    return React.createElement(
+      'ul',
+      { className: 'live-examples-list' },
+      exampleSections
+    );
+  },
+
+  render: function render() {
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'a',
+        { name: 'top' },
+        ' '
+      ),
+      this._renderExampleLinks(),
+      this._renderExampleSections()
+    );
+  }
+});
+
+React.render(React.createElement(RSSExamples, null), document.getElementById('examples'));
+
+},{"../src/react-super-select":3,"./all-examples":4,"classnames":1,"lodash":29,"react":184}],6:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  ajaxDataFetch={simulatedAjaxFetch} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  // simulate a 2 second ajax fetch for collection data\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(testData);\n      }, 2000);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],7:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],8:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],9:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customFilterFunction: customFilterExample,\n                  placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;filter shop by category&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customfilterfunction\">customFilterFunction</h4>\n<pre><code class=\"lang-js\">var customFilterExample = function (option, index, collection, searchTerm) {\n  return option.group.toLowerCase().indexOf(searchTerm) &gt; -1;\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+},{}],10:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+},{}],11:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+},{}],12:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  tags={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot;\n                  tagRemoveLabelString=&quot;删除标记&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<p>####localization properties</p>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\ntagRemoveLabelString=&quot;删除标记&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Localized Tags Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};\\n&#39;]);\n  });\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],13:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],14:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],15:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],16:[function(require,module,exports){
+'use strict';
+
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicAjaxMarkdown = require('../markdown/js/examples/basic-ajax').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('basic_ajax_output', output.join(''));
+};
+
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(testData);
+      }, 2000);
+    }
+  };
+};
+
+var basicAjaxExample = {
+
+  nameAttr: "basic_ajax",
+  displayName: "Basic Ajax",
+
+  props: {
+    placeholder: "Choose An Option",
+    ajaxDataFetch: simulatedAjaxFetch,
+    onChange: handlerExample,
+    searchable: true
+  },
+
+  renderString: basicAjaxMarkdown
+
+};
+
+module.exports = basicAjaxExample;
+
+},{"../markdown/js/examples/basic-ajax":6,"./support/example-output.js":25,"./support/test-data.js":27}],17:[function(require,module,exports){
+'use strict';
+
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('basic_example_output', output.join(''));
+};
+
+var basicExample = {
+
+  nameAttr: "basic_example",
+  displayName: "Basic Example",
+
+  props: {
+    placeholder: "Make a Selection",
+    dataSource: testData,
+    onChange: handlerExample
+  },
+
+  renderString: basicExampleMarkdown
+
+};
+
+module.exports = basicExample;
+
+},{"../markdown/js/examples/basic-example":7,"./support/example-output.js":25,"./support/test-data.js":27}],18:[function(require,module,exports){
+'use strict';
+
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Searchable Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('basic_searchable_output', output.join(''));
+};
+
+var basicSearchableExample = {
+
+  nameAttr: "basic_searchable",
+  displayName: "Basic Searchable",
+
+  props: {
+    placeholder: "Make a Selection",
+    dataSource: testData,
+    onChange: handlerExample,
+    searchable: true
+  },
+
+  renderString: basicSearchableMarkdown
+
+};
+
+module.exports = basicSearchableExample;
+
+},{"../markdown/js/examples/basic-searchable":8,"./support/example-output.js":25,"./support/test-data.js":27}],19:[function(require,module,exports){
+'use strict';
+
+var React = require('react'),
+    classNames = require('classnames'),
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    customFilterFunctionMarkdown = require('../markdown/js/examples/custom-filter-function').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
+  exampleOutput('custom_template_output', output.join(''));
+};
+
+var customFilter = function customFilter(option, index, collection, searchTerm) {
+  return option.group.toLowerCase().indexOf(searchTerm) > -1;
+};
+
+var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
+
+  return React.createElement(
+    'div',
+    { className: itemClasses },
+    React.createElement('span', { className: iconClasses }),
+    React.createElement(
+      'p',
+      null,
+      item.label,
+      ' - ',
+      '$' + item.price.toFixed(2)
+    )
+  );
+};
+
+var customFilterExample = {
+
+  nameAttr: "custom_filter_function",
+  displayName: "Custom Filter Function Example",
+
+  props: {
+    customFilterFunction: customFilter,
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: 'label',
+    placeholder: "Pick an Item",
+    searchable: true,
+    searchPlaceholder: "filter shop by category"
+  },
+
+  renderString: customFilterFunctionMarkdown
+
+};
+
+module.exports = customFilterExample;
+
+},{"../markdown/js/examples/custom-filter-function":9,"./support/example-output.js":25,"./support/groceries.js":26,"classnames":1,"react":184}],20:[function(require,module,exports){
+'use strict';
+
+var React = require('react'),
+    classNames = require('classnames'),
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
+  exampleOutput('custom_template_output', output.join(''));
+};
+
+var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
+
+  return React.createElement(
+    'div',
+    { className: itemClasses },
+    React.createElement('span', { className: iconClasses }),
+    React.createElement(
+      'p',
+      null,
+      item.label,
+      ' - ',
+      '$' + item.price.toFixed(2)
+    )
+  );
+};
+
+var customTemplateExample = {
+
+  nameAttr: "custom_template",
+  displayName: "Custom Template Example",
+
+  props: {
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: 'label',
+    placeholder: "Pick an Item",
+    searchable: true,
+    searchPlaceholder: "Search Shop"
+  },
+
+  renderString: customTemplateMarkdown
+
+};
+
+module.exports = customTemplateExample;
+
+},{"../markdown/js/examples/custom-template":10,"./support/example-output.js":25,"./support/groceries.js":26,"classnames":1,"react":184}],21:[function(require,module,exports){
+'use strict';
+
+var React = require('react'),
+    classNames = require('classnames'),
+    groceries = require('./support/groceries.js'),
+    exampleOutput = require('./support/example-output.js'),
+    groupByMarkdown = require('../markdown/js/examples/group-by').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
+  exampleOutput('group_by_output', output.join(''));
+};
+
+var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
+
+  return React.createElement(
+    'div',
+    { className: itemClasses },
+    React.createElement('span', { className: iconClasses }),
+    React.createElement(
+      'p',
+      null,
+      item.label,
+      ' - ',
+      '$' + item.price.toFixed(2)
+    )
+  );
+};
+
+var groupByExample = {
+
+  nameAttr: "group_by",
+  displayName: "Grouped Options Example",
+
+  props: {
+    customOptionTemplateFunction: groceryCartItemTemplate,
+    dataSource: groceries,
+    onChange: handlerExample,
+    optionLabelKey: "label",
+    placeholder: "Pick an Item",
+    searchable: true,
+    searchPlaceholder: "Search Shop",
+    groupBy: "group"
+  },
+
+  renderString: groupByMarkdown
+
+};
+
+module.exports = groupByExample;
+
+},{"../markdown/js/examples/group-by":11,"./support/example-output.js":25,"./support/groceries.js":26,"classnames":1,"react":184}],22:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    localizedMarkdown = require('../markdown/js/examples/localized').body;
+
+var handlerExample = function handlerExample(options) {
+  var output = [];
+  _.map(options, function (option) {
+    output = output.concat(['Localized Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
+  });
+
+  exampleOutput('localized_output', output.join(''));
+};
+
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
+  var MOCK_AJAX_PER_PAGE = 10;
+  var data = _.take(testData, MOCK_AJAX_PER_PAGE);
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(data);
+      }, 2000);
+    }
+  };
+};
+
+var hasMorePagesExample = function hasMorePagesExample(collection) {
+  return collection.length < testData.length;
+};
+
+var previousPage = 0;
+
+var simulatedPageFetch = function simulatedPageFetch(collection) {
+  var MOCK_AJAX_PER_PAGE = 10;
+  previousPage = previousPage + 1;
+  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
+      data;
+  if (sliceLocation < testData.length) {
+    data = [];
+
+    for (var i = sliceLocation; i < sliceLocation + MOCK_AJAX_PER_PAGE; i++) {
+      if (testData[i]) {
+        data.push(testData[i]);
+      }
+    }
+  } else {
+    data = testData;
+  }
+
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(collection.concat(data));
+      }, 1500);
+    }
+  };
+};
+
+var localizedExample = {
+
+  nameAttr: "localized",
+  displayName: "Localized",
+
+  props: {
+    ajaxDataFetch: simulatedAjaxFetch,
+    hasMorePages: hasMorePagesExample,
+    onChange: handlerExample,
+    pageDataFetch: simulatedPageFetch,
+    placeholder: "选择",
+    ajaxErrorString: "错误",
+    noResultsString: "无结果",
+    searchPlaceholder: "搜索",
+    searchable: true,
+    tagRemoveLabelString: '删除标记',
+    tags: true
+  },
+
+  renderString: localizedMarkdown
+
+};
+
+module.exports = localizedExample;
+
+},{"../markdown/js/examples/localized":12,"./support/example-output.js":25,"./support/test-data.js":27,"lodash":29}],23:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    multiselectMarkdown = require('../markdown/js/examples/multiselect').body;
+
+var handlerExample = function handlerExample(options) {
+  var output = [];
+  _.map(options, function (option) {
+    output = output.concat(['Multiselect Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
+  });
+
+  exampleOutput('multiselect_output', output.join(''));
+};
+
+var multiselectExample = {
+
+  nameAttr: "multiselect",
+  displayName: "Multiselect",
+
+  props: {
+    placeholder: "Make Your Selections",
+    dataSource: testData,
+    onChange: handlerExample,
+    multiple: true
+  },
+
+  renderString: multiselectMarkdown
+
+};
+
+module.exports = multiselectExample;
+
+},{"../markdown/js/examples/multiselect":13,"./support/example-output.js":25,"./support/test-data.js":27,"lodash":29}],24:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    pagingMarkdown = require('../markdown/js/examples/paging').body;
+
+var handlerExample = function handlerExample(option) {
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('paging_output', output.join(''));
+};
+
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
+  var MOCK_AJAX_PER_PAGE = 10;
+  var data = _.take(testData, MOCK_AJAX_PER_PAGE);
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(data);
+      }, 2000);
+    }
+  };
+};
+
+var hasMorePagesExample = function hasMorePagesExample(collection) {
+  return collection.length < testData.length;
+};
+
+var previousPage = 0;
+
+var simulatedPageFetch = function simulatedPageFetch(collection) {
+  var MOCK_AJAX_PER_PAGE = 10;
+  previousPage = previousPage + 1;
+  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
+      data;
+  if (sliceLocation < testData.length) {
+    data = [];
+
+    for (var i = sliceLocation; i < sliceLocation + MOCK_AJAX_PER_PAGE; i++) {
+      if (testData[i]) {
+        data.push(testData[i]);
+      }
+    }
+  } else {
+    data = testData;
+  }
+
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(collection.concat(data));
+      }, 1500);
+    }
+  };
+};
+
+var pagingExample = {
+
+  nameAttr: "paging",
+  displayName: "Paging",
+
+  props: {
+    ajaxDataFetch: simulatedAjaxFetch,
+    hasMorePages: hasMorePagesExample,
+    onChange: handlerExample,
+    pageDataFetch: simulatedPageFetch,
+    placeholder: "Choose An Option",
+    searchable: true
+  },
+
+  renderString: pagingMarkdown
+
+};
+
+module.exports = pagingExample;
+
+},{"../markdown/js/examples/paging":14,"./support/example-output.js":25,"./support/test-data.js":27,"lodash":29}],25:[function(require,module,exports){
+"use strict";
+
+var exampleOutput = function exampleOutput(id, content) {
+  var outputDiv = document.getElementById(id);
+
+  if (outputDiv && outputDiv.childNodes && outputDiv.childNodes[0]) {
+    outputDiv.replaceChild(document.createTextNode(content), outputDiv.childNodes[0]);
+  } else {
+    outputDiv.appendChild(document.createTextNode(content));
+  }
+};
+
+module.exports = exampleOutput;
+
+},{}],26:[function(require,module,exports){
+"use strict";
+
+var groceries = [{
+  id: 1,
+  attributeName: "apple",
+  label: "Apple",
+  iconClass: "rss-grocery rss-grocery-apple",
+  group: "fruits",
+  price: 0.79
+}, {
+  id: 2,
+  attributeName: "carrot",
+  label: "Carrot",
+  iconClass: "rss-grocery rss-grocery-carrot",
+  group: "Vegetables",
+  price: 0.21
+}, {
+  id: 3,
+  attributeName: "cherries",
+  label: "Cherries",
+  iconClass: "rss-grocery rss-grocery-cherries",
+  group: "fruits",
+  price: 0.45
+}, {
+  id: 4,
+  attributeName: "eggplant",
+  label: "Eggplant",
+  iconClass: "rss-grocery rss-grocery-eggplant",
+  group: "Vegetables",
+  price: 1.50
+}, {
+  id: 5,
+  attributeName: "garlic",
+  label: "Garlic",
+  iconClass: "rss-grocery rss-grocery-garlic",
+  group: "Vegetables",
+  price: 0.60
+}, {
+  id: 6,
+  attributeName: "grapes",
+  label: "Grapes",
+  iconClass: "rss-grocery rss-grocery-grapes",
+  group: "fruits",
+  price: 3.00
+}, {
+  id: 7,
+  attributeName: "green_pepper",
+  label: "Green Pepper",
+  iconClass: "rss-grocery rss-grocery-green_pepper",
+  group: "Vegetables",
+  price: 0.95
+}, {
+  id: 8,
+  attributeName: "lemon",
+  label: "Lemon",
+  iconClass: "rss-grocery rss-grocery-lemon",
+  group: "fruits",
+  price: 0.40
+}, {
+  id: 9,
+  attributeName: "orange",
+  label: "Orange",
+  iconClass: "rss-grocery rss-grocery-orange",
+  group: "fruits",
+  price: 0.60
+}, {
+  id: 10,
+  attributeName: "peach",
+  label: "Peach",
+  iconClass: "rss-grocery rss-grocery-peach",
+  group: "fruits",
+  price: 0.95
+}, {
+  id: 11,
+  attributeName: "pear",
+  label: "Pear",
+  iconClass: "rss-grocery rss-grocery-pear",
+  group: "fruits",
+  price: 0.55
+}, {
+  id: 12,
+  attributeName: "pumpkin",
+  label: "Pumpkin",
+  iconClass: "rss-grocery rss-grocery-pumpkin",
+  group: "Vegetables",
+  price: 2.00
+}, {
+  id: 13,
+  attributeName: "red_pepper",
+  label: "Red Pepper",
+  iconClass: "rss-grocery rss-grocery-red_pepper",
+  group: "Vegetables",
+  price: 1.00
+}, {
+  id: 14,
+  attributeName: "strawberry",
+  label: "Strawberry",
+  iconClass: "rss-grocery rss-grocery-strawberry",
+  group: "fruits",
+  price: 0.15
+}, {
+  id: 15,
+  attributeName: "tomato",
+  label: "Tomato",
+  iconClass: "rss-grocery rss-grocery-tomato",
+  group: "fruits",
+  price: 0.60
+}, {
+  id: 16,
+  attributeName: "watermelon",
+  label: "Watermelon",
+  iconClass: "rss-grocery rss-grocery-watermelon",
+  group: "fruits",
+  price: 1.90
+}];
+
+module.exports = groceries;
+
+},{}],27:[function(require,module,exports){
+"use strict";
+
+var testData = [{
+  "id": "5507c0528152e61f3c348d56",
+  "name": "elit laborum et",
+  "size": "Large"
+}, {
+  "id": "5507c0526305bceb0c0e2c7a",
+  "name": "dolor nulla velit",
+  "size": "Medium"
+}, {
+  "id": "5507c052467f171e4e2f460e",
+  "name": "consequat commodo elit",
+  "size": "Small"
+}, {
+  "id": "5507c05280458aa7521a98d3",
+  "name": "dolor deserunt pariatur",
+  "size": "Large"
+}, {
+  "id": "5507c0525c18b6bc81e2a661",
+  "name": "labore excepteur ut",
+  "size": "Large"
+}, {
+  "id": "5507c05226d6c301539c9363",
+  "name": "occaecat ipsum sit",
+  "size": "Medium"
+}, {
+  "id": "5507c052981e4a28d673820c",
+  "name": "dolor officia eu",
+  "size": "Medium"
+}, {
+  "id": "5507c0522340b9bec96ef3d0",
+  "name": "ad enim ad",
+  "size": "Medium"
+}, {
+  "id": "5507c052f379af7af42af291",
+  "name": "amet in sunt",
+  "size": "Medium"
+}, {
+  "id": "5507c0525b90c984190cb7f9",
+  "name": "ea sit qui",
+  "size": "Small"
+}, {
+  "id": "5507c0525013be7033176d97",
+  "name": "reprehenderit adipisicing nisi",
+  "size": "Medium"
+}, {
+  "id": "5507c052c957e4c4a94c09d6",
+  "name": "veniam pariatur sint",
+  "size": "Large"
+}, {
+  "id": "5507c052a2ef6ce44a822f9f",
+  "name": "mollit in elit",
+  "size": "Large"
+}, {
+  "id": "5507c052265e8dbfb667b320",
+  "name": "sunt est reprehenderit",
+  "size": "Medium"
+}, {
+  "id": "5507c0526c19cadf4345992b",
+  "name": "reprehenderit officia sint",
+  "size": "Large"
+}, {
+  "id": "5507c052ab8f326ac857413b",
+  "name": "enim duis est",
+  "size": "Medium"
+}, {
+  "id": "5507c05224e453ebbd82ec23",
+  "name": "occaecat elit esse",
+  "size": "Small"
+}, {
+  "id": "5507c052f3a9f85a73feac00",
+  "name": "enim magna reprehenderit",
+  "size": "Small"
+}, {
+  "id": "5507c052b016fd12b330bcc1",
+  "name": "nostrud commodo laboris",
+  "size": "Large"
+}, {
+  "id": "5507c05287dc146f83eb969c",
+  "name": "anim mollit dolor",
+  "size": "Medium"
+}, {
+  "id": "5507c052d62d6e47a7b9e3ea",
+  "name": "tempor duis irure",
+  "size": "Small"
+}, {
+  "id": "5507c052e3604925abd04af7",
+  "name": "ullamco exercitation commodo",
+  "size": "Small"
+}, {
+  "id": "5507c052af7f3ede18c29878",
+  "name": "non ex ullamco",
+  "size": "Medium"
+}, {
+  "id": "5507c052f8419e0c886ad481",
+  "name": "dolore pariatur voluptate",
+  "size": "Large"
+}, {
+  "id": "5507c0527b92f529158aa3f3",
+  "name": "nisi consequat minim",
+  "size": "Small"
+}, {
+  "id": "5507c052fa42ff00ff3b706e",
+  "name": "laborum reprehenderit ut",
+  "size": "Small"
+}, {
+  "id": "5507c0529ac26334e60054cb",
+  "name": "qui ullamco non",
+  "size": "Small"
+}, {
+  "id": "5507c052973e3ac25c7ceb3a",
+  "name": "cillum Lorem amet",
+  "size": "Small"
+}, {
+  "id": "5507c052fdeeb5210cf219fe",
+  "name": "enim commodo officia",
+  "size": "Medium"
+}, {
+  "id": "5507c052c8751cfa0ebac0c9",
+  "name": "esse ullamco duis",
+  "size": "Medium"
+}, {
+  "id": "5507c0525dcfda7c9d57d1f2",
+  "name": "ea Lorem quis",
+  "size": "Large"
+}, {
+  "id": "5507c052ab2af04b759874ec",
+  "name": "velit ipsum occaecat",
+  "size": "Large"
+}, {
+  "id": "5507c05295f489e31f118a1c",
+  "name": "aute qui et",
+  "size": "Medium"
+}, {
+  "id": "5507c052341811b6429577c3",
+  "name": "incididunt aliquip aliquip",
+  "size": "Small"
+}, {
+  "id": "5507c052089b0968cb58de59",
+  "name": "veniam et Lorem",
+  "size": "Small"
+}, {
+  "id": "5507c0524bdb62dca52c0943",
+  "name": "fugiat esse consectetur",
+  "size": "Large"
+}, {
+  "id": "5507c0524f9611ea15963c20",
+  "name": "do excepteur occaecat",
+  "size": "Large"
+}, {
+  "id": "5507c052958a89ff83da7df1",
+  "name": "irure pariatur irure",
+  "size": "Medium"
+}, {
+  "id": "5507c0525566ad2cd006b31a",
+  "name": "veniam ut veniam",
+  "size": "Medium"
+}, {
+  "id": "5507c05231dcc890c5c25dc7",
+  "name": "reprehenderit nulla eiusmod",
+  "size": "Large"
+}, {
+  "id": "5507c05265bf7b373ee75105",
+  "name": "id ullamco id",
+  "size": "Small"
+}, {
+  "id": "5507c052a64af7c2f1a9a28b",
+  "name": "est esse voluptate",
+  "size": "Small"
+}, {
+  "id": "5507c0529fecf0d2ff679c24",
+  "name": "reprehenderit sunt proident",
+  "size": "Large"
+}, {
+  "id": "5507c052b2382a6259ecd4ca",
+  "name": "dolore velit enim",
+  "size": "Small"
+}, {
+  "id": "5507c05225dccd4c70999902",
+  "name": "enim et nulla",
+  "size": "Small"
+}];
+
+module.exports = testData;
+
+},{}],28:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash'),
+    testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    tagsMarkdown = require('../markdown/js/examples/tags-example').body;
+
+var handlerExample = function handlerExample(options) {
+  var output = [];
+  _.map(options, function (option) {
+    output = output.concat(['Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
+  });
+
+  exampleOutput('tags_example_output', output.join(''));
+};
+
+var tagsExample = {
+
+  nameAttr: "tags_example",
+  displayName: "Tags",
+
+  props: {
+    placeholder: "Make Your Selections",
+    dataSource: testData,
+    initialValue: [testData[0], testData[1]],
+    onChange: handlerExample,
+    tags: true
+  },
+
+  renderString: tagsMarkdown
+
+};
+
+module.exports = tagsExample;
+
+},{"../markdown/js/examples/tags-example":15,"./support/example-output.js":25,"./support/test-data.js":27,"lodash":29}],29:[function(require,module,exports){
 (function (global){
 /**
  * @license
- * lodash 3.8.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.7.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -d -o ./index.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -125,7 +2443,7 @@ process.chdir = function (dir) {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.8.0';
+  var VERSION = '3.7.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -200,7 +2518,7 @@ process.chdir = function (dir) {
       reInterpolate = /<%=([\s\S]+?)%>/g;
 
   /** Used to match property names within property paths. */
-  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
+  var reIsDeepProp = /\.|\[(?:[^[\]]+|(["'])(?:(?!\1)[^\n\\]|\\.)*?)\1\]/,
       reIsPlainProp = /^\w*$/,
       rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
 
@@ -391,6 +2709,8 @@ process.chdir = function (dir) {
    * restricted `window` object, otherwise the `window` object is used.
    */
   var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || freeSelf || this;
+
+  /*--------------------------------------------------------------------------*/
 
   /**
    * The base implementation of `compareAscending` which compares values and
@@ -762,6 +3082,8 @@ process.chdir = function (dir) {
     return htmlUnescapes[chr];
   }
 
+  /*--------------------------------------------------------------------------*/
+
   /**
    * Create a new pristine `lodash` function using the given `context` object.
    *
@@ -857,7 +3179,7 @@ process.chdir = function (dir) {
         getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
         getPrototypeOf = isNative(getPrototypeOf = Object.getPrototypeOf) && getPrototypeOf,
         push = arrayProto.push,
-        preventExtensions = isNative(preventExtensions = Object.preventExtensions) && preventExtensions,
+        preventExtensions = isNative(Object.preventExtensions = Object.preventExtensions) && preventExtensions,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         Set = isNative(Set = context.Set) && Set,
         setTimeout = context.setTimeout,
@@ -885,19 +3207,12 @@ process.chdir = function (dir) {
       //
       // Use `Object.preventExtensions` on a plain object instead of simply using
       // `Object('x')` because Chrome and IE fail to throw an error when attempting
-      // to assign values to readonly indexes of strings.
-      var func = preventExtensions && isNative(func = Object.assign) && func;
-      try {
-        if (func) {
-          var object = preventExtensions({ '1': 0 });
-          object[0] = 1;
-        }
-      } catch(e) {
-        // Only attempt in strict mode.
-        try { func(object, 'xo'); } catch(e) {}
-        return !object[1] && func;
-      }
-      return false;
+      // to assign values to readonly indexes of strings in strict mode.
+      var object = { '1': 0 },
+          func = preventExtensions && isNative(func = Object.assign) && func;
+
+      try { func(preventExtensions(object), 'xo'); } catch(e) {}
+      return !object[1] && func;
     }());
 
     /* Native method references for those with the same name as other `lodash` methods. */
@@ -918,7 +3233,7 @@ process.chdir = function (dir) {
 
     /** Used as references for the maximum length and index of an array. */
     var MAX_ARRAY_LENGTH = Math.pow(2, 32) - 1,
-        MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
+        MAX_ARRAY_INDEX =  MAX_ARRAY_LENGTH - 1,
         HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
     /** Used as the size, in bytes, of each `Float64Array` element. */
@@ -935,6 +3250,8 @@ process.chdir = function (dir) {
 
     /** Used to lookup unminified function names. */
     var realNames = {};
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a `lodash` object which wraps `value` to enable implicit chaining.
@@ -1075,7 +3392,6 @@ process.chdir = function (dir) {
 
     (function(x) {
       var Ctor = function() { this.x = x; },
-          args = arguments,
           object = { '0': x, 'length': x },
           props = [];
 
@@ -1125,7 +3441,7 @@ process.chdir = function (dir) {
        * @type boolean
        */
       try {
-        support.nonEnumArgs = !propertyIsEnumerable.call(args, 1);
+        support.nonEnumArgs = !propertyIsEnumerable.call(arguments, 1);
       } catch(e) {
         support.nonEnumArgs = true;
       }
@@ -1191,6 +3507,8 @@ process.chdir = function (dir) {
         '_': lodash
       }
     };
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
@@ -1320,6 +3638,8 @@ process.chdir = function (dir) {
       return result;
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Creates a cache object to store key/value pairs.
      *
@@ -1388,6 +3708,8 @@ process.chdir = function (dir) {
       return this;
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      *
      * Creates a cache object to store unique values.
@@ -1436,6 +3758,8 @@ process.chdir = function (dir) {
         data.hash[value] = true;
       }
     }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Copies the values of `source` to `array`.
@@ -1780,9 +4104,8 @@ process.chdir = function (dir) {
      */
     function baseAt(collection, props) {
       var index = -1,
-          isNil = collection == null,
-          isArr = !isNil && isArrayLike(collection),
-          length = isArr && collection.length,
+          length = collection.length,
+          isArr = isLength(length),
           propsLength = props.length,
           result = Array(propsLength);
 
@@ -1791,7 +4114,7 @@ process.chdir = function (dir) {
         if (isArr) {
           result[index] = isIndex(key, length) ? collection[key] : undefined;
         } else {
-          result[index] = isNil ? undefined : collection[key];
+          result[index] = collection[key];
         }
       }
       return result;
@@ -2118,8 +4441,8 @@ process.chdir = function (dir) {
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isDeep] Specify a deep flatten.
-     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+     * @param {boolean} isDeep Specify a deep flatten.
+     * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isDeep, isStrict) {
@@ -2130,8 +4453,8 @@ process.chdir = function (dir) {
 
       while (++index < length) {
         var value = array[index];
-        if (isObjectLike(value) && isArrayLike(value) &&
-            (isStrict || isArray(value) || isArguments(value))) {
+
+        if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
             value = baseFlatten(value, isDeep, isStrict);
@@ -2139,6 +4462,7 @@ process.chdir = function (dir) {
           var valIndex = -1,
               valLength = value.length;
 
+          result.length += valLength;
           while (++valIndex < valLength) {
             result[++resIndex] = value[valIndex];
           }
@@ -2259,9 +4583,9 @@ process.chdir = function (dir) {
           length = path.length;
 
       while (object != null && ++index < length) {
-        object = object[path[index]];
+        var result = object = object[path[index]];
       }
-      return (index && index == length) ? object : undefined;
+      return result;
     }
 
     /**
@@ -2280,7 +4604,8 @@ process.chdir = function (dir) {
     function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
       // Exit early for identical values.
       if (value === other) {
-        return true;
+        // Treat `+0` vs. `-0` as not equal.
+        return value !== 0 || (1 / value == 1 / other);
       }
       var valType = typeof value,
           othType = typeof other;
@@ -2429,7 +4754,8 @@ process.chdir = function (dir) {
      */
     function baseMap(collection, iteratee) {
       var index = -1,
-          result = isArrayLike(collection) ? Array(collection.length) : [];
+          length = getLength(collection),
+          result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value, key, collection) {
         result[++index] = iteratee(value, key, collection);
@@ -2528,7 +4854,7 @@ process.chdir = function (dir) {
       if (!isObject(object)) {
         return object;
       }
-      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source));
+      var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
       if (!isSrcArr) {
         var props = keys(source);
         push.apply(props, getSymbols(source));
@@ -2591,10 +4917,10 @@ process.chdir = function (dir) {
 
       if (isCommon) {
         result = srcValue;
-        if (isArrayLike(srcValue) && (isArray(srcValue) || isTypedArray(srcValue))) {
+        if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
           result = isArray(value)
             ? value
-            : (isArrayLike(value) ? arrayCopy(value) : []);
+            : (getLength(value) ? arrayCopy(value) : []);
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
           result = isArguments(value)
@@ -2656,7 +4982,7 @@ process.chdir = function (dir) {
      * @returns {Array} Returns `array`.
      */
     function basePullAt(array, indexes) {
-      var length = array ? indexes.length : 0;
+      var length = indexes.length;
       while (length--) {
         var index = parseFloat(indexes[length]);
         if (index != previous && isIndex(index)) {
@@ -3142,12 +5468,12 @@ process.chdir = function (dir) {
       while (++argsIndex < argsLength) {
         result[argsIndex] = args[argsIndex];
       }
-      var offset = argsIndex;
+      var pad = argsIndex;
       while (++rightIndex < rightLength) {
-        result[offset + rightIndex] = partials[rightIndex];
+        result[pad + rightIndex] = partials[rightIndex];
       }
       while (++holdersIndex < holdersLength) {
-        result[offset + holders[holdersIndex]] = args[argsIndex++];
+        result[pad + holders[holdersIndex]] = args[argsIndex++];
       }
       return result;
     }
@@ -3415,7 +5741,7 @@ process.chdir = function (dir) {
           return index > -1 ? collection[index] : undefined;
         }
         return baseFind(collection, predicate, eachFunc);
-      };
+      }
     }
 
     /**
@@ -3481,7 +5807,7 @@ process.chdir = function (dir) {
           funcName = getFuncName(func);
 
           var data = funcName == 'wrapper' ? getData(func) : null;
-          if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
+          if (data && isLaziable(data[0])) {
             wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
           } else {
             wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);
@@ -3552,28 +5878,6 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Creates a function for `_.mapKeys` or `_.mapValues`.
-     *
-     * @private
-     * @param {boolean} [isMapKeys] Specify mapping keys instead of values.
-     * @returns {Function} Returns the new map function.
-     */
-    function createObjectMapper(isMapKeys) {
-      return function(object, iteratee, thisArg) {
-        var result = {};
-        iteratee = getCallback(iteratee, thisArg, 3);
-
-        baseForOwn(object, function(value, key, object) {
-          var mapped = iteratee(value, key, object);
-          key = isMapKeys ? mapped : key;
-          value = isMapKeys ? value : mapped;
-          result[key] = value;
-        });
-        return result;
-      };
-    }
-
-    /**
      * Creates a function for `_.padLeft` or `_.padRight`.
      *
      * @private
@@ -3583,7 +5887,7 @@ process.chdir = function (dir) {
     function createPadDir(fromRight) {
       return function(string, length, chars) {
         string = baseToString(string);
-        return (fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string);
+        return string && ((fromRight ? string : '') + createPadding(string, length, chars) + (fromRight ? '' : string));
       };
     }
 
@@ -3929,7 +6233,8 @@ process.chdir = function (dir) {
           // Treat `NaN` vs. `NaN` as equal.
           return (object != +object)
             ? other != +other
-            : object == +other;
+            // But, treat `-0` vs. `+0` as not equal.
+            : (object == 0 ? ((1 / object) == (1 / other)) : object == +other);
 
         case regexpTag:
         case stringTag:
@@ -4109,7 +6414,7 @@ process.chdir = function (dir) {
      * Gets the "length" property value of `object`.
      *
      * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-     * that affects Safari on at least iOS 8.1-8.3 ARM64.
+     * in Safari on iOS 8.1 ARM64.
      *
      * @private
      * @param {Object} object The object to query.
@@ -4249,17 +6554,6 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Checks if `value` is array-like.
-     *
-     * @private
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-     */
-    function isArrayLike(value) {
-      return value != null && isLength(getLength(value));
-    }
-
-    /**
      * Checks if `value` is a valid array-like index.
      *
      * @private
@@ -4287,9 +6581,13 @@ process.chdir = function (dir) {
         return false;
       }
       var type = typeof index;
-      if (type == 'number'
-          ? (isArrayLike(object) && isIndex(index, object.length))
-          : (type == 'string' && index in object)) {
+      if (type == 'number') {
+        var length = getLength(object),
+            prereq = isLength(length) && isIndex(index, length);
+      } else {
+        prereq = type == 'string' && index in object;
+      }
+      if (prereq) {
         var other = object[index];
         return value === value ? (value === other) : (other !== other);
       }
@@ -4350,7 +6648,7 @@ process.chdir = function (dir) {
      *  equality comparisons, else `false`.
      */
     function isStrictComparable(value) {
-      return value === value && !isObject(value);
+      return value === value && (value === 0 ? ((1 / value) > 0) : !isObject(value));
     }
 
     /**
@@ -4424,7 +6722,7 @@ process.chdir = function (dir) {
     }
 
     /**
-     * A specialized version of `_.pick` which picks `object` properties specified
+     * A specialized version of `_.pick` that picks `object` properties specified
      * by `props`.
      *
      * @private
@@ -4449,7 +6747,7 @@ process.chdir = function (dir) {
     }
 
     /**
-     * A specialized version of `_.pick` which picks `object` properties `predicate`
+     * A specialized version of `_.pick` that picks `object` properties `predicate`
      * returns truthy for.
      *
      * @private
@@ -4594,7 +6892,7 @@ process.chdir = function (dir) {
       if (value == null) {
         return [];
       }
-      if (!isArrayLike(value)) {
+      if (!isLength(getLength(value))) {
         return values(value);
       }
       return isObject(value) ? value : Object(value);
@@ -4641,6 +6939,8 @@ process.chdir = function (dir) {
         ? wrapper.clone()
         : new LodashWrapper(wrapper.__wrapped__, wrapper.__chain__, arrayCopy(wrapper.__actions__));
     }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates an array of elements split into groups the length of `size`.
@@ -4710,8 +7010,11 @@ process.chdir = function (dir) {
 
     /**
      * Creates an array excluding all values of the provided arrays using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -4725,7 +7028,7 @@ process.chdir = function (dir) {
      * // => [1, 3]
      */
     var difference = restParam(function(array, values) {
-      return isArrayLike(array)
+      return (isArray(array) || isArguments(array))
         ? baseDifference(array, baseFlatten(values, false, true))
         : [];
     });
@@ -5120,10 +7423,13 @@ process.chdir = function (dir) {
 
     /**
      * Gets the index at which the first occurrence of `value` is found in `array`
-     * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
-     * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
-     * performs a faster binary search.
+     * using `SameValueZero` for equality comparisons. If `fromIndex` is negative,
+     * it is used as the offset from the end of `array`. If `array` is sorted
+     * providing `true` for `fromIndex` performs a faster binary search.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5183,9 +7489,12 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Creates an array of unique values in all provided arrays using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * Creates an array of unique values in all provided arrays using `SameValueZero`
      * for equality comparisons.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5207,7 +7516,7 @@ process.chdir = function (dir) {
 
       while (++argsIndex < argsLength) {
         var value = arguments[argsIndex];
-        if (isArrayLike(value)) {
+        if (isArray(value) || isArguments(value)) {
           args.push(value);
           caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
         }
@@ -5312,11 +7621,14 @@ process.chdir = function (dir) {
     }
 
     /**
-     * Removes all provided values from `array` using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * Removes all provided values from `array` using `SameValueZero` for equality
+     * comparisons.
      *
-     * **Note:** Unlike `_.without`, this method mutates `array`.
+     * **Notes:**
+     *  - Unlike `_.without`, this method mutates `array`
+     *  - [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     *    comparisons are like strict equality comparisons, e.g. `===`, except
+     *    that `NaN` matches `NaN`
      *
      * @static
      * @memberOf _
@@ -5380,6 +7692,7 @@ process.chdir = function (dir) {
      * // => [10, 20]
      */
     var pullAt = restParam(function(array, indexes) {
+      array || (array = []);
       indexes = baseFlatten(indexes);
 
       var result = baseAt(array, indexes);
@@ -5746,8 +8059,11 @@ process.chdir = function (dir) {
 
     /**
      * Creates an array of unique values, in order, of the provided arrays using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * `SameValueZero` for equality comparisons.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5764,9 +8080,8 @@ process.chdir = function (dir) {
     });
 
     /**
-     * Creates a duplicate-free version of an array, using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons, in which only the first occurence of each element
+     * Creates a duplicate-free version of an array, using `SameValueZero` for
+     * equality comparisons, in which only the first occurence of each element
      * is kept. Providing `true` for `isSorted` performs a faster search algorithm
      * for sorted arrays. If an iteratee function is provided it is invoked for
      * each element in the array to generate the criterion by which uniqueness
@@ -5783,6 +8098,10 @@ process.chdir = function (dir) {
      * If an object is provided for `iteratee` the created `_.matches` style
      * callback returns `true` for elements that have the properties of the given
      * object, else `false`.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5833,7 +8152,7 @@ process.chdir = function (dir) {
 
     /**
      * This method is like `_.zip` except that it accepts an array of grouped
-     * elements and creates an array regrouping the elements to their pre-zip
+     * elements and creates an array regrouping the elements to their pre-`_.zip`
      * configuration.
      *
      * @static
@@ -5850,19 +8169,10 @@ process.chdir = function (dir) {
      * // => [['fred', 'barney'], [30, 40], [true, false]]
      */
     function unzip(array) {
-      if (!(array && array.length)) {
-        return [];
-      }
       var index = -1,
-          length = 0;
+          length = (array && array.length && arrayMax(arrayMap(array, getLength))) >>> 0,
+          result = Array(length);
 
-      array = arrayFilter(array, function(group) {
-        if (isArrayLike(group)) {
-          length = nativeMax(group.length, length);
-          return true;
-        }
-      });
-      var result = Array(length);
       while (++index < length) {
         result[index] = arrayMap(array, baseProperty(index));
       }
@@ -5870,44 +8180,12 @@ process.chdir = function (dir) {
     }
 
     /**
-     * This method is like `_.unzip` except that it accepts an iteratee to specify
-     * how regrouped values should be combined. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments: (accumulator, value, index, group).
+     * Creates an array excluding all provided values using `SameValueZero` for
+     * equality comparisons.
      *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} array The array of grouped elements to process.
-     * @param {Function} [iteratee] The function to combine regrouped values.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Array} Returns the new array of regrouped elements.
-     * @example
-     *
-     * var zipped = _.zip([1, 2], [10, 20], [100, 200]);
-     * // => [[1, 10, 100], [2, 20, 200]]
-     *
-     * _.unzipWith(zipped, _.add);
-     * // => [3, 30, 300]
-     */
-    function unzipWith(array, iteratee, thisArg) {
-      var length = array ? array.length : 0;
-      if (!length) {
-        return [];
-      }
-      var result = unzip(array);
-      if (iteratee == null) {
-        return result;
-      }
-      iteratee = bindCallback(iteratee, thisArg, 4);
-      return arrayMap(result, function(group) {
-        return arrayReduce(group, iteratee, undefined, true);
-      });
-    }
-
-    /**
-     * Creates an array excluding all provided values using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons.
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -5921,7 +8199,7 @@ process.chdir = function (dir) {
      * // => [3]
      */
     var without = restParam(function(array, values) {
-      return isArrayLike(array)
+      return (isArray(array) || isArguments(array))
         ? baseDifference(array, values)
         : [];
     });
@@ -5946,7 +8224,7 @@ process.chdir = function (dir) {
 
       while (++index < length) {
         var array = arguments[index];
-        if (isArrayLike(array)) {
+        if (isArray(array) || isArguments(array)) {
           var result = result
             ? baseDifference(result, array).concat(baseDifference(array, result))
             : array;
@@ -6012,37 +8290,7 @@ process.chdir = function (dir) {
       return result;
     }
 
-    /**
-     * This method is like `_.zip` except that it accepts an iteratee to specify
-     * how grouped values should be combined. The `iteratee` is bound to `thisArg`
-     * and invoked with four arguments: (accumulator, value, index, group).
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {...Array} [arrays] The arrays to process.
-     * @param {Function} [iteratee] The function to combine grouped values.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Array} Returns the new array of grouped elements.
-     * @example
-     *
-     * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
-     * // => [111, 222]
-     */
-    var zipWith = restParam(function(arrays) {
-      var length = arrays.length,
-          iteratee = arrays[length - 2],
-          thisArg = arrays[length - 1];
-
-      if (length > 2 && typeof iteratee == 'function') {
-        length -= 2;
-      } else {
-        iteratee = (length > 1 && typeof thisArg == 'function') ? (--length, thisArg) : undefined;
-        thisArg = undefined;
-      }
-      arrays.length = length;
-      return unzipWith(arrays, iteratee, thisArg);
-    });
+    /*------------------------------------------------------------------------*/
 
     /**
      * Creates a `lodash` object that wraps `value` with explicit method
@@ -6294,6 +8542,8 @@ process.chdir = function (dir) {
       return baseWrapperValue(this.__wrapped__, this.__actions__);
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Creates an array of elements corresponding to the given keys, or indexes,
      * of `collection`. Keys may be specified as individual arguments or as arrays
@@ -6315,6 +8565,10 @@ process.chdir = function (dir) {
      * // => ['barney', 'pebbles']
      */
     var at = restParam(function(collection, props) {
+      var length = collection ? getLength(collection) : 0;
+      if (isLength(length)) {
+        collection = toIterable(collection);
+      }
       return baseAt(collection, baseFlatten(props));
     });
 
@@ -6687,10 +8941,13 @@ process.chdir = function (dir) {
     });
 
     /**
-     * Checks if `value` is in `collection` using
-     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
-     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
-     * from the end of `collection`.
+     * Checks if `value` is in `collection` using `SameValueZero` for equality
+     * comparisons. If `fromIndex` is negative, it is used as the offset from
+     * the end of `collection`.
+     *
+     * **Note:** [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+     * comparisons are like strict equality comparisons, e.g. `===`, except that
+     * `NaN` matches `NaN`.
      *
      * @static
      * @memberOf _
@@ -6810,7 +9067,8 @@ process.chdir = function (dir) {
       var index = -1,
           isFunc = typeof path == 'function',
           isProp = isKey(path),
-          result = isArrayLike(collection) ? Array(collection.length) : [];
+          length = getLength(collection),
+          result = isLength(length) ? Array(length) : [];
 
       baseEach(collection, function(value) {
         var func = isFunc ? path : (isProp && value != null && value[path]);
@@ -6839,11 +9097,10 @@ process.chdir = function (dir) {
      * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
      *
      * The guarded methods are:
-     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`,
-     * `drop`, `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`,
-     * `parseInt`, `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`,
-     * `trimLeft`, `trimRight`, `trunc`, `random`, `range`, `sample`, `some`,
-     * `sum`, `uniq`, and `words`
+     * `ary`, `callback`, `chunk`, `clone`, `create`, `curry`, `curryRight`, `drop`,
+     * `dropRight`, `every`, `fill`, `flatten`, `invert`, `max`, `min`, `parseInt`,
+     * `slice`, `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimLeft`,
+     * `trimRight`, `trunc`, `random`, `range`, `sample`, `some`, `uniq`, and `words`
      *
      * @static
      * @memberOf _
@@ -7031,11 +9288,22 @@ process.chdir = function (dir) {
      * }, []);
      * // => [4, 5, 2, 3, 0, 1]
      */
-    var reduceRight = createReduce(arrayReduceRight, baseEachRight);
+    var reduceRight =  createReduce(arrayReduceRight, baseEachRight);
 
     /**
      * The opposite of `_.filter`; this method returns the elements of `collection`
      * that `predicate` does **not** return truthy for.
+     *
+     * If a property name is provided for `predicate` the created `_.property`
+     * style callback returns the property value of the given element.
+     *
+     * If a value is also provided for `thisArg` the created `_.matchesProperty`
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
+     * If an object is provided for `predicate` the created `_.matches` style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
      *
      * @static
      * @memberOf _
@@ -7415,6 +9683,8 @@ process.chdir = function (dir) {
       return filter(collection, baseMatches(source));
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Gets the number of milliseconds that have elapsed since the Unix epoch
      * (1 January 1970 00:00:00 UTC).
@@ -7432,6 +9702,8 @@ process.chdir = function (dir) {
     var now = nativeNow || function() {
       return new Date().getTime();
     };
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * The opposite of `_.before`; this method creates a function that invokes
@@ -8412,6 +10684,8 @@ process.chdir = function (dir) {
       return createWrapper(wrapper, PARTIAL_FLAG, null, [value], []);
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
      * otherwise they are assigned by reference. If `customizer` is provided it is
@@ -8543,7 +10817,8 @@ process.chdir = function (dir) {
      * // => false
      */
     function isArguments(value) {
-      return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
+      var length = isObjectLike(value) ? value.length : undefined;
+      return isLength(length) && objToString.call(value) == argsTag;
     }
 
     /**
@@ -8664,9 +10939,10 @@ process.chdir = function (dir) {
       if (value == null) {
         return true;
       }
-      if (isArrayLike(value) && (isArray(value) || isString(value) || isArguments(value) ||
+      var length = getLength(value);
+      if (isLength(length) && (isArray(value) || isString(value) || isArguments(value) ||
           (isObjectLike(value) && isFunction(value.splice)))) {
-        return !value.length;
+        return !length;
       }
       return !keys(value).length;
     }
@@ -9056,7 +11332,7 @@ process.chdir = function (dir) {
      * // => false
      */
     function isRegExp(value) {
-      return isObjectLike(value) && objToString.call(value) == regexpTag;
+      return (isObjectLike(value) && objToString.call(value) == regexpTag) || false;
     }
 
     /**
@@ -9172,6 +11448,8 @@ process.chdir = function (dir) {
       return baseCopy(value, keysIn(value));
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object. Subsequent sources overwrite property assignments of previous sources.
@@ -9181,6 +11459,7 @@ process.chdir = function (dir) {
      *
      * **Note:** This method mutates `object` and is based on
      * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
+     *
      *
      * @static
      * @memberOf _
@@ -9653,9 +11932,12 @@ process.chdir = function (dir) {
      * // => ['0', '1']
      */
     var keys = !nativeKeys ? shimKeys : function(object) {
-      var Ctor = object != null && object.constructor;
+      if (object) {
+        var Ctor = object.constructor,
+            length = object.length;
+      }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-          (typeof object != 'function' && isArrayLike(object))) {
+          (typeof object != 'function' && isLength(length))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -9713,28 +11995,6 @@ process.chdir = function (dir) {
     }
 
     /**
-     * The opposite of `_.mapValues`; this method creates an object with the
-     * same values as `object` and keys generated by running each own enumerable
-     * property of `object` through `iteratee`.
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked
-     *  per iteration.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {Object} Returns the new mapped object.
-     * @example
-     *
-     * _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
-     *   return key + value;
-     * });
-     * // => { 'a1': 1, 'b2': 2 }
-     */
-    var mapKeys = createObjectMapper(true);
-
-    /**
      * Creates an object with the same keys as `object` and values generated by
      * running each own enumerable property of `object` through `iteratee`. The
      * iteratee function is bound to `thisArg` and invoked with three arguments:
@@ -9775,7 +12035,15 @@ process.chdir = function (dir) {
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
-    var mapValues = createObjectMapper();
+    function mapValues(object, iteratee, thisArg) {
+      var result = {};
+      iteratee = getCallback(iteratee, thisArg, 3);
+
+      baseForOwn(object, function(value, key, object) {
+        result[key] = iteratee(value, key, object);
+      });
+      return result;
+    }
 
     /**
      * Recursively merges own enumerable properties of the source object(s), that
@@ -9830,6 +12098,11 @@ process.chdir = function (dir) {
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
      * own and inherited enumerable properties of `object` that are not omitted.
+     * Property names may be specified as individual arguments or as arrays of
+     * property names. If `predicate` is provided it is invoked for each property
+     * of `object` omitting the properties `predicate` returns truthy for. The
+     * predicate is bound to `thisArg` and invoked with three arguments:
+     * (value, key, object).
      *
      * @static
      * @memberOf _
@@ -10123,6 +12396,8 @@ process.chdir = function (dir) {
       return baseValues(object, keysIn(object));
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
      * `end` is not specified it is set to `start` with `start` then set to `0`.
@@ -10226,6 +12501,8 @@ process.chdir = function (dir) {
       }
       return baseRandom(min, max);
     }
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
@@ -11092,6 +13369,8 @@ process.chdir = function (dir) {
       return string.match(pattern || reWords) || [];
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Attempts to invoke `func`, returning either the result or the caught error
      * object. Any additional arguments are provided to `func` when it is invoked.
@@ -11162,9 +13441,7 @@ process.chdir = function (dir) {
       if (guard && isIterateeCall(func, thisArg, guard)) {
         thisArg = null;
       }
-      return isObjectLike(func)
-        ? matches(func)
-        : baseCallback(func, thisArg);
+      return baseCallback(func, thisArg);
     }
 
     /**
@@ -11289,7 +13566,7 @@ process.chdir = function (dir) {
     var method = restParam(function(path, args) {
       return function(object) {
         return invokePath(object, path, args);
-      };
+      }
     });
 
     /**
@@ -11626,6 +13903,8 @@ process.chdir = function (dir) {
       return baseToString(prefix) + id;
     }
 
+    /*------------------------------------------------------------------------*/
+
     /**
      * Adds two numbers.
      *
@@ -11790,6 +14069,8 @@ process.chdir = function (dir) {
         : baseSum(collection, iteratee);
     }
 
+    /*------------------------------------------------------------------------*/
+
     // Ensure wrappers are instances of `baseLodash`.
     lodash.prototype = baseLodash.prototype;
 
@@ -11860,7 +14141,6 @@ process.chdir = function (dir) {
     lodash.keys = keys;
     lodash.keysIn = keysIn;
     lodash.map = map;
-    lodash.mapKeys = mapKeys;
     lodash.mapValues = mapValues;
     lodash.matches = matches;
     lodash.matchesProperty = matchesProperty;
@@ -11909,7 +14189,6 @@ process.chdir = function (dir) {
     lodash.union = union;
     lodash.uniq = uniq;
     lodash.unzip = unzip;
-    lodash.unzipWith = unzipWith;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.where = where;
@@ -11918,7 +14197,6 @@ process.chdir = function (dir) {
     lodash.xor = xor;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
-    lodash.zipWith = zipWith;
 
     // Add aliases.
     lodash.backflow = flowRight;
@@ -11936,6 +14214,8 @@ process.chdir = function (dir) {
 
     // Add functions to `lodash.prototype`.
     mixin(lodash, lodash);
+
+    /*------------------------------------------------------------------------*/
 
     // Add functions that return unwrapped values when chaining.
     lodash.add = add;
@@ -12040,6 +14320,8 @@ process.chdir = function (dir) {
       return source;
     }()), false);
 
+    /*------------------------------------------------------------------------*/
+
     // Add functions capable of returning wrapped and unwrapped values when chaining.
     lodash.sample = sample;
 
@@ -12051,6 +14333,8 @@ process.chdir = function (dir) {
         return sample(value, n);
       });
     };
+
+    /*------------------------------------------------------------------------*/
 
     /**
      * The semantic version number.
@@ -12162,13 +14446,8 @@ process.chdir = function (dir) {
 
     LazyWrapper.prototype.slice = function(start, end) {
       start = start == null ? 0 : (+start || 0);
+      var result = start < 0 ? this.takeRight(-start) : this.drop(start);
 
-      var result = this;
-      if (start < 0) {
-        result = this.takeRight(-start);
-      } else if (start) {
-        result = this.drop(start);
-      }
       if (end !== undefined) {
         end = (+end || 0);
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
@@ -12191,6 +14470,7 @@ process.chdir = function (dir) {
 
       lodash.prototype[methodName] = function() {
         var args = arguments,
+            length = args.length,
             chainAll = this.__chain__,
             value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
@@ -12279,6 +14559,8 @@ process.chdir = function (dir) {
     return lodash;
   }
 
+  /*--------------------------------------------------------------------------*/
+
   // Export lodash.
   var _ = runInContext();
 
@@ -12314,7 +14596,7 @@ process.chdir = function (dir) {
 }.call(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12341,7 +14623,7 @@ var AutoFocusMixin = {
 
 module.exports = AutoFocusMixin;
 
-},{"./focusNode":122}],5:[function(require,module,exports){
+},{"./focusNode":148}],31:[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -12836,7 +15118,7 @@ var BeforeInputEventPlugin = {
 
 module.exports = BeforeInputEventPlugin;
 
-},{"./EventConstants":17,"./EventPropagators":22,"./ExecutionEnvironment":23,"./FallbackCompositionState":24,"./SyntheticCompositionEvent":96,"./SyntheticInputEvent":100,"./keyOf":144}],6:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPropagators":48,"./ExecutionEnvironment":49,"./FallbackCompositionState":50,"./SyntheticCompositionEvent":122,"./SyntheticInputEvent":126,"./keyOf":170}],32:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -12961,7 +15243,7 @@ var CSSProperty = {
 
 module.exports = CSSProperty;
 
-},{}],7:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13143,7 +15425,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./CSSProperty":6,"./ExecutionEnvironment":23,"./camelizeStyleName":111,"./dangerousStyleValue":116,"./hyphenateStyleName":136,"./memoizeStringOnly":146,"./warning":157,"1YiZ5S":2}],8:[function(require,module,exports){
+},{"./CSSProperty":32,"./ExecutionEnvironment":49,"./camelizeStyleName":137,"./dangerousStyleValue":142,"./hyphenateStyleName":162,"./memoizeStringOnly":172,"./warning":183,"1YiZ5S":2}],34:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13243,7 +15525,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 module.exports = CallbackQueue;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./PooledClass":30,"./invariant":138,"1YiZ5S":2}],9:[function(require,module,exports){
+},{"./Object.assign":55,"./PooledClass":56,"./invariant":164,"1YiZ5S":2}],35:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13625,7 +15907,7 @@ var ChangeEventPlugin = {
 
 module.exports = ChangeEventPlugin;
 
-},{"./EventConstants":17,"./EventPluginHub":19,"./EventPropagators":22,"./ExecutionEnvironment":23,"./ReactUpdates":90,"./SyntheticEvent":98,"./isEventSupported":139,"./isTextInputElement":141,"./keyOf":144}],10:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPluginHub":45,"./EventPropagators":48,"./ExecutionEnvironment":49,"./ReactUpdates":116,"./SyntheticEvent":124,"./isEventSupported":165,"./isTextInputElement":167,"./keyOf":170}],36:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13650,7 +15932,7 @@ var ClientReactRootIndex = {
 
 module.exports = ClientReactRootIndex;
 
-},{}],11:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -13788,7 +16070,7 @@ var DOMChildrenOperations = {
 module.exports = DOMChildrenOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./Danger":14,"./ReactMultiChildUpdateTypes":75,"./invariant":138,"./setTextContent":152,"1YiZ5S":2}],12:[function(require,module,exports){
+},{"./Danger":40,"./ReactMultiChildUpdateTypes":101,"./invariant":164,"./setTextContent":178,"1YiZ5S":2}],38:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14087,7 +16369,7 @@ var DOMProperty = {
 module.exports = DOMProperty;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],13:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],39:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14279,7 +16561,7 @@ var DOMPropertyOperations = {
 module.exports = DOMPropertyOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./DOMProperty":12,"./quoteAttributeValueForBrowser":150,"./warning":157,"1YiZ5S":2}],14:[function(require,module,exports){
+},{"./DOMProperty":38,"./quoteAttributeValueForBrowser":176,"./warning":183,"1YiZ5S":2}],40:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14466,7 +16748,7 @@ var Danger = {
 module.exports = Danger;
 
 }).call(this,require("1YiZ5S"))
-},{"./ExecutionEnvironment":23,"./createNodesFromMarkup":115,"./emptyFunction":117,"./getMarkupWrap":130,"./invariant":138,"1YiZ5S":2}],15:[function(require,module,exports){
+},{"./ExecutionEnvironment":49,"./createNodesFromMarkup":141,"./emptyFunction":143,"./getMarkupWrap":156,"./invariant":164,"1YiZ5S":2}],41:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14505,7 +16787,7 @@ var DefaultEventPluginOrder = [
 
 module.exports = DefaultEventPluginOrder;
 
-},{"./keyOf":144}],16:[function(require,module,exports){
+},{"./keyOf":170}],42:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14645,7 +16927,7 @@ var EnterLeaveEventPlugin = {
 
 module.exports = EnterLeaveEventPlugin;
 
-},{"./EventConstants":17,"./EventPropagators":22,"./ReactMount":73,"./SyntheticMouseEvent":102,"./keyOf":144}],17:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPropagators":48,"./ReactMount":99,"./SyntheticMouseEvent":128,"./keyOf":170}],43:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14717,7 +16999,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":143}],18:[function(require,module,exports){
+},{"./keyMirror":169}],44:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14807,7 +17089,7 @@ var EventListener = {
 module.exports = EventListener;
 
 }).call(this,require("1YiZ5S"))
-},{"./emptyFunction":117,"1YiZ5S":2}],19:[function(require,module,exports){
+},{"./emptyFunction":143,"1YiZ5S":2}],45:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15085,7 +17367,7 @@ var EventPluginHub = {
 module.exports = EventPluginHub;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventPluginRegistry":20,"./EventPluginUtils":21,"./accumulateInto":108,"./forEachAccumulated":123,"./invariant":138,"1YiZ5S":2}],20:[function(require,module,exports){
+},{"./EventPluginRegistry":46,"./EventPluginUtils":47,"./accumulateInto":134,"./forEachAccumulated":149,"./invariant":164,"1YiZ5S":2}],46:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15365,7 +17647,7 @@ var EventPluginRegistry = {
 module.exports = EventPluginRegistry;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],21:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],47:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15586,7 +17868,7 @@ var EventPluginUtils = {
 module.exports = EventPluginUtils;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventConstants":17,"./invariant":138,"1YiZ5S":2}],22:[function(require,module,exports){
+},{"./EventConstants":43,"./invariant":164,"1YiZ5S":2}],48:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15728,7 +18010,7 @@ var EventPropagators = {
 module.exports = EventPropagators;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventConstants":17,"./EventPluginHub":19,"./accumulateInto":108,"./forEachAccumulated":123,"1YiZ5S":2}],23:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPluginHub":45,"./accumulateInto":134,"./forEachAccumulated":149,"1YiZ5S":2}],49:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15772,7 +18054,7 @@ var ExecutionEnvironment = {
 
 module.exports = ExecutionEnvironment;
 
-},{}],24:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15863,7 +18145,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
 
-},{"./Object.assign":29,"./PooledClass":30,"./getTextContentAccessor":133}],25:[function(require,module,exports){
+},{"./Object.assign":55,"./PooledClass":56,"./getTextContentAccessor":159}],51:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16074,7 +18356,7 @@ var HTMLDOMPropertyConfig = {
 
 module.exports = HTMLDOMPropertyConfig;
 
-},{"./DOMProperty":12,"./ExecutionEnvironment":23}],26:[function(require,module,exports){
+},{"./DOMProperty":38,"./ExecutionEnvironment":49}],52:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16230,7 +18512,7 @@ var LinkedValueUtils = {
 module.exports = LinkedValueUtils;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactPropTypes":81,"./invariant":138,"1YiZ5S":2}],27:[function(require,module,exports){
+},{"./ReactPropTypes":107,"./invariant":164,"1YiZ5S":2}],53:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -16287,7 +18569,7 @@ var LocalEventTrapMixin = {
 module.exports = LocalEventTrapMixin;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactBrowserEventEmitter":33,"./accumulateInto":108,"./forEachAccumulated":123,"./invariant":138,"1YiZ5S":2}],28:[function(require,module,exports){
+},{"./ReactBrowserEventEmitter":59,"./accumulateInto":134,"./forEachAccumulated":149,"./invariant":164,"1YiZ5S":2}],54:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16345,7 +18627,7 @@ var MobileSafariClickEventPlugin = {
 
 module.exports = MobileSafariClickEventPlugin;
 
-},{"./EventConstants":17,"./emptyFunction":117}],29:[function(require,module,exports){
+},{"./EventConstants":43,"./emptyFunction":143}],55:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -16394,7 +18676,7 @@ function assign(target, sources) {
 
 module.exports = assign;
 
-},{}],30:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16510,7 +18792,7 @@ var PooledClass = {
 module.exports = PooledClass;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],31:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],57:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16622,7 +18904,7 @@ if ("production" !== process.env.NODE_ENV) {
       if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
         console.debug(
           'Download the React DevTools for a better development experience: ' +
-          'https://fb.me/react-devtools'
+          'http://fb.me/react-devtools'
         );
       }
     }
@@ -16649,7 +18931,7 @@ if ("production" !== process.env.NODE_ENV) {
       if (!expectedFeatures[i]) {
         console.error(
           'One or more ES5 shim/shams expected by React are not available: ' +
-          'https://fb.me/react-warning-polyfills'
+          'http://fb.me/react-warning-polyfills'
         );
         break;
       }
@@ -16657,12 +18939,12 @@ if ("production" !== process.env.NODE_ENV) {
   }
 }
 
-React.version = '0.13.3';
+React.version = '0.13.2';
 
 module.exports = React;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventPluginUtils":21,"./ExecutionEnvironment":23,"./Object.assign":29,"./ReactChildren":35,"./ReactClass":36,"./ReactComponent":37,"./ReactContext":41,"./ReactCurrentOwner":42,"./ReactDOM":43,"./ReactDOMTextComponent":54,"./ReactDefaultInjection":57,"./ReactElement":60,"./ReactElementValidator":61,"./ReactInstanceHandles":69,"./ReactMount":73,"./ReactPerf":78,"./ReactPropTypes":81,"./ReactReconciler":84,"./ReactServerRendering":87,"./findDOMNode":120,"./onlyChild":147,"1YiZ5S":2}],32:[function(require,module,exports){
+},{"./EventPluginUtils":47,"./ExecutionEnvironment":49,"./Object.assign":55,"./ReactChildren":61,"./ReactClass":62,"./ReactComponent":63,"./ReactContext":67,"./ReactCurrentOwner":68,"./ReactDOM":69,"./ReactDOMTextComponent":80,"./ReactDefaultInjection":83,"./ReactElement":86,"./ReactElementValidator":87,"./ReactInstanceHandles":95,"./ReactMount":99,"./ReactPerf":104,"./ReactPropTypes":107,"./ReactReconciler":110,"./ReactServerRendering":113,"./findDOMNode":146,"./onlyChild":173,"1YiZ5S":2}],58:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16693,7 +18975,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 
-},{"./findDOMNode":120}],33:[function(require,module,exports){
+},{"./findDOMNode":146}],59:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17046,7 +19328,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":17,"./EventPluginHub":19,"./EventPluginRegistry":20,"./Object.assign":29,"./ReactEventEmitterMixin":64,"./ViewportMetrics":107,"./isEventSupported":139}],34:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPluginHub":45,"./EventPluginRegistry":46,"./Object.assign":55,"./ReactEventEmitterMixin":90,"./ViewportMetrics":133,"./isEventSupported":165}],60:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -17173,7 +19455,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 
-},{"./ReactReconciler":84,"./flattenChildren":121,"./instantiateReactComponent":137,"./shouldUpdateReactComponent":154}],35:[function(require,module,exports){
+},{"./ReactReconciler":110,"./flattenChildren":147,"./instantiateReactComponent":163,"./shouldUpdateReactComponent":180}],61:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17326,7 +19608,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 }).call(this,require("1YiZ5S"))
-},{"./PooledClass":30,"./ReactFragment":66,"./traverseAllChildren":156,"./warning":157,"1YiZ5S":2}],36:[function(require,module,exports){
+},{"./PooledClass":56,"./ReactFragment":92,"./traverseAllChildren":182,"./warning":183,"1YiZ5S":2}],62:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18164,7 +20446,7 @@ var ReactClass = {
         ("production" !== process.env.NODE_ENV ? warning(
           this instanceof Constructor,
           'Something is calling a React component directly. Use a factory or ' +
-          'JSX instead. See: https://fb.me/react-legacyfactory'
+          'JSX instead. See: http://fb.me/react-legacyfactory'
         ) : null);
       }
 
@@ -18272,7 +20554,7 @@ var ReactClass = {
 module.exports = ReactClass;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./ReactComponent":37,"./ReactCurrentOwner":42,"./ReactElement":60,"./ReactErrorUtils":63,"./ReactInstanceMap":70,"./ReactLifeCycle":71,"./ReactPropTypeLocationNames":79,"./ReactPropTypeLocations":80,"./ReactUpdateQueue":89,"./invariant":138,"./keyMirror":143,"./keyOf":144,"./warning":157,"1YiZ5S":2}],37:[function(require,module,exports){
+},{"./Object.assign":55,"./ReactComponent":63,"./ReactCurrentOwner":68,"./ReactElement":86,"./ReactErrorUtils":89,"./ReactInstanceMap":96,"./ReactLifeCycle":97,"./ReactPropTypeLocationNames":105,"./ReactPropTypeLocations":106,"./ReactUpdateQueue":115,"./invariant":164,"./keyMirror":169,"./keyOf":170,"./warning":183,"1YiZ5S":2}],63:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18376,38 +20658,20 @@ ReactComponent.prototype.forceUpdate = function(callback) {
  */
 if ("production" !== process.env.NODE_ENV) {
   var deprecatedAPIs = {
-    getDOMNode: [
-      'getDOMNode',
-      'Use React.findDOMNode(component) instead.'
-    ],
-    isMounted: [
-      'isMounted',
-      'Instead, make sure to clean up subscriptions and pending requests in ' +
-      'componentWillUnmount to prevent memory leaks.'
-    ],
-    replaceProps: [
-      'replaceProps',
-      'Instead, call React.render again at the top level.'
-    ],
-    replaceState: [
-      'replaceState',
-      'Refactor your code to use setState instead (see ' +
-      'https://github.com/facebook/react/issues/3236).'
-    ],
-    setProps: [
-      'setProps',
-      'Instead, call React.render again at the top level.'
-    ]
+    getDOMNode: 'getDOMNode',
+    isMounted: 'isMounted',
+    replaceProps: 'replaceProps',
+    replaceState: 'replaceState',
+    setProps: 'setProps'
   };
-  var defineDeprecationWarning = function(methodName, info) {
+  var defineDeprecationWarning = function(methodName, displayName) {
     try {
       Object.defineProperty(ReactComponent.prototype, methodName, {
         get: function() {
           ("production" !== process.env.NODE_ENV ? warning(
             false,
-            '%s(...) is deprecated in plain JavaScript React classes. %s',
-            info[0],
-            info[1]
+            '%s(...) is deprecated in plain JavaScript React classes.',
+            displayName
           ) : null);
           return undefined;
         }
@@ -18426,7 +20690,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactUpdateQueue":89,"./invariant":138,"./warning":157,"1YiZ5S":2}],38:[function(require,module,exports){
+},{"./ReactUpdateQueue":115,"./invariant":164,"./warning":183,"1YiZ5S":2}],64:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18473,7 +20737,7 @@ var ReactComponentBrowserEnvironment = {
 
 module.exports = ReactComponentBrowserEnvironment;
 
-},{"./ReactDOMIDOperations":47,"./ReactMount":73}],39:[function(require,module,exports){
+},{"./ReactDOMIDOperations":73,"./ReactMount":99}],65:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -18534,7 +20798,7 @@ var ReactComponentEnvironment = {
 module.exports = ReactComponentEnvironment;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],40:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],66:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18756,7 +21020,6 @@ var ReactCompositeComponentMixin = {
     this._pendingReplaceState = false;
     this._pendingForceUpdate = false;
 
-    var childContext;
     var renderedElement;
 
     var previouslyMounting = ReactLifeCycle.currentlyMountingInstance;
@@ -18771,8 +21034,7 @@ var ReactCompositeComponentMixin = {
         }
       }
 
-      childContext = this._getValidatedChildContext(context);
-      renderedElement = this._renderValidatedComponent(childContext);
+      renderedElement = this._renderValidatedComponent();
     } finally {
       ReactLifeCycle.currentlyMountingInstance = previouslyMounting;
     }
@@ -18786,7 +21048,7 @@ var ReactCompositeComponentMixin = {
       this._renderedComponent,
       rootID,
       transaction,
-      this._mergeChildContext(context, childContext)
+      this._processChildContext(context)
     );
     if (inst.componentDidMount) {
       transaction.getReactMountReady().enqueue(inst.componentDidMount, inst);
@@ -18916,7 +21178,7 @@ var ReactCompositeComponentMixin = {
    * @return {object}
    * @private
    */
-  _getValidatedChildContext: function(currentContext) {
+  _processChildContext: function(currentContext) {
     var inst = this._instance;
     var childContext = inst.getChildContext && inst.getChildContext();
     if (childContext) {
@@ -18941,13 +21203,6 @@ var ReactCompositeComponentMixin = {
           name
         ) : invariant(name in inst.constructor.childContextTypes));
       }
-      return childContext;
-    }
-    return null;
-  },
-
-  _mergeChildContext: function(currentContext, childContext) {
-    if (childContext) {
       return assign({}, currentContext, childContext);
     }
     return currentContext;
@@ -19207,10 +21462,6 @@ var ReactCompositeComponentMixin = {
       return inst.state;
     }
 
-    if (replace && queue.length === 1) {
-      return queue[0];
-    }
-
     var nextState = assign({}, replace ? queue[0] : inst.state);
     for (var i = replace ? 1 : 0; i < queue.length; i++) {
       var partial = queue[i];
@@ -19280,14 +21531,13 @@ var ReactCompositeComponentMixin = {
   _updateRenderedComponent: function(transaction, context) {
     var prevComponentInstance = this._renderedComponent;
     var prevRenderedElement = prevComponentInstance._currentElement;
-    var childContext = this._getValidatedChildContext();
-    var nextRenderedElement = this._renderValidatedComponent(childContext);
+    var nextRenderedElement = this._renderValidatedComponent();
     if (shouldUpdateReactComponent(prevRenderedElement, nextRenderedElement)) {
       ReactReconciler.receiveComponent(
         prevComponentInstance,
         nextRenderedElement,
         transaction,
-        this._mergeChildContext(context, childContext)
+        this._processChildContext(context)
       );
     } else {
       // These two IDs are actually the same! But nothing should rely on that.
@@ -19303,7 +21553,7 @@ var ReactCompositeComponentMixin = {
         this._renderedComponent,
         thisID,
         transaction,
-        this._mergeChildContext(context, childContext)
+        this._processChildContext(context)
       );
       this._replaceNodeWithMarkupByID(prevComponentID, nextMarkup);
     }
@@ -19341,12 +21591,11 @@ var ReactCompositeComponentMixin = {
   /**
    * @private
    */
-  _renderValidatedComponent: function(childContext) {
+  _renderValidatedComponent: function() {
     var renderedComponent;
     var previousContext = ReactContext.current;
-    ReactContext.current = this._mergeChildContext(
-      this._currentElement._context,
-      childContext
+    ReactContext.current = this._processChildContext(
+      this._currentElement._context
     );
     ReactCurrentOwner.current = this;
     try {
@@ -19447,7 +21696,7 @@ var ReactCompositeComponent = {
 module.exports = ReactCompositeComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./ReactComponentEnvironment":39,"./ReactContext":41,"./ReactCurrentOwner":42,"./ReactElement":60,"./ReactElementValidator":61,"./ReactInstanceMap":70,"./ReactLifeCycle":71,"./ReactNativeComponent":76,"./ReactPerf":78,"./ReactPropTypeLocationNames":79,"./ReactPropTypeLocations":80,"./ReactReconciler":84,"./ReactUpdates":90,"./emptyObject":118,"./invariant":138,"./shouldUpdateReactComponent":154,"./warning":157,"1YiZ5S":2}],41:[function(require,module,exports){
+},{"./Object.assign":55,"./ReactComponentEnvironment":65,"./ReactContext":67,"./ReactCurrentOwner":68,"./ReactElement":86,"./ReactElementValidator":87,"./ReactInstanceMap":96,"./ReactLifeCycle":97,"./ReactNativeComponent":102,"./ReactPerf":104,"./ReactPropTypeLocationNames":105,"./ReactPropTypeLocations":106,"./ReactReconciler":110,"./ReactUpdates":116,"./emptyObject":144,"./invariant":164,"./shouldUpdateReactComponent":180,"./warning":183,"1YiZ5S":2}],67:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19525,7 +21774,7 @@ var ReactContext = {
 module.exports = ReactContext;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./emptyObject":118,"./warning":157,"1YiZ5S":2}],42:[function(require,module,exports){
+},{"./Object.assign":55,"./emptyObject":144,"./warning":183,"1YiZ5S":2}],68:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19559,7 +21808,7 @@ var ReactCurrentOwner = {
 
 module.exports = ReactCurrentOwner;
 
-},{}],43:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19715,7 +21964,6 @@ var ReactDOM = mapObject({
 
   // SVG
   circle: 'circle',
-  clipPath: 'clipPath',
   defs: 'defs',
   ellipse: 'ellipse',
   g: 'g',
@@ -19738,7 +21986,7 @@ var ReactDOM = mapObject({
 module.exports = ReactDOM;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":60,"./ReactElementValidator":61,"./mapObject":145,"1YiZ5S":2}],44:[function(require,module,exports){
+},{"./ReactElement":86,"./ReactElementValidator":87,"./mapObject":171,"1YiZ5S":2}],70:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19802,7 +22050,7 @@ var ReactDOMButton = ReactClass.createClass({
 
 module.exports = ReactDOMButton;
 
-},{"./AutoFocusMixin":4,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60,"./keyMirror":143}],45:[function(require,module,exports){
+},{"./AutoFocusMixin":30,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86,"./keyMirror":169}],71:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19867,13 +22115,11 @@ function assertValidProps(props) {
       'Can only set one of `children` or `props.dangerouslySetInnerHTML`.'
     ) : invariant(props.children == null));
     ("production" !== process.env.NODE_ENV ? invariant(
-      typeof props.dangerouslySetInnerHTML === 'object' &&
-      '__html' in props.dangerouslySetInnerHTML,
+      props.dangerouslySetInnerHTML.__html != null,
       '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. ' +
-      'Please visit https://fb.me/react-invariant-dangerously-set-inner-html ' +
+      'Please visit http://fb.me/react-invariant-dangerously-set-inner-html ' +
       'for more information.'
-    ) : invariant(typeof props.dangerouslySetInnerHTML === 'object' &&
-    '__html' in props.dangerouslySetInnerHTML));
+    ) : invariant(props.dangerouslySetInnerHTML.__html != null));
   }
   if ("production" !== process.env.NODE_ENV) {
     ("production" !== process.env.NODE_ENV ? warning(
@@ -20312,7 +22558,7 @@ ReactDOMComponent.injection = {
 module.exports = ReactDOMComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./CSSPropertyOperations":7,"./DOMProperty":12,"./DOMPropertyOperations":13,"./Object.assign":29,"./ReactBrowserEventEmitter":33,"./ReactComponentBrowserEnvironment":38,"./ReactMount":73,"./ReactMultiChild":74,"./ReactPerf":78,"./escapeTextContentForBrowser":119,"./invariant":138,"./isEventSupported":139,"./keyOf":144,"./warning":157,"1YiZ5S":2}],46:[function(require,module,exports){
+},{"./CSSPropertyOperations":33,"./DOMProperty":38,"./DOMPropertyOperations":39,"./Object.assign":55,"./ReactBrowserEventEmitter":59,"./ReactComponentBrowserEnvironment":64,"./ReactMount":99,"./ReactMultiChild":100,"./ReactPerf":104,"./escapeTextContentForBrowser":145,"./invariant":164,"./isEventSupported":165,"./keyOf":170,"./warning":183,"1YiZ5S":2}],72:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20361,7 +22607,7 @@ var ReactDOMForm = ReactClass.createClass({
 
 module.exports = ReactDOMForm;
 
-},{"./EventConstants":17,"./LocalEventTrapMixin":27,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60}],47:[function(require,module,exports){
+},{"./EventConstants":43,"./LocalEventTrapMixin":53,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86}],73:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20529,7 +22775,7 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 module.exports = ReactDOMIDOperations;
 
 }).call(this,require("1YiZ5S"))
-},{"./CSSPropertyOperations":7,"./DOMChildrenOperations":11,"./DOMPropertyOperations":13,"./ReactMount":73,"./ReactPerf":78,"./invariant":138,"./setInnerHTML":151,"1YiZ5S":2}],48:[function(require,module,exports){
+},{"./CSSPropertyOperations":33,"./DOMChildrenOperations":37,"./DOMPropertyOperations":39,"./ReactMount":99,"./ReactPerf":104,"./invariant":164,"./setInnerHTML":177,"1YiZ5S":2}],74:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20574,7 +22820,7 @@ var ReactDOMIframe = ReactClass.createClass({
 
 module.exports = ReactDOMIframe;
 
-},{"./EventConstants":17,"./LocalEventTrapMixin":27,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60}],49:[function(require,module,exports){
+},{"./EventConstants":43,"./LocalEventTrapMixin":53,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86}],75:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20620,7 +22866,7 @@ var ReactDOMImg = ReactClass.createClass({
 
 module.exports = ReactDOMImg;
 
-},{"./EventConstants":17,"./LocalEventTrapMixin":27,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60}],50:[function(require,module,exports){
+},{"./EventConstants":43,"./LocalEventTrapMixin":53,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86}],76:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20797,7 +23043,7 @@ var ReactDOMInput = ReactClass.createClass({
 module.exports = ReactDOMInput;
 
 }).call(this,require("1YiZ5S"))
-},{"./AutoFocusMixin":4,"./DOMPropertyOperations":13,"./LinkedValueUtils":26,"./Object.assign":29,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60,"./ReactMount":73,"./ReactUpdates":90,"./invariant":138,"1YiZ5S":2}],51:[function(require,module,exports){
+},{"./AutoFocusMixin":30,"./DOMPropertyOperations":39,"./LinkedValueUtils":52,"./Object.assign":55,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86,"./ReactMount":99,"./ReactUpdates":116,"./invariant":164,"1YiZ5S":2}],77:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20849,7 +23095,7 @@ var ReactDOMOption = ReactClass.createClass({
 module.exports = ReactDOMOption;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60,"./warning":157,"1YiZ5S":2}],52:[function(require,module,exports){
+},{"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86,"./warning":183,"1YiZ5S":2}],78:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21027,7 +23273,7 @@ var ReactDOMSelect = ReactClass.createClass({
 
 module.exports = ReactDOMSelect;
 
-},{"./AutoFocusMixin":4,"./LinkedValueUtils":26,"./Object.assign":29,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60,"./ReactUpdates":90}],53:[function(require,module,exports){
+},{"./AutoFocusMixin":30,"./LinkedValueUtils":52,"./Object.assign":55,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86,"./ReactUpdates":116}],79:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21240,7 +23486,7 @@ var ReactDOMSelection = {
 
 module.exports = ReactDOMSelection;
 
-},{"./ExecutionEnvironment":23,"./getNodeForCharacterOffset":131,"./getTextContentAccessor":133}],54:[function(require,module,exports){
+},{"./ExecutionEnvironment":49,"./getNodeForCharacterOffset":157,"./getTextContentAccessor":159}],80:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21357,7 +23603,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 
-},{"./DOMPropertyOperations":13,"./Object.assign":29,"./ReactComponentBrowserEnvironment":38,"./ReactDOMComponent":45,"./escapeTextContentForBrowser":119}],55:[function(require,module,exports){
+},{"./DOMPropertyOperations":39,"./Object.assign":55,"./ReactComponentBrowserEnvironment":64,"./ReactDOMComponent":71,"./escapeTextContentForBrowser":145}],81:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21497,7 +23743,7 @@ var ReactDOMTextarea = ReactClass.createClass({
 module.exports = ReactDOMTextarea;
 
 }).call(this,require("1YiZ5S"))
-},{"./AutoFocusMixin":4,"./DOMPropertyOperations":13,"./LinkedValueUtils":26,"./Object.assign":29,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactElement":60,"./ReactUpdates":90,"./invariant":138,"./warning":157,"1YiZ5S":2}],56:[function(require,module,exports){
+},{"./AutoFocusMixin":30,"./DOMPropertyOperations":39,"./LinkedValueUtils":52,"./Object.assign":55,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactElement":86,"./ReactUpdates":116,"./invariant":164,"./warning":183,"1YiZ5S":2}],82:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21570,7 +23816,7 @@ var ReactDefaultBatchingStrategy = {
 
 module.exports = ReactDefaultBatchingStrategy;
 
-},{"./Object.assign":29,"./ReactUpdates":90,"./Transaction":106,"./emptyFunction":117}],57:[function(require,module,exports){
+},{"./Object.assign":55,"./ReactUpdates":116,"./Transaction":132,"./emptyFunction":143}],83:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21729,7 +23975,7 @@ module.exports = {
 };
 
 }).call(this,require("1YiZ5S"))
-},{"./BeforeInputEventPlugin":5,"./ChangeEventPlugin":9,"./ClientReactRootIndex":10,"./DefaultEventPluginOrder":15,"./EnterLeaveEventPlugin":16,"./ExecutionEnvironment":23,"./HTMLDOMPropertyConfig":25,"./MobileSafariClickEventPlugin":28,"./ReactBrowserComponentMixin":32,"./ReactClass":36,"./ReactComponentBrowserEnvironment":38,"./ReactDOMButton":44,"./ReactDOMComponent":45,"./ReactDOMForm":46,"./ReactDOMIDOperations":47,"./ReactDOMIframe":48,"./ReactDOMImg":49,"./ReactDOMInput":50,"./ReactDOMOption":51,"./ReactDOMSelect":52,"./ReactDOMTextComponent":54,"./ReactDOMTextarea":55,"./ReactDefaultBatchingStrategy":56,"./ReactDefaultPerf":58,"./ReactElement":60,"./ReactEventListener":65,"./ReactInjection":67,"./ReactInstanceHandles":69,"./ReactMount":73,"./ReactReconcileTransaction":83,"./SVGDOMPropertyConfig":91,"./SelectEventPlugin":92,"./ServerReactRootIndex":93,"./SimpleEventPlugin":94,"./createFullPageComponent":114,"1YiZ5S":2}],58:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":31,"./ChangeEventPlugin":35,"./ClientReactRootIndex":36,"./DefaultEventPluginOrder":41,"./EnterLeaveEventPlugin":42,"./ExecutionEnvironment":49,"./HTMLDOMPropertyConfig":51,"./MobileSafariClickEventPlugin":54,"./ReactBrowserComponentMixin":58,"./ReactClass":62,"./ReactComponentBrowserEnvironment":64,"./ReactDOMButton":70,"./ReactDOMComponent":71,"./ReactDOMForm":72,"./ReactDOMIDOperations":73,"./ReactDOMIframe":74,"./ReactDOMImg":75,"./ReactDOMInput":76,"./ReactDOMOption":77,"./ReactDOMSelect":78,"./ReactDOMTextComponent":80,"./ReactDOMTextarea":81,"./ReactDefaultBatchingStrategy":82,"./ReactDefaultPerf":84,"./ReactElement":86,"./ReactEventListener":91,"./ReactInjection":93,"./ReactInstanceHandles":95,"./ReactMount":99,"./ReactReconcileTransaction":109,"./SVGDOMPropertyConfig":117,"./SelectEventPlugin":118,"./ServerReactRootIndex":119,"./SimpleEventPlugin":120,"./createFullPageComponent":140,"1YiZ5S":2}],84:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21995,7 +24241,7 @@ var ReactDefaultPerf = {
 
 module.exports = ReactDefaultPerf;
 
-},{"./DOMProperty":12,"./ReactDefaultPerfAnalysis":59,"./ReactMount":73,"./ReactPerf":78,"./performanceNow":149}],59:[function(require,module,exports){
+},{"./DOMProperty":38,"./ReactDefaultPerfAnalysis":85,"./ReactMount":99,"./ReactPerf":104,"./performanceNow":175}],85:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22201,7 +24447,7 @@ var ReactDefaultPerfAnalysis = {
 
 module.exports = ReactDefaultPerfAnalysis;
 
-},{"./Object.assign":29}],60:[function(require,module,exports){
+},{"./Object.assign":55}],86:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22509,7 +24755,7 @@ ReactElement.isValidElement = function(object) {
 module.exports = ReactElement;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./ReactContext":41,"./ReactCurrentOwner":42,"./warning":157,"1YiZ5S":2}],61:[function(require,module,exports){
+},{"./Object.assign":55,"./ReactContext":67,"./ReactCurrentOwner":68,"./warning":183,"1YiZ5S":2}],87:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22679,7 +24925,7 @@ function warnAndMonitorForKeyUse(message, element, parentType) {
 
   ("production" !== process.env.NODE_ENV ? warning(
     false,
-    message + '%s%s See https://fb.me/react-warning-keys for more information.',
+    message + '%s%s See http://fb.me/react-warning-keys for more information.',
     parentOrOwnerAddendum,
     childOwnerAddendum
   ) : null);
@@ -22974,7 +25220,7 @@ var ReactElementValidator = {
 module.exports = ReactElementValidator;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactCurrentOwner":42,"./ReactElement":60,"./ReactFragment":66,"./ReactNativeComponent":76,"./ReactPropTypeLocationNames":79,"./ReactPropTypeLocations":80,"./getIteratorFn":129,"./invariant":138,"./warning":157,"1YiZ5S":2}],62:[function(require,module,exports){
+},{"./ReactCurrentOwner":68,"./ReactElement":86,"./ReactFragment":92,"./ReactNativeComponent":102,"./ReactPropTypeLocationNames":105,"./ReactPropTypeLocations":106,"./getIteratorFn":155,"./invariant":164,"./warning":183,"1YiZ5S":2}],88:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -23069,7 +25315,7 @@ var ReactEmptyComponent = {
 module.exports = ReactEmptyComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":60,"./ReactInstanceMap":70,"./invariant":138,"1YiZ5S":2}],63:[function(require,module,exports){
+},{"./ReactElement":86,"./ReactInstanceMap":96,"./invariant":164,"1YiZ5S":2}],89:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23101,7 +25347,7 @@ var ReactErrorUtils = {
 
 module.exports = ReactErrorUtils;
 
-},{}],64:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23151,7 +25397,7 @@ var ReactEventEmitterMixin = {
 
 module.exports = ReactEventEmitterMixin;
 
-},{"./EventPluginHub":19}],65:[function(require,module,exports){
+},{"./EventPluginHub":45}],91:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23334,7 +25580,7 @@ var ReactEventListener = {
 
 module.exports = ReactEventListener;
 
-},{"./EventListener":18,"./ExecutionEnvironment":23,"./Object.assign":29,"./PooledClass":30,"./ReactInstanceHandles":69,"./ReactMount":73,"./ReactUpdates":90,"./getEventTarget":128,"./getUnboundedScrollPosition":134}],66:[function(require,module,exports){
+},{"./EventListener":44,"./ExecutionEnvironment":49,"./Object.assign":55,"./PooledClass":56,"./ReactInstanceHandles":95,"./ReactMount":99,"./ReactUpdates":116,"./getEventTarget":154,"./getUnboundedScrollPosition":160}],92:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -23519,7 +25765,7 @@ var ReactFragment = {
 module.exports = ReactFragment;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":60,"./warning":157,"1YiZ5S":2}],67:[function(require,module,exports){
+},{"./ReactElement":86,"./warning":183,"1YiZ5S":2}],93:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23561,7 +25807,7 @@ var ReactInjection = {
 
 module.exports = ReactInjection;
 
-},{"./DOMProperty":12,"./EventPluginHub":19,"./ReactBrowserEventEmitter":33,"./ReactClass":36,"./ReactComponentEnvironment":39,"./ReactDOMComponent":45,"./ReactEmptyComponent":62,"./ReactNativeComponent":76,"./ReactPerf":78,"./ReactRootIndex":86,"./ReactUpdates":90}],68:[function(require,module,exports){
+},{"./DOMProperty":38,"./EventPluginHub":45,"./ReactBrowserEventEmitter":59,"./ReactClass":62,"./ReactComponentEnvironment":65,"./ReactDOMComponent":71,"./ReactEmptyComponent":88,"./ReactNativeComponent":102,"./ReactPerf":104,"./ReactRootIndex":112,"./ReactUpdates":116}],94:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23696,7 +25942,7 @@ var ReactInputSelection = {
 
 module.exports = ReactInputSelection;
 
-},{"./ReactDOMSelection":53,"./containsNode":112,"./focusNode":122,"./getActiveElement":124}],69:[function(require,module,exports){
+},{"./ReactDOMSelection":79,"./containsNode":138,"./focusNode":148,"./getActiveElement":150}],95:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24032,7 +26278,7 @@ var ReactInstanceHandles = {
 module.exports = ReactInstanceHandles;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactRootIndex":86,"./invariant":138,"1YiZ5S":2}],70:[function(require,module,exports){
+},{"./ReactRootIndex":112,"./invariant":164,"1YiZ5S":2}],96:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24081,7 +26327,7 @@ var ReactInstanceMap = {
 
 module.exports = ReactInstanceMap;
 
-},{}],71:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 /**
  * Copyright 2015, Facebook, Inc.
  * All rights reserved.
@@ -24118,7 +26364,7 @@ var ReactLifeCycle = {
 
 module.exports = ReactLifeCycle;
 
-},{}],72:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24166,7 +26412,7 @@ var ReactMarkupChecksum = {
 
 module.exports = ReactMarkupChecksum;
 
-},{"./adler32":109}],73:[function(require,module,exports){
+},{"./adler32":135}],99:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25057,7 +27303,7 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 module.exports = ReactMount;
 
 }).call(this,require("1YiZ5S"))
-},{"./DOMProperty":12,"./ReactBrowserEventEmitter":33,"./ReactCurrentOwner":42,"./ReactElement":60,"./ReactElementValidator":61,"./ReactEmptyComponent":62,"./ReactInstanceHandles":69,"./ReactInstanceMap":70,"./ReactMarkupChecksum":72,"./ReactPerf":78,"./ReactReconciler":84,"./ReactUpdateQueue":89,"./ReactUpdates":90,"./containsNode":112,"./emptyObject":118,"./getReactRootElementInContainer":132,"./instantiateReactComponent":137,"./invariant":138,"./setInnerHTML":151,"./shouldUpdateReactComponent":154,"./warning":157,"1YiZ5S":2}],74:[function(require,module,exports){
+},{"./DOMProperty":38,"./ReactBrowserEventEmitter":59,"./ReactCurrentOwner":68,"./ReactElement":86,"./ReactElementValidator":87,"./ReactEmptyComponent":88,"./ReactInstanceHandles":95,"./ReactInstanceMap":96,"./ReactMarkupChecksum":98,"./ReactPerf":104,"./ReactReconciler":110,"./ReactUpdateQueue":115,"./ReactUpdates":116,"./containsNode":138,"./emptyObject":144,"./getReactRootElementInContainer":158,"./instantiateReactComponent":163,"./invariant":164,"./setInnerHTML":177,"./shouldUpdateReactComponent":180,"./warning":183,"1YiZ5S":2}],100:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25487,7 +27733,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 
-},{"./ReactChildReconciler":34,"./ReactComponentEnvironment":39,"./ReactMultiChildUpdateTypes":75,"./ReactReconciler":84}],75:[function(require,module,exports){
+},{"./ReactChildReconciler":60,"./ReactComponentEnvironment":65,"./ReactMultiChildUpdateTypes":101,"./ReactReconciler":110}],101:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25520,7 +27766,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 
 module.exports = ReactMultiChildUpdateTypes;
 
-},{"./keyMirror":143}],76:[function(require,module,exports){
+},{"./keyMirror":169}],102:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -25627,7 +27873,7 @@ var ReactNativeComponent = {
 module.exports = ReactNativeComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./invariant":138,"1YiZ5S":2}],77:[function(require,module,exports){
+},{"./Object.assign":55,"./invariant":164,"1YiZ5S":2}],103:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25739,7 +27985,7 @@ var ReactOwner = {
 module.exports = ReactOwner;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],78:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],104:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25843,7 +28089,7 @@ function _noMeasure(objName, fnName, func) {
 module.exports = ReactPerf;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":2}],79:[function(require,module,exports){
+},{"1YiZ5S":2}],105:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25871,7 +28117,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = ReactPropTypeLocationNames;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":2}],80:[function(require,module,exports){
+},{"1YiZ5S":2}],106:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25895,7 +28141,7 @@ var ReactPropTypeLocations = keyMirror({
 
 module.exports = ReactPropTypeLocations;
 
-},{"./keyMirror":143}],81:[function(require,module,exports){
+},{"./keyMirror":169}],107:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26244,7 +28490,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"./ReactElement":60,"./ReactFragment":66,"./ReactPropTypeLocationNames":79,"./emptyFunction":117}],82:[function(require,module,exports){
+},{"./ReactElement":86,"./ReactFragment":92,"./ReactPropTypeLocationNames":105,"./emptyFunction":143}],108:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26300,7 +28546,7 @@ PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 module.exports = ReactPutListenerQueue;
 
-},{"./Object.assign":29,"./PooledClass":30,"./ReactBrowserEventEmitter":33}],83:[function(require,module,exports){
+},{"./Object.assign":55,"./PooledClass":56,"./ReactBrowserEventEmitter":59}],109:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26476,7 +28722,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 
-},{"./CallbackQueue":8,"./Object.assign":29,"./PooledClass":30,"./ReactBrowserEventEmitter":33,"./ReactInputSelection":68,"./ReactPutListenerQueue":82,"./Transaction":106}],84:[function(require,module,exports){
+},{"./CallbackQueue":34,"./Object.assign":55,"./PooledClass":56,"./ReactBrowserEventEmitter":59,"./ReactInputSelection":94,"./ReactPutListenerQueue":108,"./Transaction":132}],110:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26600,7 +28846,7 @@ var ReactReconciler = {
 module.exports = ReactReconciler;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElementValidator":61,"./ReactRef":85,"1YiZ5S":2}],85:[function(require,module,exports){
+},{"./ReactElementValidator":87,"./ReactRef":111,"1YiZ5S":2}],111:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26671,7 +28917,7 @@ ReactRef.detachRefs = function(instance, element) {
 
 module.exports = ReactRef;
 
-},{"./ReactOwner":77}],86:[function(require,module,exports){
+},{"./ReactOwner":103}],112:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26702,7 +28948,7 @@ var ReactRootIndex = {
 
 module.exports = ReactRootIndex;
 
-},{}],87:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26784,7 +29030,7 @@ module.exports = {
 };
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":60,"./ReactInstanceHandles":69,"./ReactMarkupChecksum":72,"./ReactServerRenderingTransaction":88,"./emptyObject":118,"./instantiateReactComponent":137,"./invariant":138,"1YiZ5S":2}],88:[function(require,module,exports){
+},{"./ReactElement":86,"./ReactInstanceHandles":95,"./ReactMarkupChecksum":98,"./ReactServerRenderingTransaction":114,"./emptyObject":144,"./instantiateReactComponent":163,"./invariant":164,"1YiZ5S":2}],114:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -26897,7 +29143,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":8,"./Object.assign":29,"./PooledClass":30,"./ReactPutListenerQueue":82,"./Transaction":106,"./emptyFunction":117}],89:[function(require,module,exports){
+},{"./CallbackQueue":34,"./Object.assign":55,"./PooledClass":56,"./ReactPutListenerQueue":108,"./Transaction":132,"./emptyFunction":143}],115:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -27196,7 +29442,7 @@ var ReactUpdateQueue = {
 module.exports = ReactUpdateQueue;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./ReactCurrentOwner":42,"./ReactElement":60,"./ReactInstanceMap":70,"./ReactLifeCycle":71,"./ReactUpdates":90,"./invariant":138,"./warning":157,"1YiZ5S":2}],90:[function(require,module,exports){
+},{"./Object.assign":55,"./ReactCurrentOwner":68,"./ReactElement":86,"./ReactInstanceMap":96,"./ReactLifeCycle":97,"./ReactUpdates":116,"./invariant":164,"./warning":183,"1YiZ5S":2}],116:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27478,7 +29724,7 @@ var ReactUpdates = {
 module.exports = ReactUpdates;
 
 }).call(this,require("1YiZ5S"))
-},{"./CallbackQueue":8,"./Object.assign":29,"./PooledClass":30,"./ReactCurrentOwner":42,"./ReactPerf":78,"./ReactReconciler":84,"./Transaction":106,"./invariant":138,"./warning":157,"1YiZ5S":2}],91:[function(require,module,exports){
+},{"./CallbackQueue":34,"./Object.assign":55,"./PooledClass":56,"./ReactCurrentOwner":68,"./ReactPerf":104,"./ReactReconciler":110,"./Transaction":132,"./invariant":164,"./warning":183,"1YiZ5S":2}],117:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27500,7 +29746,6 @@ var MUST_USE_ATTRIBUTE = DOMProperty.injection.MUST_USE_ATTRIBUTE;
 
 var SVGDOMPropertyConfig = {
   Properties: {
-    clipPath: MUST_USE_ATTRIBUTE,
     cx: MUST_USE_ATTRIBUTE,
     cy: MUST_USE_ATTRIBUTE,
     d: MUST_USE_ATTRIBUTE,
@@ -27546,7 +29791,6 @@ var SVGDOMPropertyConfig = {
     y: MUST_USE_ATTRIBUTE
   },
   DOMAttributeNames: {
-    clipPath: 'clip-path',
     fillOpacity: 'fill-opacity',
     fontFamily: 'font-family',
     fontSize: 'font-size',
@@ -27572,7 +29816,7 @@ var SVGDOMPropertyConfig = {
 
 module.exports = SVGDOMPropertyConfig;
 
-},{"./DOMProperty":12}],92:[function(require,module,exports){
+},{"./DOMProperty":38}],118:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27767,7 +30011,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":17,"./EventPropagators":22,"./ReactInputSelection":68,"./SyntheticEvent":98,"./getActiveElement":124,"./isTextInputElement":141,"./keyOf":144,"./shallowEqual":153}],93:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPropagators":48,"./ReactInputSelection":94,"./SyntheticEvent":124,"./getActiveElement":150,"./isTextInputElement":167,"./keyOf":170,"./shallowEqual":179}],119:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27798,7 +30042,7 @@ var ServerReactRootIndex = {
 
 module.exports = ServerReactRootIndex;
 
-},{}],94:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -28226,7 +30470,7 @@ var SimpleEventPlugin = {
 module.exports = SimpleEventPlugin;
 
 }).call(this,require("1YiZ5S"))
-},{"./EventConstants":17,"./EventPluginUtils":21,"./EventPropagators":22,"./SyntheticClipboardEvent":95,"./SyntheticDragEvent":97,"./SyntheticEvent":98,"./SyntheticFocusEvent":99,"./SyntheticKeyboardEvent":101,"./SyntheticMouseEvent":102,"./SyntheticTouchEvent":103,"./SyntheticUIEvent":104,"./SyntheticWheelEvent":105,"./getEventCharCode":125,"./invariant":138,"./keyOf":144,"./warning":157,"1YiZ5S":2}],95:[function(require,module,exports){
+},{"./EventConstants":43,"./EventPluginUtils":47,"./EventPropagators":48,"./SyntheticClipboardEvent":121,"./SyntheticDragEvent":123,"./SyntheticEvent":124,"./SyntheticFocusEvent":125,"./SyntheticKeyboardEvent":127,"./SyntheticMouseEvent":128,"./SyntheticTouchEvent":129,"./SyntheticUIEvent":130,"./SyntheticWheelEvent":131,"./getEventCharCode":151,"./invariant":164,"./keyOf":170,"./warning":183,"1YiZ5S":2}],121:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28271,7 +30515,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
 
-},{"./SyntheticEvent":98}],96:[function(require,module,exports){
+},{"./SyntheticEvent":124}],122:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28316,7 +30560,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticCompositionEvent;
 
-},{"./SyntheticEvent":98}],97:[function(require,module,exports){
+},{"./SyntheticEvent":124}],123:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28355,7 +30599,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
 
-},{"./SyntheticMouseEvent":102}],98:[function(require,module,exports){
+},{"./SyntheticMouseEvent":128}],124:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28521,7 +30765,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.threeArgumentPooler);
 
 module.exports = SyntheticEvent;
 
-},{"./Object.assign":29,"./PooledClass":30,"./emptyFunction":117,"./getEventTarget":128}],99:[function(require,module,exports){
+},{"./Object.assign":55,"./PooledClass":56,"./emptyFunction":143,"./getEventTarget":154}],125:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28560,7 +30804,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
 
-},{"./SyntheticUIEvent":104}],100:[function(require,module,exports){
+},{"./SyntheticUIEvent":130}],126:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28606,7 +30850,7 @@ SyntheticEvent.augmentClass(
 
 module.exports = SyntheticInputEvent;
 
-},{"./SyntheticEvent":98}],101:[function(require,module,exports){
+},{"./SyntheticEvent":124}],127:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28693,7 +30937,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
 
-},{"./SyntheticUIEvent":104,"./getEventCharCode":125,"./getEventKey":126,"./getEventModifierState":127}],102:[function(require,module,exports){
+},{"./SyntheticUIEvent":130,"./getEventCharCode":151,"./getEventKey":152,"./getEventModifierState":153}],128:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28774,7 +31018,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
 
-},{"./SyntheticUIEvent":104,"./ViewportMetrics":107,"./getEventModifierState":127}],103:[function(require,module,exports){
+},{"./SyntheticUIEvent":130,"./ViewportMetrics":133,"./getEventModifierState":153}],129:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28822,7 +31066,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
 
-},{"./SyntheticUIEvent":104,"./getEventModifierState":127}],104:[function(require,module,exports){
+},{"./SyntheticUIEvent":130,"./getEventModifierState":153}],130:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28884,7 +31128,7 @@ SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
 
-},{"./SyntheticEvent":98,"./getEventTarget":128}],105:[function(require,module,exports){
+},{"./SyntheticEvent":124,"./getEventTarget":154}],131:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28945,7 +31189,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
 
-},{"./SyntheticMouseEvent":102}],106:[function(require,module,exports){
+},{"./SyntheticMouseEvent":128}],132:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29186,7 +31430,7 @@ var Transaction = {
 module.exports = Transaction;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],107:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],133:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29215,7 +31459,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{}],108:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -29281,7 +31525,7 @@ function accumulateInto(current, next) {
 module.exports = accumulateInto;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],109:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],135:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29315,7 +31559,7 @@ function adler32(data) {
 
 module.exports = adler32;
 
-},{}],110:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29347,7 +31591,7 @@ function camelize(string) {
 
 module.exports = camelize;
 
-},{}],111:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29389,7 +31633,7 @@ function camelizeStyleName(string) {
 
 module.exports = camelizeStyleName;
 
-},{"./camelize":110}],112:[function(require,module,exports){
+},{"./camelize":136}],138:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29433,7 +31677,7 @@ function containsNode(outerNode, innerNode) {
 
 module.exports = containsNode;
 
-},{"./isTextNode":142}],113:[function(require,module,exports){
+},{"./isTextNode":168}],139:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29519,7 +31763,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 
-},{"./toArray":155}],114:[function(require,module,exports){
+},{"./toArray":181}],140:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29581,7 +31825,7 @@ function createFullPageComponent(tag) {
 module.exports = createFullPageComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactClass":36,"./ReactElement":60,"./invariant":138,"1YiZ5S":2}],115:[function(require,module,exports){
+},{"./ReactClass":62,"./ReactElement":86,"./invariant":164,"1YiZ5S":2}],141:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29671,7 +31915,7 @@ function createNodesFromMarkup(markup, handleScript) {
 module.exports = createNodesFromMarkup;
 
 }).call(this,require("1YiZ5S"))
-},{"./ExecutionEnvironment":23,"./createArrayFromMixed":113,"./getMarkupWrap":130,"./invariant":138,"1YiZ5S":2}],116:[function(require,module,exports){
+},{"./ExecutionEnvironment":49,"./createArrayFromMixed":139,"./getMarkupWrap":156,"./invariant":164,"1YiZ5S":2}],142:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29729,7 +31973,7 @@ function dangerousStyleValue(name, value) {
 
 module.exports = dangerousStyleValue;
 
-},{"./CSSProperty":6}],117:[function(require,module,exports){
+},{"./CSSProperty":32}],143:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29763,7 +32007,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],118:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29787,7 +32031,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = emptyObject;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":2}],119:[function(require,module,exports){
+},{"1YiZ5S":2}],145:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29827,7 +32071,7 @@ function escapeTextContentForBrowser(text) {
 
 module.exports = escapeTextContentForBrowser;
 
-},{}],120:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29900,7 +32144,7 @@ function findDOMNode(componentOrElement) {
 module.exports = findDOMNode;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactCurrentOwner":42,"./ReactInstanceMap":70,"./ReactMount":73,"./invariant":138,"./isNode":140,"./warning":157,"1YiZ5S":2}],121:[function(require,module,exports){
+},{"./ReactCurrentOwner":68,"./ReactInstanceMap":96,"./ReactMount":99,"./invariant":164,"./isNode":166,"./warning":183,"1YiZ5S":2}],147:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29958,7 +32202,7 @@ function flattenChildren(children) {
 module.exports = flattenChildren;
 
 }).call(this,require("1YiZ5S"))
-},{"./traverseAllChildren":156,"./warning":157,"1YiZ5S":2}],122:[function(require,module,exports){
+},{"./traverseAllChildren":182,"./warning":183,"1YiZ5S":2}],148:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -29987,7 +32231,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 
-},{}],123:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30018,7 +32262,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],124:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30047,7 +32291,7 @@ function getActiveElement() /*?DOMElement*/ {
 
 module.exports = getActiveElement;
 
-},{}],125:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30099,7 +32343,7 @@ function getEventCharCode(nativeEvent) {
 
 module.exports = getEventCharCode;
 
-},{}],126:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30204,7 +32448,7 @@ function getEventKey(nativeEvent) {
 
 module.exports = getEventKey;
 
-},{"./getEventCharCode":125}],127:[function(require,module,exports){
+},{"./getEventCharCode":151}],153:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30251,7 +32495,7 @@ function getEventModifierState(nativeEvent) {
 
 module.exports = getEventModifierState;
 
-},{}],128:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30282,7 +32526,7 @@ function getEventTarget(nativeEvent) {
 
 module.exports = getEventTarget;
 
-},{}],129:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30326,7 +32570,7 @@ function getIteratorFn(maybeIterable) {
 
 module.exports = getIteratorFn;
 
-},{}],130:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30359,7 +32603,6 @@ var shouldWrap = {
   // Force wrapping for SVG elements because if they get created inside a <div>,
   // they will be initialized in the wrong namespace (and will not display).
   'circle': true,
-  'clipPath': true,
   'defs': true,
   'ellipse': true,
   'g': true,
@@ -30402,7 +32645,6 @@ var markupWrap = {
   'th': trWrap,
 
   'circle': svgWrap,
-  'clipPath': svgWrap,
   'defs': svgWrap,
   'ellipse': svgWrap,
   'g': svgWrap,
@@ -30445,7 +32687,7 @@ function getMarkupWrap(nodeName) {
 module.exports = getMarkupWrap;
 
 }).call(this,require("1YiZ5S"))
-},{"./ExecutionEnvironment":23,"./invariant":138,"1YiZ5S":2}],131:[function(require,module,exports){
+},{"./ExecutionEnvironment":49,"./invariant":164,"1YiZ5S":2}],157:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30520,7 +32762,7 @@ function getNodeForCharacterOffset(root, offset) {
 
 module.exports = getNodeForCharacterOffset;
 
-},{}],132:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30555,7 +32797,7 @@ function getReactRootElementInContainer(container) {
 
 module.exports = getReactRootElementInContainer;
 
-},{}],133:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30592,7 +32834,7 @@ function getTextContentAccessor() {
 
 module.exports = getTextContentAccessor;
 
-},{"./ExecutionEnvironment":23}],134:[function(require,module,exports){
+},{"./ExecutionEnvironment":49}],160:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30632,7 +32874,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],135:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30665,7 +32907,7 @@ function hyphenate(string) {
 
 module.exports = hyphenate;
 
-},{}],136:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30706,7 +32948,7 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 
-},{"./hyphenate":135}],137:[function(require,module,exports){
+},{"./hyphenate":161}],163:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30844,7 +33086,7 @@ function instantiateReactComponent(node, parentCompositeType) {
 module.exports = instantiateReactComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./Object.assign":29,"./ReactCompositeComponent":40,"./ReactEmptyComponent":62,"./ReactNativeComponent":76,"./invariant":138,"./warning":157,"1YiZ5S":2}],138:[function(require,module,exports){
+},{"./Object.assign":55,"./ReactCompositeComponent":66,"./ReactEmptyComponent":88,"./ReactNativeComponent":102,"./invariant":164,"./warning":183,"1YiZ5S":2}],164:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30901,7 +33143,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":2}],139:[function(require,module,exports){
+},{"1YiZ5S":2}],165:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30966,7 +33208,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":23}],140:[function(require,module,exports){
+},{"./ExecutionEnvironment":49}],166:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30993,7 +33235,7 @@ function isNode(object) {
 
 module.exports = isNode;
 
-},{}],141:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31036,7 +33278,7 @@ function isTextInputElement(elem) {
 
 module.exports = isTextInputElement;
 
-},{}],142:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31061,7 +33303,7 @@ function isTextNode(object) {
 
 module.exports = isTextNode;
 
-},{"./isNode":140}],143:[function(require,module,exports){
+},{"./isNode":166}],169:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31116,7 +33358,7 @@ var keyMirror = function(obj) {
 module.exports = keyMirror;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],144:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],170:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31152,7 +33394,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],145:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31205,7 +33447,7 @@ function mapObject(object, callback, context) {
 
 module.exports = mapObject;
 
-},{}],146:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31238,7 +33480,7 @@ function memoizeStringOnly(callback) {
 
 module.exports = memoizeStringOnly;
 
-},{}],147:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31278,7 +33520,7 @@ function onlyChild(children) {
 module.exports = onlyChild;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":60,"./invariant":138,"1YiZ5S":2}],148:[function(require,module,exports){
+},{"./ReactElement":86,"./invariant":164,"1YiZ5S":2}],174:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31306,7 +33548,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = performance || {};
 
-},{"./ExecutionEnvironment":23}],149:[function(require,module,exports){
+},{"./ExecutionEnvironment":49}],175:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31334,7 +33576,7 @@ var performanceNow = performance.now.bind(performance);
 
 module.exports = performanceNow;
 
-},{"./performance":148}],150:[function(require,module,exports){
+},{"./performance":174}],176:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31362,7 +33604,7 @@ function quoteAttributeValueForBrowser(value) {
 
 module.exports = quoteAttributeValueForBrowser;
 
-},{"./escapeTextContentForBrowser":119}],151:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":145}],177:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31451,7 +33693,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setInnerHTML;
 
-},{"./ExecutionEnvironment":23}],152:[function(require,module,exports){
+},{"./ExecutionEnvironment":49}],178:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31493,7 +33735,7 @@ if (ExecutionEnvironment.canUseDOM) {
 
 module.exports = setTextContent;
 
-},{"./ExecutionEnvironment":23,"./escapeTextContentForBrowser":119,"./setInnerHTML":151}],153:[function(require,module,exports){
+},{"./ExecutionEnvironment":49,"./escapeTextContentForBrowser":145,"./setInnerHTML":177}],179:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -31537,7 +33779,7 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 
-},{}],154:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31641,7 +33883,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 module.exports = shouldUpdateReactComponent;
 
 }).call(this,require("1YiZ5S"))
-},{"./warning":157,"1YiZ5S":2}],155:[function(require,module,exports){
+},{"./warning":183,"1YiZ5S":2}],181:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -31713,7 +33955,7 @@ function toArray(obj) {
 module.exports = toArray;
 
 }).call(this,require("1YiZ5S"))
-},{"./invariant":138,"1YiZ5S":2}],156:[function(require,module,exports){
+},{"./invariant":164,"1YiZ5S":2}],182:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -31966,7 +34208,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 module.exports = traverseAllChildren;
 
 }).call(this,require("1YiZ5S"))
-},{"./ReactElement":60,"./ReactFragment":66,"./ReactInstanceHandles":69,"./getIteratorFn":129,"./invariant":138,"./warning":157,"1YiZ5S":2}],157:[function(require,module,exports){
+},{"./ReactElement":86,"./ReactFragment":92,"./ReactInstanceHandles":95,"./getIteratorFn":155,"./invariant":164,"./warning":183,"1YiZ5S":2}],183:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -32029,2245 +34271,7 @@ if ("production" !== process.env.NODE_ENV) {
 module.exports = warning;
 
 }).call(this,require("1YiZ5S"))
-},{"./emptyFunction":117,"1YiZ5S":2}],158:[function(require,module,exports){
+},{"./emptyFunction":143,"1YiZ5S":2}],184:[function(require,module,exports){
 module.exports = require('./lib/React');
 
-},{"./lib/React":31}],159:[function(require,module,exports){
-// © Scotland Stephenson 2015
-
-// - [github](https://github.com/alsoscotland/react-super-select)
-// - [documentation](http://alsoscotland.github.io/react-super-select/)
-// - freely distributed under the MIT license.
-
-'use strict';
-
-var _ = require('lodash'),
-    classNames = require('classnames'),
-    React = require('react');
-
-// Dependencies
-//  - [Lodash](https://lodash.com/)
-//  - [classnames](https://www.npmjs.com/package/classnames)
-//  - [React](https://facebook.github.io/react/index.html)
-
-var ReactSuperSelect = React.createClass({
-  displayName: 'ReactSuperSelect',
-
-  // Properties
-  // ------
-  propTypes: {
-
-    // BOOLEAN OPTIONS
-    // ---------------
-
-    // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
-    multiple: React.PropTypes.bool,
-    // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
-    searchable: React.PropTypes.bool,
-    // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
-    tags: React.PropTypes.bool,
-
-    // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
-    // -----------------------------------
-
-    // **customClass** (String) *optional* - This value will be added as a css class to the control's main wrapping element.  You should be able to overide all styling by leading your rules with
-    // ```css
-    // .r-ss-wrap.{customClass}
-    // ```
-    customClass: React.PropTypes.string,
-
-    // **customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown
-    customGroupHeadingClass: React.PropTypes.string,
-
-    // **customSearchIconClass** (String) *optional* - This value will be added as a css class to the icon element in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
-    customSearchIconClass: React.PropTypes.string,
-
-    // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataFetch** option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
-    customLoaderClass: React.PropTypes.string,
-
-    // **customTagClass** (String) *optional* - Used in conjunction with the **tags** option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with
-    // ```css
-    //  .r-ss-tag.{customTagClass}
-    //  ```
-    customTagClass: React.PropTypes.string,
-
-    // MAIN CHANGE HANDLER
-    // -------------------
-
-    // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
-    onChange: React.PropTypes.func.isRequired,
-
-    // OPTION DATA-RELATED PROPS
-    // -------------------------
-
-    // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
-    // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the **dataSource** option documentation. The **dataSource** option should be left undefined when using this option.
-    ajaxDataFetch: React.PropTypes.func,
-
-    // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
-    // The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type
-
-    //  The parsing method supports dataSource values as:
-    //  - an array of option objects (will be directly assigned to state.data)
-    //  - an object with a collection property (object.collection will be assigned to state.data)
-    //  - an object with a get function (the return value of object.get('collection') will be assigned to state.data)
-
-    //  Each option in the resulting collection must have the following properties:
-    //  - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of **id**
-    //  - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
-    dataSource: React.PropTypes.oneOfType([React.PropTypes.arrayOf(React.PropTypes.object), React.PropTypes.object]),
-
-    // **initialValue** (Array|Object) *optional*
-    // The selected value the control will be initialized with
-    // must be an array of option items or a single option item from your dataSource collection
-    initialValue: React.PropTypes.oneOfType([React.PropTypes.arrayOf(React.PropTypes.object), React.PropTypes.object]),
-
-    // **optionLabelKey** (String) (*optional - defaults to using 'name' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value you would like displayed for each option.
-    optionLabelKey: React.PropTypes.string,
-
-    // **optionValueKey** (String) (*optional - defaults to using 'id' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value that **uniquely identifies** that option across the **dataSource** collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
-    optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
-
-    // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
-    // The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
-    // It must return a **promise** object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the **dataSource** option documentation.
-    // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.
-    // *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
-    pageDataFetch: React.PropTypes.func,
-
-    // **hasMorePages** (Function) *optional* (should be provided when using the *pageDataFetch* option) - A function that accepts one argument, a value as described by the *dataSource* option documentation, and returns a Boolean value.
-    // The value should indicate whether the option data collection has any more pages available for fetching
-    hasMorePages: React.PropTypes.func,
-
-    // GROUPING FUNCTIONALITY
-    // ----------------------
-
-    // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference the [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
-    groupBy: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func, React.PropTypes.object]),
-
-    // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
-    customGroupHeadingTemplateFunction: React.PropTypes.func,
-
-    // RENDERING (OPTION ITERATOR) FUNCTIONS
-    // -------------------------------------
-
-    // **customFilterFunction** (Function) *optional* - Used in conjunction with the **searchable** option.  The function provided will serve as a replacement of the default search filter function.
-    // and will be called as the predicate function of [Lodash's filter function](https://lodash.com/docs#filter)
-
-    // The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current **searchString** (state variable)
-
-    // When left undefined the default filter function will be used.
-    //(Defaults To: A lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is leveraged by [Lodash's filter function](https://lodash.com/docs#filter) with your **dataSource** collection as its first argument.
-    customFilterFunction: React.PropTypes.func,
-
-    // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
-    customOptionTemplateFunction: React.PropTypes.func,
-
-    // LOCALIZATION STRINGS
-    // --------------------
-
-    // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
-    ajaxErrorString: React.PropTypes.string,
-
-    // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
-    noResultsString: React.PropTypes.string,
-
-    // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control when the user has no selected values
-    placeholder: React.PropTypes.string,
-
-    // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's search input field when a user has not entered any characters.
-    searchPlaceholder: React.PropTypes.string,
-
-    // **tagRemoveLabelString** (String) *optional* - (Used in conjunction with the **tags** option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).
-    tagRemoveLabelString: React.PropTypes.string
-  },
-
-  // CONSTANTS
-  // ---------
-
-  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
-  SEARCH_FOCUS_ID: -1,
-
-  // regular expression used to determine if event src options have selected class
-  SELECTED_OPTION_REGEX: /r-ss-selected/,
-
-  // Default string values for localization options
-  DEFAULT_LOCALIZATIONS: {
-    ajaxErrorString: 'An Error occured while fetching options',
-    noResultsString: 'No Results Available',
-    placeholder: 'Select an Option',
-    searchPlaceholder: 'Search',
-    tagRemoveLabelString: 'Remove Tag'
-  },
-
-  // STATE VARIABLES
-  // ---------------
-  getInitialState: function getInitialState() {
-    return {
-      // **ajaxError** (Boolean) - Set to true when an ajax request fails
-      ajaxError: false,
-
-      // **controlId** (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels
-      controlId: _.uniqueId('rss_'),
-
-      // **data** (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected
-      data: this._configureDataSource(this.props.dataSource),
-
-      // **rawDataSource** (Object|Array) The raw dataSource value the user supplies through the *dataSource* prop (or returned from *ajaxDataFetch* / *pageDataFetch*). This value is passed to the *pageDataFetch* callback
-      rawDataSource: this.props.dataSource,
-
-      // **isOpen** (Boolean) - Whether or not the dropdown is open
-      isOpen: false,
-
-      // **focusedId** (Number) - Used to track keyboard focus for accessibility
-      focusedId: undefined,
-
-      // **labelKey** (String) - The option object key that will be used to identify the value displayed as an option's label
-      labelKey: this.props.optionLabelKey || 'name',
-
-      // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option in the dropdown
-      lastOptionId: _.isArray(this.props.dataSource) && this.props.dataSource.length > 0 ? this.props.dataSource.length - 1 : undefined,
-
-      // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
-      searchString: undefined,
-
-      // **value** (Array) - An array that holds the current user-selected option(s)
-      value: this._buildInitialValue(),
-
-      // **valueKey** (String) - The option object key that will be used to identify the value used as an option's value property (values must be unique across data source)
-      valueKey: this.props.optionValueKey || 'id'
-    };
-  },
-
-  // KEYMAP CONSTANT
-  // ------
-  // A text-based lookup for keyboard navigation keys and their corresponding 'which' keycode values
-  keymap: {
-    'down': 40,
-    'end': 35, // goto last option ?
-    'enter': 13,
-    'esc': 27,
-    'home': 36, // go to first option ?
-    'space': 32,
-    'tab': 9,
-    'up': 38
-  },
-
-  // NON-STATE VARS (no need to re-render based on these being set)
-
-  // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
-  lastUserSelectedOption: undefined,
-
-  // If parent page updates the data source, reset all control state values which are derived from props.
-  // Reset some state defaults and dataSource related fields if dataSource changed.
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    var newState = {};
-
-    if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
-      newState.value = this._buildInitialValue(nextProps);
-    }
-
-    if (!_.isUndefined(nextProps.optionLabelKey) && nextProps.optionLabelKey !== this.props.optionLabelKey) {
-      newState.labelKey = nextProps.optionLabelKey;
-    }
-
-    if (!_.isUndefined(nextProps.optionValueKey) && nextProps.optionValueKey !== this.props.optionValueKey) {
-      newState.valueKey = nextProps.optionValueKey;
-    }
-
-    if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
-
-      this.lastUserSelectedOption = undefined;
-
-      newState = _.extend(newState, {
-        data: this._configureDataSource(nextProps.dataSource),
-        rawDataSource: nextProps.dataSource,
-        focusedId: undefined,
-        lastOptionId: _.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
-      });
-    }
-
-    if (!_.isEmpty(newState)) {
-      this.setState(newState);
-    }
-  },
-
-  // Update focused element after re-render
-  componentDidUpdate: function componentDidUpdate() {
-    this._focusCurrentFocusedId();
-  },
-
-  // main render method
-  render: function render() {
-    var dropdownContent = this._getDropdownContent(),
-        placeholderString,
-        triggerDisplayContent,
-        triggerClasses,
-        caratClass = classNames('carat', {
-      'down': !this.state.isOpen,
-      'up': this.state.isOpen
-    }),
-        wrapClasses;
-
-    wrapClasses = classNames('r-ss-wrap', this.props.customClass, {
-      'r-ss-expanded': this.state.isOpen
-    });
-
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen,
-      'r-ss-placeholder': this.state.value.length < 1
-    });
-
-    placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
-
-    return React.createElement(
-      'div',
-      { ref: 'rssControl', id: this.state.controlId, className: wrapClasses },
-      React.createElement(
-        'div',
-        { ref: 'triggerDiv',
-          className: triggerClasses,
-          onClick: this.toggleDropdown,
-          onKeyDown: this._handleKeyDown,
-          role: 'combobox',
-          'aria-activedescendant': this._ariaGetActiveDescendentId(),
-          'aria-haspopup': true,
-          'aria-controls': this._ariaGetListId(),
-          'aria-label': placeholderString,
-          'aria-multiselectable': this._isMultiSelect(),
-          tabIndex: '1' },
-        triggerDisplayContent,
-        React.createElement(
-          'span',
-          { ref: 'carat', className: caratClass },
-          ' '
-        )
-      ),
-      dropdownContent
-    );
-  },
-
-  // toggles the open-state of the dropdown
-  // sets focused option in callback after opening
-  toggleDropdown: function toggleDropdown() {
-    this.setState({
-      'isOpen': !this.state.isOpen
-    }, function () {
-      if (this.state.isOpen) {
-        this._setFocusOnOpen();
-      }
-    });
-  },
-
-  // returns the unique DOM id for the currently focused option. Used for accessibility-related labeling
-  _ariaGetActiveDescendentId: function _ariaGetActiveDescendentId() {
-    var ariaActiveDescendantId = null,
-        optionRef = this._getFocusedOptionKey();
-    if (this.refs[optionRef]) {
-      ariaActiveDescendantId = this.refs[optionRef].props.id;
-    }
-    return ariaActiveDescendantId;
-  },
-
-  // calculate the unique identifier for the options ul for aria compliance labeling usage
-  _ariaGetListId: function _ariaGetListId() {
-    return this.state.controlId + '_list';
-  },
-
-  // calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps
-  _buildInitialValue: function _buildInitialValue(props) {
-    props = props || this.props;
-    var initialValue = [];
-
-    if (!_.isUndefined(props.initialValue)) {
-      initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
-
-      if (!this._isMultiSelect()) {
-        initialValue = [_.first(initialValue)];
-      }
-    }
-
-    return initialValue;
-  },
-
-  // close the dropdown
-  // resets focus to the main control trigger
-  // clear focused id
-  _closeOnKeypress: function _closeOnKeypress() {
-    if (this.state.isOpen) {
-      this.setState({
-        isOpen: false,
-        focusedId: undefined
-      }, this._focusTrigger);
-    }
-  },
-
-  // overloaded dataSource parser (Object|Array)
-  // case: (object) - look for a collection property which is an array, or runs an existing 'get' function, get('collection'), and determines if the return value is an array
-  // case: (Array) - return the dataSource array for use as this.state.data
-  _configureDataSource: function _configureDataSource(dataSource) {
-    if (_.isArray(dataSource)) {
-      return dataSource;
-    }
-
-    if (_.isObject(dataSource)) {
-      if (_.isArray(dataSource.collection)) {
-        return dataSource.collection;
-      }
-
-      if (_.isFunction(dataSource.get)) {
-        var collection = dataSource.get('collection');
-        if (_.isArray(collection)) {
-          return collection;
-        }
-      }
-    }
-
-    return [];
-  },
-
-  // Used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control.
-  // Runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
-  _defaultSearchFilter: function _defaultSearchFilter(option) {
-    var search = this.state.searchString.toLowerCase();
-    if (!_.isString(option[this.state.labelKey])) {
-      return false;
-    }
-    return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
-  },
-
-  // fetch data source via ajax if **ajaxDataFetch** function provided
-  // handles success and failure for ajax call
-  _fetchDataViaAjax: function _fetchDataViaAjax() {
-    var self = this;
-    this.props.ajaxDataFetch(this.state.rawDataSource).then(function (dataSourceFromAjax) {
-      self.setState({
-        ajaxError: false,
-        data: self._configureDataSource(dataSourceFromAjax),
-        rawDataSource: dataSourceFromAjax
-      });
-    }, function () {
-      self.setState({
-        ajaxError: true,
-        // define as empty array on error so that _needsAjaxFetch will evaluate to false
-        rawDataSource: []
-      });
-    });
-  },
-
-  // Fetch the next page of options data if **pageDataFetch** function provided.
-  // Called onMouseMove if scroll position in dropdown exceeds threshold.
-  // Handles success and failure for ajax call
-  _fetchNextPage: function _fetchNextPage() {
-    var self = this;
-    this.props.pageDataFetch(this.state.rawDataSource).then(function (dataSourceFromPageFetch) {
-      self.setState({
-        ajaxError: false,
-        data: self._configureDataSource(dataSourceFromPageFetch),
-        rawDataSource: dataSourceFromPageFetch,
-        isFetchingPage: false
-      });
-    }, function () {
-      self.setState({
-        ajaxError: true
-      });
-    });
-  },
-
-  // choose the appropriate search filter function and run the filter against the options data
-  _filterDataBySearchString: function _filterDataBySearchString(data) {
-    var self = this;
-    var filterFunction = this._defaultSearchFilter;
-    if (_.isFunction(this.props.customFilterFunction)) {
-      filterFunction = function (value, index, collection) {
-        return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
-      };
-    }
-    return _.filter(data, filterFunction);
-  },
-
-  // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
-  _findArrayOfOptionDataObjectsByValue: function _findArrayOfOptionDataObjectsByValue(value) {
-    var valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
-    return _.reject(this.state.data, function (item) {
-      return !_.contains(valuesArray, item[this.state.valueKey]);
-    }, this);
-  },
-
-  // determine whether to focus a option value in the DOM, or the search field
-  _focusCurrentFocusedId: function _focusCurrentFocusedId() {
-    if (this.state.focusedId < 0) {
-      this._focusSearch();
-      return;
-    }
-
-    this._focusDOMOption();
-  },
-
-  // focus the DOM option identified by the current state.focusedId
-  _focusDOMOption: function _focusDOMOption() {
-    var optionRef = this._getFocusedOptionKey();
-    if (this.refs[optionRef]) {
-      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
-        this.refs[optionRef].getDOMNode().focus();
-      }
-    }
-  },
-
-  // focus the dropdown's search field if it exists
-  _focusSearch: function _focusSearch() {
-    if (this.refs.searchInput) {
-      this.refs.searchInput.getDOMNode().focus();
-    }
-  },
-
-  // focus the main trigger element of the control
-  _focusTrigger: function _focusTrigger() {
-    if (this.refs.triggerDiv) {
-      this.refs.triggerDiv.getDOMNode().focus();
-    }
-  },
-
-  // choose whether to template the display of user-selected values normally, or as tags
-  _generateValueDisplay: function _generateValueDisplay() {
-    if (!this.props.tags) {
-      return this._getNormalDisplayMarkup();
-    } else {
-      return this._getTagsDisplayMarkup();
-    }
-  },
-
-  // render the content shown if an ajax error occurs
-  _getAjaxErrorMarkup: function _getAjaxErrorMarkup() {
-    var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.DEFAULT_LOCALIZATIONS.ajaxErrorString;
-    return React.createElement(
-      'li',
-      { className: 'r-ss-dropdown-option error' },
-      React.createElement(
-        'i',
-        { ref: 'errorDisplay' },
-        errorString
-      )
-    );
-  },
-
-  // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
-  _getDataSource: function _getDataSource() {
-    var data = _.isArray(this.state.data) ? this.state.data : [];
-    if (_.isString(this.state.searchString)) {
-      data = this._filterDataBySearchString(data);
-    }
-
-    if (this.props.groupBy) {
-      data = _.groupBy(data, this.props.groupBy);
-    }
-
-    return data;
-  },
-
-  // build and render the dropdown content
-  // will trigger the **ajaxDataFetch** fetch (and show loader) if needed
-  _getDropdownContent: function _getDropdownContent() {
-    if (!this.state.isOpen) {
-      return null;
-    }
-
-    var searchContent = this._getSearchContent(),
-        mouseMoveHandler,
-        pagingLi;
-
-    mouseMoveHandler = this.props.pageDataFetch ? this._onMouseMove : null;
-    pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
-
-    return React.createElement(
-      'div',
-      { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown },
-      searchContent,
-      React.createElement(
-        'div',
-        { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler },
-        React.createElement(
-          'ul',
-          { className: 'r-ss-dropdown-options',
-            ref: 'dropdownOptionsList',
-            tabIndex: '-1',
-            id: this._ariaGetListId(),
-            role: 'listbox',
-            'aria-expanded': this.state.isOpen },
-          this._getOptionsMarkup()
-        ),
-        pagingLi
-      )
-    );
-  },
-
-  // build the string used as a React component ref for each focusable option
-  _getFocusedOptionKey: function _getFocusedOptionKey() {
-    return 'option_' + this.state.focusedId;
-  },
-
-  // render a group heading, used if **groupBy** option is provided.
-  // renders a non-focusable list item for an option group heading
-  _getGroupHeadingMarkup: function _getGroupHeadingMarkup(heading) {
-    if (!heading) {
-      return null;
-    }
-
-    var headingClasses = classNames('r-ss-option-group-heading', this.props.customGroupHeadingClass),
-        headingKey = 'heading_' + heading,
-        headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
-
-    // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
-    // in search of a better solution for announcing/navigating grouped listbox items as subgroups
-    return React.createElement(
-      'li',
-      { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true },
-      headingMarkup
-    );
-  },
-
-  // render the content shown when no options are available
-  _getNoResultsMarkup: function _getNoResultsMarkup() {
-    var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.DEFAULT_LOCALIZATIONS.noResultsString;
-    return React.createElement(
-      'li',
-      { className: 'r-ss-dropdown-option', tabIndex: '-1' },
-      React.createElement(
-        'i',
-        { ref: 'noResults' },
-        noResultsString
-      )
-    );
-  },
-
-  // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
-  // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
-  _getNormalDisplayMarkup: function _getNormalDisplayMarkup() {
-    return _.map(this.state.value, function (value) {
-      var selectedKey = 'r_ss_selected_' + value[this.state.labelKey];
-      if (this.props.customOptionTemplateFunction) {
-        return this.props.customOptionTemplateFunction(value);
-      } else {
-        return React.createElement(
-          'span',
-          { key: selectedKey, className: 'r-ss-selected-label' },
-          value[this.state.labelKey]
-        );
-      }
-    }, this);
-  },
-
-  // render a loading span (spinner gif), with **customLoaderClass** if provided
-  _getLoadingMarkup: function _getLoadingMarkup() {
-    var loaderClasses = this.props.customLoaderClass ? 'r-ss-loader ' + this.props.customLoaderClass : 'r-ss-loader';
-    return React.createElement('span', { ref: 'loader', className: loaderClasses });
-  },
-
-  // get the option Li element from a passed eventTarget.
-  // for key events = event.target
-  // for click events = event.currentTarget
-  _getOptionIndexFromTarget: function _getOptionIndexFromTarget(targetLi) {
-    return parseInt(targetLi.getAttribute('data-option-index'), 10);
-  },
-
-  // render the data source as options,
-  // render loading if fetching
-  // render ajaxError markup when state.ajaxError is true
-  // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
-  // - must track options count to maintain a single focusable index mapping across multiple groups of options
-  _getOptionsMarkup: function _getOptionsMarkup() {
-    if (this._needsAjaxFetch()) {
-      this._fetchDataViaAjax();
-      return this._getPagingLi();
-    }
-
-    if (this.state.ajaxError) {
-      return this._getAjaxErrorMarkup();
-    }
-
-    var data = this._getDataSource(),
-        options = [],
-        optionsCount = 0;
-
-    if (!_.isArray(data)) {
-      _.forIn(data, function (groupedOptions, heading) {
-        options.push(this._getGroupHeadingMarkup(heading));
-        options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
-        optionsCount = optionsCount + groupedOptions.length;
-      }, this);
-    } else {
-      options = this._getTemplatedOptions(data);
-    }
-
-    return options;
-  },
-
-  // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
-  _getPagingLi: function _getPagingLi() {
-    return React.createElement(
-      'li',
-      { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1' },
-      this._getLoadingMarkup()
-    );
-  },
-
-  // render a search input bar with a search icon
-  // - add localized **searchPlaceholder** if provided
-  // - add **customIconClass** if provided
-  _getSearchContent: function _getSearchContent() {
-    if (!this.props.searchable) {
-      return null;
-    }
-
-    var magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : 'r-ss-magnifier',
-        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.DEFAULT_LOCALIZATIONS.searchPlaceholder,
-        searchAriaId = this.state.controlId + '_search',
-        searchAriaIdLabel = searchAriaId + '_label';
-
-    return React.createElement(
-      'div',
-      { className: 'r-ss-search-wrap' },
-      React.createElement(
-        'div',
-        { className: 'r-ss-search-inner' },
-        React.createElement(
-          'label',
-          { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId },
-          searchPlaceholderString
-        ),
-        React.createElement('input', { ref: 'searchInput',
-          placeholder: searchPlaceholderString,
-          onClick: this._setFocusIdToSearch,
-          onChange: this._handleSearch,
-          defaultValue: this.state.searchString,
-          name: searchAriaId,
-          id: searchAriaId,
-          'aria-labelledby': searchAriaIdLabel,
-          'aria-autocomplete': 'list' }),
-        React.createElement(
-          'i',
-          { className: magnifierClass },
-          'search'
-        )
-      )
-    );
-  },
-
-  // iterate over selected values and build tags markup for selected options display
-  _getTagsDisplayMarkup: function _getTagsDisplayMarkup() {
-    return _.map(this.state.value, function (value) {
-      return this._getTagMarkup(value);
-    }, this);
-  },
-
-  // render a tag for an individual selected value
-  // - add **customTagClass** if provided
-  _getTagMarkup: function _getTagMarkup(value) {
-    var label = value[this.state.labelKey],
-        displayValue = value[this.state.valueKey],
-        tagKey = 'tag_' + displayValue,
-        buttonName = 'RemoveTag_' + displayValue,
-        tagRemoveIndex = this._getTagRemoveIndex(displayValue),
-        tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.DEFAULT_LOCALIZATIONS.tagRemoveLabelString,
-        tagWrapClass = this.props.customTagClass ? 'r-ss-tag ' + this.props.customTagClass : 'r-ss-tag';
-
-    tagRemoveButtonLabelString = tagRemoveButtonLabelString + ' ' + label;
-
-    return React.createElement(
-      'span',
-      { className: tagWrapClass, key: tagKey },
-      React.createElement(
-        'span',
-        { className: 'r-ss-tag-label' },
-        label
-      ),
-      React.createElement(
-        'button',
-        { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
-        React.createElement('span', null)
-      )
-    );
-  },
-
-  // tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard
-  _getTagRemoveIndex: function _getTagRemoveIndex(identifier) {
-    return 'tag_remove_' + identifier;
-  },
-
-  // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
-  // - render no results markup if no options result from map calls
-  _getTemplatedOptions: function _getTemplatedOptions(data, indexStart) {
-    indexStart = indexStart || 0;
-    var options = this._mapDataToOptionsMarkup(data, indexStart);
-
-    if (options.length === 0) {
-      options = this._getNoResultsMarkup();
-    }
-
-    return options;
-  },
-
-  // main keyDown binding handler for keyboard navigation and selection
-  _handleKeyDown: function _handleKeyDown(event) {
-    if (this._isUserSearchTypingEvent(event)) {
-      return;
-    }
-
-    if (this.state.isOpen || event.which !== this.keymap.tab) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-
-    switch (event.which) {
-      case this.keymap.down:
-        this._onDownKey(event);
-        break;
-      case this.keymap.end:
-        this._onEndKey();
-        break;
-      case this.keymap.enter:
-        this._onEnterKey(event);
-        break;
-      case this.keymap.esc:
-        this._onEscKey();
-        break;
-      case this.keymap.home:
-        this._onHomeKey();
-        break;
-      case this.keymap.space:
-        this._onEnterKey(event); // delegate to enter
-        break;
-      case this.keymap.tab:
-        // delegate to enter (selection) handler
-        if (this.state.isOpen) {
-          this._onEnterKey(event);
-        }
-        break;
-      case this.keymap.up:
-        this._onUpKey(event);
-        break;
-    }
-  },
-
-  // handler for searchInput's keyUp event
-  _handleSearch: function _handleSearch(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    var searchString = event.target.value;
-    this._handleSearchDebounced.call(this, searchString);
-  },
-
-  // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
-  _handleSearchDebounced: _.debounce(function (search) {
-    this.setState({
-      searchString: search
-    });
-  }, 300),
-
-  // return the boolean used to determine whether an option should have the 'r-ss-selected' class
-  _isCurrentlySelected: function _isCurrentlySelected(dataItem) {
-    if (!_.isArray(this.state.value)) {
-      return _.isEqual(this.state.value, dataItem);
-    }
-    return !!_.findWhere(this.state.value, dataItem);
-  },
-
-  // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
-  _isMultiSelect: function _isMultiSelect() {
-    return this.props.multiple || this.props.tags;
-  },
-
-  // user search events need to pass through the default keyDown handler
-  _isUserSearchTypingEvent: function _isUserSearchTypingEvent(event) {
-    if (!this.refs.searchInput || event.which === this.keymap.down || event.which === this.keymap.up && event.altKey || event.which === this.keymap.esc) {
-      return false;
-    }
-    return event.target === this.refs.searchInput.getDOMNode();
-  },
-
-  // Render the option list-items.
-  // Leverage the **customOptionTemplateFunction** function if provided
-  _mapDataToOptionsMarkup: function _mapDataToOptionsMarkup(data, indexStart) {
-    return _.map(data, function (dataOption, index) {
-      index = indexStart + index;
-
-      var isCurrentlySelected = this._isCurrentlySelected(dataOption),
-          itemKey = 'drop_li_' + dataOption[this.state.valueKey],
-          indexRef = 'option_' + index,
-          ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
-          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
-          classes = classNames('r-ss-dropdown-option', {
-        'r-ss-selected': isCurrentlySelected
-      });
-
-      return React.createElement(
-        'li',
-        { ref: indexRef,
-          id: ariaDescendantId,
-          tabIndex: '0',
-          'data-option-index': index,
-          className: classes,
-          'aria-selected': isCurrentlySelected,
-          key: itemKey,
-          'data-option-value': dataOption[this.state.valueKey],
-          onClick: this._selectItemOnOptionClick.bind(null, dataOption),
-          role: 'option' },
-        optionMarkup
-      );
-    }, this);
-  },
-
-  // determines next focusedId prior to updateFocusedId call
-  _moveFocusDown: function _moveFocusDown() {
-    if (this._needsAjaxFetch()) {
-      return;
-    }
-    var nextId;
-
-    if (_.isUndefined(this.state.focusedId)) {
-      if (this.props.searchable) {
-        nextId = this.SEARCH_FOCUS_ID;
-      } else {
-        nextId = 0;
-      }
-    } else {
-      nextId = this.state.lastOptionId === this.state.focusedId ? this.state.lastOptionId : this.state.focusedId + 1;
-    }
-
-    this._updateFocusedId(nextId);
-  },
-
-  // determines previous focusedId prior to updateFocusedId call
-  _moveFocusUp: function _moveFocusUp() {
-    var previousId;
-
-    if (!_.isUndefined(this.state.focusedId) && this.state.focusedId !== this.SEARCH_FOCUS_ID) {
-      if (this.state.focusedId === 0) {
-        if (this.props.searchable) {
-          previousId = this.SEARCH_FOCUS_ID;
-        }
-      } else {
-        previousId = this.state.focusedId - 1;
-      }
-    }
-    this._updateFocusedId(previousId);
-  },
-
-  // return boolean to determine if we have already received data from the **ajaxDataFetch** function
-  _needsAjaxFetch: function _needsAjaxFetch() {
-    return _.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch);
-  },
-
-  // down key handler
-  // shift-keypress is used to select successive focus items for aria keyboard accessibility
-  _onDownKey: function _onDownKey(event) {
-    if (!this.state.isOpen) {
-      this.toggleDropdown();
-      return;
-    }
-
-    this._moveFocusDown();
-    if (this._isMultiSelect() && event.shiftKey) {
-      this._selectFocusedOption(event.target, true);
-    }
-  },
-
-  // end key handler. Move focus to the last available option
-  _onEndKey: function _onEndKey() {
-    if (this.state.lastOptionId) {
-      this._updateFocusedId(this.state.lastOptionId);
-    }
-  },
-
-  // Enter key handler.
-  // Opens the control when closed.
-  // Otherwise, makes selection
-  _onEnterKey: function _onEnterKey(event) {
-    if (!this.state.isOpen) {
-      this.toggleDropdown();
-      return;
-    }
-
-    if (this._isMultiSelect() && event.shiftKey) {
-      this._selectAllOptionsToLastUserSelectedOption(event.target);
-      return;
-    }
-
-    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey),
-        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.target.getAttribute('class'));
-
-    if (keepControlOpen && alreadySelected) {
-      var optionData = _.first(this._findArrayOfOptionDataObjectsByValue(event.target.getAttribute('data-option-value')));
-      this._removeSelectedOptionByValue(optionData);
-    } else {
-      if (!alreadySelected) {
-        this._selectFocusedOption(event.target, keepControlOpen);
-      }
-    }
-  },
-
-  // Escape key handler. Closes the dropdown
-  _onEscKey: function _onEscKey() {
-    this._closeOnKeypress();
-  },
-
-  // Home key handler. Moves focus to the first available option
-  _onHomeKey: function _onHomeKey() {
-    this._updateFocusedId(0);
-  },
-
-  // mouse move handler used when **pageDataFetch** is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown
-  _onMouseMove: function _onMouseMove() {
-    // do not fetch page if searching or already loading data
-    if (this.refs.loader || this.state.searchString || !this._pageFetchingComplete()) {
-      return;
-    }
-
-    var wrap = this.refs.scrollWrap.getDOMNode();
-
-    if (wrap.scrollTop + wrap.offsetHeight >= wrap.scrollHeight) {
-      this.setState({
-        isFetchingPage: true
-      }, this._fetchNextPage);
-    }
-  },
-
-  // Up key handler.
-  // Shift-click is used to select successive focus items for aria keyboard accessibility
-  _onUpKey: function _onUpKey(event) {
-    if (event.altKey) {
-      this._closeOnKeypress();
-      return;
-    }
-
-    if (this.state.isOpen) {
-      this._moveFocusUp();
-      if (this._isMultiSelect() && event.shiftKey) {
-        this._selectFocusedOption(event.target, true);
-      }
-    }
-  },
-
-  // If hasMorePages option (Function) present, returns the value of its call.
-  // Otherwise, returns false so page fetch will not occur
-  _pageFetchingComplete: function _pageFetchingComplete() {
-    if (!_.isFunction(this.props.hasMorePages)) {
-      return false;
-    } else {
-      return this.props.hasMorePages(this.state.rawDataSource);
-    }
-  },
-
-  // Used in shift selection when the event target was previously selected.
-  // Remove all options up to, but not including the option that raised the event.
-  // (So it behaves like a native browser form multi-select)
-  _removeAllOptionsInOptionIdRange: function _removeAllOptionsInOptionIdRange(from, to) {
-    var valuePropsToReject = [],
-        start = from <= to ? from : to,
-        end = to >= from ? to : from;
-
-    for (var i = start; i <= end; i++) {
-      var refString = 'option_' + i,
-          option = this.refs[refString];
-      if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
-        // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
-        if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getDOMNode().getAttribute('data-option-value')) {
-          valuePropsToReject.push(option.props['data-option-value']);
-        }
-      }
-    }
-
-    var remainingSelected = _.reject(this.state.value, function (option) {
-      return _.includes(valuePropsToReject, option[this.state.valueKey]);
-    }, this);
-
-    this.props.onChange(remainingSelected);
-
-    this.setState({
-      value: remainingSelected
-    });
-  },
-
-  // Remove an item from the state.value selected items array.
-  // The *value* arg represents a full dataSource option object
-  _removeSelectedOptionByValue: function _removeSelectedOptionByValue(value, callback) {
-    // clear lastUserSelected if has been removed
-    if (this.lastUserSelectedOption && this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey]) {
-      this.lastUserSelectedOption = undefined;
-    }
-
-    var SelectedAfterRemoval = _.reject(this.state.value, function (option) {
-      return option[this.state.valueKey] === value[this.state.valueKey];
-    }, this);
-
-    this.props.onChange(SelectedAfterRemoval);
-
-    callback = _.isFunction(callback) ? callback : _.noop;
-
-    this.setState({
-      value: SelectedAfterRemoval
-    }, callback);
-  },
-
-  // remove a selected tag on keyDown
-  _removeTagKeyPress: function _removeTagKeyPress(value, event) {
-    var isEnterKey = event.which === this.keymap.enter,
-        isSpaceKey = event.which === this.keymap.space;
-
-    if (isEnterKey || isSpaceKey) {
-      event.preventDefault();
-      event.stopPropagation();
-      this._removeSelectedOptionByValue(value, this._setFocusToTagRemovalIfPresent); // delegate to removal handler
-    }
-  },
-
-  // remove a selected tag on click
-  _removeTagClick: function _removeTagClick(value, event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    this._removeSelectedOptionByValue(value);
-  },
-
-  // used in shift-click range selections
-  _selectAllOptionsInOptionIdRange: function _selectAllOptionsInOptionIdRange(from, to) {
-    var valuePropsToSelect = [],
-        start = from <= to ? from : to,
-        end = to >= from ? to : from;
-
-    for (var i = start; i <= end; i++) {
-      var refString = 'option_' + i,
-          option = this.refs[refString];
-      if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
-        valuePropsToSelect.push(option.props['data-option-value']);
-      }
-    }
-
-    var optionsToSelect = _.reduce(this.state.data, function (memo, option) {
-      if (_.includes(valuePropsToSelect, option[this.state.valueKey])) {
-        memo.push(option);
-      }
-      return memo;
-    }, [], this);
-    this._selectItemByValues(optionsToSelect, true);
-  },
-
-  // Used in shift-key selection.
-  // Select all options from the current eventTarget to the lastUserSelectedOption
-  _selectAllOptionsToLastUserSelectedOption: function _selectAllOptionsToLastUserSelectedOption(eventTargetLi) {
-    if (!this.lastUserSelectedOption) {
-      this.lastUserSelectedOption = eventTargetLi;
-      // select all options from the first option to the clicked option
-      this._selectAllOptionsInOptionIdRange(0, this._getOptionIndexFromTarget(eventTargetLi));
-      return;
-    }
-
-    var from = this._getOptionIndexFromTarget(this.lastUserSelectedOption),
-        to = this._getOptionIndexFromTarget(eventTargetLi);
-
-    this.lastUserSelectedOption = eventTargetLi;
-
-    // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
-    if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
-      this._removeAllOptionsInOptionIdRange(from, to);
-    } else {
-      this._selectAllOptionsInOptionIdRange(from, to);
-    }
-  },
-
-  // Make a user-selection of the option that is currently focused.
-  // Will close the dropDown when keepControlOpen is falsy
-  _selectFocusedOption: function _selectFocusedOption(eventTargetLi, keepControlOpen) {
-    keepControlOpen = keepControlOpen || false;
-
-    var focusedOptionKey = this._getFocusedOptionKey();
-    if (this.refs[focusedOptionKey]) {
-      var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
-
-      // store as last userSelected
-      this.lastUserSelectedOption = eventTargetLi;
-
-      if (keepControlOpen && this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
-        var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
-        this._removeSelectedOptionByValue(optionFullFromValueProp);
-      } else {
-        this._selectItemByValues(optionValue, keepControlOpen);
-      }
-    }
-  },
-
-  // Handle selection of an option or array of options.
-  // Track last selection the user made.
-  // Close dropdown on the setState callback if not a non control-closing selection
-  _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
-    var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
-
-    if (this._isMultiSelect() || keepControlOpen && this.state.value) {
-      objectValues = this.state.value.concat(objectValues);
-    }
-
-    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
-    this.props.onChange(outputValue);
-
-    if (keepControlOpen) {
-      this.setState({
-        value: objectValues
-      });
-    } else {
-      this.setState({
-        value: objectValues
-      }, this._closeOnKeypress);
-    }
-  },
-
-  // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
-  _selectItemOnOptionClick: function _selectItemOnOptionClick(value, event) {
-    if (this._isMultiSelect() && event.shiftKey) {
-      this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
-      return;
-    }
-    var keepControlOpen = this._isMultiSelect() && (event.ctrlKey || event.metaKey),
-        alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
-
-    // store clicked option as the lastUserSelected
-    this.lastUserSelectedOption = event.currentTarget;
-
-    if (keepControlOpen && alreadySelected) {
-      this._removeSelectedOptionByValue(value);
-    } else {
-      if (!alreadySelected) {
-        this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
-      }
-    }
-  },
-
-  // set the focusId to the SEARCH_FOCUS_ID constant value
-  _setFocusIdToSearch: function _setFocusIdToSearch() {
-    this._updateFocusedId(this.SEARCH_FOCUS_ID);
-  },
-
-  // if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown
-  _setFocusOnOpen: function _setFocusOnOpen() {
-    if (this.lastUserSelectedOption) {
-      this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
-    } else {
-      this._moveFocusDown();
-    }
-  },
-
-  // DOM focus for tag removal buttons will get lost after a tag removal.
-  // After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove
-  _setFocusToTagRemovalIfPresent: function _setFocusToTagRemovalIfPresent() {
-    if (!this.props.tags || this.state.value.length === 0) {
-      return false;
-    }
-
-    var firstValue = _.first(this.state.value)[this.state.valueKey],
-        firstTag = this.refs[this._getTagRemoveIndex(firstValue)];
-
-    if (firstTag) {
-      if (_.isFunction(firstTag.getDOMNode().focus)) {
-        firstTag.getDOMNode().focus();
-        return true;
-      }
-    }
-    return false;
-  },
-
-  // Sets the current focusedId.
-  _updateFocusedId: function _updateFocusedId(id) {
-    this.setState({
-      focusedId: id
-    });
-  }
-
-});
-
-module.exports = ReactSuperSelect;
-
-},{"classnames":1,"lodash":3,"react":158}],160:[function(require,module,exports){
-'use strict';
-
-var basicAjaxExample = require('./super-selects/basic-ajax'),
-    basicExample = require('./super-selects/basic-example'),
-    basicSearchable = require('./super-selects/basic-searchable'),
-    customFilterFunction = require('./super-selects/custom-filter-function'),
-    customTemplate = require('./super-selects/custom-template'),
-    groupBy = require('./super-selects/group-by'),
-    localized = require('./super-selects/localized'),
-    multiselect = require('./super-selects/multiselect'),
-    paging = require('./super-selects/paging'),
-    tagsExample = require('./super-selects/tags-example');
-
-var allExamples = [basicExample, basicAjaxExample, basicSearchable, customFilterFunction, customTemplate, groupBy, localized, multiselect, paging, tagsExample];
-
-module.exports = allExamples;
-
-},{"./super-selects/basic-ajax":172,"./super-selects/basic-example":173,"./super-selects/basic-searchable":174,"./super-selects/custom-filter-function":175,"./super-selects/custom-template":176,"./super-selects/group-by":177,"./super-selects/localized":178,"./super-selects/multiselect":179,"./super-selects/paging":180,"./super-selects/tags-example":184}],161:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    React = require('react'),
-    ReactSuperSelect = require('../src/react-super-select');
-
-var allExamples = require('./all-examples');
-
-var RSSExamples = React.createClass({
-  displayName: 'RSSExamples',
-
-  _renderExampleLinks: function _renderExampleLinks() {
-    var exampleLinks = _.map(allExamples, function (example, index) {
-      var href = '#' + example.nameAttr;
-      return React.createElement(
-        'li',
-        { key: index },
-        React.createElement(
-          'a',
-          { href: href },
-          ' ',
-          example.displayName,
-          ' '
-        )
-      );
-    });
-
-    return React.createElement(
-      'div',
-      { className: 'example-links' },
-      React.createElement(
-        'h1',
-        null,
-        'React-Super-Select Live Examples'
-      ),
-      React.createElement(
-        'h2',
-        null,
-        ' Quick Links: '
-      ),
-      React.createElement(
-        'nav',
-        { className: 'api' },
-        React.createElement(
-          'ul',
-          null,
-          exampleLinks
-        )
-      )
-    );
-  },
-
-  _renderExampleSections: function _renderExampleSections() {
-    var exampleSections = _.map(allExamples, function (example, index) {
-      var superSelect = React.createElement(ReactSuperSelect, example.props),
-          outputId = example.nameAttr + '_output';
-
-      return React.createElement(
-        'li',
-        { key: index, className: 'example-sections' },
-        React.createElement(
-          'article',
-          { className: 'api-item' },
-          React.createElement(
-            'h3',
-            { className: 'api-link' },
-            React.createElement(
-              'a',
-              { name: example.nameAttr },
-              ' ',
-              example.displayName,
-              ' '
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'rss-live-example' },
-            superSelect
-          ),
-          React.createElement(
-            'div',
-            { className: 'rss-output-example' },
-            'onChange Output'
-          ),
-          React.createElement('pre', { className: 'example-output', id: outputId }),
-          React.createElement(
-            'div',
-            null,
-            React.createElement('aside', { className: 'rss-example-markdown', dangerouslySetInnerHTML: { __html: example.renderString } })
-          ),
-          React.createElement(
-            'a',
-            { className: 'top-return', href: '#top' },
-            'Back to Top'
-          )
-        )
-      );
-    });
-
-    return React.createElement(
-      'ul',
-      { className: 'live-examples-list' },
-      exampleSections
-    );
-  },
-
-  render: function render() {
-    return React.createElement(
-      'div',
-      null,
-      React.createElement(
-        'a',
-        { name: 'top' },
-        ' '
-      ),
-      this._renderExampleLinks(),
-      this._renderExampleSections()
-    );
-  }
-});
-
-React.render(React.createElement(RSSExamples, null), document.getElementById('examples'));
-
-},{"../src/react-super-select":159,"./all-examples":160,"lodash":3,"react":158}],162:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  ajaxDataFetch={simulatedAjaxFetch} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  // simulate a 2 second ajax fetch for collection data\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(testData);\n      }, 2000);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],163:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],164:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],165:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customFilterFunction: customFilterExample,\n                  placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;filter shop by category&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customfilterfunction\">customFilterFunction</h4>\n<pre><code class=\"lang-js\">var customFilterExample = function (option, index, collection, searchTerm) {\n  return option.group.toLowerCase().indexOf(searchTerm) &gt; -1;\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
-},{}],166:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
-},{}],167:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
-},{}],168:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  searchable={true}\n                  tags={true}\n                  placeholder=&quot;选择&quot;\n                  ajaxErrorString=&quot;错误&quot;\n                  noResultsString=&quot;无结果&quot;\n                  searchPlaceholder=&quot;搜索&quot;\n                  tagRemoveLabelString=&quot;删除标记&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"localization-properties\">localization properties</h4>\n<pre><code class=\"lang-jsx\">placeholder=&quot;选择&quot;\najaxErrorString=&quot;错误&quot;\nnoResultsString=&quot;无结果&quot;\nsearchPlaceholder=&quot;搜索&quot;\ntagRemoveLabelString=&quot;删除标记&quot;\n</code></pre>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Localized Tags Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};\\n&#39;]);\n  });\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],169:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],170:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],171:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
-},{}],172:[function(require,module,exports){
-'use strict';
-
-var testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    basicAjaxMarkdown = require('../markdown/js/examples/basic-ajax').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('basic_ajax_output', output.join(''));
-};
-
-var simulatedAjaxFetch = function simulatedAjaxFetch() {
-  // simulate a 2 second ajax fetch for collection data
-  return {
-    then: function then(callback) {
-      setTimeout(function () {
-        callback(testData);
-      }, 2000);
-    }
-  };
-};
-
-var basicAjaxExample = {
-
-  nameAttr: 'basic_ajax',
-  displayName: 'Basic Ajax',
-
-  props: {
-    placeholder: 'Choose An Option',
-    ajaxDataFetch: simulatedAjaxFetch,
-    onChange: handlerExample,
-    searchable: true
-  },
-
-  renderString: basicAjaxMarkdown
-
-};
-
-module.exports = basicAjaxExample;
-
-},{"../markdown/js/examples/basic-ajax":162,"./support/example-output.js":181,"./support/test-data.js":183}],173:[function(require,module,exports){
-'use strict';
-
-var testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('basic_example_output', output.join(''));
-};
-
-var basicExample = {
-
-  nameAttr: 'basic_example',
-  displayName: 'Basic Example',
-
-  props: {
-    placeholder: 'Make a Selection',
-    dataSource: testData,
-    onChange: handlerExample
-  },
-
-  renderString: basicExampleMarkdown
-
-};
-
-module.exports = basicExample;
-
-},{"../markdown/js/examples/basic-example":163,"./support/example-output.js":181,"./support/test-data.js":183}],174:[function(require,module,exports){
-'use strict';
-
-var testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Searchable Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('basic_searchable_output', output.join(''));
-};
-
-var basicSearchableExample = {
-
-  nameAttr: 'basic_searchable',
-  displayName: 'Basic Searchable',
-
-  props: {
-    placeholder: 'Make a Selection',
-    dataSource: testData,
-    onChange: handlerExample,
-    searchable: true
-  },
-
-  renderString: basicSearchableMarkdown
-
-};
-
-module.exports = basicSearchableExample;
-
-},{"../markdown/js/examples/basic-searchable":164,"./support/example-output.js":181,"./support/test-data.js":183}],175:[function(require,module,exports){
-'use strict';
-
-var React = require('react'),
-    classNames = require('classnames'),
-    groceries = require('./support/groceries.js'),
-    exampleOutput = require('./support/example-output.js'),
-    customFilterFunctionMarkdown = require('../markdown/js/examples/custom-filter-function').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
-  exampleOutput('custom_template_output', output.join(''));
-};
-
-var customFilter = function customFilter(option, index, collection, searchTerm) {
-  return option.group.toLowerCase().indexOf(searchTerm) > -1;
-};
-
-var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
-  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
-      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
-
-  return React.createElement(
-    'div',
-    { className: itemClasses },
-    React.createElement('span', { className: iconClasses }),
-    React.createElement(
-      'p',
-      null,
-      item.label,
-      ' - ',
-      '$' + item.price.toFixed(2)
-    )
-  );
-};
-
-var customFilterExample = {
-
-  nameAttr: 'custom_filter_function',
-  displayName: 'Custom Filter Function Example',
-
-  props: {
-    customFilterFunction: customFilter,
-    customOptionTemplateFunction: groceryCartItemTemplate,
-    dataSource: groceries,
-    onChange: handlerExample,
-    optionLabelKey: 'label',
-    placeholder: 'Pick an Item',
-    searchable: true,
-    searchPlaceholder: 'filter shop by category'
-  },
-
-  renderString: customFilterFunctionMarkdown
-
-};
-
-module.exports = customFilterExample;
-
-},{"../markdown/js/examples/custom-filter-function":165,"./support/example-output.js":181,"./support/groceries.js":182,"classnames":1,"react":158}],176:[function(require,module,exports){
-'use strict';
-
-var React = require('react'),
-    classNames = require('classnames'),
-    groceries = require('./support/groceries.js'),
-    exampleOutput = require('./support/example-output.js'),
-    customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
-  exampleOutput('custom_template_output', output.join(''));
-};
-
-var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
-  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
-      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
-
-  return React.createElement(
-    'div',
-    { className: itemClasses },
-    React.createElement('span', { className: iconClasses }),
-    React.createElement(
-      'p',
-      null,
-      item.label,
-      ' - ',
-      '$' + item.price.toFixed(2)
-    )
-  );
-};
-
-var customTemplateExample = {
-
-  nameAttr: 'custom_template',
-  displayName: 'Custom Template Example',
-
-  props: {
-    customOptionTemplateFunction: groceryCartItemTemplate,
-    dataSource: groceries,
-    onChange: handlerExample,
-    optionLabelKey: 'label',
-    placeholder: 'Pick an Item',
-    searchable: true,
-    searchPlaceholder: 'Search Shop'
-  },
-
-  renderString: customTemplateMarkdown
-
-};
-
-module.exports = customTemplateExample;
-
-},{"../markdown/js/examples/custom-template":166,"./support/example-output.js":181,"./support/groceries.js":182,"classnames":1,"react":158}],177:[function(require,module,exports){
-'use strict';
-
-var React = require('react'),
-    classNames = require('classnames'),
-    groceries = require('./support/groceries.js'),
-    exampleOutput = require('./support/example-output.js'),
-    groupByMarkdown = require('../markdown/js/examples/group-by').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
-  exampleOutput('group_by_output', output.join(''));
-};
-
-var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
-  var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
-      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
-
-  return React.createElement(
-    'div',
-    { className: itemClasses },
-    React.createElement('span', { className: iconClasses }),
-    React.createElement(
-      'p',
-      null,
-      item.label,
-      ' - ',
-      '$' + item.price.toFixed(2)
-    )
-  );
-};
-
-var groupByExample = {
-
-  nameAttr: 'group_by',
-  displayName: 'Grouped Options Example',
-
-  props: {
-    customOptionTemplateFunction: groceryCartItemTemplate,
-    dataSource: groceries,
-    onChange: handlerExample,
-    optionLabelKey: 'label',
-    placeholder: 'Pick an Item',
-    searchable: true,
-    searchPlaceholder: 'Search Shop',
-    groupBy: 'group'
-  },
-
-  renderString: groupByMarkdown
-
-};
-
-module.exports = groupByExample;
-
-},{"../markdown/js/examples/group-by":167,"./support/example-output.js":181,"./support/groceries.js":182,"classnames":1,"react":158}],178:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    localizedMarkdown = require('../markdown/js/examples/localized').body;
-
-var handlerExample = function handlerExample(options) {
-  var output = [];
-  _.map(options, function (option) {
-    output = output.concat(['Localized Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
-  });
-
-  exampleOutput('localized_output', output.join(''));
-};
-
-var simulatedAjaxFetch = function simulatedAjaxFetch() {
-  var MOCK_AJAX_PER_PAGE = 10;
-  var data = _.take(testData, MOCK_AJAX_PER_PAGE);
-  // simulate a 2 second ajax fetch for collection data
-  return {
-    then: function then(callback) {
-      setTimeout(function () {
-        callback(data);
-      }, 2000);
-    }
-  };
-};
-
-var hasMorePagesExample = function hasMorePagesExample(collection) {
-  return collection.length < testData.length;
-};
-
-var previousPage = 0;
-
-var simulatedPageFetch = function simulatedPageFetch(collection) {
-  var MOCK_AJAX_PER_PAGE = 10;
-  previousPage = previousPage + 1;
-  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
-      data;
-  if (sliceLocation < testData.length) {
-    data = [];
-
-    for (var i = sliceLocation; i < sliceLocation + MOCK_AJAX_PER_PAGE; i++) {
-      if (testData[i]) {
-        data.push(testData[i]);
-      }
-    }
-  } else {
-    data = testData;
-  }
-
-  return {
-    then: function then(callback) {
-      setTimeout(function () {
-        callback(collection.concat(data));
-      }, 1500);
-    }
-  };
-};
-
-var localizedExample = {
-
-  nameAttr: 'localized',
-  displayName: 'Localized',
-
-  props: {
-    ajaxDataFetch: simulatedAjaxFetch,
-    hasMorePages: hasMorePagesExample,
-    onChange: handlerExample,
-    pageDataFetch: simulatedPageFetch,
-    placeholder: '选择',
-    ajaxErrorString: '错误',
-    noResultsString: '无结果',
-    searchPlaceholder: '搜索',
-    searchable: true,
-    tagRemoveLabelString: '删除标记',
-    tags: true
-  },
-
-  renderString: localizedMarkdown
-
-};
-
-module.exports = localizedExample;
-
-},{"../markdown/js/examples/localized":168,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}],179:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    multiselectMarkdown = require('../markdown/js/examples/multiselect').body;
-
-var handlerExample = function handlerExample(options) {
-  var output = [];
-  _.map(options, function (option) {
-    output = output.concat(['Multiselect Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
-  });
-
-  exampleOutput('multiselect_output', output.join(''));
-};
-
-var multiselectExample = {
-
-  nameAttr: 'multiselect',
-  displayName: 'Multiselect',
-
-  props: {
-    placeholder: 'Make Your Selections',
-    dataSource: testData,
-    onChange: handlerExample,
-    multiple: true
-  },
-
-  renderString: multiselectMarkdown
-
-};
-
-module.exports = multiselectExample;
-
-},{"../markdown/js/examples/multiselect":169,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}],180:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    pagingMarkdown = require('../markdown/js/examples/paging').body;
-
-var handlerExample = function handlerExample(option) {
-  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
-  exampleOutput('paging_output', output.join(''));
-};
-
-var simulatedAjaxFetch = function simulatedAjaxFetch() {
-  var MOCK_AJAX_PER_PAGE = 10;
-  var data = _.take(testData, MOCK_AJAX_PER_PAGE);
-  // simulate a 2 second ajax fetch for collection data
-  return {
-    then: function then(callback) {
-      setTimeout(function () {
-        callback(data);
-      }, 2000);
-    }
-  };
-};
-
-var hasMorePagesExample = function hasMorePagesExample(collection) {
-  return collection.length < testData.length;
-};
-
-var previousPage = 0;
-
-var simulatedPageFetch = function simulatedPageFetch(collection) {
-  var MOCK_AJAX_PER_PAGE = 10;
-  previousPage = previousPage + 1;
-  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,
-      data;
-  if (sliceLocation < testData.length) {
-    data = [];
-
-    for (var i = sliceLocation; i < sliceLocation + MOCK_AJAX_PER_PAGE; i++) {
-      if (testData[i]) {
-        data.push(testData[i]);
-      }
-    }
-  } else {
-    data = testData;
-  }
-
-  return {
-    then: function then(callback) {
-      setTimeout(function () {
-        callback(collection.concat(data));
-      }, 1500);
-    }
-  };
-};
-
-var pagingExample = {
-
-  nameAttr: 'paging',
-  displayName: 'Paging',
-
-  props: {
-    ajaxDataFetch: simulatedAjaxFetch,
-    hasMorePages: hasMorePagesExample,
-    onChange: handlerExample,
-    pageDataFetch: simulatedPageFetch,
-    placeholder: 'Choose An Option',
-    searchable: true
-  },
-
-  renderString: pagingMarkdown
-
-};
-
-module.exports = pagingExample;
-
-},{"../markdown/js/examples/paging":170,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}],181:[function(require,module,exports){
-"use strict";
-
-var exampleOutput = function exampleOutput(id, content) {
-  var outputDiv = document.getElementById(id);
-
-  if (outputDiv && outputDiv.childNodes && outputDiv.childNodes[0]) {
-    outputDiv.replaceChild(document.createTextNode(content), outputDiv.childNodes[0]);
-  } else {
-    outputDiv.appendChild(document.createTextNode(content));
-  }
-};
-
-module.exports = exampleOutput;
-
-},{}],182:[function(require,module,exports){
-"use strict";
-
-var groceries = [{
-  id: 1,
-  attributeName: "apple",
-  label: "Apple",
-  iconClass: "rss-grocery rss-grocery-apple",
-  group: "fruits",
-  price: 0.79
-}, {
-  id: 2,
-  attributeName: "carrot",
-  label: "Carrot",
-  iconClass: "rss-grocery rss-grocery-carrot",
-  group: "Vegetables",
-  price: 0.21
-}, {
-  id: 3,
-  attributeName: "cherries",
-  label: "Cherries",
-  iconClass: "rss-grocery rss-grocery-cherries",
-  group: "fruits",
-  price: 0.45
-}, {
-  id: 4,
-  attributeName: "eggplant",
-  label: "Eggplant",
-  iconClass: "rss-grocery rss-grocery-eggplant",
-  group: "Vegetables",
-  price: 1.5
-}, {
-  id: 5,
-  attributeName: "garlic",
-  label: "Garlic",
-  iconClass: "rss-grocery rss-grocery-garlic",
-  group: "Vegetables",
-  price: 0.6
-}, {
-  id: 6,
-  attributeName: "grapes",
-  label: "Grapes",
-  iconClass: "rss-grocery rss-grocery-grapes",
-  group: "fruits",
-  price: 3
-}, {
-  id: 7,
-  attributeName: "green_pepper",
-  label: "Green Pepper",
-  iconClass: "rss-grocery rss-grocery-green_pepper",
-  group: "Vegetables",
-  price: 0.95
-}, {
-  id: 8,
-  attributeName: "lemon",
-  label: "Lemon",
-  iconClass: "rss-grocery rss-grocery-lemon",
-  group: "fruits",
-  price: 0.4
-}, {
-  id: 9,
-  attributeName: "orange",
-  label: "Orange",
-  iconClass: "rss-grocery rss-grocery-orange",
-  group: "fruits",
-  price: 0.6
-}, {
-  id: 10,
-  attributeName: "peach",
-  label: "Peach",
-  iconClass: "rss-grocery rss-grocery-peach",
-  group: "fruits",
-  price: 0.95
-}, {
-  id: 11,
-  attributeName: "pear",
-  label: "Pear",
-  iconClass: "rss-grocery rss-grocery-pear",
-  group: "fruits",
-  price: 0.55
-}, {
-  id: 12,
-  attributeName: "pumpkin",
-  label: "Pumpkin",
-  iconClass: "rss-grocery rss-grocery-pumpkin",
-  group: "Vegetables",
-  price: 2
-}, {
-  id: 13,
-  attributeName: "red_pepper",
-  label: "Red Pepper",
-  iconClass: "rss-grocery rss-grocery-red_pepper",
-  group: "Vegetables",
-  price: 1
-}, {
-  id: 14,
-  attributeName: "strawberry",
-  label: "Strawberry",
-  iconClass: "rss-grocery rss-grocery-strawberry",
-  group: "fruits",
-  price: 0.15
-}, {
-  id: 15,
-  attributeName: "tomato",
-  label: "Tomato",
-  iconClass: "rss-grocery rss-grocery-tomato",
-  group: "fruits",
-  price: 0.6
-}, {
-  id: 16,
-  attributeName: "watermelon",
-  label: "Watermelon",
-  iconClass: "rss-grocery rss-grocery-watermelon",
-  group: "fruits",
-  price: 1.9
-}];
-
-module.exports = groceries;
-
-},{}],183:[function(require,module,exports){
-"use strict";
-
-var testData = [{
-  "id": "5507c0528152e61f3c348d56",
-  "name": "elit laborum et",
-  "size": "Large"
-}, {
-  "id": "5507c0526305bceb0c0e2c7a",
-  "name": "dolor nulla velit",
-  "size": "Medium"
-}, {
-  "id": "5507c052467f171e4e2f460e",
-  "name": "consequat commodo elit",
-  "size": "Small"
-}, {
-  "id": "5507c05280458aa7521a98d3",
-  "name": "dolor deserunt pariatur",
-  "size": "Large"
-}, {
-  "id": "5507c0525c18b6bc81e2a661",
-  "name": "labore excepteur ut",
-  "size": "Large"
-}, {
-  "id": "5507c05226d6c301539c9363",
-  "name": "occaecat ipsum sit",
-  "size": "Medium"
-}, {
-  "id": "5507c052981e4a28d673820c",
-  "name": "dolor officia eu",
-  "size": "Medium"
-}, {
-  "id": "5507c0522340b9bec96ef3d0",
-  "name": "ad enim ad",
-  "size": "Medium"
-}, {
-  "id": "5507c052f379af7af42af291",
-  "name": "amet in sunt",
-  "size": "Medium"
-}, {
-  "id": "5507c0525b90c984190cb7f9",
-  "name": "ea sit qui",
-  "size": "Small"
-}, {
-  "id": "5507c0525013be7033176d97",
-  "name": "reprehenderit adipisicing nisi",
-  "size": "Medium"
-}, {
-  "id": "5507c052c957e4c4a94c09d6",
-  "name": "veniam pariatur sint",
-  "size": "Large"
-}, {
-  "id": "5507c052a2ef6ce44a822f9f",
-  "name": "mollit in elit",
-  "size": "Large"
-}, {
-  "id": "5507c052265e8dbfb667b320",
-  "name": "sunt est reprehenderit",
-  "size": "Medium"
-}, {
-  "id": "5507c0526c19cadf4345992b",
-  "name": "reprehenderit officia sint",
-  "size": "Large"
-}, {
-  "id": "5507c052ab8f326ac857413b",
-  "name": "enim duis est",
-  "size": "Medium"
-}, {
-  "id": "5507c05224e453ebbd82ec23",
-  "name": "occaecat elit esse",
-  "size": "Small"
-}, {
-  "id": "5507c052f3a9f85a73feac00",
-  "name": "enim magna reprehenderit",
-  "size": "Small"
-}, {
-  "id": "5507c052b016fd12b330bcc1",
-  "name": "nostrud commodo laboris",
-  "size": "Large"
-}, {
-  "id": "5507c05287dc146f83eb969c",
-  "name": "anim mollit dolor",
-  "size": "Medium"
-}, {
-  "id": "5507c052d62d6e47a7b9e3ea",
-  "name": "tempor duis irure",
-  "size": "Small"
-}, {
-  "id": "5507c052e3604925abd04af7",
-  "name": "ullamco exercitation commodo",
-  "size": "Small"
-}, {
-  "id": "5507c052af7f3ede18c29878",
-  "name": "non ex ullamco",
-  "size": "Medium"
-}, {
-  "id": "5507c052f8419e0c886ad481",
-  "name": "dolore pariatur voluptate",
-  "size": "Large"
-}, {
-  "id": "5507c0527b92f529158aa3f3",
-  "name": "nisi consequat minim",
-  "size": "Small"
-}, {
-  "id": "5507c052fa42ff00ff3b706e",
-  "name": "laborum reprehenderit ut",
-  "size": "Small"
-}, {
-  "id": "5507c0529ac26334e60054cb",
-  "name": "qui ullamco non",
-  "size": "Small"
-}, {
-  "id": "5507c052973e3ac25c7ceb3a",
-  "name": "cillum Lorem amet",
-  "size": "Small"
-}, {
-  "id": "5507c052fdeeb5210cf219fe",
-  "name": "enim commodo officia",
-  "size": "Medium"
-}, {
-  "id": "5507c052c8751cfa0ebac0c9",
-  "name": "esse ullamco duis",
-  "size": "Medium"
-}, {
-  "id": "5507c0525dcfda7c9d57d1f2",
-  "name": "ea Lorem quis",
-  "size": "Large"
-}, {
-  "id": "5507c052ab2af04b759874ec",
-  "name": "velit ipsum occaecat",
-  "size": "Large"
-}, {
-  "id": "5507c05295f489e31f118a1c",
-  "name": "aute qui et",
-  "size": "Medium"
-}, {
-  "id": "5507c052341811b6429577c3",
-  "name": "incididunt aliquip aliquip",
-  "size": "Small"
-}, {
-  "id": "5507c052089b0968cb58de59",
-  "name": "veniam et Lorem",
-  "size": "Small"
-}, {
-  "id": "5507c0524bdb62dca52c0943",
-  "name": "fugiat esse consectetur",
-  "size": "Large"
-}, {
-  "id": "5507c0524f9611ea15963c20",
-  "name": "do excepteur occaecat",
-  "size": "Large"
-}, {
-  "id": "5507c052958a89ff83da7df1",
-  "name": "irure pariatur irure",
-  "size": "Medium"
-}, {
-  "id": "5507c0525566ad2cd006b31a",
-  "name": "veniam ut veniam",
-  "size": "Medium"
-}, {
-  "id": "5507c05231dcc890c5c25dc7",
-  "name": "reprehenderit nulla eiusmod",
-  "size": "Large"
-}, {
-  "id": "5507c05265bf7b373ee75105",
-  "name": "id ullamco id",
-  "size": "Small"
-}, {
-  "id": "5507c052a64af7c2f1a9a28b",
-  "name": "est esse voluptate",
-  "size": "Small"
-}, {
-  "id": "5507c0529fecf0d2ff679c24",
-  "name": "reprehenderit sunt proident",
-  "size": "Large"
-}, {
-  "id": "5507c052b2382a6259ecd4ca",
-  "name": "dolore velit enim",
-  "size": "Small"
-}, {
-  "id": "5507c05225dccd4c70999902",
-  "name": "enim et nulla",
-  "size": "Small"
-}];
-
-module.exports = testData;
-
-},{}],184:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash'),
-    testData = require('./support/test-data.js'),
-    exampleOutput = require('./support/example-output.js'),
-    tagsMarkdown = require('../markdown/js/examples/tags-example').body;
-
-var handlerExample = function handlerExample(options) {
-  var output = [];
-  _.map(options, function (option) {
-    output = output.concat(['Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
-  });
-
-  exampleOutput('tags_example_output', output.join(''));
-};
-
-var tagsExample = {
-
-  nameAttr: 'tags_example',
-  displayName: 'Tags',
-
-  props: {
-    placeholder: 'Make Your Selections',
-    dataSource: testData,
-    initialValue: [testData[0], testData[1]],
-    onChange: handlerExample,
-    tags: true
-  },
-
-  renderString: tagsMarkdown
-
-};
-
-module.exports = tagsExample;
-
-},{"../markdown/js/examples/tags-example":171,"./support/example-output.js":181,"./support/test-data.js":183,"lodash":3}]},{},[161])
+},{"./lib/React":57}]},{},[5])
