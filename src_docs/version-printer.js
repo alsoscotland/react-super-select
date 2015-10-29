@@ -1,4 +1,4 @@
-var RSS_VERSION = "0.1.18";
+var RSS_VERSION = "0.1.19";
 var React = require('react');
 
 var VersionPrinter = React.createClass({
