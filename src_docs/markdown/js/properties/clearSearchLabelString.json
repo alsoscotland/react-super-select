@@ -1,0 +1,1 @@
+{"body":"<!-- clearSearchLabelString -->\n<p>(<strong>clearSearchLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option - which defaults to true)</p>\n<p>This string will be used as an aria-label for the clear search button when a user has entered a value into the search field (for accesibility).</p>\n"}

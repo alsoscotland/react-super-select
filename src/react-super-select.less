@@ -4,6 +4,8 @@
 @palestGrey: rgba(51, 51, 51, .10);
 @lightGreyBackground: #EDEDED;
 @lightGreyBorder: #9e9e9e;
+@greyButtonBackground: #ccc;
+@greyButtonHoverBackground: #eee;
 @black: #000;
 @focusBlue: rgba(0, 136, 204, .1);
 @yellow: #FFD;
@@ -18,16 +20,15 @@
 @borderSelected: @black;
 @selectedBackground: @yellow;
 @slightBorder: @palestGrey;
-@inputWithIconPadding: 18px;
 @selectedLabelBorder: @lightGreyBorder;
 
 @tagBackgroundColor: @lightGreyBackground;
 @tagColor: @paleGreyFallback;
 @tagShadowColor: @paleGreyFallback;
-@removeButtonBackground: @white;
+@removeButtonBackground: @greyButtonBackground;
 @removeButtonColor: @paleGreyFallback;
-@removeButtonHoverBackground: @red;
-@removeButtonHoverColor: @white;
+@removeButtonHoverBackground: @greyButtonHoverBackground;
+@removeButtonHoverColor: @black;
 @tagRemoveBorderColor: @black;
 @tagBorderRadius: 4px;
 @removeButtonBorderRadius: 2px;
@@ -55,6 +56,8 @@
 .r-ss-remove-button {
   opacity: .25;
   position: absolute;
+  width: 14px;
+  height: 14px;
   padding: 0;
   color: @removeButtonColor;
   background-color: @removeButtonBackground;
@@ -112,7 +115,7 @@
   cursor: pointer;
   display: block;
   line-height: 30px;
-  padding: .25rem @inputWithIconPadding .25rem .25rem;
+  padding: .25rem 50px .25rem .25rem;
   border-color: @borderFallback;
   border: 1px solid @border;
   text-decoration: none;
@@ -148,23 +151,10 @@
   }
 
   .r-ss-selection-clear {
-    display: inline-block;
-    padding: .25rem;
-    margin: 0 .25rem;
-    color: @removeButtonColor;
-    background-color: @removeButtonBackground;
-    font-size: 12px;
-    border: 1px solid @removeButtonColor;
-    cursor: pointer;
-    z-index: 1;
-    .border-radius(@removeButtonBorderRadius, @removeButtonBorderRadius, @removeButtonBorderRadius, @removeButtonBorderRadius);
-
-    &:hover,
-    &:focus {
-      color: @removeButtonHoverColor;
-      background-color: @removeButtonHoverBackground;
-    }
-
+    position: absolute;
+    top: 13px;
+    right: 32px;
+    .r-ss-remove-button;
   }
 
   .carat {
@@ -206,11 +196,11 @@
     outline: none;
     width: 100%;
     height: 30px;
-    padding: .25rem @inputWithIconPadding .25rem .25rem;
+    padding: .25rem 18px .25rem .25rem;
   }
 
   .r-ss-search-clear {
-    top: 7px;
+    top: 8px;
     right: 28px;
     width: 18px;
     height: 18px;
@@ -394,8 +384,6 @@
   .r-ss-tag-remove {
     top: 2px;
     right: 2px;
-    width: 14px;
-    height: 14px;
     .r-ss-remove-button;
   }
 }

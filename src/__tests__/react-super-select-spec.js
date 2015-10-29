@@ -173,6 +173,89 @@ describe('ReactSuperSelect', function() {
     });
   });
 
+  describe('clearSelection button', function() {
+
+    it('does not render clear selection button when nothing is selected', function() {
+      var el = renderComponent({
+        dataSource: {
+          collection: mockData
+        },
+        multiple: true
+      });
+
+      expect(el.refs.selectionClear).toBeUndefined();
+    });
+
+    it('does not render clear selection button when clearable is false', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          clearable: false,
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      expect(el.refs.selectionClear).toBeUndefined();
+    });
+
+    it('renders clear selection button when values are selected', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      expect(el.refs.selectionClear).toBeTruthy();
+    });
+
+    it('clears selection when clear selection button is clicked', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      TestUtils.Simulate.click(el.refs.selectionClear, {type: 'click'});
+      expect(_.isEmpty(el.state.value)).toBe(true);
+    });
+
+    it('clears selection when clear selection button receives space-bar keyDown', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+        which: el.keymap.space
+      });
+      expect(_.isEmpty(el.state.value)).toBe(true);
+    });
+
+    it('clears selection when clear selection button receives enter keyDown', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+        which: el.keymap.space
+      });
+      expect(_.isEmpty(el.state.value)).toBe(true);
+    });
+
+  });
+
   describe('initialValue', function() {
     it('will preselect an array of options provided to the initialValue prop', function() {
       var el = renderComponent({
@@ -517,6 +600,74 @@ describe('ReactSuperSelect', function() {
 
       expect(optionElements.length).toBe(2);
     });
+
+    it('does not render a clear search button when search is not set', function() {
+      var el = renderAndOpen({
+        'searchable': true
+      });
+      el.setState({
+        'isOpen': true,
+        'searchString': undefined
+      });
+
+      expect(el.refs.searchClear).toBeUndefined();
+    });
+
+    it('renders a clear search button when search is set', function() {
+      var el = renderAndOpen({
+        'searchable': true
+      });
+
+      el.setState({
+        'isOpen': true,
+        'searchString': 'whatzit'
+      });
+
+      expect(el.refs.searchClear).toBeTruthy();
+    });
+
+    it('clears search value when clearSearch is clicked', function() {
+      var el = renderAndOpen({
+        'searchable': true
+      });
+
+      el.setState({
+        'isOpen': true,
+        'searchString': 'whatzit'
+      });
+
+      TestUtils.Simulate.click(el.refs.searchClear);
+      expect(el.state.searchString).toBeUndefined();
+    });
+
+    it('clears search value when clearSearch is clicked', function() {
+      var el = renderAndOpen({
+        'searchable': true
+      });
+
+      el.setState({
+        'isOpen': true,
+        'searchString': 'whatzit'
+      });
+
+      TestUtils.Simulate.click(el.refs.searchClear);
+      expect(el.state.searchString).toBeUndefined();
+    });
+
+    it('clears search value when clearSearch handles a keyDown event', function() {
+      var el = renderAndOpen({
+        'searchable': true
+      });
+
+      el.setState({
+        'isOpen': true,
+        'searchString': 'whatzit'
+      });
+
+      TestUtils.Simulate.keyDown(el.refs.searchClear);
+      expect(el.state.searchString).toBeUndefined();
+    });
+
   });
 
   describe('single item selection', function() {
@@ -580,6 +731,45 @@ describe('ReactSuperSelect', function() {
 
           return el;
         };
+
+    describe('remove buttons have focusability and keyboard enabled traversal', function() {
+      it('moves focus from trigger to remove buttons', function() {
+        var el = getElWithThreeTags(),
+            removeButtons = TestUtils.scryRenderedDOMComponentsWithTag(el.refs.triggerDiv, 'button');
+
+        el.setState({
+          isOpen: false
+        });
+
+        el.refs.triggerDiv.getDOMNode().focus();
+
+        TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+          which: el.keymap.tab
+        });
+
+        expect(document.activeElement).toBe(removeButtons[0].getDOMNode());
+
+        TestUtils.Simulate.keyDown(removeButtons[0].getDOMNode(), {
+          which: el.keymap.tab
+        });
+
+        expect(document.activeElement).toBe(removeButtons[1].getDOMNode());
+
+        TestUtils.Simulate.keyDown(removeButtons[1].getDOMNode(), {
+          which: el.keymap.tab,
+          shiftKey: true
+        });
+
+        expect(document.activeElement).toBe(removeButtons[0].getDOMNode());
+
+        TestUtils.Simulate.keyDown(removeButtons[0].getDOMNode(), {
+          which: el.keymap.tab,
+          shiftKey: true
+        });
+
+        expect(document.activeElement).toBe(el.refs.triggerDiv.getDOMNode());
+      });
+    });
 
     it('selects multiple items by ctrl or meta-key click', function() {
       var el = renderAndOpen({
