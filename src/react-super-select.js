@@ -277,6 +277,12 @@ var ReactSuperSelect = React.createClass({
       this.setState(newState);
     }
   },
+  componentDidMount: function() {
+    var self = this;
+    document.addEventListener('click', function(event){
+      self._closeDropdow(event);
+    });
+  },
 
   // Update focused element after re-render
   componentDidUpdate: function() {
@@ -787,7 +793,6 @@ var ReactSuperSelect = React.createClass({
         tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
     tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
-
     return (
       <span className={tagWrapClass} key={tagKey}>
         <span className="r-ss-tag-label">{label}</span>
@@ -862,6 +867,15 @@ var ReactSuperSelect = React.createClass({
     this._arrestEvent(event);
     var searchString = event.target.value;
     this._handleSearchDebounced.call(this, searchString);
+  },
+
+  _closeDropdow: function(event) {
+    if(this.state.isOpen && !event.target.isSameNode(this.refs.triggerDiv) 
+      && !event.target.isSameNode(this.refs.searchInput)) {
+      this.setState({
+        'isOpen': !this.state.isOpen,
+      });
+    }
   },
 
   // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
