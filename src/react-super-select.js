@@ -277,6 +277,12 @@ var ReactSuperSelect = React.createClass({
       this.setState(newState);
     }
   },
+  componentDidMount: function() {
+    var self = this;
+    document.addEventListener('click', function(event){
+      self._closeDropdow(event);
+    });
+  },
 
   // Update focused element after re-render
   componentDidUpdate: function() {
@@ -353,7 +359,7 @@ var ReactSuperSelect = React.createClass({
     var ariaActiveDescendantId = null,
         optionRef = this._getFocusedOptionKey();
     if (this.refs[optionRef]) {
-      ariaActiveDescendantId = this.refs[optionRef].props.id;
+      ariaActiveDescendantId = this.refs[optionRef].id;
     }
     return ariaActiveDescendantId;
   },
@@ -522,8 +528,8 @@ var ReactSuperSelect = React.createClass({
   _focusDOMOption: function() {
     var optionRef = this._getFocusedOptionKey();
     if (this.refs[optionRef]) {
-      if (_.isFunction(this.refs[optionRef].getDOMNode().focus)) {
-        this.refs[optionRef].getDOMNode().focus();
+      if (_.isFunction(this.refs[optionRef].focus)) {
+        this.refs[optionRef].focus();
       }
     }
   },
@@ -531,14 +537,14 @@ var ReactSuperSelect = React.createClass({
   // focus the dropdown's search field if it exists
   _focusSearch: function() {
     if (this.refs.searchInput) {
-      this.refs.searchInput.getDOMNode().focus();
+      this.refs.searchInput.focus();
     }
   },
 
   // shift focus from dropdown trigger to any removal/clear buttons
   // for keyboard navigation and accessibility
   _focusRemovalButtons: function(event) {
-    var triggerContainer = this.refs.triggerDiv.getDOMNode(),
+    var triggerContainer = this.refs.triggerDiv,
         buttons = triggerContainer.getElementsByTagName('button'),
         currentlyFocusedRemoveButtonIndex,
         nextButtonIndexToFocus;
@@ -567,7 +573,7 @@ var ReactSuperSelect = React.createClass({
   // focus the main trigger element of the control
   _focusTrigger: function() {
     if (this.refs.triggerDiv) {
-      this.refs.triggerDiv.getDOMNode().focus();
+      this.refs.triggerDiv.focus();
     }
   },
 
@@ -787,7 +793,6 @@ var ReactSuperSelect = React.createClass({
         tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
     tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
-
     return (
       <span className={tagWrapClass} key={tagKey}>
         <span className="r-ss-tag-label">{label}</span>
@@ -864,6 +869,15 @@ var ReactSuperSelect = React.createClass({
     this._handleSearchDebounced.call(this, searchString);
   },
 
+  _closeDropdow: function(event) {
+    if(this.state.isOpen && !event.target.isSameNode(this.refs.triggerDiv) 
+      && !event.target.isSameNode(this.refs.searchInput)) {
+      this.setState({
+        'isOpen': !this.state.isOpen,
+      });
+    }
+  },
+
   // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
   _handleSearchDebounced: _.debounce(function(search) {
     this.setState({
@@ -889,7 +903,7 @@ var ReactSuperSelect = React.createClass({
     if (!this.refs.searchInput || (event.which === this.keymap.down) || ((event.which === this.keymap.up) && event.altKey) || (event.which === this.keymap.esc)) {
       return false;
     }
-    return (event.target === this.refs.searchInput.getDOMNode());
+    return (event.target === this.refs.searchInput);
   },
 
   // Render the option list-items.
@@ -1021,7 +1035,7 @@ var ReactSuperSelect = React.createClass({
       return;
     }
 
-    var wrap = this.refs.scrollWrap.getDOMNode();
+    var wrap = this.refs.scrollWrap;
 
     if ((wrap.scrollTop + wrap.offsetHeight) >= wrap.scrollHeight) {
       this.setState({
@@ -1069,7 +1083,7 @@ var ReactSuperSelect = React.createClass({
       option = this.refs[refString];
       if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
         // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
-        if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getDOMNode().getAttribute('data-option-value')) {
+        if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getAttribute('data-option-value')) {
           valuePropsToReject.push(option.props['data-option-value']);
         }
       }
@@ -1183,7 +1197,7 @@ var ReactSuperSelect = React.createClass({
       // store as last userSelected
       this.lastUserSelectedOption = eventTargetLi;
 
-      if (this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].props.className)) {
+      if (this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].className)) {
         var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
         this._removeSelectedOptionByValue(optionFullFromValueProp);
       } else {
@@ -1261,8 +1275,8 @@ var ReactSuperSelect = React.createClass({
         firstTag = this.refs[this._getTagRemoveIndex(firstValue)];
 
     if (firstTag) {
-      if (_.isFunction(firstTag.getDOMNode().focus)) {
-        firstTag.getDOMNode().focus();
+      if (_.isFunction(firstTag.focus)) {
+        firstTag.focus();
         return true;
       }
     }
