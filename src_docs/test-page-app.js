@@ -1,6 +1,6 @@
 var _ = require('lodash'),
-    classNames = require('classnames'),
     React = require('react'),
+    ReactDOM = require('react-dom'),
     ReactSuperSelect = require('../src/react-super-select'),
     TestPageExampleOptionTemplate = require('./super-selects/support/test-page-example-option-template');
 
@@ -82,4 +82,4 @@ var RSSTestPageApp = React.createClass({
   }
 });
 
-React.render(<RSSTestPageApp />, document.getElementById('test_page_app'));
+ReactDOM.render(<RSSTestPageApp />, document.getElementById('test_page_app'));

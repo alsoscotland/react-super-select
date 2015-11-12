@@ -10,11 +10,11 @@ module.exports = function(gulp, config) {
     'watch:examples-lint'
   ]);
 
-  // tasks linting and watching acts as standalone
   gulp.task('lint:tasks', function() {
     return gulp.src(config.tasks.lint.js)
-      .pipe(jshint())
-      .pipe(jshint.reporter('jshint-stylish'));
+      .pipe(eslint())
+      .pipe(eslint.format())
+      .pipe(eslint.failOnError());
   });
 
   gulp.task('watch:tasks', [

@@ -12,6 +12,7 @@ var _ = require('lodash'),
 //  - [Lodash](https://lodash.com/)
 //  - [classnames](https://www.npmjs.com/package/classnames)
 //  - [React](https://facebook.github.io/react/index.html)
+//  - [React-DOM](https://facebook.github.io/react/index.html)
 
 var ReactSuperSelect = React.createClass({
 
@@ -720,6 +721,16 @@ var ReactSuperSelect = React.createClass({
     return options;
   },
 
+  // get the data-option-value attribute for an option node
+  // convert to numeric (data-attrs cast to strings) if:
+  // the conversion does not alter the string representation's value
+  _getOptionValueFromDataAttr: function(optionNode) {
+    var optionValue = optionNode.getAttribute('data-option-value');
+
+    optionValue = (+optionValue + "" === optionValue) ? +optionValue : optionValue;
+    return optionValue;
+  },
+
   // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
   _getPagingLi: function() {
     return(<li key="page_loading" className="r-ss-page-fetch-indicator" tabIndex="-1">
@@ -1067,10 +1078,10 @@ var ReactSuperSelect = React.createClass({
     for (var i = start; i <= end; i++) {
       var refString = 'option_' + i,
       option = this.refs[refString];
-      if (this.SELECTED_OPTION_REGEX.test(option.props.className)) {
+      if (this.SELECTED_OPTION_REGEX.test(option.getAttribute("class"))) {
         // do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select
         if (this.lastUserSelectedOption.getAttribute('data-option-value') !== option.getAttribute('data-option-value')) {
-          valuePropsToReject.push(option.props['data-option-value']);
+          valuePropsToReject.push(this._getOptionValueFromDataAttr(option));
         }
       }
     }
@@ -1135,8 +1146,8 @@ var ReactSuperSelect = React.createClass({
     for (var i = start; i <= end; i++) {
       var refString = 'option_' + i,
       option = this.refs[refString];
-      if (!this.SELECTED_OPTION_REGEX.test(option.props.className)) {
-        valuePropsToSelect.push(option.props['data-option-value']);
+      if (!this.SELECTED_OPTION_REGEX.test(option.getAttribute("class"))) {
+        valuePropsToSelect.push(this._getOptionValueFromDataAttr(option));
       }
     }
 
@@ -1178,7 +1189,7 @@ var ReactSuperSelect = React.createClass({
 
     var focusedOptionKey = this._getFocusedOptionKey();
     if (this.refs[focusedOptionKey]) {
-      var optionValue = this.refs[focusedOptionKey].props['data-option-value'];
+      var optionValue = this._getOptionValueFromDataAttr(this.refs[focusedOptionKey]);
 
       // store as last userSelected
       this.lastUserSelectedOption = eventTargetLi;

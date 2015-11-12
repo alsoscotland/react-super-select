@@ -1,6 +1,6 @@
 var _ = require('lodash'),
-    classNames = require('classnames'),
-    React = require('react');
+    React = require('react'),
+    ReactDOM = require('react-dom');
 
 var allKeys = require('./all-keys');
 
@@ -49,4 +49,4 @@ var KeyboardNavigationApp = React.createClass({
 });
 
 module.exports = KeyboardNavigationApp;
-React.render(<KeyboardNavigationApp />, document.getElementById('keyboard_docs'));
+ReactDOM.render(<KeyboardNavigationApp />, document.getElementById('keyboard_docs'));
