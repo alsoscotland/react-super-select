@@ -2,10 +2,11 @@ jest.dontMock('lodash');
 jest.dontMock('../react-super-select.js');
 
 describe('ReactSuperSelect', function() {
-  var React = require('react/addons'),
-      _ = require('lodash'),
+  var _ = require('lodash'),
+      React = require('react'),
+      ReactDOM = require('react-dom'),
       ReactSuperSelect = require('../react-super-select.js'),
-      TestUtils = React.addons.TestUtils;
+      TestUtils = require('react-addons-test-utils');
 
   var renderComponent = function(userProps) {
     var props = _.extend({}, {
@@ -22,14 +23,6 @@ describe('ReactSuperSelect', function() {
       isOpen: true
     });
     return el;
-  };
-
-  var mockFocusForTriggerDiv = function(el) {
-    var triggerNode = el.refs.triggerDiv.getDOMNode();
-    // jest does not support focus for non-traditionally focusable tags in virtual DOM nodes,
-    // it should when they have tabIndex? Possible Bug?
-    triggerNode.focus = jest.genMockFunction();
-    return triggerNode;
   };
 
   var mockData = [
@@ -50,19 +43,15 @@ describe('ReactSuperSelect', function() {
     });
 
     it('will render', function() {
-      expect(el.getDOMNode()).toBeTruthy();
+      expect(ReactDOM.findDOMNode(el)).toBeTruthy();
     });
 
     it('will render the trigger div', function() {
-      var trigger = el.refs.triggerDiv;
-
-      expect(trigger.getDOMNode()).toBeTruthy();
+      expect(el.refs.triggerDiv).toBeTruthy();
     });
 
     it('will render the carat span', function() {
-      var carat = el.refs.carat;
-
-      expect(carat.getDOMNode()).toBeTruthy();
+      expect(el.refs.carat).toBeTruthy();
     });
 
     it('carat span has up class when open', function() {
@@ -71,8 +60,8 @@ describe('ReactSuperSelect', function() {
         'isOpen': false
       });
 
-      expect(carat.props.className.indexOf('up')).toBe(-1);
-      expect(carat.props.className.indexOf('down')).toBeGreaterThan(-1);
+      expect(carat.getAttribute("class").indexOf('up')).toBe(-1);
+      expect(carat.getAttribute("class").indexOf('down')).toBeGreaterThan(-1);
     });
 
     it('carat span has down class when closed', function() {
@@ -81,18 +70,18 @@ describe('ReactSuperSelect', function() {
         'isOpen': true
       });
 
-      expect(carat.props.className.indexOf('down')).toBe(-1);
-      expect(carat.props.className.indexOf('up')).toBeGreaterThan(-1);
+      expect(carat.getAttribute("class").indexOf('down')).toBe(-1);
+      expect(carat.getAttribute("class").indexOf('up')).toBeGreaterThan(-1);
     });
 
     it('trigger value display will show placeholder if provided', function() {
       var triggerDiv = el.refs.triggerDiv;
-      expect(triggerDiv.props.children[0]).toBe('I am a placeholder');
+      expect(triggerDiv.childNodes[0].textContent).toBe('I am a placeholder');
     });
 
     it('adds placeholder display class when value unset', function() {
       var triggerDiv = el.refs.triggerDiv;
-      expect(triggerDiv.props.className.indexOf('r-ss-placeholder')).toBeGreaterThan(-1);
+      expect(triggerDiv.getAttribute("class").indexOf('r-ss-placeholder')).toBeGreaterThan(-1);
     });
 
     it('does not add placeholder display class when value set', function() {
@@ -101,7 +90,7 @@ describe('ReactSuperSelect', function() {
         value: ['foo']
       });
 
-      expect(triggerDiv.props.className.indexOf('r-ss-placeholder')).toBe(-1);
+      expect(triggerDiv.getAttribute("class").indexOf('r-ss-placeholder')).toBe(-1);
     });
 
     it('does not render dropdown when isOpen is false', function() {
@@ -113,13 +102,13 @@ describe('ReactSuperSelect', function() {
     it('adds required aria attributes to the triggerDiv', function() {
       var el = renderComponent();
 
-      expect(el.refs.triggerDiv.props.role).toBe('combobox');
-      expect(el.refs.triggerDiv.props['aria-activedescendant']).not.toBeUndefined();
-      expect(el.refs.triggerDiv.props['aria-haspopup']).toBe(true);
-      expect(el.refs.triggerDiv.props['aria-controls']).toBe(el._ariaGetListId());
-      expect(_.isString(el.refs.triggerDiv.props['aria-label'])).toBe(true);
-      expect(el.refs.triggerDiv.props['aria-multiselectable']).toBe(el._isMultiSelect());
-      expect(el.refs.triggerDiv.props.tabIndex).toBe('1');
+      expect(el.refs.triggerDiv.getAttribute("role")).toBe('combobox');
+      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).not.toBeUndefined();
+      expect(el.refs.triggerDiv.getAttribute("aria-haspopup")).toBeTruthy();
+      expect(el.refs.triggerDiv.getAttribute("aria-controls")).toBe(el._ariaGetListId());
+      expect(_.isString(el.refs.triggerDiv.getAttribute("aria-label"))).toBe(true);
+      expect(Boolean(el.refs.triggerDiv.getAttribute("aria-multiselectable"))).toBe(Boolean(el._isMultiSelect()));
+      expect(el.refs.triggerDiv.getAttribute("tabIndex")).toBe('1');
     });
 
     it('triggerDiv tracks focused option as aria-active-descendant', function() {
@@ -127,10 +116,10 @@ describe('ReactSuperSelect', function() {
         dataSource: mockData
       });
 
-      expect(el.refs.triggerDiv.props['aria-activedescendant']).toBe(null);
+      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).toBeFalsy();
       el._updateFocusedId(0);
-      expect(el.refs.triggerDiv.props['aria-activedescendant']).toBeTruthy();
-      expect(el.refs.triggerDiv.props['aria-activedescendant']).toBe(el._ariaGetActiveDescendentId());
+      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).toBeTruthy();
+      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).toBe(el._ariaGetActiveDescendentId());
     });
 
     it('adds required aria attributes to the dropdownList', function() {
@@ -138,10 +127,10 @@ describe('ReactSuperSelect', function() {
         dataSource: mockData
       });
 
-      expect(el.refs.dropdownOptionsList.props.role).toBe('listbox');
-      expect(el.refs.dropdownOptionsList.props.id).toBe(el._ariaGetListId());
-      expect(el.refs.dropdownOptionsList.props['aria-expanded']).toBe(el.state.isOpen);
-      expect(el.refs.dropdownOptionsList.props.tabIndex).toBe('-1');
+      expect(el.refs.dropdownOptionsList.getAttribute("role")).toBe('listbox');
+      expect(el.refs.dropdownOptionsList.getAttribute("id")).toBe(el._ariaGetListId());
+      expect(el.refs.dropdownOptionsList.getAttribute("aria-expanded")).toBeTruthy();
+      expect(el.refs.dropdownOptionsList.getAttribute("tabIndex")).toBe('-1');
     });
 
     it('adds required aria attributes to the searchInput', function() {
@@ -150,8 +139,8 @@ describe('ReactSuperSelect', function() {
         searchable: true
       });
 
-      expect(el.refs.searchInput.props['aria-labelledby']).toBe(el.refs.searchInputLabel.props.id);
-      expect(el.refs.searchInput.props['aria-autocomplete']).toBe('list');
+      expect(el.refs.searchInput.getAttribute('aria-labelledby')).toBe(el.refs.searchInputLabel.getAttribute("id"));
+      expect(el.refs.searchInput.getAttribute('aria-autocomplete')).toBe('list');
     });
 
     it('adds aria-selected attribute to all options', function() {
@@ -159,17 +148,16 @@ describe('ReactSuperSelect', function() {
         dataSource: mockData
       });
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
-      mockFocusForTriggerDiv(el);
 
       TestUtils.Simulate.click(options[1]);
       el.toggleDropdown();
       options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
-      expect(options[0].props['aria-selected']).toBe(false);
-      expect(options[1].props['aria-selected']).toBe(true);
-      expect(options[2].props['aria-selected']).toBe(false);
-      expect(options[3].props['aria-selected']).toBe(false);
-      expect(options[4].props['aria-selected']).toBe(false);
+      expect(options[0].getAttribute("aria-selected")).toBe('false');
+      expect(options[1].getAttribute("aria-selected")).toBe('true');
+      expect(options[2].getAttribute("aria-selected")).toBe('false');
+      expect(options[3].getAttribute("aria-selected")).toBe('false');
+      expect(options[4].getAttribute("aria-selected")).toBe('false');
     });
   });
 
@@ -328,17 +316,17 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on trigger click', function() {
-      TestUtils.Simulate.click(el.refs.triggerDiv.getDOMNode(), {});
+      TestUtils.Simulate.click(el.refs.triggerDiv, {});
 
       expect(el.state.isOpen).toBe(true);
 
-      TestUtils.Simulate.click(el.refs.triggerDiv.getDOMNode(), {});
+      TestUtils.Simulate.click(el.refs.triggerDiv, {});
 
       expect(el.state.isOpen).toBe(false);
     });
 
     it('toggles dropdown on keypress of down arrow', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.down
       });
 
@@ -346,7 +334,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on alt-keypress of down arrow', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         altKey: true,
         which: el.keymap.down
       });
@@ -355,7 +343,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on keypress of space bar', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.space
       });
 
@@ -363,7 +351,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on keypress of enter key', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.enter
       });
 
@@ -371,7 +359,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on keypress of space key', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.space
       });
 
@@ -380,29 +368,27 @@ describe('ReactSuperSelect', function() {
 
     it('closes dropdown on keypress of esc key', function() {
       el.toggleDropdown();
-      var triggerNode = mockFocusForTriggerDiv(el);
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.esc
       });
 
       expect(el.state.isOpen).toBe(false);
-      expect(triggerNode.focus.mock.calls.length).toBe(1);
+      expect(document.activeElement).toBe(el.refs.triggerDiv);
     });
 
     it('closes dropdown on keypress of alt-up arrow', function() {
       el.setState({
         isOpen: true
       });
-      var triggerNode = mockFocusForTriggerDiv(el);
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.up,
         altKey: true
       });
 
       expect(el.state.isOpen).toBe(false);
-      expect(triggerNode.focus.mock.calls.length).toBe(1);
+      expect(document.activeElement).toBe(el.refs.triggerDiv);
     });
 
     it('calls _setFocusOnOpen after opening', function() {
@@ -419,12 +405,12 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent({
         searchable: true
       });
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         altKey: true,
         which: el.keymap.down
       });
 
-      expect(document.activeElement).toBe(el.refs.searchInput.getDOMNode());
+      expect(document.activeElement).toBe(el.refs.searchInput);
     });
 
     it('focuses first option when not searchable and expanded by keypress', function() {
@@ -433,7 +419,7 @@ describe('ReactSuperSelect', function() {
       });
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.down,
         preventDefault: _.noop,
         stopPropagation: _.noop
@@ -447,7 +433,7 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent();
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.home,
         preventDefault: _.noop,
         stopPropagation: _.noop
@@ -461,7 +447,7 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent();
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.end,
         preventDefault: _.noop,
         stopPropagation: _.noop
@@ -474,7 +460,6 @@ describe('ReactSuperSelect', function() {
     it('focuses lastUserSelectedOption when set', function() {
       var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
-      mockFocusForTriggerDiv(el);
 
       TestUtils.Simulate.click(options[3]);
 
@@ -483,7 +468,7 @@ describe('ReactSuperSelect', function() {
 
       expect(focusSpy).toHaveBeenCalled();
       // also verifying that lastUserSelectedOption is set to the correct option
-      expect(options[3].props['data-option-value']).toBe(parseInt(el.lastUserSelectedOption.getAttribute('data-option-value'),10));
+      expect(options[3].getAttribute('data-option-value')).toBe(el.lastUserSelectedOption.getAttribute('data-option-value'));
       expect(el.state.focusedId).toBe(3);
     });
   });
@@ -526,7 +511,7 @@ describe('ReactSuperSelect', function() {
         searchPlaceholder: 'search placeholder'
       });
 
-      expect(el.refs.searchInput.props.placeholder).toBe('search placeholder');
+      expect(el.refs.searchInput.getAttribute("placeholder")).toBe('search placeholder');
     });
 
     it('shows no results content when dataSource empty', function() {
@@ -543,7 +528,7 @@ describe('ReactSuperSelect', function() {
         dataSource: []
       });
 
-      expect(el.refs.noResults.props.children).toBe('blah');
+      expect(el.refs.noResults.textContent).toBe('blah');
     });
   });
 
@@ -551,7 +536,7 @@ describe('ReactSuperSelect', function() {
     it('renders the default list item content when no template is provided', function() {
       var el = renderAndOpen();
 
-      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
       expect(optionElements.length).toBe(mockData.length);
     });
@@ -567,7 +552,7 @@ describe('ReactSuperSelect', function() {
         isOpen: true
       });
 
-      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'custom-option');
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el, 'custom-option');
 
       expect(optionElements.length).toBe(mockData.length);
     });
@@ -580,7 +565,7 @@ describe('ReactSuperSelect', function() {
         'searchString': 'two'
       });
 
-      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
       expect(optionElements.length).toBe(1);
     });
@@ -596,7 +581,7 @@ describe('ReactSuperSelect', function() {
         'searchString': 'whatzit'
       });
 
-      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, 'r-ss-dropdown-option');
+      var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
       expect(optionElements.length).toBe(2);
     });
@@ -674,7 +659,6 @@ describe('ReactSuperSelect', function() {
     it('selects item by click', function() {
       var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
-      mockFocusForTriggerDiv(el);
 
       TestUtils.Simulate.click(options[1]);
       expect(el.state.value[0]).toBe(mockData[1]);
@@ -682,7 +666,6 @@ describe('ReactSuperSelect', function() {
 
     it('selects item by keyDown for enter', function() {
       var el = renderAndOpen();
-      mockFocusForTriggerDiv(el);
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
       el._updateFocusedId(0);
 
@@ -697,7 +680,6 @@ describe('ReactSuperSelect', function() {
     it('selects item by keyDown for space bar', function() {
       var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
-      mockFocusForTriggerDiv(el);
 
       el._updateFocusedId(0);
 
@@ -735,39 +717,39 @@ describe('ReactSuperSelect', function() {
     describe('remove buttons have focusability and keyboard enabled traversal', function() {
       it('moves focus from trigger to remove buttons', function() {
         var el = getElWithThreeTags(),
-            removeButtons = TestUtils.scryRenderedDOMComponentsWithTag(el.refs.triggerDiv, 'button');
+            removeButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');
 
         el.setState({
           isOpen: false
         });
 
-        el.refs.triggerDiv.getDOMNode().focus();
+        el.refs.triggerDiv.focus();
 
-        TestUtils.Simulate.keyDown(el.refs.triggerDiv.getDOMNode(), {
+        TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
           which: el.keymap.tab
         });
 
-        expect(document.activeElement).toBe(removeButtons[0].getDOMNode());
+        expect(document.activeElement).toBe(removeButtons[0]);
 
-        TestUtils.Simulate.keyDown(removeButtons[0].getDOMNode(), {
+        TestUtils.Simulate.keyDown(removeButtons[0], {
           which: el.keymap.tab
         });
 
-        expect(document.activeElement).toBe(removeButtons[1].getDOMNode());
+        expect(document.activeElement).toBe(removeButtons[1]);
 
-        TestUtils.Simulate.keyDown(removeButtons[1].getDOMNode(), {
+        TestUtils.Simulate.keyDown(removeButtons[1], {
           which: el.keymap.tab,
           shiftKey: true
         });
 
-        expect(document.activeElement).toBe(removeButtons[0].getDOMNode());
+        expect(document.activeElement).toBe(removeButtons[0]);
 
-        TestUtils.Simulate.keyDown(removeButtons[0].getDOMNode(), {
+        TestUtils.Simulate.keyDown(removeButtons[0], {
           which: el.keymap.tab,
           shiftKey: true
         });
 
-        expect(document.activeElement).toBe(el.refs.triggerDiv.getDOMNode());
+        expect(document.activeElement).toBe(el.refs.triggerDiv);
       });
     });
 
@@ -991,7 +973,6 @@ describe('ReactSuperSelect', function() {
     describe('shift-click multi-selection', function() {
       it('selects only the clicked option if non-multi select', function() {
         var el = renderAndOpen({});
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
         TestUtils.Simulate.click(options[0], {
@@ -1024,7 +1005,6 @@ describe('ReactSuperSelect', function() {
         var el = renderAndOpen({
           tags: true
         });
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
         TestUtils.Simulate.click(options[3], {
@@ -1053,7 +1033,6 @@ describe('ReactSuperSelect', function() {
         var el = renderAndOpen({
           tags: true
         });
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
@@ -1093,7 +1072,6 @@ describe('ReactSuperSelect', function() {
         var el = renderAndOpen({
           tags: true
         });
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
@@ -1133,7 +1111,6 @@ describe('ReactSuperSelect', function() {
         var el = renderAndOpen({
           tags: true
         });
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
         TestUtils.Simulate.click(options[0], {
@@ -1162,7 +1139,6 @@ describe('ReactSuperSelect', function() {
         var el = renderAndOpen({
           tags: true
         });
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
         TestUtils.Simulate.click(options[0], {
@@ -1189,7 +1165,6 @@ describe('ReactSuperSelect', function() {
         var el = renderAndOpen({
           tags: true
         });
-        mockFocusForTriggerDiv(el);
 
         var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
         TestUtils.Simulate.click(options[0], {
@@ -1220,7 +1195,7 @@ describe('ReactSuperSelect', function() {
         customClass: 'yoClass'
       });
 
-      expect(el.refs.rssControl.props.className).toMatch(/yoClass/);
+      expect(el.refs.rssControl.getAttribute("class")).toMatch(/yoClass/);
     });
 
     it('renders tags with custom wrapper class when customTagClass provided', function() {
@@ -1235,7 +1210,7 @@ describe('ReactSuperSelect', function() {
       }, options[1].id);
 
       var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
-      expect(tags[0].props.className).toMatch(/yoTagClass/);
+      expect(tags[0].getAttribute("class")).toMatch(/yoTagClass/);
     });
 
     it('renders items in groups with customGroupHeadingClass', function() {
@@ -1282,13 +1257,13 @@ describe('ReactSuperSelect', function() {
     it('renders spinner when fetching ajax data', function() {
       el.toggleDropdown();
 
-      expect(el.refs.loader.getDOMNode()).toBeTruthy();
+      expect(el.refs.loader).toBeTruthy();
     });
 
     it('renders spinner with custom class', function() {
       el.toggleDropdown();
 
-      expect(el.refs.loader.props.className).toMatch(/loaditUp/);
+      expect(el.refs.loader.getAttribute("class")).toMatch(/loaditUp/);
     });
 
     it('renders ajax data', function() {
@@ -1308,46 +1283,48 @@ describe('ReactSuperSelect', function() {
 
       expect(el.state.ajaxError).toBe(true);
       expect(el.refs.errorDisplay).toBeTruthy();
-      expect(el.refs.errorDisplay.props.children).toBe('No Data For You!!!');
+      expect(el.refs.errorDisplay.textContent).toBe('No Data For You!!!');
     });
   });
 
   describe('page Fetching functionality', function() {
     var el,
+        hasMorePages = jest.genMockFunction(),
         scrollNode,
         mockAjaxThen;
 
     beforeEach(function() {
       mockAjaxThen = jest.genMockFunction();
+      hasMorePages.mockClear();
       el = renderAndOpen({
         dataSource: undefined,
-        hasMorePages: jest.genMockFunction(),
+        hasMorePages: hasMorePages,
         pageDataFetch: jest.genMockFunction().mockReturnValue({
           then: mockAjaxThen
         })
       });
-      scrollNode = el.refs.scrollWrap.getDOMNode();
+      scrollNode = el.refs.scrollWrap;
       scrollNode.scrollHeight = 100;
       scrollNode.offsetHeight = 55;
       scrollNode.scrollTop = 50;
     });
 
     it('calls the pageDataFetch handler after scroll threshold is reached', function() {
-      el.props.hasMorePages.mockReturnValue(true);
+      hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
       expect(el.props.pageDataFetch.mock.calls.length).toBe(1);
     });
 
     it('renders a loader during pageDataFetch', function() {
-      el.props.hasMorePages.mockReturnValue(true);
+      hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
       expect(el.refs.loader).toBeTruthy();
     });
 
     it('renders error content on ajax errors', function() {
-      el.props.hasMorePages.mockReturnValue(true);
+      hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
       var promiseErrorCallback = mockAjaxThen.mock.calls[0][1];
@@ -1355,11 +1332,11 @@ describe('ReactSuperSelect', function() {
 
       expect(el.state.ajaxError).toBe(true);
       expect(el.refs.errorDisplay).toBeTruthy();
-      expect(el.refs.errorDisplay.props.children).toBe(el.DEFAULT_LOCALIZATIONS.ajaxErrorString);
+      expect(el.refs.errorDisplay.textContent).toBe(el.DEFAULT_LOCALIZATIONS.ajaxErrorString);
     });
 
     it('does not call the pageDataFetch handler if loader present', function() {
-      el.props.hasMorePages.mockReturnValue(true);
+      hasMorePages.mockReturnValue(true);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
@@ -1367,7 +1344,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('does not call the pageDataFetch handler if pageDataFetchingComplete', function() {
-      el.props.hasMorePages.mockReturnValue(false);
+      hasMorePages.mockReturnValue(false);
       TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
 
       expect(el.props.pageDataFetch.mock.calls.length).toBe(0);
@@ -1418,7 +1395,7 @@ describe('ReactSuperSelect', function() {
         }
       });
 
-      var customHeadings = TestUtils.scryRenderedDOMComponentsWithClass(el.refs.dropdownOptionsList, "custom-heading");
+      var customHeadings = TestUtils.scryRenderedDOMComponentsWithClass(el, "custom-heading");
 
       expect(customHeadings.length).toBe(3);
     });
@@ -1471,7 +1448,6 @@ describe('ReactSuperSelect', function() {
       parent.setState({
         initialValue: optTwo
       });
-      expect(parent.refs.rss.props.initialValue).toBe(optTwo);
       expect(_.isEqual(parent.refs.rss.state.value, [optTwo])).toBe(true);
     });
 

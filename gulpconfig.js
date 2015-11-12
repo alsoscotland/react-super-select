@@ -7,13 +7,6 @@ var COMPONENT_NAME = 'react-super-select';
 // Read the package.json to detect the package name and dependencies
 var pkg = JSON.parse(require('fs').readFileSync('./package.json'));
 
-// Globally-shimmed dependencies from package.json
-// dependencies will need to be available in global scopes by their shimmed values
-var dependencies = [];
-Object.keys(pkg["browserify-shim"]).forEach(function(i) {
-  dependencies.push(i);
-});
-
 module.exports = {
 
   component: {
@@ -25,7 +18,6 @@ module.exports = {
     src: 'src',
     dist: 'dist',
     pkgName: pkg.name,
-    dependencies: dependencies,
     lint: {
       js: [
         './src/**/*-spec.js',

@@ -1,6 +1,6 @@
 var _ = require('lodash'),
-    classNames = require('classnames'),
-    React = require('react');
+    React = require('react'),
+    ReactDOM = require('react-dom');
 
 var allProps = require('./all-props');
 
@@ -56,4 +56,4 @@ var PropsApp = React.createClass({
 });
 
 module.exports = PropsApp;
-React.render(<PropsApp />, document.getElementById('props_docs'));
+ReactDOM.render(<PropsApp />, document.getElementById('props_docs'));

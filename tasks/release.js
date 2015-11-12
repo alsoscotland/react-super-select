@@ -14,9 +14,9 @@ module.exports = function(gulp, config) {
       if (err) {
         throw err;
       }
-      git.push('origin', v, function (err) {
-        if (err) {
-          throw err;
+      git.push('origin', v, function (ERR) {
+        if (ERR) {
+          throw ERR;
         }
         done();
       });

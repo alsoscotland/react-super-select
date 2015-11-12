@@ -1,6 +1,6 @@
 var _ = require('lodash'),
-    classNames = require('classnames'),
     React = require('react'),
+    ReactDOM = require('react-dom'),
     ReactSuperSelect = require('../src/react-super-select');
 
 var allExamples = require('./all-examples');
@@ -62,4 +62,4 @@ var RSSExamples = React.createClass({
   }
 });
 
-React.render(<RSSExamples />, document.getElementById('examples'));
+ReactDOM.render(<RSSExamples />, document.getElementById('examples'));

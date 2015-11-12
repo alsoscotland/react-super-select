@@ -1,5 +1,6 @@
-var RSS_VERSION = "0.1.19";
-var React = require('react');
+var RSS_VERSION = "0.2.0";
+var React = require('react'),
+    ReactDOM = require('react-dom');
 
 var VersionPrinter = React.createClass({
   render: function() {
@@ -8,4 +9,4 @@ var VersionPrinter = React.createClass({
 });
 
 module.exports = VersionPrinter;
-React.render(<VersionPrinter />, document.getElementById('r_ss_version'));
+ReactDOM.render(<VersionPrinter />, document.getElementById('r_ss_version'));
