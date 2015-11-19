@@ -1,6 +1,6 @@
 {
   "name": "react-super-select",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A flexible replacement for the html select control built with React",
   "main": "./lib/react-super-select.js",
   "author": "Scotland Stephenson",
@@ -34,8 +34,9 @@
     ]
   },
   "peerDependencies": {
-    "react": ">=0.14.0",
-    "react-dom": ">=0.14.0"
+    "classnames": "^2.1.5",
+    "lodash": "*",
+    "react": ">=0.14.0"
   },
   "devDependencies": {
     "babel": "^6.0.15",
@@ -47,7 +48,6 @@
     "babel-preset-react": "^6.1.2",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
-    "classnames": "^2.1.5",
     "docco": "^0.7.0",
     "eslint": "^1.6.0",
     "eslint-plugin-react": "^3.5.1",
@@ -79,11 +79,16 @@
     "test": "$(npm bin)/jest",
     "build": "npm run clean && npm run npm:build:css && npm run npm:build:js && npm run bower:copy && npm run docs:build-sequence",
     "clean": "rm -rf ./dist && mkdir ./dist && rm -rf ./lib && mkdir ./lib",
-    "npm:build:js": "$(npm bin)/browserify -x react -x react-dom src/react-super-select.js -d -t babelify -t uglifyify | exorcist dist/react-super-select.js.map > dist/react-super-select.js",
+    "npm:build:js": "$(npm bin)/browserify -x lodash -x classnames -x react src/react-super-select.js -d -t babelify -t uglifyify | exorcist dist/react-super-select.js.map > dist/react-super-select.js",
     "npm:build:css": "lessc ./src/react-super-select.less ./dist/react-super-select.css",
     "docs:build-sequence": "npm run docs:clean && $(npm bin)/gulp build:docs-gulp-sequence",
     "docs:clean": "rm -rf ./src_docs/markdown/js/**/* docs_generated/*",
     "bower:copy": "cp -r ./dist/ ./lib"
+  },
+  "browserify-shim": {
+    "classnames": "global:classNames",
+    "lodash": "global:_",
+    "react": "global:React"
   },
   "readmeFilename": "README.md",
   "keywords": [
