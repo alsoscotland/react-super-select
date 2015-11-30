@@ -12,7 +12,6 @@ var _ = require('lodash'),
 //  - [Lodash](https://lodash.com/)
 //  - [classnames](https://www.npmjs.com/package/classnames)
 //  - [React](https://facebook.github.io/react/index.html)
-//  - [React-DOM](https://facebook.github.io/react/index.html)
 
 var ReactSuperSelect = React.createClass({
 
