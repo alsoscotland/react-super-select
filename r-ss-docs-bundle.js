@@ -32379,7 +32379,7 @@ ReactDOM.render(React.createElement(PropsApp, {
 },{"./all-props":161,"lodash":2,"react":159,"react-dom":3}],237:[function(require,module,exports){
 'use strict';
 
-var RSS_VERSION = "0.2.1";
+var RSS_VERSION = "0.2.2";
 var React = require('react'),
     ReactDOM = require('react-dom');
 
