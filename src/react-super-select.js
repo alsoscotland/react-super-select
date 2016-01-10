@@ -243,6 +243,18 @@ var ReactSuperSelect = React.createClass({
   // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
   lastUserSelectedOption: undefined,
 
+  // wire document click close control handler
+  componentDidMount: function() {
+    document.addEventListener('click', this._handleDocumentClick);
+    document.addEventListener('touchstart', this._handleDocumentClick);
+  },
+
+  // remove binding for document click close control handler
+  componentWillUnmount: function() {
+    document.removeEventListener('click', this._handleDocumentClick);
+    document.removeEventListener('touchstart', this._handleDocumentClick);
+  },
+
   // If parent page updates the data source, reset all control state values which are derived from props.
   // Reset some state defaults and dataSource related fields if dataSource changed.
   componentWillReceiveProps: function(nextProps) {
@@ -564,9 +576,9 @@ var ReactSuperSelect = React.createClass({
 
   },
 
-  // focus the main trigger element of the control
+  // focus the main trigger element of the control if the user is interacting with this control instance
   _focusTrigger: function() {
-    if (this.refs.triggerDiv) {
+    if (this.refs.triggerDiv && this.refs.rssControl.contains(document.activeElement)) {
       this.refs.triggerDiv.focus();
     }
   },
@@ -823,6 +835,13 @@ var ReactSuperSelect = React.createClass({
     }
 
     return options;
+  },
+
+  // close control on document click outside of the control itself
+  _handleDocumentClick: function(event) {
+    if (!this.refs.rssControl.contains(event.target)) {
+      this._closeOnKeypress();
+    }
   },
 
   // main keyDown binding handler for keyboard navigation and selection

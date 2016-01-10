@@ -71,7 +71,7 @@ module.exports = function(gulp, config) {
   gulp.task('docs_watch', [
     'docs_lint-js',
   ], function() {
-    gulp.watch(['./' + config.component.src + '/' + config.component.file], ['build:dist:scripts', 'docs_js_bundled', 'live_examples_js_bundled', 'test_page_js_bundled']);
+    gulp.watch(['./' + config.component.src + '/' + config.component.file], ['compile:js', 'docs_js_bundled', 'live_examples_js_bundled', 'test_page_js_bundled']);
     gulp.watch([config.documentation.lint.js], ['docs_lint-js']);
     gulp.watch([config.documentation.docs_bundle], ['docs_js_bundled']);
     gulp.watch([config.documentation.live_examples_bundle], ['live_examples_js_bundled']);
