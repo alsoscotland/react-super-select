@@ -369,6 +369,8 @@ describe('ReactSuperSelect', function() {
     it('closes dropdown on keypress of esc key', function() {
       el.toggleDropdown();
 
+      el.refs.triggerDiv.focus();
+
       TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.esc
       });
@@ -381,6 +383,8 @@ describe('ReactSuperSelect', function() {
       el.setState({
         isOpen: true
       });
+
+      el.refs.triggerDiv.focus();
 
       TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
         which: el.keymap.up,
