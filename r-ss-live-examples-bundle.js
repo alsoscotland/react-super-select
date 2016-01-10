@@ -31411,21 +31411,21 @@ var _ = require('lodash'),
 var _ref = React.createElement('span', {
   __source: {
     fileName: '../../../../../src/react-super-select.js',
-    lineNumber: 314
+    lineNumber: 326
   }
 });
 
 var _ref2 = React.createElement('span', {
   __source: {
     fileName: '../../../../../src/react-super-select.js',
-    lineNumber: 757
+    lineNumber: 769
   }
 });
 
 var _ref3 = React.createElement('span', {
   __source: {
     fileName: '../../../../../src/react-super-select.js',
-    lineNumber: 805
+    lineNumber: 817
   }
 });
 
@@ -31648,6 +31648,18 @@ var ReactSuperSelect = React.createClass({
   // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
   lastUserSelectedOption: undefined,
 
+  // wire document click close control handler
+  componentDidMount: function componentDidMount() {
+    document.addEventListener('click', this._handleDocumentClick);
+    document.addEventListener('touchstart', this._handleDocumentClick);
+  },
+
+  // remove binding for document click close control handler
+  componentWillUnmount: function componentWillUnmount() {
+    document.removeEventListener('click', this._handleDocumentClick);
+    document.removeEventListener('touchstart', this._handleDocumentClick);
+  },
+
   // If parent page updates the data source, reset all control state values which are derived from props.
   // Reset some state defaults and dataSource related fields if dataSource changed.
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
@@ -31718,7 +31730,7 @@ var ReactSuperSelect = React.createClass({
         'button',
         { 'aria-label': clearSelectionLabelString, ref: 'selectionClear', name: 'clearSelection', type: 'button', className: 'r-ss-selection-clear', onClick: this._clearSelection, onKeyDown: this._clearSelection, __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 313
+            lineNumber: 325
           }
         },
         _ref
@@ -31729,7 +31741,7 @@ var ReactSuperSelect = React.createClass({
       'div',
       { ref: 'rssControl', id: this.state.controlId, className: wrapClasses, __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 319
+          lineNumber: 331
         }
       },
       React.createElement(
@@ -31746,7 +31758,7 @@ var ReactSuperSelect = React.createClass({
           'aria-multiselectable': this._isMultiSelect(),
           tabIndex: '1', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 320
+            lineNumber: 332
           }
         },
         triggerDisplayContent,
@@ -31755,7 +31767,7 @@ var ReactSuperSelect = React.createClass({
           'span',
           { ref: 'carat', className: caratClass, __source: {
               fileName: '../../../../../src/react-super-select.js',
-              lineNumber: 333
+              lineNumber: 345
             }
           },
           ' '
@@ -31992,9 +32004,9 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
-  // focus the main trigger element of the control
+  // focus the main trigger element of the control if the user is interacting with this control instance
   _focusTrigger: function _focusTrigger() {
-    if (this.refs.triggerDiv) {
+    if (this.refs.triggerDiv && this.refs.rssControl.contains(document.activeElement)) {
       this.refs.triggerDiv.focus();
     }
   },
@@ -32015,14 +32027,14 @@ var ReactSuperSelect = React.createClass({
       'li',
       { className: 'r-ss-dropdown-option error', __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 586
+          lineNumber: 598
         }
       },
       React.createElement(
         'i',
         { ref: 'errorDisplay', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 586
+            lineNumber: 598
           }
         },
         errorString
@@ -32062,7 +32074,7 @@ var ReactSuperSelect = React.createClass({
       'div',
       { ref: 'dropdownContent', className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown, __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 618
+          lineNumber: 630
         }
       },
       searchContent,
@@ -32070,7 +32082,7 @@ var ReactSuperSelect = React.createClass({
         'div',
         { ref: 'scrollWrap', className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler, __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 620
+            lineNumber: 632
           }
         },
         React.createElement(
@@ -32082,7 +32094,7 @@ var ReactSuperSelect = React.createClass({
             role: 'listbox',
             'aria-expanded': this.state.isOpen, __source: {
               fileName: '../../../../../src/react-super-select.js',
-              lineNumber: 621
+              lineNumber: 633
             }
           },
           this._getOptionsMarkup()
@@ -32114,7 +32126,7 @@ var ReactSuperSelect = React.createClass({
       'li',
       { tabIndex: '-1', className: headingClasses, key: headingKey, role: 'separator', 'aria-label': heading, 'aria-hidden': true, __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 654
+          lineNumber: 666
         }
       },
       headingMarkup
@@ -32128,14 +32140,14 @@ var ReactSuperSelect = React.createClass({
       'li',
       { className: 'r-ss-dropdown-option', tabIndex: '-1', __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 662
+          lineNumber: 674
         }
       },
       React.createElement(
         'i',
         { ref: 'noResults', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 662
+            lineNumber: 674
           }
         },
         noResultsString
@@ -32155,7 +32167,7 @@ var ReactSuperSelect = React.createClass({
           'span',
           { key: selectedKey, className: 'r-ss-selected-label', __source: {
               fileName: '../../../../../src/react-super-select.js',
-              lineNumber: 673
+              lineNumber: 685
             }
           },
           value[this.state.labelKey]
@@ -32169,7 +32181,7 @@ var ReactSuperSelect = React.createClass({
     var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
     return React.createElement('span', { ref: 'loader', className: loaderClasses, __source: {
         fileName: '../../../../../src/react-super-select.js',
-        lineNumber: 681
+        lineNumber: 693
       }
     });
   },
@@ -32229,7 +32241,7 @@ var ReactSuperSelect = React.createClass({
       'li',
       { key: 'page_loading', className: 'r-ss-page-fetch-indicator', tabIndex: '-1', __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 735
+          lineNumber: 747
         }
       },
       this._getLoadingMarkup()
@@ -32256,7 +32268,7 @@ var ReactSuperSelect = React.createClass({
         'button',
         { 'aria-label': clearSearchLabelString, ref: 'searchClear', name: 'clearSearch', type: 'button', className: 'r-ss-search-clear', onClick: this._clearSearchString, onKeyDown: this._clearSearchString, __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 756
+            lineNumber: 768
           }
         },
         _ref2
@@ -32267,21 +32279,21 @@ var ReactSuperSelect = React.createClass({
       'div',
       { className: 'r-ss-search-wrap', __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 762
+          lineNumber: 774
         }
       },
       React.createElement(
         'div',
         { className: 'r-ss-search-inner', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 763
+            lineNumber: 775
           }
         },
         React.createElement(
           'label',
           { ref: 'searchInputLabel', id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId, __source: {
               fileName: '../../../../../src/react-super-select.js',
-              lineNumber: 764
+              lineNumber: 776
             }
           },
           searchPlaceholderString
@@ -32296,7 +32308,7 @@ var ReactSuperSelect = React.createClass({
           'aria-labelledby': searchAriaIdLabel,
           'aria-autocomplete': 'list', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 765
+            lineNumber: 777
           }
         }),
         clearSearch,
@@ -32304,7 +32316,7 @@ var ReactSuperSelect = React.createClass({
           'i',
           { className: magnifierClass, __source: {
               fileName: '../../../../../src/react-super-select.js',
-              lineNumber: 775
+              lineNumber: 787
             }
           },
           'search'
@@ -32337,14 +32349,14 @@ var ReactSuperSelect = React.createClass({
       'span',
       { className: tagWrapClass, key: tagKey, __source: {
           fileName: '../../../../../src/react-super-select.js',
-          lineNumber: 802
+          lineNumber: 814
         }
       },
       React.createElement(
         'span',
         { className: 'r-ss-tag-label', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 803
+            lineNumber: 815
           }
         },
         label
@@ -32353,7 +32365,7 @@ var ReactSuperSelect = React.createClass({
         'button',
         { 'aria-label': tagRemoveButtonLabelString, ref: tagRemoveIndex, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value), __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 804
+            lineNumber: 816
           }
         },
         _ref3
@@ -32377,6 +32389,13 @@ var ReactSuperSelect = React.createClass({
     }
 
     return options;
+  },
+
+  // close control on document click outside of the control itself
+  _handleDocumentClick: function _handleDocumentClick(event) {
+    if (!this.refs.rssControl.contains(event.target)) {
+      this._closeOnKeypress();
+    }
   },
 
   // main keyDown binding handler for keyboard navigation and selection
@@ -32485,7 +32504,7 @@ var ReactSuperSelect = React.createClass({
           onClick: this._selectItemOnOptionClick.bind(null, dataOption),
           role: 'option', __source: {
             fileName: '../../../../../src/react-super-select.js',
-            lineNumber: 921
+            lineNumber: 940
           }
         },
         optionMarkup
@@ -32886,14 +32905,14 @@ var RSSExamples = React.createClass({
       return React.createElement(
         'li',
         { key: index, __source: {
-            fileName: '../../../../../src_docs/fake_5bb344f1.js',
+            fileName: '../../../../../src_docs/fake_23c2b33a.js',
             lineNumber: 13
           }
         },
         React.createElement(
           'a',
           { href: href, __source: {
-              fileName: '../../../../../src_docs/fake_5bb344f1.js',
+              fileName: '../../../../../src_docs/fake_23c2b33a.js',
               lineNumber: 13
             }
           },
@@ -32907,7 +32926,7 @@ var RSSExamples = React.createClass({
     return React.createElement(
       'div',
       { className: 'example-links', __source: {
-          fileName: '../../../../../src_docs/fake_5bb344f1.js',
+          fileName: '../../../../../src_docs/fake_23c2b33a.js',
           lineNumber: 16
         }
       },
@@ -32915,7 +32934,7 @@ var RSSExamples = React.createClass({
         'h1',
         {
           __source: {
-            fileName: '../../../../../src_docs/fake_5bb344f1.js',
+            fileName: '../../../../../src_docs/fake_23c2b33a.js',
             lineNumber: 17
           }
         },
@@ -32925,7 +32944,7 @@ var RSSExamples = React.createClass({
         'h2',
         {
           __source: {
-            fileName: '../../../../../src_docs/fake_5bb344f1.js',
+            fileName: '../../../../../src_docs/fake_23c2b33a.js',
             lineNumber: 18
           }
         },
@@ -32934,7 +32953,7 @@ var RSSExamples = React.createClass({
       React.createElement(
         'nav',
         { className: 'api', __source: {
-            fileName: '../../../../../src_docs/fake_5bb344f1.js',
+            fileName: '../../../../../src_docs/fake_23c2b33a.js',
             lineNumber: 19
           }
         },
@@ -32942,7 +32961,7 @@ var RSSExamples = React.createClass({
           'ul',
           {
             __source: {
-              fileName: '../../../../../src_docs/fake_5bb344f1.js',
+              fileName: '../../../../../src_docs/fake_23c2b33a.js',
               lineNumber: 20
             }
           },
@@ -32960,28 +32979,28 @@ var RSSExamples = React.createClass({
       return React.createElement(
         'li',
         { key: index, className: 'example-sections', __source: {
-            fileName: '../../../../../src_docs/fake_5bb344f1.js',
+            fileName: '../../../../../src_docs/fake_23c2b33a.js',
             lineNumber: 32
           }
         },
         React.createElement(
           'article',
           { className: 'api-item', __source: {
-              fileName: '../../../../../src_docs/fake_5bb344f1.js',
+              fileName: '../../../../../src_docs/fake_23c2b33a.js',
               lineNumber: 33
             }
           },
           React.createElement(
             'h3',
             { className: 'api-link', __source: {
-                fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                fileName: '../../../../../src_docs/fake_23c2b33a.js',
                 lineNumber: 34
               }
             },
             React.createElement(
               'a',
               { name: example.nameAttr, __source: {
-                  fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                  fileName: '../../../../../src_docs/fake_23c2b33a.js',
                   lineNumber: 35
                 }
               },
@@ -32993,7 +33012,7 @@ var RSSExamples = React.createClass({
           React.createElement(
             'div',
             { className: 'rss-live-example', __source: {
-                fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                fileName: '../../../../../src_docs/fake_23c2b33a.js',
                 lineNumber: 37
               }
             },
@@ -33002,14 +33021,14 @@ var RSSExamples = React.createClass({
           React.createElement(
             'div',
             { className: 'rss-output-example', __source: {
-                fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                fileName: '../../../../../src_docs/fake_23c2b33a.js',
                 lineNumber: 40
               }
             },
             'onChange Output'
           ),
           React.createElement('pre', { className: 'example-output', id: outputId, __source: {
-              fileName: '../../../../../src_docs/fake_5bb344f1.js',
+              fileName: '../../../../../src_docs/fake_23c2b33a.js',
               lineNumber: 41
             }
           }),
@@ -33017,12 +33036,12 @@ var RSSExamples = React.createClass({
             'div',
             {
               __source: {
-                fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                fileName: '../../../../../src_docs/fake_23c2b33a.js',
                 lineNumber: 43
               }
             },
             React.createElement('aside', { className: 'rss-example-markdown', dangerouslySetInnerHTML: { __html: example.renderString }, __source: {
-                fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                fileName: '../../../../../src_docs/fake_23c2b33a.js',
                 lineNumber: 44
               }
             })
@@ -33030,7 +33049,7 @@ var RSSExamples = React.createClass({
           React.createElement(
             'a',
             { className: 'top-return', href: '#top', __source: {
-                fileName: '../../../../../src_docs/fake_5bb344f1.js',
+                fileName: '../../../../../src_docs/fake_23c2b33a.js',
                 lineNumber: 46
               }
             },
@@ -33043,7 +33062,7 @@ var RSSExamples = React.createClass({
     return React.createElement(
       'ul',
       { className: 'live-examples-list', __source: {
-          fileName: '../../../../../src_docs/fake_5bb344f1.js',
+          fileName: '../../../../../src_docs/fake_23c2b33a.js',
           lineNumber: 51
         }
       },
@@ -33056,14 +33075,14 @@ var RSSExamples = React.createClass({
       'div',
       {
         __source: {
-          fileName: '../../../../../src_docs/fake_5bb344f1.js',
+          fileName: '../../../../../src_docs/fake_23c2b33a.js',
           lineNumber: 57
         }
       },
       React.createElement(
         'a',
         { name: 'top', __source: {
-            fileName: '../../../../../src_docs/fake_5bb344f1.js',
+            fileName: '../../../../../src_docs/fake_23c2b33a.js',
             lineNumber: 58
           }
         },
@@ -33077,7 +33096,7 @@ var RSSExamples = React.createClass({
 
 ReactDOM.render(React.createElement(RSSExamples, {
   __source: {
-    fileName: '../../../../../src_docs/fake_5bb344f1.js',
+    fileName: '../../../../../src_docs/fake_23c2b33a.js',
     lineNumber: 65
   }
 }), document.getElementById('examples'));

@@ -1130,6 +1130,42 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
+              <p>wire document click close control handler</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  componentDidMount: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'click'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
+    <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'touchstart'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>remove binding for document click close control handler</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  componentWillUnmount: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">document</span>.removeEventListener(<span class="hljs-string">'click'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
+    <span class="hljs-built_in">document</span>.removeEventListener(<span class="hljs-string">'touchstart'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
               <p>If parent page updates the data source, reset all control state values which are derived from props.
 Reset some state defaults and dataSource related fields if dataSource changed.</p>
 
@@ -1171,11 +1207,11 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
         </li>
         
         
-        <li id="section-75">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>Update focused element after re-render</p>
 
@@ -1188,11 +1224,11 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
         </li>
         
         
-        <li id="section-76">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p>main render method</p>
 
@@ -1253,11 +1289,11 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
         </li>
         
         
-        <li id="section-77">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p>toggles the open-state of the dropdown
 sets focused option in callback after opening</p>
@@ -1277,11 +1313,11 @@ sets focused option in callback after opening</p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>returns the unique DOM id for the currently focused option. Used for accessibility-related labeling</p>
 
@@ -1299,11 +1335,11 @@ sets focused option in callback after opening</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p>calculate the unique identifier for the options ul for aria compliance labeling usage</p>
 
@@ -1316,11 +1352,11 @@ sets focused option in callback after opening</p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p>helper for stopping event propagation</p>
 
@@ -1334,11 +1370,11 @@ sets focused option in callback after opening</p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p>calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps</p>
 
@@ -1362,11 +1398,11 @@ sets focused option in callback after opening</p>
         </li>
         
         
-        <li id="section-82">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p>clear the searchString value
 for <strong>searchable</strong> controls</p>
@@ -1382,11 +1418,11 @@ for <strong>searchable</strong> controls</p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <p>clear the selected options
 for <strong>clearable</strong> controls</p>
@@ -1405,11 +1441,11 @@ for <strong>clearable</strong> controls</p>
         </li>
         
         
-        <li id="section-84">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>close the dropdown
 resets focus to the main control trigger
@@ -1429,11 +1465,11 @@ clear focused id</p>
         </li>
         
         
-        <li id="section-85">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p>overloaded dataSource parser (Object|Array)
 case: (object) - look for a collection property which is an array, or runs an existing ‘get’ function, get(‘collection’), and determines if the return value is an array
@@ -1465,11 +1501,11 @@ case: (Array) - return the dataSource array for use as this.state.data</p>
         </li>
         
         
-        <li id="section-86">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <p>Used if no <strong>customFilterFunction</strong> provided for filtering the data options shown in a <strong>searchable</strong> control.
 Runs a lowercase string comparison with the <strong>searchString</strong> and the value corresponding to an option’s <strong>optionLabelKey</strong></p>
@@ -1487,11 +1523,11 @@ Runs a lowercase string comparison with the <strong>searchString</strong> and th
         </li>
         
         
-        <li id="section-87">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p>fetch data source via ajax if <strong>ajaxDataFetch</strong> function provided
 handles success and failure for ajax call</p>
@@ -1513,11 +1549,11 @@ handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-88">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <p>define as empty array on error so that _needsAjaxFetch will evaluate to false</p>
 
@@ -1531,11 +1567,11 @@ handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-89">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <p>Fetch the next page of options data if <strong>pageDataFetch</strong> function provided.
 Called onMouseMove if scroll position in dropdown exceeds threshold.
@@ -1562,11 +1598,11 @@ Handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-90">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <p>choose the appropriate search filter function and run the filter against the options data</p>
 
@@ -1586,11 +1622,11 @@ Handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-91">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <p>used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in</p>
 
@@ -1606,11 +1642,11 @@ Handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-92">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <p>determine whether to focus a option value in the DOM, or the search field</p>
 
@@ -1628,11 +1664,11 @@ Handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-93">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p>focus the DOM option identified by the current state.focusedId</p>
 
@@ -1650,11 +1686,11 @@ Handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-94">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p>focus the dropdown’s search field if it exists</p>
 
@@ -1669,11 +1705,11 @@ Handles success and failure for ajax call</p>
         </li>
         
         
-        <li id="section-95">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>shift focus from dropdown trigger to any removal/clear buttons
 for keyboard navigation and accessibility</p>
@@ -1710,18 +1746,18 @@ for keyboard navigation and accessibility</p>
         </li>
         
         
-        <li id="section-96">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
-              <p>focus the main trigger element of the control</p>
+              <p>focus the main trigger element of the control if the user is interacting with this control instance</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  _focusTrigger: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs.triggerDiv) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs.triggerDiv &amp;&amp; <span class="hljs-keyword">this</span>.refs.rssControl.contains(<span class="hljs-built_in">document</span>.activeElement)) {
       <span class="hljs-keyword">this</span>.refs.triggerDiv.focus();
     }
   },</pre></div></div>
@@ -1729,11 +1765,11 @@ for keyboard navigation and accessibility</p>
         </li>
         
         
-        <li id="section-97">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <p>choose whether to template the display of user-selected values normally, or as tags</p>
 
@@ -1750,11 +1786,11 @@ for keyboard navigation and accessibility</p>
         </li>
         
         
-        <li id="section-98">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <p>render the content shown if an ajax error occurs</p>
 
@@ -1768,11 +1804,11 @@ for keyboard navigation and accessibility</p>
         </li>
         
         
-        <li id="section-99">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <p>calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality</p>
 
@@ -1794,11 +1830,11 @@ for keyboard navigation and accessibility</p>
         </li>
         
         
-        <li id="section-100">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>build and render the dropdown content
 will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if needed</p>
@@ -1838,11 +1874,11 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
         </li>
         
         
-        <li id="section-101">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <p>build the string used as a React component ref for each focusable option</p>
 
@@ -1855,11 +1891,11 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
         </li>
         
         
-        <li id="section-102">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <p>render a group heading, used if <strong>groupBy</strong> option is provided.
 renders a non-focusable list item for an option group heading</p>
@@ -1878,11 +1914,11 @@ renders a non-focusable list item for an option group heading</p>
         </li>
         
         
-        <li id="section-103">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>currently, group headings are aria-hidden so they will not throw off the options count in voiceover
 in search of a better solution for announcing/navigating grouped listbox items as subgroups</p>
@@ -1898,11 +1934,11 @@ in search of a better solution for announcing/navigating grouped listbox items a
         </li>
         
         
-        <li id="section-104">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <p>render the content shown when no options are available</p>
 
@@ -1916,11 +1952,11 @@ in search of a better solution for announcing/navigating grouped listbox items a
         </li>
         
         
-        <li id="section-105">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <p>Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
 Choose whether to render using the default template or a provided <strong>customOptionTemplateFunction</strong></p>
@@ -1941,11 +1977,11 @@ Choose whether to render using the default template or a provided <strong>custom
         </li>
         
         
-        <li id="section-106">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p>render a loading span (spinner gif), with <strong>customLoaderClass</strong> if provided</p>
 
@@ -1959,11 +1995,11 @@ Choose whether to render using the default template or a provided <strong>custom
         </li>
         
         
-        <li id="section-107">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <p>get the option Li element from a passed eventTarget.
 for key events = event.target
@@ -1978,11 +2014,11 @@ for click events = event.currentTarget</p>
         </li>
         
         
-        <li id="section-108">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-108">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <p>render the data source as options,
 render loading if fetching
@@ -2024,11 +2060,11 @@ render ajaxError markup when state.ajaxError is true</p>
         </li>
         
         
-        <li id="section-109">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-109">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>get the data-option-value attribute for an option node
 convert to numeric (data-attrs cast to strings) if:
@@ -2046,11 +2082,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-110">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-110">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <p>render a list item with a loading indicator.  Shown while <strong>pageDataFetch</strong> or <strong>ajaxDataFetch</strong> functions run</p>
 
@@ -2065,11 +2101,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-111">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>render a search input bar with a search icon</p>
 <ul>
@@ -2120,11 +2156,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <p>iterate over selected values and build tags markup for selected options display</p>
 
@@ -2139,11 +2175,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-113">
+        <li id="section-115">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <p>render a tag for an individual selected value</p>
 <ul>
@@ -2175,11 +2211,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-114">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <p>tagRemovalIndex is used to focus the first tag removal button (as a ref) when deleting tags from keyboard</p>
 
@@ -2192,11 +2228,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-115">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>choose a rendering function, either <strong>customOptionTemplateFunction</strong> if provided, or default</p>
 <ul>
@@ -2219,11 +2255,30 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-116">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
+              </div>
+              <p>close control on document click outside of the control itself</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _handleDocumentClick: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.refs.rssControl.contains(event.target)) {
+      <span class="hljs-keyword">this</span>._closeOnKeypress();
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-119">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <p>main keyDown binding handler for keyboard navigation and selection</p>
 
@@ -2273,11 +2328,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>handler for searchInput’s keyUp event</p>
 
@@ -2292,11 +2347,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <p>debounced handler for searchInput’s keyUp event, reduces # of times the control re-renders</p>
 
@@ -2311,11 +2366,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-119">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>return the boolean used to determine whether an option should have the ‘r-ss-selected’ class</p>
 
@@ -2331,11 +2386,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <p>tags and mutiple both provide multi-select behavior.  Returns true if either is set to true</p>
 
@@ -2348,11 +2403,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>user search events need to pass through the default keyDown handler</p>
 
@@ -2368,11 +2423,11 @@ the conversion does not alter the string representation’s value</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>Render the option list-items.
 Leverage the <strong>customOptionTemplateFunction</strong> function if provided</p>
@@ -2411,11 +2466,11 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
         </li>
         
         
-        <li id="section-123">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p>determines next focusedId prior to updateFocusedId call</p>
 
@@ -2443,11 +2498,11 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
         </li>
         
         
-        <li id="section-124">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <p>determines previous focusedId prior to updateFocusedId call</p>
 
@@ -2471,11 +2526,11 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
         </li>
         
         
-        <li id="section-125">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>return boolean to determine if we have already received data from the <strong>ajaxDataFetch</strong> function</p>
 
@@ -2488,11 +2543,11 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
         </li>
         
         
-        <li id="section-126">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>down key handler
 shift-keypress is used to select successive focus items for aria keyboard accessibility</p>
@@ -2514,11 +2569,11 @@ shift-keypress is used to select successive focus items for aria keyboard access
         </li>
         
         
-        <li id="section-127">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p>end key handler. Move focus to the last available option</p>
 
@@ -2533,11 +2588,11 @@ shift-keypress is used to select successive focus items for aria keyboard access
         </li>
         
         
-        <li id="section-128">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p>Enter key handler.
 Opens the control when closed.
@@ -2564,11 +2619,11 @@ Otherwise, makes selection</p>
         </li>
         
         
-        <li id="section-129">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <p>Escape key handler. Closes the dropdown</p>
 
@@ -2581,11 +2636,11 @@ Otherwise, makes selection</p>
         </li>
         
         
-        <li id="section-130">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>Home key handler. Moves focus to the first available option</p>
 
@@ -2598,11 +2653,11 @@ Otherwise, makes selection</p>
         </li>
         
         
-        <li id="section-131">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>mouse move handler used when <strong>pageDataFetch</strong> is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown</p>
 
@@ -2613,11 +2668,11 @@ Otherwise, makes selection</p>
         </li>
         
         
-        <li id="section-132">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <p>do not fetch page if searching or already loading data</p>
 
@@ -2639,11 +2694,11 @@ Otherwise, makes selection</p>
         </li>
         
         
-        <li id="section-133">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>Up key handler.
 Shift-click is used to select successive focus items for aria keyboard accessibility</p>
@@ -2667,11 +2722,11 @@ Shift-click is used to select successive focus items for aria keyboard accessibi
         </li>
         
         
-        <li id="section-134">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <p>If hasMorePages option (Function) present, returns the value of its call.
 Otherwise, returns false so page fetch will not occur</p>
@@ -2689,11 +2744,11 @@ Otherwise, returns false so page fetch will not occur</p>
         </li>
         
         
-        <li id="section-135">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <p>Used in shift selection when the event target was previously selected.
 Remove all options up to, but not including the option that raised the event.
@@ -2714,11 +2769,11 @@ Remove all options up to, but not including the option that raised the event.
         </li>
         
         
-        <li id="section-136">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>do not remove the item the user shift-clicked, this is the way browser default shift-click behaves in multi-select</p>
 
@@ -2744,11 +2799,11 @@ Remove all options up to, but not including the option that raised the event.
         </li>
         
         
-        <li id="section-137">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p>Remove an item from the state.value selected items array.
 The <em>value</em> arg represents a full dataSource option object</p>
@@ -2760,11 +2815,11 @@ The <em>value</em> arg represents a full dataSource option object</p>
         </li>
         
         
-        <li id="section-138">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <p>clear lastUserSelected if has been removed</p>
 
@@ -2790,11 +2845,11 @@ The <em>value</em> arg represents a full dataSource option object</p>
         </li>
         
         
-        <li id="section-139">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <p>remove a selected tag on keyDown</p>
 
@@ -2814,11 +2869,11 @@ The <em>value</em> arg represents a full dataSource option object</p>
         </li>
         
         
-        <li id="section-140">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <p>remove a selected tag on click</p>
 
@@ -2833,11 +2888,11 @@ The <em>value</em> arg represents a full dataSource option object</p>
         </li>
         
         
-        <li id="section-141">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <p>used in shift-click range selections</p>
 
@@ -2868,11 +2923,11 @@ The <em>value</em> arg represents a full dataSource option object</p>
         </li>
         
         
-        <li id="section-142">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p>Used in shift-key selection.
 Select all options from the current eventTarget to the lastUserSelectedOption</p>
@@ -2886,11 +2941,11 @@ Select all options from the current eventTarget to the lastUserSelectedOption</p
         </li>
         
         
-        <li id="section-143">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <p>select all options from the first option to the clicked option</p>
 
@@ -2908,11 +2963,11 @@ Select all options from the current eventTarget to the lastUserSelectedOption</p
         </li>
         
         
-        <li id="section-144">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <p>if the option was already selected, this should trigger a removal operation, otherwise trigger an add</p>
 
@@ -2928,11 +2983,11 @@ Select all options from the current eventTarget to the lastUserSelectedOption</p
         </li>
         
         
-        <li id="section-145">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
               <p>Make a user-selection of the option that is currently focused.
 Will close the dropDown when keepControlOpen is falsy</p>
@@ -2948,11 +3003,11 @@ Will close the dropDown when keepControlOpen is falsy</p>
         </li>
         
         
-        <li id="section-146">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <p>store as last userSelected</p>
 
@@ -2973,11 +3028,11 @@ Will close the dropDown when keepControlOpen is falsy</p>
         </li>
         
         
-        <li id="section-147">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p>Handle selection of an option or array of options.
 Track last selection the user made.
@@ -3009,11 +3064,11 @@ Close dropdown on the setState callback if not a non control-closing selection</
         </li>
         
         
-        <li id="section-148">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-148">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               <p>handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control</p>
 
@@ -3030,11 +3085,11 @@ Close dropdown on the setState callback if not a non control-closing selection</
         </li>
         
         
-        <li id="section-149">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               <p>store clicked option as the lastUserSelected</p>
 
@@ -3052,11 +3107,11 @@ Close dropdown on the setState callback if not a non control-closing selection</
         </li>
         
         
-        <li id="section-150">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <p>set the focusId to the SEARCH_FOCUS_ID constant value</p>
 
@@ -3069,11 +3124,11 @@ Close dropdown on the setState callback if not a non control-closing selection</
         </li>
         
         
-        <li id="section-151">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <p>if lastUserSelectedOption is populated, focus it, otherwise moveFocusDown</p>
 
@@ -3090,11 +3145,11 @@ Close dropdown on the setState callback if not a non control-closing selection</
         </li>
         
         
-        <li id="section-152">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>DOM focus for tag removal buttons will get lost after a tag removal.
 After tag deletion via keyboard, this Keeps focus in context of tag removal as long as there are more to remove</p>
@@ -3121,11 +3176,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
         </li>
         
         
-        <li id="section-153">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <p>Sets the current focusedId.</p>
 
