@@ -182,7 +182,8 @@ var ReactSuperSelect = React.createClass({
     noResultsString: 'No Results Available',
     placeholder: 'Select an Option',
     searchPlaceholder: 'Search',
-    tagRemoveLabelString: 'Remove Tag'
+    tagRemoveLabelString: 'Remove Tag',
+	multiResultsLabel: 'Selected @COUNT@ items'
   },
 
   // STATE VARIABLES
@@ -301,8 +302,10 @@ var ReactSuperSelect = React.createClass({
         clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.DEFAULT_LOCALIZATIONS.clearSelectionLabelString,
         dropdownContent = this._getDropdownContent(),
         placeholderString,
+		multiResultsLabelString,
         triggerDisplayContent,
         triggerClasses,
+		contentToDisplay,
         caratClass = classNames('carat', {
           'down': !this.state.isOpen,
           'up': this.state.isOpen
@@ -319,7 +322,9 @@ var ReactSuperSelect = React.createClass({
     });
 
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+	multiResultsLabelString = this.props.multiResultsLabel ? this.props.multiResultsLabel : this.DEFAULT_LOCALIZATIONS.multiResultsLabel;
+	contentToDisplay = this._isMultiSelect() ? multiResultsLabelString : this._generateValueDisplay();
+    triggerDisplayContent = this.state.value.length ? contentToDisplay : placeholderString;
 
     if (!_.isEmpty(this.state.value) && (this.props.clearable !== false)) {
       clearSelectionButton = (<button aria-label={clearSelectionLabelString} ref="selectionClear" name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}>
