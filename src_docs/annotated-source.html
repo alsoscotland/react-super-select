@@ -1261,6 +1261,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
 
     placeholderString = <span class="hljs-keyword">this</span>.props.placeholder ? <span class="hljs-keyword">this</span>.props.placeholder : <span class="hljs-keyword">this</span>.DEFAULT_LOCALIZATIONS.placeholder;
 	multiResultsLabelString = <span class="hljs-keyword">this</span>.props.multiResultsLabel ? <span class="hljs-keyword">this</span>.props.multiResultsLabel : <span class="hljs-keyword">this</span>.DEFAULT_LOCALIZATIONS.multiResultsLabel;
+    multiResultsLabelString = multiResultsLabelString.replace(<span class="hljs-string">"@COUNT@"</span>, <span class="hljs-keyword">this</span>.state.value.length);
 	contentToDisplay = <span class="hljs-keyword">this</span>._isMultiSelect() ? multiResultsLabelString : <span class="hljs-keyword">this</span>._generateValueDisplay();
     triggerDisplayContent = <span class="hljs-keyword">this</span>.state.value.length ? contentToDisplay : placeholderString;
 
