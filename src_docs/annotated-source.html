@@ -328,7 +328,9 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    onChange: React.PropTypes.func.isRequired,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    onChange: React.PropTypes.func.isRequired,
+
+    onSubmit: React.PropTypes.func.isRequired,</pre></div></div>
             
         </li>
         
@@ -1399,7 +1401,17 @@ sets focused option in callback after opening</p>
     }
 
     <span class="hljs-keyword">return</span> initialValue;
-  },</pre></div></div>
+  },
+
+    _selectAll: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>.setState({
+            value: <span class="hljs-keyword">this</span>.state.data
+        });
+    },
+
+    _submit: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">this</span>.props.onSubmit(<span class="hljs-keyword">this</span>.state.value);
+    },</pre></div></div>
             
         </li>
         
@@ -1853,6 +1865,8 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
     }
 
     <span class="hljs-keyword">var</span> searchContent = <span class="hljs-keyword">this</span>._getSearchContent(),
+        selectionButtons = <span class="hljs-keyword">this</span>._getSelectionButtons(),
+        controlButtons = <span class="hljs-keyword">this</span>._getControlButtons(),
         mouseMoveHandler,
         pagingLi;
 
@@ -1862,6 +1876,7 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
     <span class="hljs-keyword">return</span>(
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"dropdownContent"</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-dropdown"</span> <span class="hljs-attr">onKeyDown</span>=<span class="hljs-string">{this._handleKeyDown}</span>&gt;</span>
         {searchContent}
+        {selectionButtons}
         <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"scrollWrap"</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-options-wrap"</span> <span class="hljs-attr">onMouseMove</span>=<span class="hljs-string">{mouseMoveHandler}</span>&gt;</span>
           <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-dropdown-options"</span>
               <span class="hljs-attr">ref</span>=<span class="hljs-string">"dropdownOptionsList"</span>
@@ -1873,6 +1888,7 @@ will trigger the <strong>ajaxDataFetch</strong> fetch (and show loader) if neede
           <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
           {pagingLi}
         <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        {controlButtons}
       <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
     )</span>;
   },</pre></div></div>
@@ -2157,7 +2173,24 @@ the conversion does not alter the string representation’s value</p>
         <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
       <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
     )</span>;
-  },</pre></div></div>
+  },
+
+    _getSelectionButtons: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-selection-buttons"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#_"</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this._selectAll}</span>&gt;</span>Vybrat vše<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#_"</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this._clearSelection}</span>&gt;</span>Vymazat<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        )</span>
+    },
+
+    _getControlButtons: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-control-buttons"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-button-save btn btn-success"</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this._submit}</span>&gt;</span>Uložit<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        )</span>
+    },</pre></div></div>
             
         </li>
         
@@ -2450,7 +2483,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
           ariaDescendantId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_aria_'</span> + indexRef,
           optionMarkup = _.isFunction(<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) ? <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(dataOption) : dataOption[<span class="hljs-keyword">this</span>.state.labelKey],
           classes = classNames(<span class="hljs-string">'r-ss-dropdown-option'</span>, {
-            <span class="hljs-string">'r-ss-selected'</span>: isCurrentlySelected
+              <span class="hljs-string">'r-ss-selected'</span>: isCurrentlySelected
           });
 
       <span class="hljs-keyword">return</span> (
@@ -2464,6 +2497,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
             <span class="hljs-attr">data-option-value</span>=<span class="hljs-string">{dataOption[this.state.valueKey]}</span>
             <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this._selectItemOnOptionClick.bind(null,</span> <span class="hljs-attr">dataOption</span>)}
             <span class="hljs-attr">role</span>=<span class="hljs-string">"option"</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">checked</span>=<span class="hljs-string">{isCurrentlySelected}</span> /&gt;</span>
           {optionMarkup}
         <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>)</span>;
     }, <span class="hljs-keyword">this</span>);
@@ -3085,7 +3119,7 @@ Close dropdown on the setState callback if not a non control-closing selection</
       <span class="hljs-keyword">this</span>._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       <span class="hljs-keyword">return</span>;
     }
-    <span class="hljs-keyword">var</span> keepControlOpen = (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; (event.ctrlKey || event.metaKey)),
+    <span class="hljs-keyword">var</span> keepControlOpen = <span class="hljs-keyword">this</span>._isMultiSelect(),
         alreadySelected = <span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute(<span class="hljs-string">'class'</span>));</pre></div></div>
             
         </li>
