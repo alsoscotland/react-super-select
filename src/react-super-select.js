@@ -62,6 +62,7 @@ var ReactSuperSelect = React.createClass({
     // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
     onChange: React.PropTypes.func.isRequired,
 
+    onSubmit: React.PropTypes.func.isRequired,
     // OPTION DATA-RELATED PROPS
     // -------------------------
 
@@ -182,7 +183,8 @@ var ReactSuperSelect = React.createClass({
     noResultsString: 'No Results Available',
     placeholder: 'Select an Option',
     searchPlaceholder: 'Search',
-    tagRemoveLabelString: 'Remove Tag'
+    tagRemoveLabelString: 'Remove Tag',
+	multiResultsLabel: 'Selected @COUNT@ items'
   },
 
   // STATE VARIABLES
@@ -301,8 +303,10 @@ var ReactSuperSelect = React.createClass({
         clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.DEFAULT_LOCALIZATIONS.clearSelectionLabelString,
         dropdownContent = this._getDropdownContent(),
         placeholderString,
+		multiResultsLabelString,
         triggerDisplayContent,
         triggerClasses,
+		contentToDisplay,
         caratClass = classNames('carat', {
           'down': !this.state.isOpen,
           'up': this.state.isOpen
@@ -319,7 +323,10 @@ var ReactSuperSelect = React.createClass({
     });
 
     placeholderString = this.props.placeholder ? this.props.placeholder : this.DEFAULT_LOCALIZATIONS.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
+	multiResultsLabelString = this.props.multiResultsLabel ? this.props.multiResultsLabel : this.DEFAULT_LOCALIZATIONS.multiResultsLabel;
+    multiResultsLabelString = multiResultsLabelString.replace("@COUNT@", this.state.value.length);
+	contentToDisplay = this._isMultiSelect() ? multiResultsLabelString : this._generateValueDisplay();
+    triggerDisplayContent = this.state.value.length ? contentToDisplay : placeholderString;
 
     if (!_.isEmpty(this.state.value) && (this.props.clearable !== false)) {
       clearSelectionButton = (<button aria-label={clearSelectionLabelString} ref="selectionClear" name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}>
@@ -396,6 +403,16 @@ var ReactSuperSelect = React.createClass({
 
     return initialValue;
   },
+
+    _selectAll: function() {
+        this.setState({
+            value: this.state.data
+        });
+    },
+
+    _submit: function() {
+        this.props.onSubmit(this.state.value);
+    },
 
   // clear the searchString value
   // for **searchable** controls
@@ -620,6 +637,8 @@ var ReactSuperSelect = React.createClass({
     }
 
     var searchContent = this._getSearchContent(),
+        selectionButtons = this._getSelectionButtons(),
+        controlButtons = this._getControlButtons(),
         mouseMoveHandler,
         pagingLi;
 
@@ -629,6 +648,7 @@ var ReactSuperSelect = React.createClass({
     return(
       <div ref="dropdownContent" className="r-ss-dropdown" onKeyDown={this._handleKeyDown}>
         {searchContent}
+        {selectionButtons}
         <div ref="scrollWrap" className="r-ss-options-wrap" onMouseMove={mouseMoveHandler}>
           <ul className="r-ss-dropdown-options"
               ref="dropdownOptionsList"
@@ -640,6 +660,7 @@ var ReactSuperSelect = React.createClass({
           </ul>
           {pagingLi}
         </div>
+        {controlButtons}
       </div>
     );
   },
@@ -790,6 +811,23 @@ var ReactSuperSelect = React.createClass({
     );
   },
 
+    _getSelectionButtons: function() {
+        return (
+            <div className="r-ss-selection-buttons">
+                <a href="#_" onClick={this._selectAll}>Vybrat vše</a>
+                <a href="#_" onClick={this._clearSelection}>Vymazat</a>
+            </div>
+        )
+    },
+
+    _getControlButtons: function() {
+        return (
+            <div className="r-ss-control-buttons">
+                <button className="r-ss-button-save btn btn-success" onClick={this._submit}>Uložit</button>
+            </div>
+        )
+    },
+
   // iterate over selected values and build tags markup for selected options display
   _getTagsDisplayMarkup: function() {
     return _.map(this.state.value, function(value) {
@@ -933,7 +971,7 @@ var ReactSuperSelect = React.createClass({
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
           optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': isCurrentlySelected
+              'r-ss-selected': isCurrentlySelected
           });
 
       return (
@@ -947,6 +985,7 @@ var ReactSuperSelect = React.createClass({
             data-option-value={dataOption[this.state.valueKey]}
             onClick={this._selectItemOnOptionClick.bind(null, dataOption)}
             role="option">
+            <input type="checkbox" checked={isCurrentlySelected} />
           {optionMarkup}
         </li>);
     }, this);
@@ -1252,7 +1291,7 @@ var ReactSuperSelect = React.createClass({
       this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
     }
-    var keepControlOpen = (this._isMultiSelect() && (event.ctrlKey || event.metaKey)),
+    var keepControlOpen = this._isMultiSelect(),
         alreadySelected = this.SELECTED_OPTION_REGEX.test(event.currentTarget.getAttribute('class'));
 
     // store clicked option as the lastUserSelected

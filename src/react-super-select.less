@@ -1,5 +1,5 @@
 @paleGreyFallback: #333;
-@paleGrey: rgba(51, 51, 51, .45);
+@paleGrey: rgb(204, 204, 204);
 @palerGrey: rgba(51, 51, 51, .20);
 @palestGrey: rgba(51, 51, 51, .10);
 @lightGreyBackground: #EDEDED;
@@ -11,6 +11,7 @@
 @yellow: #FFD;
 @white: #FFF;
 @red: #F00;
+@fontColor: #aaa;
 
 @activeBackground: @palerGrey;
 @headingBackground: @lightGreyBackground;
@@ -91,7 +92,7 @@
 .r-ss-wrap {
   position: relative;
   width: 100%;
-  .border-radius(.25rem, .25rem, .25rem, .25rem);
+  .border-radius(4px, 4px, 4px, 4px);
   .box-sizing;
 
   &.r-ss-expanded {
@@ -111,15 +112,20 @@
 }
 
 .r-ss-trigger {
+  width: 100%;
+  height: 36px;
   position: relative;
   cursor: pointer;
   display: block;
   line-height: 30px;
   padding: .25rem 50px .25rem .25rem;
+  padding-left: 10px;
   border-color: @borderFallback;
   border: 1px solid @border;
   text-decoration: none;
-  color: @borderFallback;
+  color: @fontColor;
+  background-color: @white;
+  box-shadow: none;
   .border-radius(.25rem, .25rem, .25rem, .25rem);
   cursor: pointer;
   outline: none;
@@ -146,10 +152,6 @@
     color: @border;
   }
 
-  &:focus {
-    border-color: black;
-  }
-
   .r-ss-selection-clear {
     position: absolute;
     top: 13px;
@@ -159,11 +161,15 @@
 
   .carat {
     position: absolute;
-    right: .25rem;
+    top: 50%;
+    right: 10px;
+    margin-top: -2px;
     height: 0;
     width: 0;
-    border: 11px solid transparent;
-
+    border-style: solid;
+    border-width: 5px 5px 2.5px;
+    border-color: #999 transparent transparent transparent;
+/*
     &.up {
       bottom: 14px;
       border-color: transparent transparent @borderFallback transparent;
@@ -171,8 +177,9 @@
 
     &.down {
       bottom: 1px;
-      border-color: @borderFallback transparent transparent transparent;
+      border-color: #999 transparent transparent transparent;
     }
+    */
   }
 }
 
@@ -184,7 +191,7 @@
   position: relative;
   width: 96%;
   height: 34px;
-  padding: 2px 0;
+  padding: 5px 0;
   margin: 0 auto;
 
   input {
@@ -209,8 +216,8 @@
 
   .r-ss-magnifier {
     position: absolute;
-    top: 7px;
-    right: .25rem;
+    top: 12px;
+    right: 12px;
     text-indent: -9999px;
     display: inline-block;
     width: 16px;
@@ -224,17 +231,17 @@
   position: absolute;
   top: 99%;
   .border-radius(0, 0, .25rem, .25rem);
-  background-color: @white;
-  border-color: @borderFallback;
+  background-color: #fdfdfd;
+  border-color: @border;
   border: 1px solid transparent;
   border: 1px solid @border;
   border-top: none;
-  max-height: 350px;
+  max-height: 380px;
   width: 100%;
 
   .r-ss-options-wrap {
     position: relative;
-    max-height: 316px;
+    max-height: 280px;
     width: 100%;
     overflow-y: auto;
   }
@@ -278,8 +285,7 @@
     top: 0;
     width: 100%;
     word-wrap: break-word;
-    padding: .25rem;
-    border-bottom: 1px solid @slightBorder;
+    padding: 6px 10px;
     cursor: pointer;
     user-select: none;
     -ms-user-select: none;
@@ -291,28 +297,21 @@
     }
 
     &:hover {
-      background-color: @hoverBackground;
-    }
-
-    &.active {
-      background-color: @activeBackground;
+      border-bottom: none;
+      background-color: rgba(0, 126, 255, .08);
     }
 
     &.r-ss-selected {
-      background-color: @selectedBackground;
-
-      &:focus,
-      &::selection {
-        background-color: @selectedBackground;
-      }
+      background: none;
     }
 
-    &:focus,
-    &::selection {
-      outline: none;
-      background-color: @focusBlue;
-      border: 1px solid @borderSelected;
+    input[type=checkbox] {
+      display: inline-block;
+      position: relative;
+      top: 1px;
+      margin-right: 10px;
     }
+
   }
 }
 
@@ -386,4 +385,20 @@
     right: 2px;
     .r-ss-remove-button;
   }
+}
+
+.r-ss-selection-buttons {
+  height: 25px;
+  line-height: 25px;
+  padding: 0 10px;
+  a {
+    display: inline-block;
+    margin-right: 10px;
+  }
+}
+
+.r-ss-control-buttons {
+  text-align: right;
+  height: 42px;
+  padding: 5px;
 }
