@@ -381,6 +381,26 @@ var ReactSuperSelect = React.createClass({
     event.preventDefault();
   },
 
+  // stop wheel events in dropdown from scrolling page
+  _arrestScroll: function(event) {
+    let arrestScroll = false,
+        adjustedHeight = this.refs.scrollWrap.scrollTop + this.refs.scrollWrap.clientHeight;
+
+    if (event.deltaY > 0) {
+      if (adjustedHeight >= this.refs.scrollWrap.scrollHeight) {
+        arrestScroll = true;
+      }
+    } else {
+      if (this.refs.scrollWrap.scrollTop <= 0) {
+        arrestScroll = true;
+      }
+    }
+
+    if (arrestScroll) {
+      this._arrestEvent(event);
+    }
+  },
+
   // calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps
   _buildInitialValue: function(props) {
     props = props || this.props;
@@ -390,7 +410,7 @@ var ReactSuperSelect = React.createClass({
       initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
 
       if (!this._isMultiSelect()) {
-        initialValue = [_.first(initialValue)];
+        initialValue = [_.head(initialValue)];
       }
     }
 
@@ -514,10 +534,10 @@ var ReactSuperSelect = React.createClass({
 
   // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
   _findArrayOfOptionDataObjectsByValue: function(value) {
-    var valuesArray = _.isArray(value) ? _.pluck(value, this.state.valueKey) : [value];
-    return _.reject(this.state.data, function(item) {
-      return !_.contains(valuesArray, item[this.state.valueKey]);
-    }, this);
+    var valuesArray = _.isArray(value) ? _.map(value, this.state.valueKey) : [value];
+    return _.reject(this.state.data, _.bind(function(item) {
+      return !_.includes(valuesArray, item[this.state.valueKey]);
+    }, this));
   },
 
   // determine whether to focus a option value in the DOM, or the search field
@@ -635,7 +655,8 @@ var ReactSuperSelect = React.createClass({
               tabIndex="-1"
               id={this._ariaGetListId()}
               role="listbox"
-              aria-expanded={this.state.isOpen}>
+              aria-expanded={this.state.isOpen}
+              onWheel={this._arrestScroll}>
             {this._getOptionsMarkup()}
           </ul>
           {pagingLi}
@@ -677,14 +698,14 @@ var ReactSuperSelect = React.createClass({
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function() {
-    return _.map(this.state.value, function(value) {
+    return _.map(this.state.value, _.bind(function(value) {
       var selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       } else {
         return (<span key={selectedKey} className="r-ss-selected-label">{value[this.state.labelKey]}</span>);
       }
-    }, this);
+    }, this));
   },
 
   // render a loading span (spinner gif), with **customLoaderClass** if provided
@@ -720,11 +741,11 @@ var ReactSuperSelect = React.createClass({
         optionsCount = 0;
 
     if (!_.isArray(data)) {
-      _.forIn(data, function(groupedOptions, heading) {
+      _.forIn(data, _.bind(function(groupedOptions, heading) {
         options.push(this._getGroupHeadingMarkup(heading));
         options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
-      }, this);
+      }, this));
     } else {
       options = this._getTemplatedOptions(data);
     }
@@ -792,9 +813,9 @@ var ReactSuperSelect = React.createClass({
 
   // iterate over selected values and build tags markup for selected options display
   _getTagsDisplayMarkup: function() {
-    return _.map(this.state.value, function(value) {
+    return _.map(this.state.value, _.bind(function(value) {
       return this._getTagMarkup(value);
-    }, this);
+    }, this));
   },
 
   // render a tag for an individual selected value
@@ -886,26 +907,20 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
-  // handler for searchInput's keyUp event
+  // handler for searchInput's onChange event
   _handleSearch: function(event) {
     this._arrestEvent(event);
-    var searchString = event.target.value;
-    this._handleSearchDebounced.call(this, searchString);
-  },
-
-  // debounced handler for searchInput's keyUp event, reduces # of times the control re-renders
-  _handleSearchDebounced: _.debounce(function(search) {
     this.setState({
-      searchString: search
+      searchString: event.target.value
     });
-  }, 300),
+  },
 
   // return the boolean used to determine whether an option should have the 'r-ss-selected' class
   _isCurrentlySelected: function(dataItem) {
     if (!_.isArray(this.state.value)) {
       return _.isEqual(this.state.value, dataItem);
     }
-    return !!(_.findWhere(this.state.value, dataItem));
+    return !!(_.find(this.state.value, dataItem));
   },
 
   // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
@@ -924,7 +939,7 @@ var ReactSuperSelect = React.createClass({
   // Render the option list-items.
   // Leverage the **customOptionTemplateFunction** function if provided
   _mapDataToOptionsMarkup: function(data, indexStart) {
-    return _.map(data, function(dataOption, index) {
+    return _.map(data, _.bind(function(dataOption, index) {
       index = indexStart + index;
 
       var isCurrentlySelected = this._isCurrentlySelected(dataOption),
@@ -949,7 +964,7 @@ var ReactSuperSelect = React.createClass({
             role="option">
           {optionMarkup}
         </li>);
-    }, this);
+    }, this));
   },
 
   // determines next focusedId prior to updateFocusedId call
@@ -1104,9 +1119,9 @@ var ReactSuperSelect = React.createClass({
       }
     }
 
-    var remainingSelected = _.reject(this.state.value, function(opt) {
+    var remainingSelected = _.reject(this.state.value, _.bind(function(opt) {
         return _.includes(valuePropsToReject, opt[this.state.valueKey]);
-      }, this);
+      }, this));
 
     this.props.onChange(remainingSelected);
 
@@ -1123,9 +1138,9 @@ var ReactSuperSelect = React.createClass({
       this.lastUserSelectedOption = undefined;
     }
 
-    var SelectedAfterRemoval = _.reject(this.state.value, function(option) {
+    var SelectedAfterRemoval = _.reject(this.state.value, _.bind(function(option) {
                                  return option[this.state.valueKey] === value[this.state.valueKey];
-                               }, this);
+                               }, this));
 
     this.props.onChange(SelectedAfterRemoval);
 
@@ -1169,12 +1184,12 @@ var ReactSuperSelect = React.createClass({
       }
     }
 
-    var optionsToSelect = _.reduce(this.state.data, function(memo, opt) {
+    var optionsToSelect = _.reduce(this.state.data, _.bind(function(memo, opt) {
           if (_.includes(valuePropsToSelect, opt[this.state.valueKey])) {
             memo.push(opt);
           }
           return memo;
-        }, [], this);
+        }, this), []);
     this._selectItemByValues(optionsToSelect, true);
   },
 
@@ -1213,7 +1228,7 @@ var ReactSuperSelect = React.createClass({
       this.lastUserSelectedOption = eventTargetLi;
 
       if (this.SELECTED_OPTION_REGEX.test(this.refs[focusedOptionKey].className)) {
-        var optionFullFromValueProp = _.first(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        var optionFullFromValueProp = _.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
         this._removeSelectedOptionByValue(optionFullFromValueProp);
       } else {
         keepControlOpen = keepControlOpen || false;
@@ -1232,7 +1247,7 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    var outputValue = this._isMultiSelect() ? objectValues : _.first(objectValues);
+    var outputValue = this._isMultiSelect() ? objectValues : _.head(objectValues);
     this.props.onChange(outputValue);
 
     if (keepControlOpen) {
@@ -1286,7 +1301,7 @@ var ReactSuperSelect = React.createClass({
       return false;
     }
 
-    var firstValue = _.first(this.state.value)[this.state.valueKey],
+    var firstValue = _.head(this.state.value)[this.state.valueKey],
         firstTag = this.refs[this._getTagRemoveIndex(firstValue)];
 
     if (firstTag) {
