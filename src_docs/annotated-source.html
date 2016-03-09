@@ -1384,16 +1384,14 @@ sets focused option in callback after opening</p>
             
             <div class="content"><div class='highlight'><pre>  _arrestScroll: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) </span>{
     <span class="hljs-keyword">let</span> arrestScroll = <span class="hljs-literal">false</span>,
-        selectUl = event.currentTarget,
-        adjustedHeight = selectUl.scrollTop + selectUl.clientHeight;
+        adjustedHeight = <span class="hljs-keyword">this</span>.refs.scrollWrap.scrollTop + <span class="hljs-keyword">this</span>.refs.scrollWrap.clientHeight;
 
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'selectUl'</span>, selectUl.scrollTop, selectUl.clientHeight);
     <span class="hljs-keyword">if</span> (event.deltaY &gt; <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">if</span> (adjustedHeight &gt;= optionLi.scrollHeight) {
+      <span class="hljs-keyword">if</span> (adjustedHeight &gt;= <span class="hljs-keyword">this</span>.refs.scrollWrap.scrollHeight) {
         arrestScroll = <span class="hljs-literal">true</span>;
       }
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">if</span> (optionLi.scrollTop &lt;= <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs.scrollWrap.scrollTop &lt;= <span class="hljs-number">0</span>) {
         arrestScroll = <span class="hljs-literal">true</span>;
       }
     }
