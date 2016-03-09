@@ -16,7 +16,6 @@ module.exports = {
     name: COMPONENT_NAME,
     lib: 'lib',
     src: 'src',
-    dist: 'dist',
     pkgName: pkg.name,
     lint: {
       js: [

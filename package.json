@@ -78,14 +78,12 @@
     "uglifyify": "^3.0.1"
   },
   "scripts": {
-    "bower:copy": "cp -r ./dist/ ./lib",
-    "build": "npm run clean && npm run npm:build:css && npm run npm:babel:js && npm run bower:copy && npm run docs:build-sequence",
-    "clean": "rm -rf ./dist && mkdir ./dist && rm -rf ./lib && mkdir ./lib",
+    "build": "npm run clean && npm run npm:build:css && npm run npm:babel:js && npm run docs:build-sequence",
+    "clean": "rm -rf ./lib && mkdir ./lib",
     "docs:build-sequence": "npm run docs:clean && $(npm bin)/gulp build:docs-gulp-sequence",
     "docs:clean": "rm -rf ./src_docs/markdown/js/**/* docs_generated/*",
     "npm:babel:js": "$(npm bin)/babel src/react-super-select.js --out-file lib/react-super-select.js",
-    "npm:browserify:js": "$(npm bin)/browserify -x lodash -x classnames -x react src/react-super-select.js -d -t babelify | exorcist dist/react-super-select.js.map > dist/react-super-select.js",
-    "npm:build:css": "lessc ./src/react-super-select.less ./dist/react-super-select.css",
+    "npm:build:css": "lessc ./src/react-super-select.less ./lib/react-super-select.css",
     "test": "$(npm bin)/jest"
   },
   "browserify-shim": {
