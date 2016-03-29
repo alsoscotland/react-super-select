@@ -1,13 +1,19 @@
-var testData = require('./support/test-data.js'),
+var React = require('react'),
+    testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
 
 var handlerExample = function(option) {
+  if (!option) {
+    exampleOutput('basic_searchable_output', "no option chosen");
+    return;
+  }
+
   var output = [
-    'Searchable Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+  'Option Item Chosen = {\n',
+  '\tid: ', option.id, '\n',
+  '\tname: ', option.name, '\n',
+  '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_searchable_output', output.join(''));
 };
 

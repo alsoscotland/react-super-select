@@ -3,11 +3,16 @@ var testData = require('./support/test-data.js'),
     basicAjaxMarkdown = require('../markdown/js/examples/basic-ajax').body;
 
 var handlerExample = function(option) {
+  if (!option) {
+    exampleOutput('basic_ajax_output', "no option chosen");
+    return;
+  }
+
   var output = [
-    'Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+  'Option Item Chosen = {\n',
+  '\tid: ', option.id, '\n',
+  '\tname: ', option.name, '\n',
+  '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_ajax_output', output.join(''));
 };
 

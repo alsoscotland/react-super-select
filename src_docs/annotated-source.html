@@ -1277,7 +1277,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
            <span class="hljs-attr">aria-controls</span>=<span class="hljs-string">{this._ariaGetListId()}</span>
            <span class="hljs-attr">aria-label</span>=<span class="hljs-string">{placeholderString}</span>
            <span class="hljs-attr">aria-multiselectable</span>=<span class="hljs-string">{this._isMultiSelect()}</span>
-           <span class="hljs-attr">tabIndex</span>=<span class="hljs-string">"1"</span>&gt;</span>
+           <span class="hljs-attr">tabIndex</span>=<span class="hljs-string">"0"</span>&gt;</span>
             {triggerDisplayContent}
             {clearSelectionButton}
             <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"carat"</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{caratClass}</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
@@ -1815,9 +1815,7 @@ for keyboard navigation and accessibility</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _focusTrigger: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.refs.triggerDiv &amp;&amp; <span class="hljs-keyword">this</span>.refs.rssControl.contains(<span class="hljs-built_in">document</span>.activeElement)) {
-      <span class="hljs-keyword">this</span>.refs.triggerDiv.focus();
-    }
+    <span class="hljs-keyword">this</span>.refs.triggerDiv.focus();
   },</pre></div></div>
             
         </li>

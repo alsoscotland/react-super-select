@@ -1,9 +1,15 @@
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     pagingMarkdown = require('../markdown/js/examples/paging').body;
 
 var handlerExample = function(option) {
+  if (!option) {
+    exampleOutput('paging_output', "no option chosen");
+    return;
+  }
+
   var output = [
     'Option Item Chosen = {\n',
     '\tid: ', option.id, '\n',

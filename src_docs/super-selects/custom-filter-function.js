@@ -5,12 +5,18 @@ var React = require('react'),
     customFilterFunctionMarkdown = require('../markdown/js/examples/custom-filter-function').body;
 
 var handlerExample = function(option) {
+
+  if (!option) {
+    exampleOutput('custom_filter_function_output', "no option chosen");
+    return;
+  }
+
   var output = [
     'Add To Cart: ',
     option.label,
     '\nPrice: ',
     option.price];
-  exampleOutput('custom_template_output', output.join(''));
+  exampleOutput('custom_filter_function_output', output.join(''));
 };
 
 var customFilter = function (option, index, collection, searchTerm) {
