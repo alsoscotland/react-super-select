@@ -34473,7 +34473,7 @@ var ReactSuperSelect = React.createClass({
           'aria-controls': this._ariaGetListId(),
           'aria-label': placeholderString,
           'aria-multiselectable': this._isMultiSelect(),
-          tabIndex: '1' },
+          tabIndex: '0' },
         triggerDisplayContent,
         clearSelectionButton,
         React.createElement(
@@ -34751,9 +34751,7 @@ var ReactSuperSelect = React.createClass({
 
   // focus the main trigger element of the control if the user is interacting with this control instance
   _focusTrigger: function _focusTrigger() {
-    if (this.refs.triggerDiv && this.refs.rssControl.contains(document.activeElement)) {
-      this.refs.triggerDiv.focus();
-    }
+    this.refs.triggerDiv.focus();
   },
 
   // choose whether to template the display of user-selected values normally, or as tags

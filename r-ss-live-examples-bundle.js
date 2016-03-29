@@ -34473,7 +34473,7 @@ var ReactSuperSelect = React.createClass({
           'aria-controls': this._ariaGetListId(),
           'aria-label': placeholderString,
           'aria-multiselectable': this._isMultiSelect(),
-          tabIndex: '1' },
+          tabIndex: '0' },
         triggerDisplayContent,
         clearSelectionButton,
         React.createElement(
@@ -34751,9 +34751,7 @@ var ReactSuperSelect = React.createClass({
 
   // focus the main trigger element of the control if the user is interacting with this control instance
   _focusTrigger: function _focusTrigger() {
-    if (this.refs.triggerDiv && this.refs.rssControl.contains(document.activeElement)) {
-      this.refs.triggerDiv.focus();
-    }
+    this.refs.triggerDiv.focus();
   },
 
   // choose whether to template the display of user-selected values normally, or as tags
@@ -35707,6 +35705,11 @@ var testData = require('./support/test-data.js'),
     basicAjaxMarkdown = require('../markdown/js/examples/basic-ajax').body;
 
 var handlerExample = function handlerExample(option) {
+  if (!option) {
+    exampleOutput('basic_ajax_output', "no option chosen");
+    return;
+  }
+
   var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_ajax_output', output.join(''));
 };
@@ -35748,6 +35751,11 @@ var testData = require('./support/test-data.js'),
     basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
 
 var handlerExample = function handlerExample(option) {
+  if (!option) {
+    exampleOutput('basic_example_output', "no option chosen");
+    return;
+  }
+
   var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_example_output', output.join(''));
 };
@@ -35772,12 +35780,18 @@ module.exports = basicExample;
 },{"../markdown/js/examples/basic-example":165,"./support/example-output.js":183,"./support/test-data.js":185}],176:[function(require,module,exports){
 'use strict';
 
-var testData = require('./support/test-data.js'),
+var React = require('react'),
+    testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     basicSearchableMarkdown = require('../markdown/js/examples/basic-searchable').body;
 
 var handlerExample = function handlerExample(option) {
-  var output = ['Searchable Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
+  if (!option) {
+    exampleOutput('basic_searchable_output', "no option chosen");
+    return;
+  }
+
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_searchable_output', output.join(''));
 };
 
@@ -35799,7 +35813,7 @@ var basicSearchableExample = {
 
 module.exports = basicSearchableExample;
 
-},{"../markdown/js/examples/basic-searchable":166,"./support/example-output.js":183,"./support/test-data.js":185}],177:[function(require,module,exports){
+},{"../markdown/js/examples/basic-searchable":166,"./support/example-output.js":183,"./support/test-data.js":185,"react":160}],177:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -35809,8 +35823,14 @@ var React = require('react'),
     customFilterFunctionMarkdown = require('../markdown/js/examples/custom-filter-function').body;
 
 var handlerExample = function handlerExample(option) {
+
+  if (!option) {
+    exampleOutput('custom_filter_function_output', "no option chosen");
+    return;
+  }
+
   var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
-  exampleOutput('custom_template_output', output.join(''));
+  exampleOutput('custom_filter_function_output', output.join(''));
 };
 
 var customFilter = function customFilter(option, index, collection, searchTerm) {
@@ -35867,6 +35887,12 @@ var React = require('react'),
     customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
 
 var handlerExample = function handlerExample(option) {
+
+  if (!option) {
+    exampleOutput('custom_template_output', "no option chosen");
+    return;
+  }
+
   var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
   exampleOutput('custom_template_output', output.join(''));
 };
@@ -35920,6 +35946,10 @@ var React = require('react'),
     groupByMarkdown = require('../markdown/js/examples/group-by').body;
 
 var handlerExample = function handlerExample(option) {
+  if (!option) {
+    exampleOutput('group_by_output', "no option chosen");
+    return;
+  }
   var output = ['Add To Cart: ', option.label, '\nPrice: ', option.price];
   exampleOutput('group_by_output', output.join(''));
 };
@@ -35967,12 +35997,18 @@ module.exports = groupByExample;
 },{"../markdown/js/examples/group-by":169,"./support/example-output.js":183,"./support/groceries.js":184,"classnames":1,"react":160}],180:[function(require,module,exports){
 'use strict';
 
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     localizedMarkdown = require('../markdown/js/examples/localized').body;
 
 var handlerExample = function handlerExample(options) {
+  if (!options) {
+    exampleOutput('localized_output', "no option chosen");
+    return;
+  }
+
   var output = [];
   _.map(options, function (option) {
     output = output.concat(['Localized Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
@@ -36051,15 +36087,21 @@ var localizedExample = {
 
 module.exports = localizedExample;
 
-},{"../markdown/js/examples/localized":170,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3}],181:[function(require,module,exports){
+},{"../markdown/js/examples/localized":170,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}],181:[function(require,module,exports){
 'use strict';
 
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     multiselectMarkdown = require('../markdown/js/examples/multiselect').body;
 
 var handlerExample = function handlerExample(options) {
+  if (!options) {
+    exampleOutput('multiselect_output', "no option chosen");
+    return;
+  }
+
   var output = [];
   _.map(options, function (option) {
     output = output.concat(['Multiselect Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
@@ -36086,15 +36128,21 @@ var multiselectExample = {
 
 module.exports = multiselectExample;
 
-},{"../markdown/js/examples/multiselect":171,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3}],182:[function(require,module,exports){
+},{"../markdown/js/examples/multiselect":171,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}],182:[function(require,module,exports){
 'use strict';
 
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     pagingMarkdown = require('../markdown/js/examples/paging').body;
 
 var handlerExample = function handlerExample(option) {
+  if (!option) {
+    exampleOutput('paging_output', "no option chosen");
+    return;
+  }
+
   var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
   exampleOutput('paging_output', output.join(''));
 };
@@ -36164,7 +36212,7 @@ var pagingExample = {
 
 module.exports = pagingExample;
 
-},{"../markdown/js/examples/paging":172,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3}],183:[function(require,module,exports){
+},{"../markdown/js/examples/paging":172,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}],183:[function(require,module,exports){
 "use strict";
 
 var exampleOutput = function exampleOutput(id, content) {
@@ -36488,12 +36536,18 @@ module.exports = testData;
 },{}],186:[function(require,module,exports){
 'use strict';
 
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     tagsMarkdown = require('../markdown/js/examples/tags-example').body;
 
 var handlerExample = function handlerExample(options) {
+  if (!options) {
+    exampleOutput('tags_example_output', "no option chosen");
+    return;
+  }
+
   var output = [];
   _.map(options, function (option) {
     output = output.concat(['Tags Chosen Option = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};\n']);
@@ -36521,4 +36575,4 @@ var tagsExample = {
 
 module.exports = tagsExample;
 
-},{"../markdown/js/examples/tags-example":173,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3}]},{},[163])
+},{"../markdown/js/examples/tags-example":173,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}]},{},[163])
