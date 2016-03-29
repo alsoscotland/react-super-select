@@ -5,6 +5,10 @@ var React = require('react'),
     groupByMarkdown = require('../markdown/js/examples/group-by').body;
 
 var handlerExample = function(option) {
+  if (!option) {
+    exampleOutput('group_by_output', "no option chosen");
+    return;
+  }
   var output = [
     'Add To Cart: ',
     option.label,

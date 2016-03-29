@@ -1,9 +1,15 @@
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     testData = require('./support/test-data.js'),
     exampleOutput = require('./support/example-output.js'),
     tagsMarkdown = require('../markdown/js/examples/tags-example').body;
 
 var handlerExample = function(options) {
+  if (!options) {
+    exampleOutput('tags_example_output', "no option chosen");
+    return;
+  }
+
   var output = [];
   _.map(options, function(option){
     output = output.concat([

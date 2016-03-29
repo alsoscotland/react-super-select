@@ -5,6 +5,12 @@ var React = require('react'),
     customTemplateMarkdown = require('../markdown/js/examples/custom-template').body;
 
 var handlerExample = function(option) {
+
+  if (!option) {
+    exampleOutput('custom_template_output', "no option chosen");
+    return;
+  }
+
   var output = [
     'Add To Cart: ',
     option.label,

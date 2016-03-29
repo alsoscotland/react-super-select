@@ -108,7 +108,7 @@ describe('ReactSuperSelect', function() {
       expect(el.refs.triggerDiv.getAttribute("aria-controls")).toBe(el._ariaGetListId());
       expect(_.isString(el.refs.triggerDiv.getAttribute("aria-label"))).toBe(true);
       expect(Boolean(el.refs.triggerDiv.getAttribute("aria-multiselectable"))).toBe(Boolean(el._isMultiSelect()));
-      expect(el.refs.triggerDiv.getAttribute("tabIndex")).toBe('1');
+      expect(el.refs.triggerDiv.getAttribute("tabIndex")).toBe('0');
     });
 
     it('triggerDiv tracks focused option as aria-active-descendant', function() {

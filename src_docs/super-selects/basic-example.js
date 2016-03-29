@@ -3,11 +3,16 @@ var testData = require('./support/test-data.js'),
     basicExampleMarkdown = require('../markdown/js/examples/basic-example').body;
 
 var handlerExample = function(option) {
+  if (!option) {
+    exampleOutput('basic_example_output', "no option chosen");
+    return;
+  }
+
   var output = [
-    'Option Item Chosen = {\n',
-    '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+  'Option Item Chosen = {\n',
+  '\tid: ', option.id, '\n',
+  '\tname: ', option.name, '\n',
+  '\tsize: ', option.size, '\n\t};'];
   exampleOutput('basic_example_output', output.join(''));
 };
 
