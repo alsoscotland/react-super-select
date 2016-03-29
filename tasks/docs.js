@@ -11,14 +11,6 @@ var babelify = require('babelify'),
 
 module.exports = function(gulp, config) {
 
-  gulp.task('docs:build', function(cb) {
-    exec('npm run docs:build', function (err, stdout, stderr) {
-      console.log(stdout);
-      console.log(stderr);
-      cb(err);
-    });
-  });
-
   // TODO - get docs_clean running again
   gulp.task('build:docs-gulp-sequence', function(callback) {
     runSequence('docs_annotate_source',

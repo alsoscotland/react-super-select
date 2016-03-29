@@ -401,6 +401,15 @@ var ReactSuperSelect = React.createClass({
     }
   },
 
+  // call onChange handler with updated value
+  // should be called as setState callback when changing state.value
+  // will call with undefined when no values are set
+  _broadcastChange: function() {
+    let outputValue = this._isMultiSelect() ? this.state.value : _.head(this.state.value);
+    outputValue = _.isEmpty(outputValue) ? undefined : outputValue;
+    this.props.onChange(outputValue);
+  },
+
   // calculate the initial value for the control from props, componentWillReceiveProps will call passing nextProps
   _buildInitialValue: function(props) {
     props = props || this.props;
@@ -432,7 +441,10 @@ var ReactSuperSelect = React.createClass({
       event.stopPropagation();
       this.setState({
         value: []
-      }, this._focusTrigger);
+      }, () => {
+        this._focusTrigger();
+        this._broadcastChange();
+      });
     }
   },
 
@@ -1123,16 +1135,14 @@ var ReactSuperSelect = React.createClass({
         return _.includes(valuePropsToReject, opt[this.state.valueKey]);
       });
 
-    this.props.onChange(remainingSelected);
-
     this.setState({
       value: remainingSelected
-    });
+    }, this._broadcastChange);
   },
 
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
-  _removeSelectedOptionByValue: function(value, callback) {
+  _removeSelectedOptionByValue: function(value, callback = _.noop) {
     // clear lastUserSelected if has been removed
     if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
       this.lastUserSelectedOption = undefined;
@@ -1142,13 +1152,12 @@ var ReactSuperSelect = React.createClass({
                                  return option[this.state.valueKey] === value[this.state.valueKey];
                                });
 
-    this.props.onChange(SelectedAfterRemoval);
-
-    callback = _.isFunction(callback) ? callback :  _.noop;
-
     this.setState({
       value: SelectedAfterRemoval
-    }, callback);
+    }, () => {
+      callback();
+      this._broadcastChange();
+    });
   },
 
   // remove a selected tag on keyDown
@@ -1247,18 +1256,15 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    var outputValue = this._isMultiSelect() ? objectValues : _.head(objectValues);
-    this.props.onChange(outputValue);
+    this.setState({
+      value: this._isMultiSelect() ? objectValues : [_.head(objectValues)]
+    }, () => {
+      if (!keepControlOpen) {
+        this._closeOnKeypress();
+      }
+      this._broadcastChange();
+    });
 
-    if (keepControlOpen) {
-      this.setState({
-        value: objectValues
-      });
-    } else {
-      this.setState({
-        value: objectValues
-      }, this._closeOnKeypress);
-    }
   },
 
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control

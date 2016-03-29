@@ -1,5 +1,5 @@
 var eslint = require('gulp-eslint'),
-    less = require('gulp-less'),
+    exec = require('child_process').exec,
     recess = require('gulp-recess'),
     runSequence = require('run-sequence');
 
@@ -45,10 +45,12 @@ module.exports = function(gulp, config) {
           }));
   });
 
-  gulp.task('less-compile', function () {
-      return gulp.src(config.component.lint.less)
-          .pipe(less())
-          .pipe(gulp.dest('dist'));
+  gulp.task('less-compile', function(cb) {
+    exec('npm run npm:build:css', function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
   });
 
   gulp.task('watch:examples-lint', function() {
