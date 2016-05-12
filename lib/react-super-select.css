@@ -18,12 +18,13 @@
   background-clip: padding-box;
 }
 .r-ss-remove-button > span:before {
-  position: aboslute;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   content: 'X';
+  line-height: normal;
 }
 .r-ss-remove-button:hover,
 .r-ss-remove-button:focus {
@@ -125,12 +126,13 @@
   background-clip: padding-box;
 }
 .r-ss-trigger .r-ss-selection-clear > span:before {
-  position: aboslute;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   content: 'X';
+  line-height: normal;
 }
 .r-ss-trigger .r-ss-selection-clear:hover,
 .r-ss-trigger .r-ss-selection-clear:focus {
@@ -203,12 +205,13 @@
   background-clip: padding-box;
 }
 .r-ss-search-inner .r-ss-search-clear > span:before {
-  position: aboslute;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   content: 'X';
+  line-height: normal;
 }
 .r-ss-search-inner .r-ss-search-clear:hover,
 .r-ss-search-inner .r-ss-search-clear:focus {
@@ -408,12 +411,13 @@
   background-clip: padding-box;
 }
 .r-ss-tag .r-ss-tag-remove > span:before {
-  position: aboslute;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   content: 'X';
+  line-height: normal;
 }
 .r-ss-tag .r-ss-tag-remove:hover,
 .r-ss-tag .r-ss-tag-remove:focus {
