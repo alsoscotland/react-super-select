@@ -869,8 +869,12 @@ var ReactSuperSelect = React.createClass({
   },
 
   // close control on document click outside of the control itself
-  _handleDocumentClick: function(event) {
-    if (!this.refs.rssControl.contains(event.target)) {
+  // react can remove event targets before this executes
+  // verify event target node is still in the DOM and close if click did not originate in RSS control
+  _handleDocumentClick: function() {
+    var event = Array.prototype.slice.call(arguments)[0],
+        isTargetStillInDOM = document.body.contains(event.target);
+    if (isTargetStillInDOM && !this.refs.rssControl.contains(event.target)) {
       this._closeOnKeypress();
     }
   },

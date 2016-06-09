@@ -1266,7 +1266,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
     }
 
     return (
-      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"rssControl"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">{this.state.controlId}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{wrapClasses}</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"rssControl"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">{this.state.controlId}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{wrapClasses}</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this._arrestEvent}</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">"triggerDiv"</span>
            <span class="hljs-attr">className</span>=<span class="hljs-string">{triggerClasses}</span>
            <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.toggleDropdown}</span>
@@ -1303,6 +1303,7 @@ sets focused option in callback after opening</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  toggleDropdown: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'toggleDropdown'</span>);
     <span class="hljs-keyword">this</span>.setState({
       <span class="hljs-string">'isOpen'</span>: !<span class="hljs-keyword">this</span>.state.isOpen
     }, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
@@ -1365,6 +1366,7 @@ sets focused option in callback after opening</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _arrestEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'arr'</span>, event);
     event.stopPropagation();
     event.preventDefault();
   },</pre></div></div>
@@ -1485,6 +1487,7 @@ for <strong>clearable</strong> controls</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _clearSelection: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'clearSelection'</span>);
     <span class="hljs-keyword">if</span> ((event.which === <span class="hljs-keyword">this</span>.keymap.enter) || (event.which === <span class="hljs-keyword">this</span>.keymap.space) || (event.type === <span class="hljs-string">"click"</span>)) {
       event.stopPropagation();
       <span class="hljs-keyword">this</span>.setState({
@@ -2325,6 +2328,7 @@ the conversion does not alter the string representation’s value</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _handleDocumentClick: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'_handleDocumentClick'</span>);
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.refs.rssControl.contains(event.target)) {
       <span class="hljs-keyword">this</span>._closeOnKeypress();
     }
@@ -3110,6 +3114,7 @@ Close dropdown on the setState callback if not a non control-closing selection</
             </div>
             
             <div class="content"><div class='highlight'><pre>  _selectItemOnOptionClick: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, event</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'_selectItemOnOptionClick'</span>);
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isMultiSelect() &amp;&amp; event.shiftKey) {
       <span class="hljs-keyword">this</span>._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       <span class="hljs-keyword">return</span>;
