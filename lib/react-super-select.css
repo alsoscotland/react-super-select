@@ -78,6 +78,7 @@
   background-clip: padding-box;
   cursor: pointer;
   outline: none;
+  word-wrap: break-word;
 }
 .r-ss-trigger .r-ss-selected-label {
   padding: 0 .5rem;
