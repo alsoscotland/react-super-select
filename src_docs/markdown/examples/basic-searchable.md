@@ -1,6 +1,7 @@
 ### JSX Markup
 ```html
 <ReactSuperSelect placeholder="Make a Selection" 
+                  clearSearchOnSelection={true}
                   dataSource={testData} 
                   onChange={handlerExample} 
                   searchable={true} />

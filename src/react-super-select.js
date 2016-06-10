@@ -32,6 +32,9 @@ var ReactSuperSelect = React.createClass({
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
 
+    // **clearSearchOnSelection** (Boolean) *optional* (Used in conjunction with the **searchable** option) whether to auto-clear search field when a selection is made
+    clearSearchOnSelection: React.PropTypes.bool,
+
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
 
@@ -1271,9 +1274,17 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    this.setState({
+    var newState = {
       value: this._isMultiSelect() ? objectValues : [_.head(objectValues)]
-    }, () => {
+    };
+
+    if (this.props.searchable && this.props.clearSearchOnSelection) {
+      _.extend(newState, {
+        searchString: undefined
+      });
+    }
+
+    this.setState(newState, () => {
       if (!keepControlOpen) {
         this._closeOnKeypress();
       }
