@@ -57,7 +57,7 @@ describe('ReactSuperSelect', function() {
     it('carat span has up class when open', function() {
       var carat = el.refs.carat;
       el.setState({
-        'isOpen': false
+        isOpen: false
       });
 
       expect(carat.getAttribute("class").indexOf('up')).toBe(-1);
@@ -67,7 +67,7 @@ describe('ReactSuperSelect', function() {
     it('carat span has down class when closed', function() {
       var carat = el.refs.carat;
       el.setState({
-        'isOpen': true
+        isOpen: true
       });
 
       expect(carat.getAttribute("class").indexOf('down')).toBe(-1);
@@ -242,6 +242,43 @@ describe('ReactSuperSelect', function() {
       expect(_.isEmpty(el.state.value)).toBe(true);
     });
 
+    it('if dropdown open, calls _setFocusOnOpen after clear', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      el.toggleDropdown();
+
+      var setFocusSpy = spyOn(el, '_setFocusOnOpen').andCallThrough();
+
+      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+        which: el.keymap.space
+      });
+
+      expect(setFocusSpy).toHaveBeenCalled();
+    });
+
+    it('it clears lastUserSelectedOption', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      el.lastUserSelectedOption = 'faksenode';
+
+      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+        which: el.keymap.space
+      });
+
+      expect(el.lastUserSelectedOption).toBeUndefined();
+    });
   });
 
   describe('initialValue', function() {
@@ -401,6 +438,15 @@ describe('ReactSuperSelect', function() {
       el.toggleDropdown();
 
       expect(setFocusSpy).toHaveBeenCalled();
+    });
+
+    it('clears focusedId if closing', function() {
+      el.toggleDropdown();
+      el.setState({
+        focusedId: 1
+      });
+      el.toggleDropdown();
+      expect(el.state.focusedId).toBeUndefined();
     });
   });
 
@@ -566,7 +612,7 @@ describe('ReactSuperSelect', function() {
     it('filters the default option list by label', function() {
       var el = renderAndOpen();
       el.setState({
-        'searchString': 'two'
+        searchString: 'two'
       });
 
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
@@ -581,8 +627,8 @@ describe('ReactSuperSelect', function() {
         }
       });
       el.setState({
-        'isOpen': true,
-        'searchString': 'whatzit'
+        isOpen: true,
+        searchString: 'whatzit'
       });
 
       var optionElements = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
@@ -592,11 +638,11 @@ describe('ReactSuperSelect', function() {
 
     it('does not render a clear search button when search is not set', function() {
       var el = renderAndOpen({
-        'searchable': true
+        searchable: true
       });
       el.setState({
-        'isOpen': true,
-        'searchString': undefined
+        isOpen: true,
+        searchString: undefined
       });
 
       expect(el.refs.searchClear).toBeUndefined();
@@ -604,25 +650,41 @@ describe('ReactSuperSelect', function() {
 
     it('renders a clear search button when search is set', function() {
       var el = renderAndOpen({
-        'searchable': true
+        searchable: true
       });
 
       el.setState({
-        'isOpen': true,
-        'searchString': 'whatzit'
+        isOpen: true,
+        searchString: 'whatzit'
       });
 
       expect(el.refs.searchClear).toBeTruthy();
     });
 
+    it.only('auto clears search on selection when clearSearchOnSelection is true', function() {
+      var el = renderAndOpen({
+        searchable: true,
+        clearSearchOnSelection: true
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+
+      el.setState({
+        searchString: 'option'
+      });
+
+      TestUtils.Simulate.click(options[1]);
+
+      expect(el.state.searchString).toBeUndefined();
+    });
+
     it('clears search value when clearSearch is clicked', function() {
       var el = renderAndOpen({
-        'searchable': true
+        searchable: true
       });
 
       el.setState({
-        'isOpen': true,
-        'searchString': 'whatzit'
+        searchString: 'whatzit'
       });
 
       TestUtils.Simulate.click(el.refs.searchClear);
@@ -631,12 +693,11 @@ describe('ReactSuperSelect', function() {
 
     it('clears search value when clearSearch is clicked', function() {
       var el = renderAndOpen({
-        'searchable': true
+        searchable: true
       });
 
       el.setState({
-        'isOpen': true,
-        'searchString': 'whatzit'
+        searchString: 'whatzit'
       });
 
       TestUtils.Simulate.click(el.refs.searchClear);
@@ -645,18 +706,16 @@ describe('ReactSuperSelect', function() {
 
     it('clears search value when clearSearch handles a keyDown event', function() {
       var el = renderAndOpen({
-        'searchable': true
+        searchable: true
       });
 
       el.setState({
-        'isOpen': true,
-        'searchString': 'whatzit'
+        searchString: 'whatzit'
       });
 
       TestUtils.Simulate.keyDown(el.refs.searchClear);
       expect(el.state.searchString).toBeUndefined();
     });
-
   });
 
   describe('single item selection', function() {

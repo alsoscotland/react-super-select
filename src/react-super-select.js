@@ -32,6 +32,9 @@ var ReactSuperSelect = React.createClass({
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
 
+    // **clearSearchOnSelection** (Boolean) *optional* (Used in conjunction with the **searchable** option) whether to auto-clear search field when a selection is made
+    clearSearchOnSelection: React.PropTypes.bool,
+
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
 
@@ -168,7 +171,7 @@ var ReactSuperSelect = React.createClass({
   // CONSTANTS
   // ---------
 
-  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
+  // used as the focusedId state variable value, when the search input field of a **searchable** control has focus.
   SEARCH_FOCUS_ID: -1,
 
   // regular expression used to determine if event src options have selected class
@@ -351,9 +354,18 @@ var ReactSuperSelect = React.createClass({
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
   toggleDropdown: function() {
-    this.setState({
-      'isOpen': !this.state.isOpen
-    }, function() {
+
+    var newState = {
+      isOpen: !this.state.isOpen
+    };
+
+    if (this.state.isOpen) {
+      _.extend(newState, {
+        focusedId: undefined
+      });
+    }
+
+    this.setState(newState, function() {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
@@ -442,6 +454,10 @@ var ReactSuperSelect = React.createClass({
       this.setState({
         value: []
       }, () => {
+        if (this.state.isOpen) {
+          this._setFocusOnOpen();
+        }
+        this.lastUserSelectedOption = undefined;
         this._focusTrigger();
         this._broadcastChange();
       });
@@ -869,8 +885,12 @@ var ReactSuperSelect = React.createClass({
   },
 
   // close control on document click outside of the control itself
-  _handleDocumentClick: function(event) {
-    if (!this.refs.rssControl.contains(event.target)) {
+  // react can remove event targets before this executes
+  // verify event target node is still in the DOM and close if click did not originate in RSS control
+  _handleDocumentClick: function() {
+    var event = Array.prototype.slice.call(arguments)[0],
+        isTargetStillInDOM = document.body.contains(event.target);
+    if (isTargetStillInDOM && !this.refs.rssControl.contains(event.target)) {
       this._closeOnKeypress();
     }
   },
@@ -1254,9 +1274,17 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    this.setState({
+    var newState = {
       value: this._isMultiSelect() ? objectValues : [_.head(objectValues)]
-    }, () => {
+    };
+
+    if (this.props.searchable && this.props.clearSearchOnSelection) {
+      _.extend(newState, {
+        searchString: undefined
+      });
+    }
+
+    this.setState(newState, () => {
       if (!keepControlOpen) {
         this._closeOnKeypress();
       }
