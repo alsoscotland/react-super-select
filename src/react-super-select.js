@@ -168,7 +168,7 @@ var ReactSuperSelect = React.createClass({
   // CONSTANTS
   // ---------
 
-  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
+  // used as the focusedId state variable value, when the search input field of a **searchable** control has focus.
   SEARCH_FOCUS_ID: -1,
 
   // regular expression used to determine if event src options have selected class
@@ -351,9 +351,18 @@ var ReactSuperSelect = React.createClass({
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
   toggleDropdown: function() {
-    this.setState({
-      'isOpen': !this.state.isOpen
-    }, function() {
+
+    var newState = {
+      isOpen: !this.state.isOpen
+    };
+
+    if (this.state.isOpen) {
+      _.extend(newState, {
+        focusedId: undefined
+      });
+    }
+
+    this.setState(newState, function() {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
@@ -442,6 +451,10 @@ var ReactSuperSelect = React.createClass({
       this.setState({
         value: []
       }, () => {
+        if (this.state.isOpen) {
+          this._setFocusOnOpen();
+        }
+        this.lastUserSelectedOption = undefined;
         this._focusTrigger();
         this._broadcastChange();
       });

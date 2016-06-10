@@ -242,6 +242,43 @@ describe('ReactSuperSelect', function() {
       expect(_.isEmpty(el.state.value)).toBe(true);
     });
 
+    it('if dropdown open, calls _setFocusOnOpen after clear', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      el.toggleDropdown();
+
+      var setFocusSpy = spyOn(el, '_setFocusOnOpen').andCallThrough();
+
+      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+        which: el.keymap.space
+      });
+
+      expect(setFocusSpy).toHaveBeenCalled();
+    });
+
+    it('it clears lastUserSelectedOption', function() {
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      el.lastUserSelectedOption = 'faksenode';
+
+      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+        which: el.keymap.space
+      });
+
+      expect(el.lastUserSelectedOption).toBeUndefined();
+    });
   });
 
   describe('initialValue', function() {
@@ -401,6 +438,15 @@ describe('ReactSuperSelect', function() {
       el.toggleDropdown();
 
       expect(setFocusSpy).toHaveBeenCalled();
+    });
+
+    it('clears focusedId if closing', function() {
+      el.toggleDropdown();
+      el.setState({
+        focusedId: 1
+      });
+      el.toggleDropdown();
+      expect(el.state.focusedId).toBeUndefined();
     });
   });
 

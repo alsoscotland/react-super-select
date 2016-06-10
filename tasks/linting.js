@@ -18,7 +18,7 @@ module.exports = function(gulp, config) {
   });
 
   gulp.task('watch:tasks', [
-    'lint:tasks',
+    'lint:tasks'
   ], function() {
     gulp.watch([config.tasks.lint.js], ['lint:tasks']);
   });
