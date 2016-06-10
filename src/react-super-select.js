@@ -27,6 +27,10 @@ var ReactSuperSelect = React.createClass({
 
     // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
     multiple: React.PropTypes.bool,
+
+    // **openOnMount** (Boolean) *optional* - Whether or not to render the control open when it initially mounts
+    openOnMount: React.PropTypes.bool,
+
     // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
@@ -250,6 +254,11 @@ var ReactSuperSelect = React.createClass({
   componentDidMount: function() {
     document.addEventListener('click', this._handleDocumentClick);
     document.addEventListener('touchstart', this._handleDocumentClick);
+    if (this.props.openOnMount) {
+      this.setState({
+        isOpen: true
+      })
+    }
   },
 
   // remove binding for document click close control handler
@@ -874,6 +883,7 @@ var ReactSuperSelect = React.createClass({
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
   // - render no results markup if no options result from map calls
   _getTemplatedOptions: function(data, indexStart) {
+
     indexStart = indexStart || 0;
     var options = this._mapDataToOptionsMarkup(data, indexStart);
 
@@ -890,8 +900,14 @@ var ReactSuperSelect = React.createClass({
   _handleDocumentClick: function() {
     var event = Array.prototype.slice.call(arguments)[0],
         isTargetStillInDOM = document.body.contains(event.target);
+
     if (isTargetStillInDOM && !this.refs.rssControl.contains(event.target)) {
-      this._closeOnKeypress();
+      if (this.state.isOpen) {
+        this.setState({
+          isOpen: false,
+          focusedId: undefined
+        });
+      }
     }
   },
 
@@ -976,7 +992,7 @@ var ReactSuperSelect = React.createClass({
           itemKey = "drop_li_" + dataOption[this.state.valueKey],
           indexRef = 'option_' + index,
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
-          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption) : dataOption[this.state.labelKey],
+          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption, this.state.searchString) : dataOption[this.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
             'r-ss-selected': isCurrentlySelected
           });
