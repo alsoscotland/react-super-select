@@ -34169,10 +34169,17 @@ var ReactSuperSelect = React.createClass({
 
     // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
     multiple: React.PropTypes.bool,
+
+    // **openOnMount** (Boolean) *optional* - Whether or not to render the control open when it initially mounts
+    openOnMount: React.PropTypes.bool,
+
     // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
+
+    // **clearSearchOnSelection** (Boolean) *optional* (Used in conjunction with the **searchable** option) whether to auto-clear search field when a selection is made
+    clearSearchOnSelection: React.PropTypes.bool,
 
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
@@ -34298,7 +34305,7 @@ var ReactSuperSelect = React.createClass({
   // CONSTANTS
   // ---------
 
-  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
+  // used as the focusedId state variable value, when the search input field of a **searchable** control has focus.
   SEARCH_FOCUS_ID: -1,
 
   // regular expression used to determine if event src options have selected class
@@ -34377,6 +34384,11 @@ var ReactSuperSelect = React.createClass({
   componentDidMount: function componentDidMount() {
     document.addEventListener('click', this._handleDocumentClick);
     document.addEventListener('touchstart', this._handleDocumentClick);
+    if (this.props.openOnMount) {
+      this.setState({
+        isOpen: true
+      });
+    }
   },
 
   // remove binding for document click close control handler
@@ -34489,9 +34501,18 @@ var ReactSuperSelect = React.createClass({
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
   toggleDropdown: function toggleDropdown() {
-    this.setState({
-      'isOpen': !this.state.isOpen
-    }, function () {
+
+    var newState = {
+      isOpen: !this.state.isOpen
+    };
+
+    if (this.state.isOpen) {
+      _.extend(newState, {
+        focusedId: undefined
+      });
+    }
+
+    this.setState(newState, function () {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
@@ -34582,6 +34603,10 @@ var ReactSuperSelect = React.createClass({
       this.setState({
         value: []
       }, function () {
+        if (_this.state.isOpen) {
+          _this._setFocusOnOpen();
+        }
+        _this.lastUserSelectedOption = undefined;
         _this._focusTrigger();
         _this._broadcastChange();
       });
@@ -35051,6 +35076,7 @@ var ReactSuperSelect = React.createClass({
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
   // - render no results markup if no options result from map calls
   _getTemplatedOptions: function _getTemplatedOptions(data, indexStart) {
+
     indexStart = indexStart || 0;
     var options = this._mapDataToOptionsMarkup(data, indexStart);
 
@@ -35062,9 +35088,19 @@ var ReactSuperSelect = React.createClass({
   },
 
   // close control on document click outside of the control itself
-  _handleDocumentClick: function _handleDocumentClick(event) {
-    if (!this.refs.rssControl.contains(event.target)) {
-      this._closeOnKeypress();
+  // react can remove event targets before this executes
+  // verify event target node is still in the DOM and close if click did not originate in RSS control
+  _handleDocumentClick: function _handleDocumentClick() {
+    var event = Array.prototype.slice.call(arguments)[0],
+        isTargetStillInDOM = document.body.contains(event.target);
+
+    if (isTargetStillInDOM && !this.refs.rssControl.contains(event.target)) {
+      if (this.state.isOpen) {
+        this.setState({
+          isOpen: false,
+          focusedId: undefined
+        });
+      }
     }
   },
 
@@ -35152,7 +35188,7 @@ var ReactSuperSelect = React.createClass({
           itemKey = "drop_li_" + dataOption[_this6.state.valueKey],
           indexRef = 'option_' + index,
           ariaDescendantId = _this6.state.controlId + '_aria_' + indexRef,
-          optionMarkup = _.isFunction(_this6.props.customOptionTemplateFunction) ? _this6.props.customOptionTemplateFunction(dataOption) : dataOption[_this6.state.labelKey],
+          optionMarkup = _.isFunction(_this6.props.customOptionTemplateFunction) ? _this6.props.customOptionTemplateFunction(dataOption, _this6.state.searchString) : dataOption[_this6.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
         'r-ss-selected': isCurrentlySelected
       });
@@ -35460,9 +35496,17 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    this.setState({
+    var newState = {
       value: this._isMultiSelect() ? objectValues : [_.head(objectValues)]
-    }, function () {
+    };
+
+    if (this.props.searchable && this.props.clearSearchOnSelection) {
+      _.extend(newState, {
+        searchString: undefined
+      });
+    }
+
+    this.setState(newState, function () {
       if (!keepControlOpen) {
         _this10._closeOnKeypress();
       }
@@ -35654,7 +35698,7 @@ var testData = [{
   "size": "Medium"
 }, {
   "id": "5507c052467f171e4e2f460e",
-  "name": "consequat commodo elit",
+  "name": "consequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelit",
   "size": "Small"
 }, {
   "id": "5507c05280458aa7521a98d3",

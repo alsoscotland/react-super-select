@@ -34169,10 +34169,17 @@ var ReactSuperSelect = React.createClass({
 
     // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
     multiple: React.PropTypes.bool,
+
+    // **openOnMount** (Boolean) *optional* - Whether or not to render the control open when it initially mounts
+    openOnMount: React.PropTypes.bool,
+
     // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
     tags: React.PropTypes.bool,
+
+    // **clearSearchOnSelection** (Boolean) *optional* (Used in conjunction with the **searchable** option) whether to auto-clear search field when a selection is made
+    clearSearchOnSelection: React.PropTypes.bool,
 
     // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
     // -----------------------------------
@@ -34298,7 +34305,7 @@ var ReactSuperSelect = React.createClass({
   // CONSTANTS
   // ---------
 
-  // used as the focusedID state variable value, when the search input field of a **searchable** control has focus.
+  // used as the focusedId state variable value, when the search input field of a **searchable** control has focus.
   SEARCH_FOCUS_ID: -1,
 
   // regular expression used to determine if event src options have selected class
@@ -34377,6 +34384,11 @@ var ReactSuperSelect = React.createClass({
   componentDidMount: function componentDidMount() {
     document.addEventListener('click', this._handleDocumentClick);
     document.addEventListener('touchstart', this._handleDocumentClick);
+    if (this.props.openOnMount) {
+      this.setState({
+        isOpen: true
+      });
+    }
   },
 
   // remove binding for document click close control handler
@@ -34489,9 +34501,18 @@ var ReactSuperSelect = React.createClass({
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
   toggleDropdown: function toggleDropdown() {
-    this.setState({
-      'isOpen': !this.state.isOpen
-    }, function () {
+
+    var newState = {
+      isOpen: !this.state.isOpen
+    };
+
+    if (this.state.isOpen) {
+      _.extend(newState, {
+        focusedId: undefined
+      });
+    }
+
+    this.setState(newState, function () {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
@@ -34582,6 +34603,10 @@ var ReactSuperSelect = React.createClass({
       this.setState({
         value: []
       }, function () {
+        if (_this.state.isOpen) {
+          _this._setFocusOnOpen();
+        }
+        _this.lastUserSelectedOption = undefined;
         _this._focusTrigger();
         _this._broadcastChange();
       });
@@ -35051,6 +35076,7 @@ var ReactSuperSelect = React.createClass({
   // choose a rendering function, either **customOptionTemplateFunction** if provided, or default
   // - render no results markup if no options result from map calls
   _getTemplatedOptions: function _getTemplatedOptions(data, indexStart) {
+
     indexStart = indexStart || 0;
     var options = this._mapDataToOptionsMarkup(data, indexStart);
 
@@ -35062,9 +35088,19 @@ var ReactSuperSelect = React.createClass({
   },
 
   // close control on document click outside of the control itself
-  _handleDocumentClick: function _handleDocumentClick(event) {
-    if (!this.refs.rssControl.contains(event.target)) {
-      this._closeOnKeypress();
+  // react can remove event targets before this executes
+  // verify event target node is still in the DOM and close if click did not originate in RSS control
+  _handleDocumentClick: function _handleDocumentClick() {
+    var event = Array.prototype.slice.call(arguments)[0],
+        isTargetStillInDOM = document.body.contains(event.target);
+
+    if (isTargetStillInDOM && !this.refs.rssControl.contains(event.target)) {
+      if (this.state.isOpen) {
+        this.setState({
+          isOpen: false,
+          focusedId: undefined
+        });
+      }
     }
   },
 
@@ -35152,7 +35188,7 @@ var ReactSuperSelect = React.createClass({
           itemKey = "drop_li_" + dataOption[_this6.state.valueKey],
           indexRef = 'option_' + index,
           ariaDescendantId = _this6.state.controlId + '_aria_' + indexRef,
-          optionMarkup = _.isFunction(_this6.props.customOptionTemplateFunction) ? _this6.props.customOptionTemplateFunction(dataOption) : dataOption[_this6.state.labelKey],
+          optionMarkup = _.isFunction(_this6.props.customOptionTemplateFunction) ? _this6.props.customOptionTemplateFunction(dataOption, _this6.state.searchString) : dataOption[_this6.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
         'r-ss-selected': isCurrentlySelected
       });
@@ -35460,9 +35496,17 @@ var ReactSuperSelect = React.createClass({
       objectValues = this.state.value.concat(objectValues);
     }
 
-    this.setState({
+    var newState = {
       value: this._isMultiSelect() ? objectValues : [_.head(objectValues)]
-    }, function () {
+    };
+
+    if (this.props.searchable && this.props.clearSearchOnSelection) {
+      _.extend(newState, {
+        searchString: undefined
+      });
+    }
+
+    this.setState(newState, function () {
       if (!keepControlOpen) {
         _this10._closeOnKeypress();
       }
@@ -35544,14 +35588,15 @@ var basicAjaxExample = require('./super-selects/basic-ajax'),
     groupBy = require('./super-selects/group-by'),
     localized = require('./super-selects/localized'),
     multiselect = require('./super-selects/multiselect'),
+    openOnMount = require('./super-selects/open-on-mount'),
     paging = require('./super-selects/paging'),
     tagsExample = require('./super-selects/tags-example');
 
-var allExamples = [basicExample, basicAjaxExample, basicSearchable, customFilterFunction, customTemplate, groupBy, localized, multiselect, paging, tagsExample];
+var allExamples = [basicExample, basicAjaxExample, basicSearchable, customFilterFunction, customTemplate, groupBy, localized, multiselect, openOnMount, paging, tagsExample];
 
 module.exports = allExamples;
 
-},{"./super-selects/basic-ajax":174,"./super-selects/basic-example":175,"./super-selects/basic-searchable":176,"./super-selects/custom-filter-function":177,"./super-selects/custom-template":178,"./super-selects/group-by":179,"./super-selects/localized":180,"./super-selects/multiselect":181,"./super-selects/paging":182,"./super-selects/tags-example":186}],163:[function(require,module,exports){
+},{"./super-selects/basic-ajax":175,"./super-selects/basic-example":176,"./super-selects/basic-searchable":177,"./super-selects/custom-filter-function":178,"./super-selects/custom-template":179,"./super-selects/group-by":180,"./super-selects/localized":181,"./super-selects/multiselect":182,"./super-selects/open-on-mount":183,"./super-selects/paging":184,"./super-selects/tags-example":188}],163:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash'),
@@ -35682,7 +35727,7 @@ module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=
 },{}],165:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],166:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  clearSearchOnSelection={true}\n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],167:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customFilterFunction: customFilterExample,\n                  placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;filter shop by category&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customfilterfunction\">customFilterFunction</h4>\n<pre><code class=\"lang-js\">var customFilterExample = function (option, index, collection, searchTerm) {\n  return option.group.toLowerCase().indexOf(searchTerm) &gt; -1;\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],168:[function(require,module,exports){
@@ -35694,10 +35739,12 @@ module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=
 },{}],171:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} \n                  multiple={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"multiple\">multiple</h4>\n<pre><code class=\"lang-jsx\">multiple={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],172:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  ajaxDataFetch={simulatedAjaxFetch} \n                  onChange={handlerExample} \n                  openOnMount={true}\n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  // simulate a 2 second ajax fetch for collection data\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(testData);\n      }, 2000);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],173:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect ajaxDataFetch={simulatedAjaxFetch}\n                  hasMorePages={hasMorePagesExample}\n                  onChange={handlerExample}\n                  pageDataFetch={simulatedPageFetch}\n                  placeholder=&quot;Make Your Selections&quot; \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"pagedatafetch\">pageDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var previousPage = 0;\n\nvar simulatedPageFetch = function(collection) {\n  var MOCK_AJAX_PER_PAGE = 10;\n  previousPage = previousPage + 1;\n  var sliceLocation = previousPage * MOCK_AJAX_PER_PAGE,\n      data;\n  if (sliceLocation &lt; testData.length) {\n    data = [];\n\n    for (var i = sliceLocation; i &lt; (sliceLocation + MOCK_AJAX_PER_PAGE); i++) {\n      if (testData[i]) {\n        data.push(testData[i]);\n      }\n    }\n  } else {\n    data = testData;\n  }\n\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(collection.concat(data));\n      }, 1500);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"hasmorepages\">hasMorePages</h4>\n<pre><code class=\"lang-jsx\">var hasMorePagesExample = function(collection) {\n  return collection.length &lt; testData.length;\n};\n</code></pre>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  var MOCK_AJAX_PER_PAGE = 10;\n  var data = _.take(testData, MOCK_AJAX_PER_PAGE);\n    // simulate a 2 second ajax fetch for collection data\n    return {\n      then: function(callback) {\n        setTimeout(function() {\n          callback(data);\n        }, 2000);\n      }\n    };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],174:[function(require,module,exports){
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  dataSource={testData} \n                  onChange={handlerExample}\n                  initialValue={[testData[0], testData[1]]}\n                  tags={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"tags\">tags</h4>\n<pre><code class=\"lang-jsx\">tags={true}\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(options) {\n  var output = [];\n  _.map(options, function(option){\n    output = output.concat([\n    &#39;Multiselect Chosen Option = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;]);\n  });\n\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+},{}],175:[function(require,module,exports){
 'use strict';
 
 var testData = require('./support/test-data.js'),
@@ -35743,7 +35790,7 @@ var basicAjaxExample = {
 
 module.exports = basicAjaxExample;
 
-},{"../markdown/js/examples/basic-ajax":164,"./support/example-output.js":183,"./support/test-data.js":185}],175:[function(require,module,exports){
+},{"../markdown/js/examples/basic-ajax":164,"./support/example-output.js":185,"./support/test-data.js":187}],176:[function(require,module,exports){
 'use strict';
 
 var testData = require('./support/test-data.js'),
@@ -35777,7 +35824,7 @@ var basicExample = {
 
 module.exports = basicExample;
 
-},{"../markdown/js/examples/basic-example":165,"./support/example-output.js":183,"./support/test-data.js":185}],176:[function(require,module,exports){
+},{"../markdown/js/examples/basic-example":165,"./support/example-output.js":185,"./support/test-data.js":187}],177:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -35802,6 +35849,7 @@ var basicSearchableExample = {
 
   props: {
     placeholder: "Make a Selection",
+    clearSearchOnSelection: true,
     dataSource: testData,
     onChange: handlerExample,
     searchable: true
@@ -35813,7 +35861,7 @@ var basicSearchableExample = {
 
 module.exports = basicSearchableExample;
 
-},{"../markdown/js/examples/basic-searchable":166,"./support/example-output.js":183,"./support/test-data.js":185,"react":160}],177:[function(require,module,exports){
+},{"../markdown/js/examples/basic-searchable":166,"./support/example-output.js":185,"./support/test-data.js":187,"react":160}],178:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -35877,7 +35925,7 @@ var customFilterExample = {
 
 module.exports = customFilterExample;
 
-},{"../markdown/js/examples/custom-filter-function":167,"./support/example-output.js":183,"./support/groceries.js":184,"classnames":1,"react":160}],178:[function(require,module,exports){
+},{"../markdown/js/examples/custom-filter-function":167,"./support/example-output.js":185,"./support/groceries.js":186,"classnames":1,"react":160}],179:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -35897,7 +35945,11 @@ var handlerExample = function handlerExample(option) {
   exampleOutput('custom_template_output', output.join(''));
 };
 
-var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+var groceryCartItemTemplate = function groceryCartItemTemplate(item, search) {
+  if (console && console.info) {
+    console.info('search term (%s) is provided for highlighting/modifying template output', search);
+  }
+
   var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
       iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
 
@@ -35936,7 +35988,7 @@ var customTemplateExample = {
 
 module.exports = customTemplateExample;
 
-},{"../markdown/js/examples/custom-template":168,"./support/example-output.js":183,"./support/groceries.js":184,"classnames":1,"react":160}],179:[function(require,module,exports){
+},{"../markdown/js/examples/custom-template":168,"./support/example-output.js":185,"./support/groceries.js":186,"classnames":1,"react":160}],180:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -35994,7 +36046,7 @@ var groupByExample = {
 
 module.exports = groupByExample;
 
-},{"../markdown/js/examples/group-by":169,"./support/example-output.js":183,"./support/groceries.js":184,"classnames":1,"react":160}],180:[function(require,module,exports){
+},{"../markdown/js/examples/group-by":169,"./support/example-output.js":185,"./support/groceries.js":186,"classnames":1,"react":160}],181:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -36087,7 +36139,7 @@ var localizedExample = {
 
 module.exports = localizedExample;
 
-},{"../markdown/js/examples/localized":170,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}],181:[function(require,module,exports){
+},{"../markdown/js/examples/localized":170,"./support/example-output.js":185,"./support/test-data.js":187,"lodash":3,"react":160}],182:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -36128,7 +36180,54 @@ var multiselectExample = {
 
 module.exports = multiselectExample;
 
-},{"../markdown/js/examples/multiselect":171,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}],182:[function(require,module,exports){
+},{"../markdown/js/examples/multiselect":171,"./support/example-output.js":185,"./support/test-data.js":187,"lodash":3,"react":160}],183:[function(require,module,exports){
+'use strict';
+
+var testData = require('./support/test-data.js'),
+    exampleOutput = require('./support/example-output.js'),
+    openOnMountMarkdown = require('../markdown/js/examples/open-on-mount').body;
+
+var handlerExample = function handlerExample(option) {
+  if (!option) {
+    exampleOutput('open_on_mount', "no option chosen");
+    return;
+  }
+
+  var output = ['Option Item Chosen = {\n', '\tid: ', option.id, '\n', '\tname: ', option.name, '\n', '\tsize: ', option.size, '\n\t};'];
+  exampleOutput('open_on_mount', output.join(''));
+};
+
+var simulatedAjaxFetch = function simulatedAjaxFetch() {
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function then(callback) {
+      setTimeout(function () {
+        callback(testData);
+      }, 2000);
+    }
+  };
+};
+
+var openOnMountExample = {
+
+  nameAttr: "open_on_mount",
+  displayName: "Open On Mount",
+
+  props: {
+    placeholder: "Choose An Option",
+    ajaxDataFetch: simulatedAjaxFetch,
+    onChange: handlerExample,
+    openOnMount: true,
+    searchable: true
+  },
+
+  renderString: openOnMountMarkdown
+
+};
+
+module.exports = openOnMountExample;
+
+},{"../markdown/js/examples/open-on-mount":172,"./support/example-output.js":185,"./support/test-data.js":187}],184:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -36212,7 +36311,7 @@ var pagingExample = {
 
 module.exports = pagingExample;
 
-},{"../markdown/js/examples/paging":172,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}],183:[function(require,module,exports){
+},{"../markdown/js/examples/paging":173,"./support/example-output.js":185,"./support/test-data.js":187,"lodash":3,"react":160}],185:[function(require,module,exports){
 "use strict";
 
 var exampleOutput = function exampleOutput(id, content) {
@@ -36227,7 +36326,7 @@ var exampleOutput = function exampleOutput(id, content) {
 
 module.exports = exampleOutput;
 
-},{}],184:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 "use strict";
 
 var groceries = [{
@@ -36346,7 +36445,7 @@ var groceries = [{
 
 module.exports = groceries;
 
-},{}],185:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 "use strict";
 
 var testData = [{
@@ -36359,7 +36458,7 @@ var testData = [{
   "size": "Medium"
 }, {
   "id": "5507c052467f171e4e2f460e",
-  "name": "consequat commodo elit",
+  "name": "consequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelit",
   "size": "Small"
 }, {
   "id": "5507c05280458aa7521a98d3",
@@ -36533,7 +36632,7 @@ var testData = [{
 
 module.exports = testData;
 
-},{}],186:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 'use strict';
 
 var React = require('react'),
@@ -36575,4 +36674,4 @@ var tagsExample = {
 
 module.exports = tagsExample;
 
-},{"../markdown/js/examples/tags-example":173,"./support/example-output.js":183,"./support/test-data.js":185,"lodash":3,"react":160}]},{},[163])
+},{"../markdown/js/examples/tags-example":174,"./support/example-output.js":185,"./support/test-data.js":187,"lodash":3,"react":160}]},{},[163])
