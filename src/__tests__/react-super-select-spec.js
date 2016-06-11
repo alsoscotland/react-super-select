@@ -606,6 +606,20 @@ describe('ReactSuperSelect', function() {
 
       expect(optionElements.length).toBe(mockData.length);
     });
+
+    it('custom template option function receives searchString as second param', function() {
+      var el = renderAndOpen({
+        customOptionTemplateFunction: jest.genMockFunction()
+      });
+
+      el.props.customOptionTemplateFunction.mockClear();
+
+      el.setState({
+        searchString: 'opt'
+      });
+
+      expect(el.props.customOptionTemplateFunction.mock.calls[0][1]).toBe(el.state.searchString);
+    });
   });
 
   describe('search results filter', function() {
@@ -661,7 +675,7 @@ describe('ReactSuperSelect', function() {
       expect(el.refs.searchClear).toBeTruthy();
     });
 
-    it.only('auto clears search on selection when clearSearchOnSelection is true', function() {
+    it('auto clears search on selection when clearSearchOnSelection is true', function() {
       var el = renderAndOpen({
         searchable: true,
         clearSearchOnSelection: true
@@ -1464,8 +1478,17 @@ describe('ReactSuperSelect', function() {
     });
   });
 
-  describe('componentWillReceiveProps', function() {
+  describe('openOnMount prop', function() {
+    it('will openOnMount', function() {
+      var el = renderComponent({
+        openOnMount: true
+      });
 
+      expect(el.state.isOpen).toBe(true);
+    });
+  });
+
+  describe('componentWillReceiveProps', function() {
     var parent,
         testParentComponent,
         optOne = {

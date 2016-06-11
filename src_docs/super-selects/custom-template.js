@@ -19,7 +19,11 @@ var handlerExample = function(option) {
   exampleOutput('custom_template_output', output.join(''));
 };
 
-var groceryCartItemTemplate = function(item) {
+var groceryCartItemTemplate = function(item, search) {
+  if (console && console.info) {
+    console.info('search term (%s) is provided for highlighting/modifying template output', search);
+  }
+
   var itemClasses = classNames('grocery-item',
                                'example-' + item.group.toLowerCase()),
       iconClasses = classNames('grocery-icon',

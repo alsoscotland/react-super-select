@@ -6,6 +6,7 @@ var basicAjaxExample = require('./super-selects/basic-ajax'),
     groupBy = require('./super-selects/group-by'),
     localized = require('./super-selects/localized'),
     multiselect = require('./super-selects/multiselect'),
+    openOnMount = require('./super-selects/open-on-mount'),
     paging = require('./super-selects/paging'),
     tagsExample = require('./super-selects/tags-example');
 
@@ -18,6 +19,7 @@ var allExamples = [
   groupBy,
   localized,
   multiselect,
+  openOnMount,
   paging,
   tagsExample
 ];
