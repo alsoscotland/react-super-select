@@ -18,17 +18,28 @@ var groceryCartHandler = function(item) {
 
 #### customOptionTemplateFunction
 ```js
-var groceryCartItemTemplate = function(item) {
+var _getHighlightedSearchLabel = function(item, search, searchRegex) {
+  var labelMarkup = item.label.replace(searchRegex, '<span style="background-color: #f90;">' + search + '</span>');
+
+  return React.DOM.span({ dangerouslySetInnerHTML: { __html: labelMarkup } });
+}
+
+var groceryCartItemTemplate = function(item, search) {
+  if (console && console.info) {
+    console.info('search term (%s) is provided for highlighting/modifying template output', search);
+  }
+
   var itemClasses = classNames('grocery-item',
                                'example-' + item.group.toLowerCase()),
       iconClasses = classNames('grocery-icon',
                                'rss-grocery',
-                              'rss-grocery-' + item.attributeName);
+                              'rss-grocery-' + item.attributeName),
+      labelMarkup = search ? _getHighlightedSearchLabel(item, search, new RegExp( search, 'i')) : item.label;
 
   return(
     <div className={itemClasses}>
       <span className={iconClasses}></span>
-      <p>{item.label} - {'$' + item.price.toFixed(2)}</p>
+      <p>{labelMarkup} - {'$' + item.price.toFixed(2)}</p>
     </div>);
 };
 ```

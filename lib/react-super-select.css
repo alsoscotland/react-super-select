@@ -343,9 +343,8 @@
   background-color: #EDEDED;
   color: #333;
   max-width: 100%;
-  height: 24px;
+  min-height: 24px;
   text-overflow: ellipsis;
-  white-space: nowrap;
   line-height: 22px;
   -webkit-border-radius: 4px 4px 4px 4px;
   -moz-border-radius: 4px 4px 4px 4px;
@@ -359,14 +358,11 @@
   -moz-user-select: none;
   -webkit-user-select: none;
 }
-.r-ss-tag.r-ss-tag-label {
-  white-space: nowrap;
-}
 .r-ss-tag:after {
   content: '';
   position: absolute;
   left: -0.2rem;
-  top: 35%;
+  top: 9px;
   height: 5px;
   width: 5px;
   background-color: #FFF;

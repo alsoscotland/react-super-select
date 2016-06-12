@@ -31,6 +31,9 @@ var ReactSuperSelect = React.createClass({
     // **openOnMount** (Boolean) *optional* - Whether or not to render the control open when it initially mounts
     openOnMount: React.PropTypes.bool,
 
+    // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
+    focusOnMount: React.PropTypes.bool,
+
     // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
@@ -257,7 +260,11 @@ var ReactSuperSelect = React.createClass({
     if (this.props.openOnMount) {
       this.setState({
         isOpen: true
-      })
+      }, () => {
+        if (this.props.focusOnMount && !_.isFunction(this.props.ajaxDataFetch)) {
+          this._moveFocusDown();
+        }
+      });
     }
   },
 
@@ -528,6 +535,10 @@ var ReactSuperSelect = React.createClass({
         ajaxError: false,
         data: self._configureDataSource(dataSourceFromAjax),
         rawDataSource: dataSourceFromAjax
+      }, () => {
+        if (self.props.openOnMount && self.props.focusOnMount) {
+          self._moveFocusDown();
+        }
       });
     }, function() {
       self.setState({
