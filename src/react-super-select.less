@@ -343,9 +343,8 @@
   background-color: @tagBackgroundColor;
   color: @tagColor;
   max-width: 100%;
-  height: 24px;
+  min-height: 24px;
   text-overflow: ellipsis;
-  white-space: nowrap;
   line-height: 22px;
   .border-radius(@tagBorderRadius, @tagBorderRadius, @tagBorderRadius, @tagBorderRadius);
   box-shadow: 1px 1px 1px @tagShadowColor;
@@ -354,15 +353,11 @@
   -moz-user-select: none;
   -webkit-user-select: none;
 
-  &.r-ss-tag-label {
-    white-space: nowrap;
-  }
-
   &:after {
     content: '';
     position: absolute;
     left: -.2rem;
-    top: 35%;
+    top: 9px;
     height: 5px;
     width: 5px;
     background-color: #FFF;
