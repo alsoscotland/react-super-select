@@ -34173,6 +34173,9 @@ var ReactSuperSelect = React.createClass({
     // **openOnMount** (Boolean) *optional* - Whether or not to render the control open when it initially mounts
     openOnMount: React.PropTypes.bool,
 
+    // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
+    focusOnMount: React.PropTypes.bool,
+
     // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
     searchable: React.PropTypes.bool,
     // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
@@ -34382,11 +34385,17 @@ var ReactSuperSelect = React.createClass({
 
   // wire document click close control handler
   componentDidMount: function componentDidMount() {
+    var _this = this;
+
     document.addEventListener('click', this._handleDocumentClick);
     document.addEventListener('touchstart', this._handleDocumentClick);
     if (this.props.openOnMount) {
       this.setState({
         isOpen: true
+      }, function () {
+        if (_this.props.focusOnMount && !_.isFunction(_this.props.ajaxDataFetch)) {
+          _this._moveFocusDown();
+        }
       });
     }
   },
@@ -34596,19 +34605,19 @@ var ReactSuperSelect = React.createClass({
   // clear the selected options
   // for **clearable** controls
   _clearSelection: function _clearSelection(event) {
-    var _this = this;
+    var _this2 = this;
 
     if (event.which === this.keymap.enter || event.which === this.keymap.space || event.type === "click") {
       event.stopPropagation();
       this.setState({
         value: []
       }, function () {
-        if (_this.state.isOpen) {
-          _this._setFocusOnOpen();
+        if (_this2.state.isOpen) {
+          _this2._setFocusOnOpen();
         }
-        _this.lastUserSelectedOption = undefined;
-        _this._focusTrigger();
-        _this._broadcastChange();
+        _this2.lastUserSelectedOption = undefined;
+        _this2._focusTrigger();
+        _this2._broadcastChange();
       });
     }
   },
@@ -34668,6 +34677,10 @@ var ReactSuperSelect = React.createClass({
         ajaxError: false,
         data: self._configureDataSource(dataSourceFromAjax),
         rawDataSource: dataSourceFromAjax
+      }, function () {
+        if (self.props.openOnMount && self.props.focusOnMount) {
+          self._moveFocusDown();
+        }
       });
     }, function () {
       self.setState({
@@ -34711,11 +34724,11 @@ var ReactSuperSelect = React.createClass({
 
   // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
   _findArrayOfOptionDataObjectsByValue: function _findArrayOfOptionDataObjectsByValue(value) {
-    var _this2 = this;
+    var _this3 = this;
 
     var valuesArray = _.isArray(value) ? _.map(value, this.state.valueKey) : [value];
     return _.reject(this.state.data, function (item) {
-      return !_.includes(valuesArray, item[_this2.state.valueKey]);
+      return !_.includes(valuesArray, item[_this3.state.valueKey]);
     });
   },
 
@@ -34895,17 +34908,17 @@ var ReactSuperSelect = React.createClass({
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup: function _getNormalDisplayMarkup() {
-    var _this3 = this;
+    var _this4 = this;
 
     return _.map(this.state.value, function (value) {
-      var selectedKey = "r_ss_selected_" + value[_this3.state.labelKey];
-      if (_this3.props.customOptionTemplateFunction) {
-        return _this3.props.customOptionTemplateFunction(value);
+      var selectedKey = "r_ss_selected_" + value[_this4.state.labelKey];
+      if (_this4.props.customOptionTemplateFunction) {
+        return _this4.props.customOptionTemplateFunction(value);
       } else {
         return React.createElement(
           'span',
           { key: selectedKey, className: 'r-ss-selected-label' },
-          value[_this3.state.labelKey]
+          value[_this4.state.labelKey]
         );
       }
     });
@@ -34930,7 +34943,7 @@ var ReactSuperSelect = React.createClass({
   // - when **groupBy** is set, data will be a javascript object.  Run with group heading renders in that case
   // - must track options count to maintain a single focusable index mapping across multiple groups of options
   _getOptionsMarkup: function _getOptionsMarkup() {
-    var _this4 = this;
+    var _this5 = this;
 
     if (this._needsAjaxFetch()) {
       this._fetchDataViaAjax();
@@ -34947,8 +34960,8 @@ var ReactSuperSelect = React.createClass({
 
     if (!_.isArray(data)) {
       _.forIn(data, function (groupedOptions, heading) {
-        options.push(_this4._getGroupHeadingMarkup(heading));
-        options = options.concat(_this4._getTemplatedOptions(groupedOptions, optionsCount));
+        options.push(_this5._getGroupHeadingMarkup(heading));
+        options = options.concat(_this5._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
       });
     } else {
@@ -35032,10 +35045,10 @@ var ReactSuperSelect = React.createClass({
 
   // iterate over selected values and build tags markup for selected options display
   _getTagsDisplayMarkup: function _getTagsDisplayMarkup() {
-    var _this5 = this;
+    var _this6 = this;
 
     return _.map(this.state.value, function (value) {
-      return _this5._getTagMarkup(value);
+      return _this6._getTagMarkup(value);
     });
   },
 
@@ -35179,16 +35192,16 @@ var ReactSuperSelect = React.createClass({
   // Render the option list-items.
   // Leverage the **customOptionTemplateFunction** function if provided
   _mapDataToOptionsMarkup: function _mapDataToOptionsMarkup(data, indexStart) {
-    var _this6 = this;
+    var _this7 = this;
 
     return _.map(data, function (dataOption, index) {
       index = indexStart + index;
 
-      var isCurrentlySelected = _this6._isCurrentlySelected(dataOption),
-          itemKey = "drop_li_" + dataOption[_this6.state.valueKey],
+      var isCurrentlySelected = _this7._isCurrentlySelected(dataOption),
+          itemKey = "drop_li_" + dataOption[_this7.state.valueKey],
           indexRef = 'option_' + index,
-          ariaDescendantId = _this6.state.controlId + '_aria_' + indexRef,
-          optionMarkup = _.isFunction(_this6.props.customOptionTemplateFunction) ? _this6.props.customOptionTemplateFunction(dataOption, _this6.state.searchString) : dataOption[_this6.state.labelKey],
+          ariaDescendantId = _this7.state.controlId + '_aria_' + indexRef,
+          optionMarkup = _.isFunction(_this7.props.customOptionTemplateFunction) ? _this7.props.customOptionTemplateFunction(dataOption, _this7.state.searchString) : dataOption[_this7.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
         'r-ss-selected': isCurrentlySelected
       });
@@ -35202,8 +35215,8 @@ var ReactSuperSelect = React.createClass({
           className: classes,
           'aria-selected': isCurrentlySelected,
           key: itemKey,
-          'data-option-value': dataOption[_this6.state.valueKey],
-          onClick: _this6._selectItemOnOptionClick.bind(null, dataOption),
+          'data-option-value': dataOption[_this7.state.valueKey],
+          onClick: _this7._selectItemOnOptionClick.bind(null, dataOption),
           role: 'option' },
         optionMarkup
       );
@@ -35347,7 +35360,7 @@ var ReactSuperSelect = React.createClass({
   // Remove all options up to, but not including the option that raised the event.
   // (So it behaves like a native browser form multi-select)
   _removeAllOptionsInOptionIdRange: function _removeAllOptionsInOptionIdRange(from, to) {
-    var _this7 = this;
+    var _this8 = this;
 
     var valuePropsToReject = [],
         start = from <= to ? from : to,
@@ -35365,7 +35378,7 @@ var ReactSuperSelect = React.createClass({
     }
 
     var remainingSelected = _.reject(this.state.value, function (opt) {
-      return _.includes(valuePropsToReject, opt[_this7.state.valueKey]);
+      return _.includes(valuePropsToReject, opt[_this8.state.valueKey]);
     });
 
     this.setState({
@@ -35376,7 +35389,7 @@ var ReactSuperSelect = React.createClass({
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
   _removeSelectedOptionByValue: function _removeSelectedOptionByValue(value) {
-    var _this8 = this;
+    var _this9 = this;
 
     var callback = arguments.length <= 1 || arguments[1] === undefined ? _.noop : arguments[1];
 
@@ -35386,14 +35399,14 @@ var ReactSuperSelect = React.createClass({
     }
 
     var SelectedAfterRemoval = _.reject(this.state.value, function (option) {
-      return option[_this8.state.valueKey] === value[_this8.state.valueKey];
+      return option[_this9.state.valueKey] === value[_this9.state.valueKey];
     });
 
     this.setState({
       value: SelectedAfterRemoval
     }, function () {
       callback();
-      _this8._broadcastChange();
+      _this9._broadcastChange();
     });
   },
 
@@ -35417,7 +35430,7 @@ var ReactSuperSelect = React.createClass({
 
   // used in shift-click range selections
   _selectAllOptionsInOptionIdRange: function _selectAllOptionsInOptionIdRange(from, to) {
-    var _this9 = this;
+    var _this10 = this;
 
     var valuePropsToSelect = [],
         start = from <= to ? from : to,
@@ -35432,7 +35445,7 @@ var ReactSuperSelect = React.createClass({
     }
 
     var optionsToSelect = _.reduce(this.state.data, function (memo, opt) {
-      if (_.includes(valuePropsToSelect, opt[_this9.state.valueKey])) {
+      if (_.includes(valuePropsToSelect, opt[_this10.state.valueKey])) {
         memo.push(opt);
       }
       return memo;
@@ -35488,7 +35501,7 @@ var ReactSuperSelect = React.createClass({
   // Track last selection the user made.
   // Close dropdown on the setState callback if not a non control-closing selection
   _selectItemByValues: function _selectItemByValues(value, keepControlOpen) {
-    var _this10 = this;
+    var _this11 = this;
 
     var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
@@ -35508,9 +35521,9 @@ var ReactSuperSelect = React.createClass({
 
     this.setState(newState, function () {
       if (!keepControlOpen) {
-        _this10._closeOnKeypress();
+        _this11._closeOnKeypress();
       }
-      _this10._broadcastChange();
+      _this11._broadcastChange();
     });
   },
 
@@ -35731,7 +35744,7 @@ module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=
 },{}],167:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customFilterFunction: customFilterExample,\n                  placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;filter shop by category&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customfilterfunction\">customFilterFunction</h4>\n<pre><code class=\"lang-js\">var customFilterExample = function (option, index, collection, searchTerm) {\n  return option.group.toLowerCase().indexOf(searchTerm) &gt; -1;\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],168:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;Search shop&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var _getHighlightedSearchLabel = function(item, search, searchRegex) {\n  var labelMarkup = item.label.replace(searchRegex, &#39;&lt;span style=&quot;background-color: #f90;&quot;&gt;&#39; + search + &#39;&lt;/span&gt;&#39;);\n\n  return React.DOM.span({ dangerouslySetInnerHTML: { __html: labelMarkup } });\n}\n\nvar groceryCartItemTemplate = function(item, search) {\n  if (console &amp;&amp; console.info) {\n    console.info(&#39;search term (%s) is provided for highlighting/modifying template output&#39;, search);\n  }\n\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName),\n      labelMarkup = search ? _getHighlightedSearchLabel(item, search, new RegExp( search, &#39;i&#39;)) : item.label;\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{labelMarkup} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],169:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customOptionTemplateFunction: groceryCartItemTemplate,\n                  dataSource={groceries}\n                  onChange={this.groceryCartHandler}\n                  optionLabelKey=&quot;label&quot;\n                  placeholder=&quot;Pick an Item&quot;\n                  searchable={true}\n                  searchPlaceholder=&quot;Search shop&quot;\n                  groupBy=&quot;group&quot; /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"groupby\">groupBy</h4>\n<p>Using the simplest form of lodash’s groupBy, we pass the key name for the option data object.  The options will be sorted by the values found for that \nkey across the dataSource collection.</p>\n<pre><code class=\"lang-jsx\">groupBy=&quot;group&quot;\n</code></pre>\n<h4 id=\"customoptiontemplatefunction\">customOptionTemplateFunction</h4>\n<pre><code class=\"lang-js\">var groceryCartItemTemplate = function(item) {\n  var itemClasses = classNames(&#39;grocery-item&#39;,\n                               &#39;example-&#39; + item.group.toLowerCase()),\n      iconClasses = classNames(&#39;grocery-icon&#39;,\n                               &#39;rss-grocery&#39;,\n                              &#39;rss-grocery-&#39; + item.attributeName);\n\n  return(\n    &lt;div className={itemClasses}&gt;\n      &lt;span className={iconClasses}&gt;&lt;/span&gt;\n      &lt;p&gt;{item.label} - {&#39;$&#39; + item.price.toFixed(2)}&lt;/p&gt;\n    &lt;/div&gt;);\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruits&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetables&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],170:[function(require,module,exports){
@@ -35885,7 +35898,7 @@ var customFilter = function customFilter(option, index, collection, searchTerm) 
   return option.group.toLowerCase().indexOf(searchTerm) > -1;
 };
 
-var groceryCartItemTemplate = function groceryCartItemTemplate(item) {
+var groceryCartItemTemplate = function groceryCartItemTemplate(item, search) {
   var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
       iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
 
@@ -35945,13 +35958,20 @@ var handlerExample = function handlerExample(option) {
   exampleOutput('custom_template_output', output.join(''));
 };
 
+var _getHighlightedSearchLabel = function _getHighlightedSearchLabel(item, search, searchRegex) {
+  var labelMarkup = item.label.replace(searchRegex, '<span style="background-color: #f90;">' + search + '</span>');
+
+  return React.DOM.span({ dangerouslySetInnerHTML: { __html: labelMarkup } });
+};
+
 var groceryCartItemTemplate = function groceryCartItemTemplate(item, search) {
   if (console && console.info) {
     console.info('search term (%s) is provided for highlighting/modifying template output', search);
   }
 
   var itemClasses = classNames('grocery-item', 'example-' + item.group.toLowerCase()),
-      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName);
+      iconClasses = classNames('grocery-icon', 'rss-grocery', 'rss-grocery-' + item.attributeName),
+      labelMarkup = search ? _getHighlightedSearchLabel(item, search, new RegExp(search, 'i')) : item.label;
 
   return React.createElement(
     'div',
@@ -35960,7 +35980,7 @@ var groceryCartItemTemplate = function groceryCartItemTemplate(item, search) {
     React.createElement(
       'p',
       null,
-      item.label,
+      labelMarkup,
       ' - ',
       '$' + item.price.toFixed(2)
     )
