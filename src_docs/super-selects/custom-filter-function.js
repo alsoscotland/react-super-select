@@ -23,7 +23,7 @@ var customFilter = function (option, index, collection, searchTerm) {
   return option.group.toLowerCase().indexOf(searchTerm) > -1;
 };
 
-var groceryCartItemTemplate = function(item, search) {
+var groceryCartItemTemplate = function(item /*, search */) {
   var itemClasses = classNames('grocery-item',
                                'example-' + item.group.toLowerCase()),
       iconClasses = classNames('grocery-icon',

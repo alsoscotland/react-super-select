@@ -47,15 +47,15 @@ describe('ReactSuperSelect', function() {
     });
 
     it('will render the trigger div', function() {
-      expect(el.refs.triggerDiv).toBeTruthy();
+      expect(el._rssDOM.triggerDiv).toBeTruthy();
     });
 
     it('will render the carat span', function() {
-      expect(el.refs.carat).toBeTruthy();
+      expect(el._rssDOM.carat).toBeTruthy();
     });
 
     it('carat span has up class when open', function() {
-      var carat = el.refs.carat;
+      var carat = el._rssDOM.carat;
       el.setState({
         isOpen: false
       });
@@ -65,7 +65,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('carat span has down class when closed', function() {
-      var carat = el.refs.carat;
+      var carat = el._rssDOM.carat;
       el.setState({
         isOpen: true
       });
@@ -75,17 +75,17 @@ describe('ReactSuperSelect', function() {
     });
 
     it('trigger value display will show placeholder if provided', function() {
-      var triggerDiv = el.refs.triggerDiv;
+      var triggerDiv = el._rssDOM.triggerDiv;
       expect(triggerDiv.childNodes[0].textContent).toBe('I am a placeholder');
     });
 
     it('adds placeholder display class when value unset', function() {
-      var triggerDiv = el.refs.triggerDiv;
+      var triggerDiv = el._rssDOM.triggerDiv;
       expect(triggerDiv.getAttribute("class").indexOf('r-ss-placeholder')).toBeGreaterThan(-1);
     });
 
     it('does not add placeholder display class when value set', function() {
-      var triggerDiv = el.refs.triggerDiv;
+      var triggerDiv = el._rssDOM.triggerDiv;
       el.setState({
         value: ['foo']
       });
@@ -94,7 +94,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('does not render dropdown when isOpen is false', function() {
-      expect(el.refs.dropdownContent).toBeFalsy();
+      expect(el._rssDOM.dropdownContent).toBeFalsy();
     });
   });
 
@@ -102,13 +102,13 @@ describe('ReactSuperSelect', function() {
     it('adds required aria attributes to the triggerDiv', function() {
       var el = renderComponent();
 
-      expect(el.refs.triggerDiv.getAttribute("role")).toBe('combobox');
-      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).not.toBeUndefined();
-      expect(el.refs.triggerDiv.getAttribute("aria-haspopup")).toBeTruthy();
-      expect(el.refs.triggerDiv.getAttribute("aria-controls")).toBe(el._ariaGetListId());
-      expect(_.isString(el.refs.triggerDiv.getAttribute("aria-label"))).toBe(true);
-      expect(Boolean(el.refs.triggerDiv.getAttribute("aria-multiselectable"))).toBe(Boolean(el._isMultiSelect()));
-      expect(el.refs.triggerDiv.getAttribute("tabIndex")).toBe('0');
+      expect(el._rssDOM.triggerDiv.getAttribute("role")).toBe('combobox');
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-activedescendant")).not.toBeUndefined();
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-haspopup")).toBeTruthy();
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-controls")).toBe(el._ariaGetListId());
+      expect(_.isString(el._rssDOM.triggerDiv.getAttribute("aria-label"))).toBe(true);
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-multiselectable")).toBe(el._isMultiSelect().toString());
+      expect(el._rssDOM.triggerDiv.getAttribute("tabIndex")).toBe('0');
     });
 
     it('triggerDiv tracks focused option as aria-active-descendant', function() {
@@ -116,10 +116,10 @@ describe('ReactSuperSelect', function() {
         dataSource: mockData
       });
 
-      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).toBeFalsy();
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-activedescendant")).toBeFalsy();
       el._updateFocusedId(0);
-      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).toBeTruthy();
-      expect(el.refs.triggerDiv.getAttribute("aria-activedescendant")).toBe(el._ariaGetActiveDescendentId());
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-activedescendant")).toBeTruthy();
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-activedescendant")).toBe(el._ariaGetActiveDescendentId());
     });
 
     it('adds required aria attributes to the dropdownList', function() {
@@ -127,10 +127,10 @@ describe('ReactSuperSelect', function() {
         dataSource: mockData
       });
 
-      expect(el.refs.dropdownOptionsList.getAttribute("role")).toBe('listbox');
-      expect(el.refs.dropdownOptionsList.getAttribute("id")).toBe(el._ariaGetListId());
-      expect(el.refs.dropdownOptionsList.getAttribute("aria-expanded")).toBeTruthy();
-      expect(el.refs.dropdownOptionsList.getAttribute("tabIndex")).toBe('-1');
+      expect(el._rssDOM.dropdownOptionsList.getAttribute("role")).toBe('listbox');
+      expect(el._rssDOM.dropdownOptionsList.getAttribute("id")).toBe(el._ariaGetListId());
+      expect(el._rssDOM.dropdownOptionsList.getAttribute("aria-expanded")).toBeTruthy();
+      expect(el._rssDOM.dropdownOptionsList.getAttribute("tabIndex")).toBe('-1');
     });
 
     it('adds required aria attributes to the searchInput', function() {
@@ -139,8 +139,8 @@ describe('ReactSuperSelect', function() {
         searchable: true
       });
 
-      expect(el.refs.searchInput.getAttribute('aria-labelledby')).toBe(el.refs.searchInputLabel.getAttribute("id"));
-      expect(el.refs.searchInput.getAttribute('aria-autocomplete')).toBe('list');
+      expect(el._rssDOM.searchInput.getAttribute('aria-labelledby')).toBe(el._rssDOM.searchInputLabel.getAttribute("id"));
+      expect(el._rssDOM.searchInput.getAttribute('aria-autocomplete')).toBe('list');
     });
 
     it('adds aria-selected attribute to all options', function() {
@@ -171,7 +171,7 @@ describe('ReactSuperSelect', function() {
         multiple: true
       });
 
-      expect(el.refs.selectionClear).toBeUndefined();
+      expect(el._rssDOM.selectionClear).toBeUndefined();
     });
 
     it('does not render clear selection button when clearable is false', function() {
@@ -184,7 +184,7 @@ describe('ReactSuperSelect', function() {
           initialValue: [mockData[2], mockData[4]]
         });
 
-      expect(el.refs.selectionClear).toBeUndefined();
+      expect(el._rssDOM.selectionClear).toBeUndefined();
     });
 
     it('renders clear selection button when values are selected', function() {
@@ -196,7 +196,7 @@ describe('ReactSuperSelect', function() {
           initialValue: [mockData[2], mockData[4]]
         });
 
-      expect(el.refs.selectionClear).toBeTruthy();
+      expect(el._rssDOM.selectionClear).toBeTruthy();
     });
 
     it('clears selection when clear selection button is clicked', function() {
@@ -208,7 +208,7 @@ describe('ReactSuperSelect', function() {
           initialValue: [mockData[2], mockData[4]]
         });
 
-      TestUtils.Simulate.click(el.refs.selectionClear, {type: 'click'});
+      TestUtils.Simulate.click(el._rssDOM.selectionClear, {type: 'click'});
       expect(_.isEmpty(el.state.value)).toBe(true);
     });
 
@@ -221,7 +221,7 @@ describe('ReactSuperSelect', function() {
           initialValue: [mockData[2], mockData[4]]
         });
 
-      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+      TestUtils.Simulate.keyDown(el._rssDOM.selectionClear, {
         which: el.keymap.space
       });
       expect(_.isEmpty(el.state.value)).toBe(true);
@@ -236,7 +236,7 @@ describe('ReactSuperSelect', function() {
           initialValue: [mockData[2], mockData[4]]
         });
 
-      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+      TestUtils.Simulate.keyDown(el._rssDOM.selectionClear, {
         which: el.keymap.space
       });
       expect(_.isEmpty(el.state.value)).toBe(true);
@@ -255,7 +255,7 @@ describe('ReactSuperSelect', function() {
 
       var setFocusSpy = spyOn(el, '_setFocusOnOpen').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+      TestUtils.Simulate.keyDown(el._rssDOM.selectionClear, {
         which: el.keymap.space
       });
 
@@ -273,7 +273,7 @@ describe('ReactSuperSelect', function() {
 
       el.lastUserSelectedOption = 'faksenode';
 
-      TestUtils.Simulate.keyDown(el.refs.selectionClear, {
+      TestUtils.Simulate.keyDown(el._rssDOM.selectionClear, {
         which: el.keymap.space
       });
 
@@ -353,17 +353,17 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on trigger click', function() {
-      TestUtils.Simulate.click(el.refs.triggerDiv, {});
+      TestUtils.Simulate.click(el._rssDOM.triggerDiv, {});
 
       expect(el.state.isOpen).toBe(true);
 
-      TestUtils.Simulate.click(el.refs.triggerDiv, {});
+      TestUtils.Simulate.click(el._rssDOM.triggerDiv, {});
 
       expect(el.state.isOpen).toBe(false);
     });
 
     it('toggles dropdown on keypress of down arrow', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.down
       });
 
@@ -371,7 +371,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on alt-keypress of down arrow', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         altKey: true,
         which: el.keymap.down
       });
@@ -380,7 +380,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on keypress of space bar', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.space
       });
 
@@ -388,7 +388,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on keypress of enter key', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.enter
       });
 
@@ -396,7 +396,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('toggles dropdown on keypress of space key', function() {
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.space
       });
 
@@ -406,14 +406,14 @@ describe('ReactSuperSelect', function() {
     it('closes dropdown on keypress of esc key', function() {
       el.toggleDropdown();
 
-      el.refs.triggerDiv.focus();
+      el._rssDOM.triggerDiv.focus();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.esc
       });
 
       expect(el.state.isOpen).toBe(false);
-      expect(document.activeElement).toBe(el.refs.triggerDiv);
+      expect(document.activeElement).toBe(el._rssDOM.triggerDiv);
     });
 
     it('closes dropdown on keypress of alt-up arrow', function() {
@@ -421,15 +421,15 @@ describe('ReactSuperSelect', function() {
         isOpen: true
       });
 
-      el.refs.triggerDiv.focus();
+      el._rssDOM.triggerDiv.focus();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.up,
         altKey: true
       });
 
       expect(el.state.isOpen).toBe(false);
-      expect(document.activeElement).toBe(el.refs.triggerDiv);
+      expect(document.activeElement).toBe(el._rssDOM.triggerDiv);
     });
 
     it('calls _setFocusOnOpen after opening', function() {
@@ -455,12 +455,12 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent({
         searchable: true
       });
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         altKey: true,
         which: el.keymap.down
       });
 
-      expect(document.activeElement).toBe(el.refs.searchInput);
+      expect(document.activeElement).toBe(el._rssDOM.searchInput);
     });
 
     it('focuses first option when not searchable and expanded by keypress', function() {
@@ -469,7 +469,7 @@ describe('ReactSuperSelect', function() {
       });
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.down,
         preventDefault: _.noop,
         stopPropagation: _.noop
@@ -483,7 +483,7 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent();
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.home,
         preventDefault: _.noop,
         stopPropagation: _.noop
@@ -497,7 +497,7 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent();
       var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
 
-      TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.end,
         preventDefault: _.noop,
         stopPropagation: _.noop
@@ -527,7 +527,7 @@ describe('ReactSuperSelect', function() {
     it('renders dropdown when isOpen is true', function() {
       var el = renderAndOpen();
 
-      expect(el.refs.dropdownContent).toBeTruthy();
+      expect(el._rssDOM.dropdownContent).toBeTruthy();
     });
 
     it('does not render searchInput if searchable prop is false', function() {
@@ -535,7 +535,7 @@ describe('ReactSuperSelect', function() {
         searchable: false
       });
 
-      expect(el.refs.searchInput).toBeFalsy();
+      expect(el._rssDOM.searchInput).toBeFalsy();
     });
 
     it('renders searchInput if searchable prop is true', function() {
@@ -543,7 +543,7 @@ describe('ReactSuperSelect', function() {
         searchable: true
       });
 
-      expect(el.refs.searchInput).toBeTruthy();
+      expect(el._rssDOM.searchInput).toBeTruthy();
     });
 
     it('renders the default magnifier if a custom magnifier is not set', function() {
@@ -561,7 +561,7 @@ describe('ReactSuperSelect', function() {
         searchPlaceholder: 'search placeholder'
       });
 
-      expect(el.refs.searchInput.getAttribute("placeholder")).toBe('search placeholder');
+      expect(el._rssDOM.searchInput.getAttribute("placeholder")).toBe('search placeholder');
     });
 
     it('shows no results content when dataSource empty', function() {
@@ -569,7 +569,7 @@ describe('ReactSuperSelect', function() {
         dataSource: []
       });
 
-      expect(el.refs.noResults).toBeTruthy();
+      expect(el._rssDOM.noResults).toBeTruthy();
     });
 
     it('shows no results content with custom string when provided', function() {
@@ -578,7 +578,7 @@ describe('ReactSuperSelect', function() {
         dataSource: []
       });
 
-      expect(el.refs.noResults.textContent).toBe('blah');
+      expect(el._rssDOM.noResults.textContent).toBe('blah');
     });
   });
 
@@ -659,7 +659,7 @@ describe('ReactSuperSelect', function() {
         searchString: undefined
       });
 
-      expect(el.refs.searchClear).toBeUndefined();
+      expect(el._rssDOM.searchClear).toBeUndefined();
     });
 
     it('renders a clear search button when search is set', function() {
@@ -672,7 +672,7 @@ describe('ReactSuperSelect', function() {
         searchString: 'whatzit'
       });
 
-      expect(el.refs.searchClear).toBeTruthy();
+      expect(el._rssDOM.searchClear).toBeTruthy();
     });
 
     it('auto clears search on selection when clearSearchOnSelection is true', function() {
@@ -701,7 +701,7 @@ describe('ReactSuperSelect', function() {
         searchString: 'whatzit'
       });
 
-      TestUtils.Simulate.click(el.refs.searchClear);
+      TestUtils.Simulate.click(el._rssDOM.searchClear);
       expect(el.state.searchString).toBeUndefined();
     });
 
@@ -714,7 +714,7 @@ describe('ReactSuperSelect', function() {
         searchString: 'whatzit'
       });
 
-      TestUtils.Simulate.click(el.refs.searchClear);
+      TestUtils.Simulate.click(el._rssDOM.searchClear);
       expect(el.state.searchString).toBeUndefined();
     });
 
@@ -727,7 +727,7 @@ describe('ReactSuperSelect', function() {
         searchString: 'whatzit'
       });
 
-      TestUtils.Simulate.keyDown(el.refs.searchClear);
+      TestUtils.Simulate.keyDown(el._rssDOM.searchClear);
       expect(el.state.searchString).toBeUndefined();
     });
   });
@@ -800,9 +800,9 @@ describe('ReactSuperSelect', function() {
           isOpen: false
         });
 
-        el.refs.triggerDiv.focus();
+        el._rssDOM.triggerDiv.focus();
 
-        TestUtils.Simulate.keyDown(el.refs.triggerDiv, {
+        TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
           which: el.keymap.tab
         });
 
@@ -826,7 +826,7 @@ describe('ReactSuperSelect', function() {
           shiftKey: true
         });
 
-        expect(document.activeElement).toBe(el.refs.triggerDiv);
+        expect(document.activeElement).toBe(el._rssDOM.triggerDiv);
       });
     });
 
@@ -1061,7 +1061,7 @@ describe('ReactSuperSelect', function() {
           }
         }, options[0].id);
 
-        TestUtils.Simulate.click(el.refs.triggerDiv, {
+        TestUtils.Simulate.click(el._rssDOM.triggerDiv, {
           altKey: true,
           which: el.keymap.down
         });
@@ -1272,7 +1272,7 @@ describe('ReactSuperSelect', function() {
         customClass: 'yoClass'
       });
 
-      expect(el.refs.rssControl.getAttribute("class")).toMatch(/yoClass/);
+      expect(el._rssDOM.rssControl.getAttribute("class")).toMatch(/yoClass/);
     });
 
     it('renders tags with custom wrapper class when customTagClass provided', function() {
@@ -1334,13 +1334,13 @@ describe('ReactSuperSelect', function() {
     it('renders spinner when fetching ajax data', function() {
       el.toggleDropdown();
 
-      expect(el.refs.loader).toBeTruthy();
+      expect(el._rssDOM.loader).toBeTruthy();
     });
 
     it('renders spinner with custom class', function() {
       el.toggleDropdown();
 
-      expect(el.refs.loader.getAttribute("class")).toMatch(/loaditUp/);
+      expect(el._rssDOM.loader.getAttribute("class")).toMatch(/loaditUp/);
     });
 
     it('renders ajax data', function() {
@@ -1359,8 +1359,8 @@ describe('ReactSuperSelect', function() {
       promiseErrorCallback();
 
       expect(el.state.ajaxError).toBe(true);
-      expect(el.refs.errorDisplay).toBeTruthy();
-      expect(el.refs.errorDisplay.textContent).toBe('No Data For You!!!');
+      expect(el._rssDOM.errorDisplay).toBeTruthy();
+      expect(el._rssDOM.errorDisplay.textContent).toBe('No Data For You!!!');
     });
   });
 
@@ -1380,7 +1380,7 @@ describe('ReactSuperSelect', function() {
           then: mockAjaxThen
         })
       });
-      scrollNode = el.refs.scrollWrap;
+      scrollNode = el._rssDOM.scrollWrap;
       scrollNode.scrollHeight = 100;
       scrollNode.offsetHeight = 55;
       scrollNode.scrollTop = 50;
@@ -1388,41 +1388,41 @@ describe('ReactSuperSelect', function() {
 
     it('calls the pageDataFetch handler after scroll threshold is reached', function() {
       hasMorePages.mockReturnValue(true);
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el._rssDOM.scrollWrap, {});
 
       expect(el.props.pageDataFetch.mock.calls.length).toBe(1);
     });
 
     it('renders a loader during pageDataFetch', function() {
       hasMorePages.mockReturnValue(true);
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el._rssDOM.scrollWrap, {});
 
-      expect(el.refs.loader).toBeTruthy();
+      expect(el._rssDOM.loader).toBeTruthy();
     });
 
     it('renders error content on ajax errors', function() {
       hasMorePages.mockReturnValue(true);
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el._rssDOM.scrollWrap, {});
 
       var promiseErrorCallback = mockAjaxThen.mock.calls[0][1];
       promiseErrorCallback();
 
       expect(el.state.ajaxError).toBe(true);
-      expect(el.refs.errorDisplay).toBeTruthy();
-      expect(el.refs.errorDisplay.textContent).toBe(el.DEFAULT_LOCALIZATIONS.ajaxErrorString);
+      expect(el._rssDOM.errorDisplay).toBeTruthy();
+      expect(el._rssDOM.errorDisplay.textContent).toBe(el.props.ajaxErrorString);
     });
 
     it('does not call the pageDataFetch handler if loader present', function() {
       hasMorePages.mockReturnValue(true);
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el._rssDOM.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el._rssDOM.scrollWrap, {});
 
       expect(el.props.pageDataFetch.mock.calls.length).toBe(1);
     });
 
     it('does not call the pageDataFetch handler if pageDataFetchingComplete', function() {
       hasMorePages.mockReturnValue(false);
-      TestUtils.Simulate.mouseMove(el.refs.scrollWrap, {});
+      TestUtils.Simulate.mouseMove(el._rssDOM.scrollWrap, {});
 
       expect(el.props.pageDataFetch.mock.calls.length).toBe(0);
     });
