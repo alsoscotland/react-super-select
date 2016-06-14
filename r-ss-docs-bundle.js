@@ -35036,7 +35036,7 @@ ReactDOM.render(React.createElement(PropsApp, null), document.getElementById('pr
 },{"./all-props":161,"lodash":2,"react":159,"react-dom":3}],243:[function(require,module,exports){
 'use strict';
 
-var RSS_VERSION = "0.5.1";
+var RSS_VERSION = "0.5.2";
 var React = require('react'),
     ReactDOM = require('react-dom');
 
