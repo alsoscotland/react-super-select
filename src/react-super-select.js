@@ -224,7 +224,7 @@ class ReactSuperSelect extends React.Component {
   }
 
   // Update focused element after re-render
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     this._focusCurrentFocusedId();
   }
 
@@ -289,9 +289,11 @@ class ReactSuperSelect extends React.Component {
     if (this.props.disabled) {
       return;
     }
+
     let newState = {
-      isOpen: !this.state.isOpen
-    };
+          isOpen: !this.state.isOpen
+        },
+        openStateCallback = newState.isOpen ? this.props.onOpenDropdown : this.props.onCloseDropdown;
 
     if (this.state.isOpen) {
       _.extend(newState, {
@@ -303,6 +305,7 @@ class ReactSuperSelect extends React.Component {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
+      openStateCallback();
     });
   }
 
@@ -1308,6 +1311,8 @@ ReactSuperSelect.defaultProps = {
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
+  onCloseDropdown: _.noop,
+  onOpenDropdown: _.noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
@@ -1318,7 +1323,6 @@ ReactSuperSelect.defaultProps = {
   searchPlaceholder: 'Search',
   tagRemoveLabelString: 'Remove Tag'
 };
-
 
 // Properties
 // ------
@@ -1378,6 +1382,13 @@ ReactSuperSelect.propTypes = {
 
   // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
   onChange: React.PropTypes.func.isRequired,
+
+  // ON OPEN / ON CLOSE HANDLERS
+  // **onCloseDropdown** (Function) - a callback which will be called when the control closes
+  onCloseDropdown: React.PropTypes.func,
+
+  // **onOpenDropdown** (Function) - a callback which will be called when the control opens
+  onOpenDropdown: React.PropTypes.func,
 
   // OPTION DATA-RELATED PROPS
   // -------------------------

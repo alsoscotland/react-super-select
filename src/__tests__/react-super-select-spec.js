@@ -184,6 +184,38 @@ describe('ReactSuperSelect', function() {
 
   });
 
+  describe('onOpenDropdown and onCloseDropdown handlers', function() {
+    var el;
+
+    beforeEach(function() {
+      el = renderComponent({
+        onCloseDropdown: jest.genMockFunction(),
+        onOpenDropdown: jest.genMockFunction()
+      });
+    });
+
+    it('will fire the onOpenDropdown handler', function() {
+      expect(el.props.onOpenDropdown.mock.calls.length).toBe(0);
+
+      el.toggleDropdown();
+
+      expect(el.props.onOpenDropdown.mock.calls.length).toBe(1);
+    });
+
+    it('will fire the onCloseDropdown handler', function() {
+      expect(el.props.onCloseDropdown.mock.calls.length).toBe(0);
+
+      el.toggleDropdown();
+
+      expect(el.props.onCloseDropdown.mock.calls.length).toBe(0);
+
+      el.toggleDropdown();
+
+      expect(el.props.onCloseDropdown.mock.calls.length).toBe(1);
+    });
+
+  });
+
   describe('clearSelection button', function() {
 
     it('does not render clear selection button when nothing is selected', function() {
