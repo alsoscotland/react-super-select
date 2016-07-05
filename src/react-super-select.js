@@ -41,6 +41,8 @@ class ReactSuperSelect extends React.Component {
       up: 38
     };
 
+    this.ariaRelevantKeydownCodes = _.values(this.keymap);
+
     // NON-STATE VARS (no need to re-render based on these being set)
 
     // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
@@ -843,8 +845,11 @@ class ReactSuperSelect extends React.Component {
       return;
     }
 
-    if (this.state.isOpen || (event.which !== this.keymap.tab)) {
-      this._arrestEvent(event);
+    if (this.state.isOpen) {
+      // stop propagation of keyboard events relevant to an open super select
+      if (_.includes(this.ariaRelevantKeydownCodes, event.which)) {
+        this._arrestEvent(event);
+      }
     }
 
     switch(event.which) {

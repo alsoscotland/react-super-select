@@ -1769,6 +1769,7 @@ verify event target node is still in the DOM and close if click did not originat
             </div>
             
             <div class="content"><div class='highlight'><pre>  _handleKeyDown(event) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'keydown event'</span>, event);
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isUserSearchTypingEvent(event)) {
       <span class="hljs-keyword">return</span>;
     }
