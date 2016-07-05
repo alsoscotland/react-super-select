@@ -164,6 +164,9 @@ class ReactSuperSelect extends React.Component {
 
   // wire document click close control handler
   componentDidMount() {
+    if (this.props.disabled) {
+      return;
+    }
     document.addEventListener('click', this._handleDocumentClick);
     document.addEventListener('touchstart', this._handleDocumentClick);
     if (this.props.openOnMount) {
@@ -243,6 +246,7 @@ class ReactSuperSelect extends React.Component {
 
     triggerClasses = classNames('r-ss-trigger', {
       'r-ss-open': this.state.isOpen,
+      'r-ss-disabled': this.props.disabled,
       'r-ss-placeholder': this.state.value.length < 1
     });
 
@@ -263,6 +267,7 @@ class ReactSuperSelect extends React.Component {
            onKeyDown={this._handleKeyDown}
            role="combobox"
            aria-activedescendant={this._ariaGetActiveDescendentId()}
+           aria-disabled={this.props.disabled}
            aria-haspopup={true}
            aria-controls={this._ariaGetListId()}
            aria-label={placeholderString}
@@ -279,6 +284,9 @@ class ReactSuperSelect extends React.Component {
   // toggles the open-state of the dropdown
   // sets focused option in callback after opening
   toggleDropdown() {
+    if (this.props.disabled) {
+      return;
+    }
     let newState = {
       isOpen: !this.state.isOpen
     };
@@ -1282,13 +1290,13 @@ class ReactSuperSelect extends React.Component {
       focusedId: id
     });
   }
-
 }
 
 // Default Property Values
 // ------
 ReactSuperSelect.defaultProps = {
   clearable: true,
+  disabled: false,
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
@@ -1315,6 +1323,9 @@ ReactSuperSelect.propTypes = {
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: React.PropTypes.bool,
+
+  // **disabled** *optional* - (default - false) whether the control is disabled
+  disabled: React.PropTypes.bool,
 
   // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
   multiple: React.PropTypes.bool,

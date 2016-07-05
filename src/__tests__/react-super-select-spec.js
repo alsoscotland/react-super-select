@@ -105,6 +105,7 @@ describe('ReactSuperSelect', function() {
       expect(el._rssDOM.triggerDiv.getAttribute("role")).toBe('combobox');
       expect(el._rssDOM.triggerDiv.getAttribute("aria-activedescendant")).not.toBeUndefined();
       expect(el._rssDOM.triggerDiv.getAttribute("aria-haspopup")).toBeTruthy();
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-disabled")).toBe('false');
       expect(el._rssDOM.triggerDiv.getAttribute("aria-controls")).toBe(el._ariaGetListId());
       expect(_.isString(el._rssDOM.triggerDiv.getAttribute("aria-label"))).toBe(true);
       expect(el._rssDOM.triggerDiv.getAttribute("aria-multiselectable")).toBe(el._isMultiSelect().toString());
@@ -159,6 +160,28 @@ describe('ReactSuperSelect', function() {
       expect(options[3].getAttribute("aria-selected")).toBe('false');
       expect(options[4].getAttribute("aria-selected")).toBe('false');
     });
+  });
+
+  describe('disabled property', function() {
+
+    var el;
+
+    beforeEach(function() {
+      el = renderComponent({
+        disabled: true
+      });
+    });
+
+    it('will render in a disabled state', function() {
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-disabled")).toBe('true');
+      expect(el._rssDOM.triggerDiv.getAttribute("class").indexOf('disabled')).toBeGreaterThan(-1);
+    });
+
+    it('will not toggle when in disabled state', function() {
+      el.toggleDropdown();
+      expect(el.state.isOpen).toBe(false);
+    });
+
   });
 
   describe('clearSelection button', function() {
