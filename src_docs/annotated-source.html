@@ -517,6 +517,9 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  componentDidMount() {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.disabled) {
+      <span class="hljs-keyword">return</span>;
+    }
     <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'click'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
     <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'touchstart'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.openOnMount) {
@@ -644,6 +647,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
 
     triggerClasses = classNames(<span class="hljs-string">'r-ss-trigger'</span>, {
       <span class="hljs-string">'r-ss-open'</span>: <span class="hljs-keyword">this</span>.state.isOpen,
+      <span class="hljs-string">'r-ss-disabled'</span>: <span class="hljs-keyword">this</span>.props.disabled,
       <span class="hljs-string">'r-ss-placeholder'</span>: <span class="hljs-keyword">this</span>.state.value.length &lt; <span class="hljs-number">1</span>
     });
 
@@ -664,6 +668,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
            onKeyDown={this._handleKeyDown}
            role="combobox"
            aria-activedescendant={this._ariaGetActiveDescendentId()}
+           aria-disabled={this.props.disabled}
            aria-haspopup={true}
            aria-controls={this._ariaGetListId()}
            aria-label={placeholderString}
@@ -694,6 +699,9 @@ sets focused option in callback after opening</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  toggleDropdown() {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.disabled) {
+      <span class="hljs-keyword">return</span>;
+    }
     <span class="hljs-keyword">let</span> newState = {
       isOpen: !<span class="hljs-keyword">this</span>.state.isOpen
     };
@@ -2648,7 +2656,6 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
       focusedId: id
     });
   }
-
 }</pre></div></div>
             
         </li>
@@ -2678,6 +2685,7 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
             
             <div class="content"><div class='highlight'><pre>ReactSuperSelect.defaultProps = {
   clearable: <span class="hljs-literal">true</span>,
+  disabled: <span class="hljs-literal">false</span>,
   multiple: <span class="hljs-literal">false</span>,
   openOnMount: <span class="hljs-literal">false</span>,
   focusOnMount: <span class="hljs-literal">false</span>,
@@ -2771,11 +2779,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
-              <p><strong>multiple</strong> (Boolean) <em>optional</em>  - Whether or not the control supports multi-selection. When using the <strong>tags</strong> display option, this option is redundant</p>
+              <p><strong>disabled</strong> <em>optional</em> - (default - false) whether the control is disabled</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  multiple: React.PropTypes.bool,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  disabled: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2786,11 +2794,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
-              <p><strong>openOnMount</strong> (Boolean) <em>optional</em> - Whether or not to render the control open when it initially mounts</p>
+              <p><strong>multiple</strong> (Boolean) <em>optional</em>  - Whether or not the control supports multi-selection. When using the <strong>tags</strong> display option, this option is redundant</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  openOnMount: React.PropTypes.bool,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  multiple: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2801,11 +2809,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
-              <p><strong>focusOnMount</strong> (Boolean) <em>optional</em> (Used in conjunction with the <strong>openOnMount</strong> option) Whether or not to focus control after opening in componentDidMount lifecycle function</p>
+              <p><strong>openOnMount</strong> (Boolean) <em>optional</em> - Whether or not to render the control open when it initially mounts</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  focusOnMount: React.PropTypes.bool,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  openOnMount: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2816,11 +2824,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
-              <p><strong>searchable</strong> (Boolean) <em>optional</em> - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the <strong>dataSource</strong> options (by label key)</p>
+              <p><strong>focusOnMount</strong> (Boolean) <em>optional</em> (Used in conjunction with the <strong>openOnMount</strong> option) Whether or not to focus control after opening in componentDidMount lifecycle function</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  searchable: React.PropTypes.bool,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  focusOnMount: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2831,11 +2839,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
-              <p><strong>tags</strong> (Boolean) <em>optional</em> - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the <strong>multiple</strong> option)</p>
+              <p><strong>searchable</strong> (Boolean) <em>optional</em> - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the <strong>dataSource</strong> options (by label key)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  tags: React.PropTypes.bool,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  searchable: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2846,11 +2854,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
-              <p><strong>clearSearchOnSelection</strong> (Boolean) <em>optional</em> (Used in conjunction with the <strong>searchable</strong> option) whether to auto-clear search field when a selection is made</p>
+              <p><strong>tags</strong> (Boolean) <em>optional</em> - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the <strong>multiple</strong> option)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  clearSearchOnSelection: React.PropTypes.bool,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  tags: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2861,9 +2869,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
-              <h2 id="css-class-custom-styling-support-options">CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS</h2>
+              <p><strong>clearSearchOnSelection</strong> (Boolean) <em>optional</em> (Used in conjunction with the <strong>searchable</strong> option) whether to auto-clear search field when a selection is made</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  clearSearchOnSelection: React.PropTypes.bool,</pre></div></div>
             
         </li>
         
@@ -2874,7 +2884,8 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
-              
+              <h2 id="css-class-custom-styling-support-options">CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS</h2>
+
             </div>
             
         </li>
@@ -2885,6 +2896,18 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-127">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-128">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p><strong>customClass</strong> (String) <em>optional</em> - This value will be added as a css class to the control’s main wrapping element.  You should be able to overide all styling by leading your rules with</p>
 <pre><code class="lang-css">.r-ss-wrap.{customClass}
@@ -2897,11 +2920,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
         </li>
         
         
-        <li id="section-128">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p><strong>customGroupHeadingClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>groupBy</strong> option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown</p>
 
@@ -2912,11 +2935,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
         </li>
         
         
-        <li id="section-129">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p><strong>customSearchIconClass</strong> (String) <em>optional</em> - This value will be added as a css class to the icon element in the search-filtering bar (when <strong>searchable</strong> is true).  Allowing you to override the default search icon (default: a magnifying glass)</p>
 
@@ -2927,11 +2950,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
         </li>
         
         
-        <li id="section-130">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p><strong>customLoaderClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>ajaxDataFetch</strong> option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.</p>
 
@@ -2942,11 +2965,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
         </li>
         
         
-        <li id="section-131">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <p><strong>customTagClass</strong> (String) <em>optional</em> - Used in conjunction with the <strong>tags</strong> option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with</p>
 <pre><code class="lang-css"> .r-ss-tag.{customTagClass}
@@ -2959,26 +2982,14 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
         </li>
         
         
-        <li id="section-132">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
-              </div>
-              <h2 id="main-change-handler">MAIN CHANGE HANDLER</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
-              
+              <h2 id="main-change-handler">MAIN CHANGE HANDLER</h2>
+
             </div>
             
         </li>
@@ -2990,11 +3001,8 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
-              <p><strong>onChange</strong> (Function) <em>required</em> - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when <strong>multiple</strong> or <strong>tags</strong> an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  onChange: React.PropTypes.func.isRequired,</pre></div></div>
             
         </li>
         
@@ -3005,9 +3013,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
-              <h2 id="option-data-related-props">OPTION DATA-RELATED PROPS</h2>
+              <p><strong>onChange</strong> (Function) <em>required</em> - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when <strong>multiple</strong> or <strong>tags</strong> an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  onChange: React.PropTypes.func.isRequired,</pre></div></div>
             
         </li>
         
@@ -3018,7 +3028,8 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
-              
+              <h2 id="option-data-related-props">OPTION DATA-RELATED PROPS</h2>
+
             </div>
             
         </li>
@@ -3030,12 +3041,8 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
-              <p><strong>ajaxDataFetch</strong> (Function) (<em>optional - but <strong>dataSource</strong> must be supplied if undefined</em>) - Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option.
-The function takes no arguments, but it must return a <strong>promise</strong> object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. The <strong>dataSource</strong> option should be left undefined when using this option.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  ajaxDataFetch: React.PropTypes.func,</pre></div></div>
             
         </li>
         
@@ -3046,10 +3053,12 @@ The function takes no arguments, but it must return a <strong>promise</strong> o
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
-              <p><strong>dataSource</strong> (Array|Object|Collection Object) (<em>optional - but <strong>ajaxDataFetch</strong> must be supplied if undefined</em>) - The dataSource option provides the data for your options dropdown.
-The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type</p>
+              <p><strong>ajaxDataFetch</strong> (Function) (<em>optional - but <strong>dataSource</strong> must be supplied if undefined</em>) - Your select dropdown’s data may be fetched via ajax if you provide a function as the value for this option.
+The function takes no arguments, but it must return a <strong>promise</strong> object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. The <strong>dataSource</strong> option should be left undefined when using this option.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  ajaxDataFetch: React.PropTypes.func,</pre></div></div>
             
         </li>
         
@@ -3059,6 +3068,20 @@ The value provided will go to an internal parser (_configureDataSource), which w
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-139">&#182;</a>
+              </div>
+              <p><strong>dataSource</strong> (Array|Object|Collection Object) (<em>optional - but <strong>ajaxDataFetch</strong> must be supplied if undefined</em>) - The dataSource option provides the data for your options dropdown.
+The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-140">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p> The parsing method supports dataSource values as:</p>
 <ul>
@@ -3072,11 +3095,11 @@ The value provided will go to an internal parser (_configureDataSource), which w
         </li>
         
         
-        <li id="section-140">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <p> Each option in the resulting collection must have the following properties:</p>
 <ul>
@@ -3094,11 +3117,11 @@ The value provided will go to an internal parser (_configureDataSource), which w
         </li>
         
         
-        <li id="section-141">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <p><strong>initialValue</strong> (Array|Object) <em>optional</em>
 The selected value the control will be initialized with
@@ -3114,11 +3137,11 @@ must be an array of option items or a single option item from your dataSource co
         </li>
         
         
-        <li id="section-142">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <p><strong>optionLabelKey</strong> (String) (<em>optional - defaults to using ‘name’ as the key if undefined</em>) - This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value you would like displayed for each option.</p>
 
@@ -3129,11 +3152,11 @@ must be an array of option items or a single option item from your dataSource co
         </li>
         
         
-        <li id="section-143">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <p><strong>optionValueKey</strong> (String) (<em>optional - defaults to using ‘id’ as the key if undefined</em>) - This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that <strong>uniquely identifies</strong> that option across the <strong>dataSource</strong> collection.  Think of it in terms of the value attribute of a traditional html <code>&lt;select&gt;</code> element</p>
 
@@ -3144,11 +3167,11 @@ must be an array of option items or a single option item from your dataSource co
         </li>
         
         
-        <li id="section-144">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p><strong>pageDataFetch</strong> (Function) <em>optional</em> (A <em>hasMorePages</em> function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
 The function takes one argument, the value provided as the <strong>dataSource</strong> (or the return value of the <strong>ajaxDataSource</strong> function).
@@ -3163,11 +3186,11 @@ The pageDataFetch function will be called based upon the user’s scroll positio
         </li>
         
         
-        <li id="section-145">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <p><strong>hasMorePages</strong> (Function) <em>optional</em> (should be provided when using the <em>pageDataFetch</em> option) - A function that accepts one argument, a value as described by the <em>dataSource</em> option documentation, and returns a Boolean value.
 The value should indicate whether the option data collection has any more pages available for fetching</p>
@@ -3179,26 +3202,14 @@ The value should indicate whether the option data collection has any more pages 
         </li>
         
         
-        <li id="section-146">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
-              </div>
-              <h2 id="grouping-functionality">GROUPING FUNCTIONALITY</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
-              
+              <h2 id="grouping-functionality">GROUPING FUNCTIONALITY</h2>
+
             </div>
             
         </li>
@@ -3209,6 +3220,18 @@ The value should indicate whether the option data collection has any more pages 
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-148">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-149">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <p><strong>groupBy</strong> (String|Object|Function) <em>optional</em> - Allows you to sort your dropdown options into groups by leveraging Lodash’s groupBy function.  Please reference the <a href="https://lodash.com/docs#groupBy">Lodash</a> documentation for behavior of <em>groupBy</em> when passed different argument types</p>
 
@@ -3223,11 +3246,11 @@ The value should indicate whether the option data collection has any more pages 
         </li>
         
         
-        <li id="section-149">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p><strong>customGroupHeadingTemplateFunction</strong> (Function) <em>optional</em> (Used in conjunction with the <strong>groupBy</strong> option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group’s object key (returned by the call of Lodash’s groupBy when passed the value of your <strong>groupBy</strong> option)</p>
 
@@ -3238,26 +3261,14 @@ The value should indicate whether the option data collection has any more pages 
         </li>
         
         
-        <li id="section-150">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
-              </div>
-              <h2 id="rendering-option-iterator-functions">RENDERING (OPTION ITERATOR) FUNCTIONS</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
-              
+              <h2 id="rendering-option-iterator-functions">RENDERING (OPTION ITERATOR) FUNCTIONS</h2>
+
             </div>
             
         </li>
@@ -3269,9 +3280,7 @@ The value should indicate whether the option data collection has any more pages 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
-              <p><strong>customFilterFunction</strong> (Function) <em>optional</em> - Used in conjunction with the <strong>searchable</strong> option.  The function provided will serve as a replacement of the default search filter function.
-and will be called as the predicate function of <a href="https://lodash.com/docs#filter">Lodash’s filter function</a></p>
-
+              
             </div>
             
         </li>
@@ -3283,7 +3292,8 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
-              <p>The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current <strong>searchString</strong> (state variable)</p>
+              <p><strong>customFilterFunction</strong> (Function) <em>optional</em> - Used in conjunction with the <strong>searchable</strong> option.  The function provided will serve as a replacement of the default search filter function.
+and will be called as the predicate function of <a href="https://lodash.com/docs#filter">Lodash’s filter function</a></p>
 
             </div>
             
@@ -3296,12 +3306,9 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
-              <p>When left undefined the default filter function will be used.
-(Defaults To: A lowercase string comparison for text.  Matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown’s search field).  The function is leveraged by <a href="https://lodash.com/docs#filter">Lodash’s filter function</a> with your <strong>dataSource</strong> collection as its first argument.</p>
+              <p>The function will be called with four arguments, The first three are the usual lodash predicate arguments (value, index|key, collection). The last is the current <strong>searchString</strong> (state variable)</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  customFilterFunction: React.PropTypes.func,</pre></div></div>
             
         </li>
         
@@ -3312,11 +3319,12 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
-              <p><strong>customOptionTemplateFunction</strong> (Function) <em>optional</em> - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your <strong>dataSource</strong> collection and return your desired markup based on that object’s properties.</p>
+              <p>When left undefined the default filter function will be used.
+(Defaults To: A lowercase string comparison for text.  Matches the <strong>optionLabelKey</strong> value to the text entered into the dropdown’s search field).  The function is leveraged by <a href="https://lodash.com/docs#filter">Lodash’s filter function</a> with your <strong>dataSource</strong> collection as its first argument.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  customOptionTemplateFunction: React.PropTypes.func,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  customFilterFunction: React.PropTypes.func,</pre></div></div>
             
         </li>
         
@@ -3327,9 +3335,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
-              <h2 id="localization-strings">LOCALIZATION STRINGS</h2>
+              <p><strong>customOptionTemplateFunction</strong> (Function) <em>optional</em> - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your <strong>dataSource</strong> collection and return your desired markup based on that object’s properties.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  customOptionTemplateFunction: React.PropTypes.func,</pre></div></div>
             
         </li>
         
@@ -3340,7 +3350,8 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
-              
+              <h2 id="localization-strings">LOCALIZATION STRINGS</h2>
+
             </div>
             
         </li>
@@ -3352,11 +3363,8 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
-              <p><strong>ajaxErrorString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options) This string will be shown in the dropdown area when an ajax request fails</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  ajaxErrorString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3367,11 +3375,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
-              <p><strong>clearSearchLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>clearable</strong> option) This string will be used as an aria-label for the clear selection button</p>
+              <p><strong>ajaxErrorString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options) This string will be shown in the dropdown area when an ajax request fails</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  clearSelectionLabelString: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  ajaxErrorString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3382,11 +3390,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
-              <p><strong>clearSelectionsLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be used as an aria-label for the clear search button</p>
+              <p><strong>clearSearchLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>clearable</strong> option) This string will be used as an aria-label for the clear selection button</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  clearSearchLabelString: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  clearSelectionLabelString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3397,11 +3405,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
-              <p><strong>noResultsString</strong> (String) <em>optional</em> - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)</p>
+              <p><strong>clearSelectionsLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be used as an aria-label for the clear search button</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  noResultsString: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  clearSearchLabelString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3412,11 +3420,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
-              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control when the user has no selected values</p>
+              <p><strong>noResultsString</strong> (String) <em>optional</em> - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  placeholder: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  noResultsString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3427,11 +3435,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
-              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area’s search input field when a user has not entered any characters.</p>
+              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control when the user has no selected values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  searchPlaceholder: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  placeholder: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3441,6 +3449,21 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-164">&#182;</a>
+              </div>
+              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area’s search input field when a user has not entered any characters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  searchPlaceholder: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-165">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <p><strong>tagRemoveLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>tags</strong> option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>
 
