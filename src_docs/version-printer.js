@@ -1,4 +1,4 @@
-var RSS_VERSION = "0.5.2";
+var RSS_VERSION = "0.5.3";
 var React = require('react'),
     ReactDOM = require('react-dom');
 
