@@ -41,6 +41,8 @@ class ReactSuperSelect extends React.Component {
       up: 38
     };
 
+    this.ariaRelevantKeydownCodes = _.values(this.keymap);
+
     // NON-STATE VARS (no need to re-render based on these being set)
 
     // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
@@ -287,9 +289,11 @@ class ReactSuperSelect extends React.Component {
     if (this.props.disabled) {
       return;
     }
+
     let newState = {
-      isOpen: !this.state.isOpen
-    };
+          isOpen: !this.state.isOpen
+        },
+        openStateCallback = newState.isOpen ? this.props.onOpenDropdown : this.props.onCloseDropdown;
 
     if (this.state.isOpen) {
       _.extend(newState, {
@@ -301,6 +305,7 @@ class ReactSuperSelect extends React.Component {
       if (this.state.isOpen) {
         this._setFocusOnOpen();
       }
+      openStateCallback();
     });
   }
 
@@ -327,6 +332,10 @@ class ReactSuperSelect extends React.Component {
 
   // stop wheel events in dropdown from scrolling page
   _arrestScroll(event) {
+    if (this.props.forceDefaultBrowserScrolling) {
+      return true;
+    }
+
     let arrestScroll = false,
         adjustedHeight = this._rssDOM.scrollWrap.scrollTop + this._rssDOM.scrollWrap.clientHeight;
 
@@ -843,8 +852,11 @@ class ReactSuperSelect extends React.Component {
       return;
     }
 
-    if (this.state.isOpen || (event.which !== this.keymap.tab)) {
-      this._arrestEvent(event);
+    if (this.state.isOpen) {
+      // stop propagation of keyboard events relevant to an open super select
+      if (_.includes(this.ariaRelevantKeydownCodes, event.which)) {
+        this._arrestEvent(event);
+      }
     }
 
     switch(event.which) {
@@ -1300,9 +1312,12 @@ ReactSuperSelect.defaultProps = {
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
+  forceDefaultBrowserScrolling: false,
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
+  onCloseDropdown: _.noop,
+  onOpenDropdown: _.noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
@@ -1313,7 +1328,6 @@ ReactSuperSelect.defaultProps = {
   searchPlaceholder: 'Search',
   tagRemoveLabelString: 'Remove Tag'
 };
-
 
 // Properties
 // ------
@@ -1335,6 +1349,9 @@ ReactSuperSelect.propTypes = {
 
   // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
   focusOnMount: React.PropTypes.bool,
+
+  // **forceDefaultBrowserScrolling** *optional* - (default - false) - Whether to override the default behavior of arresting mouse wheel events in an open select dropdown
+  forceDefaultBrowserScrolling: React.PropTypes.bool,
 
   // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
   searchable: React.PropTypes.bool,
@@ -1373,6 +1390,13 @@ ReactSuperSelect.propTypes = {
 
   // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
   onChange: React.PropTypes.func.isRequired,
+
+  // ON OPEN / ON CLOSE HANDLERS
+  // **onCloseDropdown** (Function) - a callback which will be called when the control closes
+  onCloseDropdown: React.PropTypes.func,
+
+  // **onOpenDropdown** (Function) - a callback which will be called when the control opens
+  onOpenDropdown: React.PropTypes.func,
 
   // OPTION DATA-RELATED PROPS
   // -------------------------

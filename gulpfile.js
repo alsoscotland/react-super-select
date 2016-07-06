@@ -14,8 +14,8 @@ function initRssGulp() {
 
 gulp.task('compile:js', function(cb) {
   exec('npm run npm:babel:js', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
+    console.info(stdout);
+    console.info(stderr);
     cb(err);
   });
 });
