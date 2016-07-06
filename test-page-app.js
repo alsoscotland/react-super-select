@@ -34270,6 +34270,7 @@ var ReactSuperSelect = function (_React$Component) {
       }
       document.addEventListener('click', this._handleDocumentClick);
       document.addEventListener('touchstart', this._handleDocumentClick);
+
       if (this.props.openOnMount) {
         this.setState({
           isOpen: true
@@ -34331,8 +34332,13 @@ var ReactSuperSelect = function (_React$Component) {
 
   }, {
     key: 'componentDidUpdate',
-    value: function componentDidUpdate() {
+    value: function componentDidUpdate(prevProps, prevState) {
       this._focusCurrentFocusedId();
+
+      if (this.state.isOpen !== prevState.isOpen) {
+        var openStateCallback = this.state.isOpen ? this.props.onOpenDropdown : this.props.onCloseDropdown;
+        openStateCallback();
+      }
     }
 
     // main render method
@@ -34342,16 +34348,16 @@ var ReactSuperSelect = function (_React$Component) {
     value: function render() {
       var _this3 = this;
 
-      var clearSelectionButton = null,
-          clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.props.clearSelectionLabelString,
-          dropdownContent = this._getDropdownContent(),
-          placeholderString = void 0,
-          triggerDisplayContent = void 0,
-          triggerClasses = void 0,
-          caratClass = (0, _classnames2.default)('carat', {
+      var caratClass = (0, _classnames2.default)('carat', {
         'down': !this.state.isOpen,
         'up': this.state.isOpen
       }),
+          clearSelectionButton = null,
+          clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.props.clearSelectionLabelString,
+          dropdownContent = this._getDropdownContent(),
+          placeholderString = void 0,
+          triggerClasses = void 0,
+          triggerDisplayContent = void 0,
           wrapClasses = void 0;
 
       wrapClasses = (0, _classnames2.default)("r-ss-wrap", this.props.customClass, {
@@ -34426,8 +34432,7 @@ var ReactSuperSelect = function (_React$Component) {
 
       var newState = {
         isOpen: !this.state.isOpen
-      },
-          openStateCallback = newState.isOpen ? this.props.onOpenDropdown : this.props.onCloseDropdown;
+      };
 
       if (this.state.isOpen) {
         _lodash2.default.extend(newState, {
@@ -34439,7 +34444,6 @@ var ReactSuperSelect = function (_React$Component) {
         if (_this4.state.isOpen) {
           _this4._setFocusOnOpen();
         }
-        openStateCallback();
       });
     }
 
@@ -34448,8 +34452,8 @@ var ReactSuperSelect = function (_React$Component) {
   }, {
     key: '_ariaGetActiveDescendentId',
     value: function _ariaGetActiveDescendentId() {
-      var ariaActiveDescendantId = null,
-          optionRef = this._getFocusedOptionKey();
+      var ariaActiveDescendantId = null;
+      var optionRef = this._getFocusedOptionKey();
       if (this._rssDOM[optionRef]) {
         ariaActiveDescendantId = this._rssDOM[optionRef].id;
       }
@@ -34482,17 +34486,15 @@ var ReactSuperSelect = function (_React$Component) {
         return true;
       }
 
-      var arrestScroll = false,
-          adjustedHeight = this._rssDOM.scrollWrap.scrollTop + this._rssDOM.scrollWrap.clientHeight;
+      var arrestScroll = false;
+      var adjustedHeight = this._rssDOM.scrollWrap.scrollTop + this._rssDOM.scrollWrap.clientHeight;
 
       if (event.deltaY > 0) {
         if (adjustedHeight >= this._rssDOM.scrollWrap.scrollHeight) {
           arrestScroll = true;
         }
-      } else {
-        if (this._rssDOM.scrollWrap.scrollTop <= 0) {
-          arrestScroll = true;
-        }
+      } else if (this._rssDOM.scrollWrap.scrollTop <= 0) {
+        arrestScroll = true;
       }
 
       if (arrestScroll) {
@@ -34673,8 +34675,9 @@ var ReactSuperSelect = function (_React$Component) {
   }, {
     key: '_filterDataBySearchString',
     value: function _filterDataBySearchString(data) {
-      var self = this,
-          filterFunction = this._defaultSearchFilter;
+      var self = this;
+
+      var filterFunction = this._defaultSearchFilter;
       if (_lodash2.default.isFunction(this.props.customFilterFunction)) {
         filterFunction = function filterFunction(value, index, collection) {
           return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
@@ -34738,9 +34741,11 @@ var ReactSuperSelect = function (_React$Component) {
   }, {
     key: '_focusRemovalButtons',
     value: function _focusRemovalButtons(event) {
-      var triggerContainer = this._rssDOM.triggerDiv,
-          buttons = triggerContainer.getElementsByTagName('button'),
-          currentlyFocusedRemoveButtonIndex = void 0,
+      var triggerContainer = this._rssDOM.triggerDiv;
+
+      var buttons = triggerContainer.getElementsByTagName('button');
+
+      var currentlyFocusedRemoveButtonIndex = void 0,
           nextButtonIndexToFocus = void 0;
 
       if (buttons.length) {
@@ -34778,9 +34783,8 @@ var ReactSuperSelect = function (_React$Component) {
     value: function _generateValueDisplay() {
       if (!this.props.tags) {
         return this._getNormalDisplayMarkup();
-      } else {
-        return this._getTagsDisplayMarkup();
       }
+      return this._getTagsDisplayMarkup();
     }
 
     // render the content shown if an ajax error occurs
@@ -34833,9 +34837,9 @@ var ReactSuperSelect = function (_React$Component) {
         return null;
       }
 
-      var searchContent = this._getSearchContent(),
-          mouseMoveHandler = void 0,
-          pagingLi = void 0;
+      var mouseMoveHandler = void 0,
+          pagingLi = void 0,
+          searchContent = this._getSearchContent();
 
       mouseMoveHandler = this.props.pageDataFetch ? this._onMouseMove : null;
       pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
@@ -34933,13 +34937,12 @@ var ReactSuperSelect = function (_React$Component) {
         var selectedKey = "r_ss_selected_" + value[_this10.state.labelKey];
         if (_this10.props.customOptionTemplateFunction) {
           return _this10.props.customOptionTemplateFunction(value);
-        } else {
-          return _react2.default.createElement(
-            'span',
-            { key: selectedKey, className: 'r-ss-selected-label' },
-            value[_this10.state.labelKey]
-          );
         }
+        return _react2.default.createElement(
+          'span',
+          { key: selectedKey, className: 'r-ss-selected-label' },
+          value[_this10.state.labelKey]
+        );
       });
     }
 
@@ -34986,8 +34989,9 @@ var ReactSuperSelect = function (_React$Component) {
         return this._getAjaxErrorMarkup();
       }
 
-      var data = this._getDataSource(),
-          options = [],
+      var data = this._getDataSource();
+
+      var options = [],
           optionsCount = 0;
 
       if (!_lodash2.default.isArray(data)) {
@@ -35112,11 +35116,12 @@ var ReactSuperSelect = function (_React$Component) {
     value: function _getTagMarkup(value) {
       var _this15 = this;
 
+      var displayValue = value[this.state.valueKey],
+          tagRemoveIndex = this._getTagRemoveIndex(displayValue);
+
       var label = value[this.state.labelKey],
-          displayValue = value[this.state.valueKey],
           tagKey = 'tag_' + displayValue,
           buttonName = "RemoveTag_" + displayValue,
-          tagRemoveIndex = this._getTagRemoveIndex(displayValue),
           tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.props.tagRemoveLabelString,
           tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
@@ -35286,9 +35291,10 @@ var ReactSuperSelect = function (_React$Component) {
       return _lodash2.default.map(data, function (dataOption, index) {
         index = indexStart + index;
 
+        var indexRef = 'option_' + index;
+
         var isCurrentlySelected = _this16._isCurrentlySelected(dataOption),
             itemKey = "drop_li_" + dataOption[_this16.state.valueKey],
-            indexRef = 'option_' + index,
             ariaDescendantId = _this16.state.controlId + '_aria_' + indexRef,
             optionMarkup = _lodash2.default.isFunction(_this16.props.customOptionTemplateFunction) ? _this16.props.customOptionTemplateFunction(dataOption, _this16.state.searchString) : dataOption[_this16.state.labelKey],
             classes = (0, _classnames2.default)('r-ss-dropdown-option', {
@@ -35475,9 +35481,8 @@ var ReactSuperSelect = function (_React$Component) {
     value: function _pageFetchingComplete() {
       if (!_lodash2.default.isFunction(this.props.hasMorePages)) {
         return false;
-      } else {
-        return this.props.hasMorePages(this.state.rawDataSource);
       }
+      return this.props.hasMorePages(this.state.rawDataSource);
     }
 
     // Used in shift selection when the event target was previously selected.
