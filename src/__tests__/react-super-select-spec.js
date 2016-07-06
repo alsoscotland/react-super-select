@@ -1422,8 +1422,8 @@ describe('ReactSuperSelect', function() {
   describe('page Fetching functionality', function() {
     var el,
         hasMorePages = jest.genMockFunction(),
-        scrollNode,
-        mockAjaxThen;
+        mockAjaxThen,
+        scrollNode;
 
     beforeEach(function() {
       mockAjaxThen = jest.genMockFunction();
@@ -1603,9 +1603,7 @@ describe('ReactSuperSelect', function() {
   });
 
   describe('componentWillReceiveProps', function() {
-    var parent,
-        testParentComponent,
-        optOne = {
+    var optOne = {
           id: 1,
           name: "Test Option 1",
           foo: "Foo1",
@@ -1616,7 +1614,9 @@ describe('ReactSuperSelect', function() {
           name: "Test Option 2",
           foo: "Foo2",
           bar: "Bar2"
-        };
+        },
+        parent,
+        testParentComponent;
 
     beforeEach(function() {
       testParentComponent = React.createFactory(React.createClass({

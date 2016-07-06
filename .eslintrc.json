@@ -25,7 +25,7 @@
     "block-scoped-var": 2,
     "comma-dangle": [2, "never"],
     "comma-style": [2, "last"],
-    "complexity": [1, 4],
+    "complexity": [1, 5],
     "curly": [2, "all"],
     "dot-notation": [2, { "allowKeywords": true }],
     "eol-last": 2,
@@ -90,7 +90,7 @@
     "react/no-render-return-value": 1,
     "react/prop-types": 1,
     "semi": [2, "always", { "omitLastInOneLineBlock": true }],
-    "sort-vars": [0, { "ignoreCase": true }], // one of these days, my pretty...
+    "sort-vars": [0, { "ignoreCase": true }],
     "use-isnan": 2,
     "valid-typeof": 2,
     "wrap-iife": [2, "inside"]
