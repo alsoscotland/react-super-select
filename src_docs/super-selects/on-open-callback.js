@@ -30,6 +30,7 @@ var onOpenCallbackExample = {
   displayName: "On Open Callback Example",
 
   props: {
+    forceDefaultBrowserScrolling: true,
     onCloseDropdown: onCloseDropdownHandler,
     onOpenDropdown: onOpenDropdownHandler,
     placeholder: "Make a Selection",

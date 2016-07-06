@@ -224,7 +224,7 @@ class ReactSuperSelect extends React.Component {
   }
 
   // Update focused element after re-render
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     this._focusCurrentFocusedId();
   }
 
@@ -332,6 +332,10 @@ class ReactSuperSelect extends React.Component {
 
   // stop wheel events in dropdown from scrolling page
   _arrestScroll(event) {
+    if (this.props.forceDefaultBrowserScrolling) {
+      return true;
+    }
+
     let arrestScroll = false,
         adjustedHeight = this._rssDOM.scrollWrap.scrollTop + this._rssDOM.scrollWrap.clientHeight;
 
@@ -1308,6 +1312,7 @@ ReactSuperSelect.defaultProps = {
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
+  forceDefaultBrowserScrolling: false,
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
@@ -1344,6 +1349,9 @@ ReactSuperSelect.propTypes = {
 
   // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
   focusOnMount: React.PropTypes.bool,
+
+  // **forceDefaultBrowserScrolling** *optional* - (default - false) - Whether to override the default behavior of arresting mouse wheel events in an open select dropdown
+  forceDefaultBrowserScrolling: React.PropTypes.bool,
 
   // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
   searchable: React.PropTypes.bool,

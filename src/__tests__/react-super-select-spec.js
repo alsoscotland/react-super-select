@@ -1533,6 +1533,65 @@ describe('ReactSuperSelect', function() {
     });
   });
 
+  describe('_arrestScroll', function() {
+
+    it('will stop Propagation of scroll down events in an open dropdown when scrollHeight is reached', function() {
+      var el = renderAndOpen({});
+      el._rssDOM.scrollWrap.scrollTop = 0;
+      el._rssDOM.scrollWrap.clientHeight = 11;
+      el._rssDOM.scrollWrap.scrollHeight = 10;
+
+      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+
+      el._arrestScroll({
+        deltaY: 11
+      });
+
+      expect(arrestSpy).toHaveBeenCalled();
+    });
+
+    it('will not stop Propagation of scroll down events in an open dropdown when scrollHeight is not yet reached', function() {
+      var el = renderAndOpen({});
+      el._rssDOM.scrollWrap.scrollTop = 0;
+      el._rssDOM.scrollWrap.clientHeight = 5;
+      el._rssDOM.scrollWrap.scrollHeight = 10;
+
+      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+
+      el._arrestScroll({
+        deltaY: 4
+      });
+
+      expect(arrestSpy).not.toHaveBeenCalled();
+    });
+
+    it('will stop Propagation of scroll up events in an open dropdown when top is reached', function() {
+      var el = renderAndOpen({});
+      el._rssDOM.scrollWrap.scrollTop = 0;
+      el._rssDOM.scrollWrap.clientHeight = 11;
+
+      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+
+      el._arrestScroll({
+        deltaY: -1
+      });
+
+      expect(arrestSpy).toHaveBeenCalled();
+    });
+
+    it('will not stop Propagation of scroll events in an open dropdown when forceDefaultBrowserScrolling true', function() {
+      var el = renderAndOpen({
+        forceDefaultBrowserScrolling: true
+      });
+
+      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+
+      el._arrestScroll({});
+
+      expect(arrestSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('openOnMount prop', function() {
     it('will openOnMount', function() {
       var el = renderComponent({
@@ -1617,6 +1676,5 @@ describe('ReactSuperSelect', function() {
       expect(_.isEqual(parent.refs.rss.state.rawDataSource, [optTwo])).toBeTruthy();
       expect(parent.refs.rss.state.lastOptionId).toBe(0);
     });
-
   });
 });
