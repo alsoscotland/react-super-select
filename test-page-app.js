@@ -34204,6 +34204,8 @@ var ReactSuperSelect = function (_React$Component) {
       up: 38
     };
 
+    _this.ariaRelevantKeydownCodes = _lodash2.default.values(_this.keymap);
+
     // NON-STATE VARS (no need to re-render based on these being set)
 
     // **lastUserSelectedOptionData** - A store of the last user-selected option, used for accesibility-related option focusing, as well as shift-click selection
@@ -34263,6 +34265,9 @@ var ReactSuperSelect = function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      if (this.props.disabled) {
+        return;
+      }
       document.addEventListener('click', this._handleDocumentClick);
       document.addEventListener('touchstart', this._handleDocumentClick);
       if (this.props.openOnMount) {
@@ -34355,6 +34360,7 @@ var ReactSuperSelect = function (_React$Component) {
 
       triggerClasses = (0, _classnames2.default)('r-ss-trigger', {
         'r-ss-open': this.state.isOpen,
+        'r-ss-disabled': this.props.disabled,
         'r-ss-placeholder': this.state.value.length < 1
       });
 
@@ -34386,6 +34392,7 @@ var ReactSuperSelect = function (_React$Component) {
             onKeyDown: this._handleKeyDown,
             role: 'combobox',
             'aria-activedescendant': this._ariaGetActiveDescendentId(),
+            'aria-disabled': this.props.disabled,
             'aria-haspopup': true,
             'aria-controls': this._ariaGetListId(),
             'aria-label': placeholderString,
@@ -34413,9 +34420,14 @@ var ReactSuperSelect = function (_React$Component) {
     value: function toggleDropdown() {
       var _this4 = this;
 
+      if (this.props.disabled) {
+        return;
+      }
+
       var newState = {
         isOpen: !this.state.isOpen
-      };
+      },
+          openStateCallback = newState.isOpen ? this.props.onOpenDropdown : this.props.onCloseDropdown;
 
       if (this.state.isOpen) {
         _lodash2.default.extend(newState, {
@@ -34427,6 +34439,7 @@ var ReactSuperSelect = function (_React$Component) {
         if (_this4.state.isOpen) {
           _this4._setFocusOnOpen();
         }
+        openStateCallback();
       });
     }
 
@@ -34465,6 +34478,10 @@ var ReactSuperSelect = function (_React$Component) {
   }, {
     key: '_arrestScroll',
     value: function _arrestScroll(event) {
+      if (this.props.forceDefaultBrowserScrolling) {
+        return true;
+      }
+
       var arrestScroll = false,
           adjustedHeight = this._rssDOM.scrollWrap.scrollTop + this._rssDOM.scrollWrap.clientHeight;
 
@@ -35177,8 +35194,11 @@ var ReactSuperSelect = function (_React$Component) {
         return;
       }
 
-      if (this.state.isOpen || event.which !== this.keymap.tab) {
-        this._arrestEvent(event);
+      if (this.state.isOpen) {
+        // stop propagation of keyboard events relevant to an open super select
+        if (_lodash2.default.includes(this.ariaRelevantKeydownCodes, event.which)) {
+          this._arrestEvent(event);
+        }
       }
 
       switch (event.which) {
@@ -35738,12 +35758,16 @@ var ReactSuperSelect = function (_React$Component) {
 
 ReactSuperSelect.defaultProps = {
   clearable: true,
+  disabled: false,
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
+  forceDefaultBrowserScrolling: false,
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
+  onCloseDropdown: _lodash2.default.noop,
+  onOpenDropdown: _lodash2.default.noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
@@ -35764,6 +35788,9 @@ ReactSuperSelect.propTypes = {
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: _react2.default.PropTypes.bool,
 
+  // **disabled** *optional* - (default - false) whether the control is disabled
+  disabled: _react2.default.PropTypes.bool,
+
   // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
   multiple: _react2.default.PropTypes.bool,
 
@@ -35772,6 +35799,9 @@ ReactSuperSelect.propTypes = {
 
   // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
   focusOnMount: _react2.default.PropTypes.bool,
+
+  // **forceDefaultBrowserScrolling** *optional* - (default - false) - Whether to override the default behavior of arresting mouse wheel events in an open select dropdown
+  forceDefaultBrowserScrolling: _react2.default.PropTypes.bool,
 
   // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
   searchable: _react2.default.PropTypes.bool,
@@ -35810,6 +35840,13 @@ ReactSuperSelect.propTypes = {
 
   // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
   onChange: _react2.default.PropTypes.func.isRequired,
+
+  // ON OPEN / ON CLOSE HANDLERS
+  // **onCloseDropdown** (Function) - a callback which will be called when the control closes
+  onCloseDropdown: _react2.default.PropTypes.func,
+
+  // **onOpenDropdown** (Function) - a callback which will be called when the control opens
+  onOpenDropdown: _react2.default.PropTypes.func,
 
   // OPTION DATA-RELATED PROPS
   // -------------------------
