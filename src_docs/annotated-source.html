@@ -1260,6 +1260,10 @@ for keyboard navigation and accessibility</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _generateValueDisplay() {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.customSelectedValueTemplateFunction) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.customSelectedValueTemplateFunction(<span class="hljs-keyword">this</span>.state.value);
+    }
+
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.props.tags) {
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._getNormalDisplayMarkup();
     }
@@ -3433,9 +3437,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
-              <h2 id="localization-strings">LOCALIZATION STRINGS</h2>
+              <p><strong>customValueTemplateFunction</strong> (Function) <em>optional</em> - This function provides custom templating capability for your control’s selected value display.  The function should accept the selected options from your <strong>dataSource</strong> collection and return your desired markup.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  customSelectedValueTemplateFunction: React.PropTypes.func,</pre></div></div>
             
         </li>
         
@@ -3446,7 +3452,8 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
-              
+              <h2 id="localization-strings">LOCALIZATION STRINGS</h2>
+
             </div>
             
         </li>
@@ -3458,11 +3465,8 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
-              <p><strong>ajaxErrorString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options) This string will be shown in the dropdown area when an ajax request fails</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  ajaxErrorString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3473,11 +3477,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
-              <p><strong>clearSearchLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>clearable</strong> option) This string will be used as an aria-label for the clear selection button</p>
+              <p><strong>ajaxErrorString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>ajaxDataFetch</strong> &amp; <strong>pageDataFetch</strong> options) This string will be shown in the dropdown area when an ajax request fails</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  clearSelectionLabelString: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  ajaxErrorString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3488,11 +3492,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
-              <p><strong>clearSelectionsLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be used as an aria-label for the clear search button</p>
+              <p><strong>clearSearchLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>clearable</strong> option) This string will be used as an aria-label for the clear selection button</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  clearSearchLabelString: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  clearSelectionLabelString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3503,11 +3507,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
-              <p><strong>noResultsString</strong> (String) <em>optional</em> - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)</p>
+              <p><strong>clearSelectionsLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be used as an aria-label for the clear search button</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  noResultsString: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  clearSearchLabelString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3518,11 +3522,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
-              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control when the user has no selected values</p>
+              <p><strong>noResultsString</strong> (String) <em>optional</em> - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  placeholder: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  noResultsString: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3533,11 +3537,11 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
-              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area’s search input field when a user has not entered any characters.</p>
+              <p><strong>placeholder</strong> (String) <em>optional</em> - This string value will be displayed in the main display area of your control when the user has no selected values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  searchPlaceholder: React.PropTypes.string,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  placeholder: React.PropTypes.string,</pre></div></div>
             
         </li>
         
@@ -3547,6 +3551,21 @@ and will be called as the predicate function of <a href="https://lodash.com/docs
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-169">&#182;</a>
+              </div>
+              <p><strong>searchPlaceholder</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>searchable</strong> option) This string will be shown in the dropdown area’s search input field when a user has not entered any characters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  searchPlaceholder: React.PropTypes.string,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-170">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <p><strong>tagRemoveLabelString</strong> (String) <em>optional</em> - (Used in conjunction with the <strong>tags</strong> option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>
 

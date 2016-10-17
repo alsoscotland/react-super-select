@@ -580,6 +580,10 @@ class ReactSuperSelect extends React.Component {
 
   // choose whether to template the display of user-selected values normally, or as tags
   _generateValueDisplay() {
+    if (this.props.customSelectedValueTemplateFunction) {
+      return this.props.customSelectedValueTemplateFunction(this.state.value);
+    }
+
     if (!this.props.tags) {
       return this._getNormalDisplayMarkup();
     }
@@ -1484,6 +1488,9 @@ ReactSuperSelect.propTypes = {
 
   // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
   customOptionTemplateFunction: React.PropTypes.func,
+
+  // **customValueTemplateFunction** (Function) *optional* - This function provides custom templating capability for your control's selected value display.  The function should accept the selected options from your **dataSource** collection and return your desired markup.
+  customSelectedValueTemplateFunction: React.PropTypes.func,
 
   // LOCALIZATION STRINGS
   // --------------------
