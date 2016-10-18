@@ -1256,6 +1256,8 @@ class ReactSuperSelect extends React.Component {
     this.setState(newState, () => {
       if (!remainOpenAfterSelection) {
         this._closeOnKeypress();
+      } else {
+        this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
       }
       this._broadcastChange();
     });
