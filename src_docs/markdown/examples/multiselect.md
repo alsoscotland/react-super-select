@@ -3,7 +3,8 @@
 <ReactSuperSelect placeholder="Make Your Selections" 
                   dataSource={testData} 
                   onChange={handlerExample} 
-                  multiple={true} />
+                  multiple={true}
+                  keepOpenOnSelection={true} />
 ```
 
 ### Properties

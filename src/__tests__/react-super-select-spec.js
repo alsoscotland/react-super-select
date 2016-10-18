@@ -796,6 +796,35 @@ describe('ReactSuperSelect', function() {
       expect(el.state.value[0]).toBe(mockData[1]);
     });
 
+    it('will render with customSelectedValueTemplateFunction', function() {
+      var templateMock = jest.genMockFunction(),
+          el = renderAndOpen({
+            customSelectedValueTemplateFunction: templateMock
+          });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(templateMock.mock.calls[0][0]).toBe(el.state.value);
+    });
+
+    it('closes control after selection', function() {
+      var el = renderAndOpen();
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(el.state.isOpen).toBe(false);
+    });
+
+    it('does not close the control when keepOpenOnSelection true', function() {
+      var el = renderAndOpen({
+        keepOpenOnSelection: true
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(el.state.isOpen).toBe(true);
+    });
+
     it('selects item by keyDown for enter', function() {
       var el = renderAndOpen();
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
