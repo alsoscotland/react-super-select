@@ -2563,6 +2563,8 @@ Close dropdown on the setState callback if not a non control-closing selection</
     <span class="hljs-keyword">this</span>.setState(newState, () =&gt; {
       <span class="hljs-keyword">if</span> (!remainOpenAfterSelection) {
         <span class="hljs-keyword">this</span>._closeOnKeypress();
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>._updateFocusedId(<span class="hljs-built_in">parseInt</span>(<span class="hljs-keyword">this</span>.lastUserSelectedOption.getAttribute(<span class="hljs-string">'data-option-index'</span>), <span class="hljs-number">10</span>));
       }
       <span class="hljs-keyword">this</span>._broadcastChange();
     });
