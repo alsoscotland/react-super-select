@@ -34440,8 +34440,10 @@ var ReactSuperSelect = function (_React$Component) {
         });
       }
 
+      var wasClosed = !this.state.isOpen;
+
       this.setState(newState, function () {
-        if (_this4.state.isOpen) {
+        if (wasClosed) {
           _this4._setFocusOnOpen();
         }
       });
@@ -34781,6 +34783,10 @@ var ReactSuperSelect = function (_React$Component) {
   }, {
     key: '_generateValueDisplay',
     value: function _generateValueDisplay() {
+      if (this.props.customSelectedValueTemplateFunction) {
+        return this.props.customSelectedValueTemplateFunction(this.state.value);
+      }
+
       if (!this.props.tags) {
         return this._getNormalDisplayMarkup();
       }
@@ -35198,7 +35204,6 @@ var ReactSuperSelect = function (_React$Component) {
       if (this._isUserSearchTypingEvent(event)) {
         return;
       }
-
       if (this.state.isOpen) {
         // stop propagation of keyboard events relevant to an open super select
         if (_lodash2.default.includes(this.ariaRelevantKeydownCodes, event.which)) {
@@ -35630,6 +35635,7 @@ var ReactSuperSelect = function (_React$Component) {
     key: '_selectFocusedOption',
     value: function _selectFocusedOption(eventTargetLi, keepControlOpen) {
       var focusedOptionKey = this._getFocusedOptionKey();
+
       if (this._rssDOM[focusedOptionKey]) {
         var optionValue = this._getOptionValueFromDataAttr(this._rssDOM[focusedOptionKey]);
 
@@ -35657,7 +35663,9 @@ var ReactSuperSelect = function (_React$Component) {
 
       var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-      if (this._isMultiSelect() || keepControlOpen && this.state.value) {
+      var remainOpenAfterSelection = keepControlOpen || this.props.keepOpenOnSelection;
+
+      if (this._isMultiSelect() || remainOpenAfterSelection && this.state.value) {
         objectValues = this.state.value.concat(objectValues);
       }
 
@@ -35672,7 +35680,7 @@ var ReactSuperSelect = function (_React$Component) {
       }
 
       this.setState(newState, function () {
-        if (!keepControlOpen) {
+        if (!remainOpenAfterSelection) {
           _this20._closeOnKeypress();
         }
         _this20._broadcastChange();
@@ -35684,6 +35692,8 @@ var ReactSuperSelect = function (_React$Component) {
   }, {
     key: '_selectItemOnOptionClick',
     value: function _selectItemOnOptionClick(value, event) {
+      this._arrestEvent(event);
+
       if (this._isMultiSelect() && event.shiftKey) {
         this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
         return;
@@ -35764,6 +35774,7 @@ var ReactSuperSelect = function (_React$Component) {
 ReactSuperSelect.defaultProps = {
   clearable: true,
   disabled: false,
+  keepOpenOnSelection: false,
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
@@ -35795,6 +35806,9 @@ ReactSuperSelect.propTypes = {
 
   // **disabled** *optional* - (default - false) whether the control is disabled
   disabled: _react2.default.PropTypes.bool,
+
+  // **keepOpenOnSelection** (Boolean) *optional* - Whether to keep the control open when selections are made
+  keepOpenOnSelection: _react2.default.PropTypes.bool,
 
   // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
   multiple: _react2.default.PropTypes.bool,
@@ -35918,6 +35932,9 @@ ReactSuperSelect.propTypes = {
 
   // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
   customOptionTemplateFunction: _react2.default.PropTypes.func,
+
+  // **customValueTemplateFunction** (Function) *optional* - This function provides custom templating capability for your control's selected value display.  The function should accept the selected options from your **dataSource** collection and return your desired markup.
+  customSelectedValueTemplateFunction: _react2.default.PropTypes.func,
 
   // LOCALIZATION STRINGS
   // --------------------
