@@ -23,7 +23,7 @@ var _getHighlightedSearchLabel = function(item, search, searchRegex) {
   var labelMarkup = item.label.replace(searchRegex, '<span style="background-color: #f90;">' + search + '</span>');
 
   return React.DOM.span({ dangerouslySetInnerHTML: { __html: labelMarkup } });
-}
+};
 
 var groceryCartItemTemplate = function(item, search) {
   if (console && console.info) {

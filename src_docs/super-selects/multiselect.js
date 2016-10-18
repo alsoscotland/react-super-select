@@ -31,6 +31,7 @@ var multiselectExample = {
     placeholder: "Make Your Selections",
     dataSource: testData,
     onChange: handlerExample,
+    keepOpenOnSelection: true,
     multiple: true
   },
 

@@ -306,8 +306,10 @@ class ReactSuperSelect extends React.Component {
       });
     }
 
+    const wasClosed = !this.state.isOpen;
+
     this.setState(newState, () => {
-      if (this.state.isOpen) {
+      if (wasClosed) {
         this._setFocusOnOpen();
       }
     });
@@ -580,6 +582,10 @@ class ReactSuperSelect extends React.Component {
 
   // choose whether to template the display of user-selected values normally, or as tags
   _generateValueDisplay() {
+    if (this.props.customSelectedValueTemplateFunction) {
+      return this.props.customSelectedValueTemplateFunction(this.state.value);
+    }
+
     if (!this.props.tags) {
       return this._getNormalDisplayMarkup();
     }
@@ -860,7 +866,6 @@ class ReactSuperSelect extends React.Component {
     if (this._isUserSearchTypingEvent(event)) {
       return;
     }
-
     if (this.state.isOpen) {
       // stop propagation of keyboard events relevant to an open super select
       if (_.includes(this.ariaRelevantKeydownCodes, event.which)) {
@@ -1209,6 +1214,7 @@ class ReactSuperSelect extends React.Component {
   // Will close the dropDown when keepControlOpen is falsy
   _selectFocusedOption(eventTargetLi, keepControlOpen) {
     const focusedOptionKey = this._getFocusedOptionKey();
+
     if (this._rssDOM[focusedOptionKey]) {
       const optionValue = this._getOptionValueFromDataAttr(this._rssDOM[focusedOptionKey]);
 
@@ -1229,9 +1235,11 @@ class ReactSuperSelect extends React.Component {
   // Track last selection the user made.
   // Close dropdown on the setState callback if not a non control-closing selection
   _selectItemByValues(value, keepControlOpen) {
-   let objectValues = this._findArrayOfOptionDataObjectsByValue(value);
+    let objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
-    if (this._isMultiSelect() || (keepControlOpen && this.state.value)) {
+    const remainOpenAfterSelection = keepControlOpen || this.props.keepOpenOnSelection;
+
+    if (this._isMultiSelect() || (remainOpenAfterSelection && this.state.value)) {
       objectValues = this.state.value.concat(objectValues);
     }
 
@@ -1246,7 +1254,7 @@ class ReactSuperSelect extends React.Component {
     }
 
     this.setState(newState, () => {
-      if (!keepControlOpen) {
+      if (!remainOpenAfterSelection) {
         this._closeOnKeypress();
       }
       this._broadcastChange();
@@ -1255,6 +1263,8 @@ class ReactSuperSelect extends React.Component {
 
   // handle option-click (ctrl or meta keys) when selecting additional options in a multi-select control
   _selectItemOnOptionClick(value, event) {
+    this._arrestEvent(event);
+
     if (this._isMultiSelect() && event.shiftKey) {
       this._selectAllOptionsToLastUserSelectedOption(event.currentTarget);
       return;
@@ -1318,6 +1328,7 @@ class ReactSuperSelect extends React.Component {
 ReactSuperSelect.defaultProps = {
   clearable: true,
   disabled: false,
+  keepOpenOnSelection: false,
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
@@ -1349,6 +1360,9 @@ ReactSuperSelect.propTypes = {
 
   // **disabled** *optional* - (default - false) whether the control is disabled
   disabled: React.PropTypes.bool,
+
+  // **keepOpenOnSelection** (Boolean) *optional* - Whether to keep the control open when selections are made
+  keepOpenOnSelection: React.PropTypes.bool,
 
   // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
   multiple: React.PropTypes.bool,
@@ -1484,6 +1498,9 @@ ReactSuperSelect.propTypes = {
 
   // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
   customOptionTemplateFunction: React.PropTypes.func,
+
+  // **customValueTemplateFunction** (Function) *optional* - This function provides custom templating capability for your control's selected value display.  The function should accept the selected options from your **dataSource** collection and return your desired markup.
+  customSelectedValueTemplateFunction: React.PropTypes.func,
 
   // LOCALIZATION STRINGS
   // --------------------
