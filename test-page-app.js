@@ -35622,6 +35622,9 @@ var ReactSuperSelect = function (_React$Component) {
 
       // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
       if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
+        if (!this.props.deselectOnSelectedOptionClick) {
+          return false;
+        }
         this._removeAllOptionsInOptionIdRange(fromVal, to);
       } else {
         this._selectAllOptionsInOptionIdRange(fromVal, to);
@@ -35644,6 +35647,9 @@ var ReactSuperSelect = function (_React$Component) {
 
         if (this.SELECTED_OPTION_REGEX.test(this._rssDOM[focusedOptionKey].className)) {
           var optionFullFromValueProp = _lodash2.default.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
+          if (!this.props.deselectOnSelectedOptionClick) {
+            return false;
+          }
           this._removeSelectedOptionByValue(optionFullFromValueProp);
         } else {
           keepControlOpen = keepControlOpen || false;
@@ -35707,6 +35713,9 @@ var ReactSuperSelect = function (_React$Component) {
       this.lastUserSelectedOption = event.currentTarget;
 
       if (alreadySelected) {
+        if (!this.props.deselectOnSelectedOptionClick) {
+          return false;
+        }
         this._removeSelectedOptionByValue(value);
       } else {
         this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
@@ -35775,6 +35784,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 ReactSuperSelect.defaultProps = {
   clearable: true,
+  deselectOnSelectedOptionClick: true,
   disabled: false,
   keepOpenOnSelection: false,
   multiple: false,
@@ -35805,6 +35815,9 @@ ReactSuperSelect.propTypes = {
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: _react2.default.PropTypes.bool,
+
+  // **deselectOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will deselect it
+  deselectOnSelectedOptionClick: _react2.default.PropTypes.bool,
 
   // **disabled** *optional* - (default - false) whether the control is disabled
   disabled: _react2.default.PropTypes.bool,

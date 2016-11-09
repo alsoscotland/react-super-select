@@ -35622,6 +35622,9 @@ var ReactSuperSelect = function (_React$Component) {
 
       // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
       if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
+        if (!this.props.deselectOnSelectedOptionClick) {
+          return false;
+        }
         this._removeAllOptionsInOptionIdRange(fromVal, to);
       } else {
         this._selectAllOptionsInOptionIdRange(fromVal, to);
@@ -35644,6 +35647,9 @@ var ReactSuperSelect = function (_React$Component) {
 
         if (this.SELECTED_OPTION_REGEX.test(this._rssDOM[focusedOptionKey].className)) {
           var optionFullFromValueProp = _lodash2.default.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
+          if (!this.props.deselectOnSelectedOptionClick) {
+            return false;
+          }
           this._removeSelectedOptionByValue(optionFullFromValueProp);
         } else {
           keepControlOpen = keepControlOpen || false;
@@ -35707,6 +35713,9 @@ var ReactSuperSelect = function (_React$Component) {
       this.lastUserSelectedOption = event.currentTarget;
 
       if (alreadySelected) {
+        if (!this.props.deselectOnSelectedOptionClick) {
+          return false;
+        }
         this._removeSelectedOptionByValue(value);
       } else {
         this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
@@ -35775,6 +35784,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 ReactSuperSelect.defaultProps = {
   clearable: true,
+  deselectOnSelectedOptionClick: true,
   disabled: false,
   keepOpenOnSelection: false,
   multiple: false,
@@ -35805,6 +35815,9 @@ ReactSuperSelect.propTypes = {
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: _react2.default.PropTypes.bool,
+
+  // **deselectOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will deselect it
+  deselectOnSelectedOptionClick: _react2.default.PropTypes.bool,
 
   // **disabled** *optional* - (default - false) whether the control is disabled
   disabled: _react2.default.PropTypes.bool,
@@ -36118,7 +36131,7 @@ module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=
 },{}],165:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=\\&quot;Make a Selection\\&quot; \n                  dataSource={testData} \n                  onChange={handlerExample} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],166:[function(require,module,exports){
-module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  clearSearchOnSelection={true}\n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
+module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make a Selection&quot; \n                  clearSearchOnSelection={true}\n                  deselectOnSelectedOptionClick={false}\n                  dataSource={testData} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Searchable Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n"}
 },{}],167:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect customFilterFunction: customFilterExample,\n                  placeholder=&quot;Pick an Item&quot; \n                  searchPlaceholder=&quot;filter shop by category&quot;\n                  onChange={this.handlerExample}\n                  customOptionTemplateFunction={groceryCartItemTemplate} \n                  dataSource={groceries} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var groceryCartHandler = function(item) {\n  console.log(&#39;Add To Cart: &#39;, item.label, &#39; &#39;, &#39;Price: &#39;, item.price);\n};\n</code></pre>\n<h4 id=\"customfilterfunction\">customFilterFunction</h4>\n<pre><code class=\"lang-js\">var customFilterExample = function (option, index, collection, searchTerm) {\n  return option.group.toLowerCase().indexOf(searchTerm) &gt; -1;\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var groceries = [\n{\n  id: 1,\n  attributeName: &quot;apple&quot;,\n  label: &quot;Apple&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-apple&quot;,\n  group: &quot;Fruit&quot;,\n  price: 0.79\n},{\n  id: 2,\n  attributeName: &quot;carrot&quot;,\n  label: &quot;Carrot&quot;,\n  iconClass: &quot;rss-grocery rss-grocery-carrot&quot;,\n  group: &quot;Vegetable&quot;,\n  price: 0.21\n}, ...\n];\n</code></pre>\n"}
 },{}],168:[function(require,module,exports){
@@ -36247,6 +36260,7 @@ var basicSearchableExample = {
   props: {
     placeholder: "Make a Selection",
     clearSearchOnSelection: true,
+    deselectOnSelectedOptionClick: false,
     dataSource: testData,
     onChange: handlerExample,
     searchable: true
