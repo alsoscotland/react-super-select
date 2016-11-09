@@ -1204,6 +1204,9 @@ class ReactSuperSelect extends React.Component {
 
     // if the option was already selected, this should trigger a removal operation, otherwise trigger an add
     if (this.SELECTED_OPTION_REGEX.test(eventTargetLi.getAttribute('class'))) {
+      if (!this.props.deselectOnSelectedOptionClick) {
+        return false;
+      }
       this._removeAllOptionsInOptionIdRange(fromVal, to);
     } else {
       this._selectAllOptionsInOptionIdRange(fromVal, to);
@@ -1223,6 +1226,9 @@ class ReactSuperSelect extends React.Component {
 
       if (this.SELECTED_OPTION_REGEX.test(this._rssDOM[focusedOptionKey].className)) {
         const optionFullFromValueProp = _.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        if (!this.props.deselectOnSelectedOptionClick) {
+          return false;
+        }
         this._removeSelectedOptionByValue(optionFullFromValueProp);
       } else {
         keepControlOpen = keepControlOpen || false;
@@ -1278,6 +1284,9 @@ class ReactSuperSelect extends React.Component {
     this.lastUserSelectedOption = event.currentTarget;
 
     if (alreadySelected) {
+      if (!this.props.deselectOnSelectedOptionClick) {
+        return false;
+      }
       this._removeSelectedOptionByValue(value);
     } else {
       this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
@@ -1329,6 +1338,7 @@ class ReactSuperSelect extends React.Component {
 // ------
 ReactSuperSelect.defaultProps = {
   clearable: true,
+  deselectOnSelectedOptionClick: true,
   disabled: false,
   keepOpenOnSelection: false,
   multiple: false,
@@ -1359,6 +1369,9 @@ ReactSuperSelect.propTypes = {
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: React.PropTypes.bool,
+
+  // **deselectOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will deselect it
+  deselectOnSelectedOptionClick: React.PropTypes.bool,
 
   // **disabled** *optional* - (default - false) whether the control is disabled
   disabled: React.PropTypes.bool,

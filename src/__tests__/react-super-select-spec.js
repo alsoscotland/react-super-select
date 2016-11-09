@@ -796,6 +796,42 @@ describe('ReactSuperSelect', function() {
       expect(el.state.value[0]).toBe(mockData[1]);
     });
 
+    it('deselects item by click when already selected', function() {
+      var el = renderAndOpen();
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(el.state.value[0]).toBe(mockData[1]);
+
+      el.setState({
+        isOpen: true
+      });
+
+      options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(el.state.value[0]).not.toBe(mockData[1]);
+    });
+
+    it('does not deselect item by click when already selected and deselectOnSelectedOptionClick is false', function() {
+      var el = renderAndOpen({
+        deselectOnSelectedOptionClick: false
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(el.state.value[0]).toBe(mockData[1]);
+
+      el.setState({
+        isOpen: true
+      });
+
+      options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1]);
+      expect(el.state.value[0]).toBe(mockData[1]);
+    });
+
     it('will render with customSelectedValueTemplateFunction', function() {
       var templateMock = jest.genMockFunction(),
           el = renderAndOpen({
@@ -988,6 +1024,43 @@ describe('ReactSuperSelect', function() {
 
       expect(_.isEqual(el.state.value, [mockData[3]])).toBe(true);
       expect(_.isEqual(el.props.onChange.mock.calls[2][0], [mockData[3]])).toBe(true);
+    });
+
+    it('does not deselect selected items if deselectOnSelectedOptionClick is false', function() {
+      var el = renderAndOpen({
+        multiple: true,
+        deselectOnSelectedOptionClick: false
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      el._updateFocusedId(1);
+      TestUtils.Simulate.keyDown(options[1], {
+        metaKey: true,
+        which: el.keymap.enter
+      }, options[1].id);
+
+      el._updateFocusedId(3);
+      TestUtils.Simulate.keyDown(options[3], {
+        metaKey: true,
+        which: el.keymap.enter
+      }, options[3].id);
+
+      el._updateFocusedId(1);
+      TestUtils.Simulate.keyDown(options[1], {
+        metaKey: true,
+        which: el.keymap.enter,
+        target: {
+          getAttribute: function(key) {
+            var attrs = {
+              "data-option-value": options[1].id
+            };
+            return attrs[key];
+          }
+        }
+      }, options[1].id);
+
+      expect(_.isEqual(el.state.value, [mockData[3]])).toBe(false);
+      expect(el.props.onChange.mock.calls.length).toBe(2);
     });
 
     it('does not close a multiselect dropdown on a ctrl or meta-key enter keypress', function() {
