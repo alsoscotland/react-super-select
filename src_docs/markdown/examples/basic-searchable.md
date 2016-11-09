@@ -2,6 +2,7 @@
 ```html
 <ReactSuperSelect placeholder="Make a Selection" 
                   clearSearchOnSelection={true}
+                  deselectOnSelectedOptionClick={false}
                   dataSource={testData} 
                   onChange={handlerExample} 
                   searchable={true} />
