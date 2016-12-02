@@ -72,18 +72,18 @@ React-Super-Select requires
 
 ## Usage
 
-To use react super-select (jsx), require the module in your source code, and add a ReactSuperSelect element with a combination of the properties listed in the [API docs](http://alsoscotland.github.io/react-super-select/) or the [Annotated Source](http://alsoscotland.github.io/react-super-select/example/annotated-source.html)
+To use react super-select (jsx), require the module in your source code, and add a ReactSuperSelect element with a combination of the properties listed in the [API docs](http://alsoscotland.github.io/react-super-select/) or the [Annotated Source](http://alsoscotland.github.io/react-super-select/annotated-source.html)
 
 ```js
 var ReactSuperSelect = require('react-super-select');
 ```
 
 ### include css
-copy the css file from the lib/ folder of node_modules/react-super-select (react-super-select.css) into your app's css directory
+copy the css file from the lib/ folder of `node_modules/react-super-select` (react-super-select.css) into your app's css directory
 
 ### License
 
 MIT License
 
-Copyright (c) 2015 Scotland Stephenson.
+Copyright (c) 2016 Scotland Stephenson.
 
