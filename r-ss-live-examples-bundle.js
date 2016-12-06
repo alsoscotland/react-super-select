@@ -34221,7 +34221,7 @@ var ReactSuperSelect = function (_React$Component) {
       ajaxError: false,
 
       // **controlId** (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels
-      controlId: _lodash2.default.uniqueId('rss_'),
+      controlId: _this.props.controlId || _lodash2.default.uniqueId('rss_'),
 
       // **data** (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected
       data: _this._configureDataSource(_this.props.dataSource),
@@ -35888,6 +35888,9 @@ ReactSuperSelect.propTypes = {
   // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
   // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the **dataSource** option documentation. The **dataSource** option should be left undefined when using this option.
   ajaxDataFetch: _react2.default.PropTypes.func,
+
+  // **controlId** (String) *optional* - used to generate aria accessibility labels. The control will generate a default value when this prop is left undefined but this prop should be used for apps with isomorphic rendering
+  controlId: _react2.default.PropTypes.string,
 
   // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
   // The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type
