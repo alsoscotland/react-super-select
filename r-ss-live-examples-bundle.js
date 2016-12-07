@@ -34242,7 +34242,7 @@ var ReactSuperSelect = function (_React$Component) {
       lastOptionId: _lodash2.default.isArray(_this.props.dataSource) && _this.props.dataSource.length > 0 ? _this.props.dataSource.length - 1 : undefined,
 
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
-      searchString: undefined,
+      searchString: "",
 
       // **value** (Array) - An array that holds the current user-selected option(s)
       value: _this._buildInitialValue(),
@@ -34542,7 +34542,7 @@ var ReactSuperSelect = function (_React$Component) {
     key: '_clearSearchString',
     value: function _clearSearchString() {
       this.setState({
-        searchString: undefined
+        searchString: ""
       }, this._setFocusIdToSearch);
     }
 
@@ -35058,7 +35058,7 @@ var ReactSuperSelect = function (_React$Component) {
           searchAriaId = this.state.controlId + '_search',
           searchAriaIdLabel = searchAriaId + '_label';
 
-      if (_lodash2.default.isString(this.state.searchString)) {
+      if (_lodash2.default.isString(this.state.searchString) && !_lodash2.default.isEmpty(this.state.searchString)) {
         clearSearch = _react2.default.createElement(
           'button',
           { 'aria-label': clearSearchLabelString, ref: function ref(c) {
@@ -35446,7 +35446,7 @@ var ReactSuperSelect = function (_React$Component) {
     key: '_onMouseMove',
     value: function _onMouseMove() {
       // do not fetch page if searching or already loading data
-      if (this._rssDOM.loader || this.state.searchString || !this._pageFetchingComplete()) {
+      if (this._rssDOM.loader || !_lodash2.default.isEmpty(this.state.searchString) || !this._pageFetchingComplete()) {
         return;
       }
 
@@ -35681,7 +35681,7 @@ var ReactSuperSelect = function (_React$Component) {
 
       if (this.props.searchable && this.props.clearSearchOnSelection) {
         _lodash2.default.extend(newState, {
-          searchString: undefined
+          searchString: ""
         });
       }
 

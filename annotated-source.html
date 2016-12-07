@@ -386,7 +386,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      searchString: <span class="hljs-literal">undefined</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      searchString: <span class="hljs-string">""</span>,</pre></div></div>
             
         </li>
         
@@ -886,7 +886,7 @@ for <strong>searchable</strong> controls</p>
             
             <div class="content"><div class='highlight'><pre>  _clearSearchString() {
     <span class="hljs-keyword">this</span>.setState({
-      searchString: <span class="hljs-literal">undefined</span>
+      searchString: <span class="hljs-string">""</span>
     }, <span class="hljs-keyword">this</span>._setFocusIdToSearch);
   }</pre></div></div>
             
@@ -1621,7 +1621,7 @@ the conversion does not alter the string representation’s value</p>
         searchAriaId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_search'</span>,
         searchAriaIdLabel = searchAriaId + <span class="hljs-string">'_label'</span>;
 
-    <span class="hljs-keyword">if</span> (_.isString(<span class="hljs-keyword">this</span>.state.searchString)) {
+    <span class="hljs-keyword">if</span> (_.isString(<span class="hljs-keyword">this</span>.state.searchString) &amp;&amp; !_.isEmpty(<span class="hljs-keyword">this</span>.state.searchString)) {
       clearSearch = (&lt;button aria-label={clearSearchLabelString} ref={(c) =&gt; {this._rssDOM.searchClear = c }} name="clearSearch" type="button" className="r-ss-search-clear" onClick={this._clearSearchString} onKeyDown={this._clearSearchString}&gt;
                        &lt;span /&gt;
                      &lt;/button&gt;);
@@ -2184,7 +2184,7 @@ Otherwise, makes selection</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM.loader || <span class="hljs-keyword">this</span>.state.searchString || !<span class="hljs-keyword">this</span>._pageFetchingComplete()) {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM.loader || !_.isEmpty(<span class="hljs-keyword">this</span>.state.searchString) || !<span class="hljs-keyword">this</span>._pageFetchingComplete()) {
       <span class="hljs-keyword">return</span>;
     }
 
@@ -2562,7 +2562,7 @@ Close dropdown on the setState callback if not a non control-closing selection</
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.searchable &amp;&amp; <span class="hljs-keyword">this</span>.props.clearSearchOnSelection) {
       _.extend(newState, {
-        searchString: <span class="hljs-literal">undefined</span>
+        searchString: <span class="hljs-string">""</span>
       });
     }
 
