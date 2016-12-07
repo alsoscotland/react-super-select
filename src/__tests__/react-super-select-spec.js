@@ -99,6 +99,14 @@ describe('ReactSuperSelect', function() {
   });
 
   describe('aria-attributes', function() {
+    it('will use a supplied controlId prop', function() {
+      var el = renderComponent({
+        controlId: "my_id"
+      });
+
+      expect(el.state.controlId).toBe('my_id');
+    });
+
     it('adds required aria attributes to the triggerDiv', function() {
       var el = renderComponent();
 
@@ -744,7 +752,7 @@ describe('ReactSuperSelect', function() {
 
       TestUtils.Simulate.click(options[1]);
 
-      expect(el.state.searchString).toBeUndefined();
+      expect(el.state.searchString).toBe("");
     });
 
     it('clears search value when clearSearch is clicked', function() {
@@ -757,7 +765,7 @@ describe('ReactSuperSelect', function() {
       });
 
       TestUtils.Simulate.click(el._rssDOM.searchClear);
-      expect(el.state.searchString).toBeUndefined();
+      expect(el.state.searchString).toBe("");
     });
 
     it('clears search value when clearSearch is clicked', function() {
@@ -770,7 +778,7 @@ describe('ReactSuperSelect', function() {
       });
 
       TestUtils.Simulate.click(el._rssDOM.searchClear);
-      expect(el.state.searchString).toBeUndefined();
+      expect(el.state.searchString).toBe("");
     });
 
     it('clears search value when clearSearch handles a keyDown event', function() {
@@ -783,7 +791,7 @@ describe('ReactSuperSelect', function() {
       });
 
       TestUtils.Simulate.keyDown(el._rssDOM.searchClear);
-      expect(el.state.searchString).toBeUndefined();
+      expect(el.state.searchString).toBe("");
     });
   });
 

@@ -79,7 +79,7 @@ class ReactSuperSelect extends React.Component {
       lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
 
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
-      searchString: undefined,
+      searchString: "",
 
       // **value** (Array) - An array that holds the current user-selected option(s)
       value: this._buildInitialValue(),
@@ -387,7 +387,7 @@ class ReactSuperSelect extends React.Component {
   // for **searchable** controls
   _clearSearchString() {
     this.setState({
-      searchString: undefined
+      searchString: ""
     }, this._setFocusIdToSearch);
   }
 
@@ -769,7 +769,7 @@ class ReactSuperSelect extends React.Component {
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
 
-    if (_.isString(this.state.searchString)) {
+    if (_.isString(this.state.searchString) && !_.isEmpty(this.state.searchString)) {
       clearSearch = (<button aria-label={clearSearchLabelString} ref={(c) => {this._rssDOM.searchClear = c }} name="clearSearch" type="button" className="r-ss-search-clear" onClick={this._clearSearchString} onKeyDown={this._clearSearchString}>
                        <span />
                      </button>);
@@ -1060,7 +1060,7 @@ class ReactSuperSelect extends React.Component {
   // mouse move handler used when **pageDataFetch** is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown
   _onMouseMove() {
     // do not fetch page if searching or already loading data
-    if (this._rssDOM.loader || this.state.searchString || !this._pageFetchingComplete()) {
+    if (this._rssDOM.loader || !_.isEmpty(this.state.searchString) || !this._pageFetchingComplete()) {
       return;
     }
 
@@ -1255,7 +1255,7 @@ class ReactSuperSelect extends React.Component {
 
     if (this.props.searchable && this.props.clearSearchOnSelection) {
       _.extend(newState, {
-        searchString: undefined
+        searchString: ""
       });
     }
 
