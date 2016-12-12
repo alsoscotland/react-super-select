@@ -34158,6 +34158,42 @@ var _ = require('lodash'),
 
 var allKeys = require('./all-keys');
 
+var _ref = React.createElement(
+  'a',
+  { className: 'top-return', href: '#index_top' },
+  'Back to Top'
+);
+
+var _ref2 = React.createElement(
+  'a',
+  { className: 'top-return', href: '#keys_top' },
+  'Back to Keys Links'
+);
+
+var _ref3 = React.createElement(
+  'a',
+  { name: 'keyboard' },
+  ' '
+);
+
+var _ref4 = React.createElement(
+  'h3',
+  { className: 'feature-heading' },
+  'Keyboard Navigation:'
+);
+
+var _ref5 = React.createElement(
+  'a',
+  { name: 'keys_top' },
+  ' '
+);
+
+var _ref6 = React.createElement(
+  'h5',
+  null,
+  'Keyboard Navigation Links By Key:'
+);
+
 var KeyboardNavigationApp = React.createClass({
   displayName: 'KeyboardNavigationApp',
 
@@ -34198,16 +34234,8 @@ var KeyboardNavigationApp = React.createClass({
           )
         ),
         React.createElement('p', { dangerouslySetInnerHTML: { __html: key.renderString } }),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#index_top' },
-          'Back to Top'
-        ),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#keys_top' },
-          'Back to Keys Links'
-        )
+        _ref,
+        _ref2
       );
     });
 
@@ -34218,26 +34246,10 @@ var KeyboardNavigationApp = React.createClass({
     return React.createElement(
       'section',
       { className: 'api-docs-section' },
-      React.createElement(
-        'a',
-        { name: 'keyboard' },
-        ' '
-      ),
-      React.createElement(
-        'h3',
-        { className: 'feature-heading' },
-        'Keyboard Navigation:'
-      ),
-      React.createElement(
-        'a',
-        { name: 'keys_top' },
-        ' '
-      ),
-      React.createElement(
-        'h5',
-        null,
-        'Keyboard Navigation Links By Key:'
-      ),
+      _ref3,
+      _ref4,
+      _ref5,
+      _ref6,
       React.createElement(
         'nav',
         { className: 'api' },
@@ -35071,6 +35083,48 @@ var _ = require('lodash'),
 
 var allProps = require('./all-props');
 
+var _ref = React.createElement(
+  'a',
+  { className: 'top-return', href: '#index_top' },
+  'Back to Top'
+);
+
+var _ref2 = React.createElement(
+  'a',
+  { className: 'top-return', href: '#properties_top' },
+  'Back to API Documentation Links'
+);
+
+var _ref3 = React.createElement(
+  'a',
+  { name: 'apiDocs' },
+  ' '
+);
+
+var _ref4 = React.createElement(
+  'h3',
+  { className: 'feature-heading' },
+  'API documentation'
+);
+
+var _ref5 = React.createElement(
+  'a',
+  { href: 'annotated-source.html' },
+  ' Annotated Source Code '
+);
+
+var _ref6 = React.createElement(
+  'a',
+  { name: 'properties_top' },
+  ' '
+);
+
+var _ref7 = React.createElement(
+  'h5',
+  null,
+  'Component Property API Documentation Links:'
+);
+
 var PropsApp = React.createClass({
   displayName: 'PropsApp',
 
@@ -35114,16 +35168,8 @@ var PropsApp = React.createClass({
           )
         ),
         React.createElement('p', { dangerouslySetInnerHTML: { __html: prop.renderString } }),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#index_top' },
-          'Back to Top'
-        ),
-        React.createElement(
-          'a',
-          { className: 'top-return', href: '#properties_top' },
-          'Back to API Documentation Links'
-        )
+        _ref,
+        _ref2
       );
     });
 
@@ -35134,32 +35180,12 @@ var PropsApp = React.createClass({
     return React.createElement(
       'section',
       { className: 'api-docs-section' },
-      React.createElement(
-        'a',
-        { name: 'apiDocs' },
-        ' '
-      ),
-      React.createElement(
-        'h3',
-        { className: 'feature-heading' },
-        'API documentation'
-      ),
+      _ref3,
+      _ref4,
       'you can also view the',
-      React.createElement(
-        'a',
-        { href: 'annotated-source.html' },
-        ' Annotated Source Code '
-      ),
-      React.createElement(
-        'a',
-        { name: 'properties_top' },
-        ' '
-      ),
-      React.createElement(
-        'h5',
-        null,
-        'Component Property API Documentation Links:'
-      ),
+      _ref5,
+      _ref6,
+      _ref7,
       React.createElement(
         'nav',
         { className: 'api' },
@@ -35180,7 +35206,7 @@ ReactDOM.render(React.createElement(PropsApp, null), document.getElementById('pr
 },{"./all-props":161,"lodash":2,"react":159,"react-dom":3}],259:[function(require,module,exports){
 'use strict';
 
-var RSS_VERSION = "0.5.9";
+var RSS_VERSION = "0.5.10";
 var React = require('react'),
     ReactDOM = require('react-dom');
 
