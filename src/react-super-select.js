@@ -851,7 +851,7 @@ class ReactSuperSelect extends React.Component {
     const event = Array.prototype.slice.call(arguments)[0],
           isTargetStillInDOM = document.body.contains(event.target);
 
-    if (isTargetStillInDOM && !this._rssDOM.rssControl.contains(event.target)) {
+    if (!this._rssDOM.rssControl || (isTargetStillInDOM && !this._rssDOM.rssControl.contains(event.target))) {
       if (this.state.isOpen) {
         this.setState({
           isOpen: false,
