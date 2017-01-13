@@ -1,9 +1,11 @@
 TASKS
+
 1) tweak/adjust build sequence via npm
+
 2) sass watch while working.  - possibly with foreman?
-3) decide when to uptake React >14
 
 3) research other aria control options
+
 
 TENTATIVE
 1) list groups should be separately focus-able and navigable?

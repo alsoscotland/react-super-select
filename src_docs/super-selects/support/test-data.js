@@ -7,7 +7,8 @@ var testData = [
 {
   "id": "5507c0526305bceb0c0e2c7a",
   "name": "dolor nulla velit",
-  "size": "Medium"
+  "size": "Medium",
+  "disabled": true
 },
 {
   "id": "5507c052467f171e4e2f460e",
