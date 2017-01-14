@@ -1823,6 +1823,7 @@ describe('ReactSuperSelect', function() {
       testParentComponent = React.createFactory(React.createClass({
         getInitialState: function() {
           return {
+            clearSelectedValueOnDataSourceChange: false,
             dataSource: [optOne, optTwo],
             initialValue: optOne,
             optionLabelKey: undefined,
@@ -1833,6 +1834,7 @@ describe('ReactSuperSelect', function() {
           return React.createElement(ReactSuperSelect, {
                     ref: "rss",
                     onChange: _.noop,
+                    clearSelectedValueOnDataSourceChange: this.state.clearSelectedValueOnDataSourceChange,
                     dataSource: this.state.dataSource,
                     initialValue: this.state.initialValue,
                     optionLabelKey: this.state.optionLabelKey,
@@ -1876,6 +1878,16 @@ describe('ReactSuperSelect', function() {
       expect(_.isEqual(parent.refs.rss.state.data, lastData)).toBeFalsy();
       expect(_.isEqual(parent.refs.rss.state.rawDataSource, [optTwo])).toBeTruthy();
       expect(parent.refs.rss.state.lastOptionId).toBe(0);
+    });
+
+    it('will clear selected value dataSource change if clearSelectedValueOnDataSourceChange true', function() {
+      parent.setState({
+        clearSelectedValueOnDataSourceChange: true
+      });
+      parent.setState({
+        dataSource: [optTwo]
+      });
+      expect(_.isEqual(parent.refs.rss.state.value, [])).toBe(true);
     });
   });
 });

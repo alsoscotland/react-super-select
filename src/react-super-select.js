@@ -210,10 +210,13 @@ class ReactSuperSelect extends React.Component {
 
       this.lastUserSelectedOption = undefined;
 
+      const newValue = this.props.clearSelectedValueOnDataSourceChange ? [] : this.state.value;
+
       newState = _.extend(newState, {
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: undefined,
+        value: newValue,
         lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined
       });
 
@@ -1350,6 +1353,7 @@ class ReactSuperSelect extends React.Component {
 // ------
 ReactSuperSelect.defaultProps = {
   clearable: true,
+  clearSelectedValueOnDataSourceChange: false,
   deselectOnSelectedOptionClick: true,
   disabled: false,
   keepOpenOnSelection: false,
@@ -1381,6 +1385,9 @@ ReactSuperSelect.propTypes = {
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: React.PropTypes.bool,
+
+  // **clearSelectedValueOnDataSourceChange** *optional* - (default - false) whether or not to clear selected options if passing a new dataSource value to the control
+  clearSelectedValueOnDataSourceChange: React.PropTypes.bool,
 
   // **deselectOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will deselect it
   deselectOnSelectedOptionClick: React.PropTypes.bool,
