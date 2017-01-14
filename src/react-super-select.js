@@ -942,16 +942,21 @@ class ReactSuperSelect extends React.Component {
 
       const indexRef = 'option_' + index;
 
-      let isCurrentlySelected = this._isCurrentlySelected(dataOption),
+      let isDisabled = !!dataOption.disabled,
+          isCurrentlySelected = this._isCurrentlySelected(dataOption),
           itemKey = "drop_li_" + dataOption[this.state.valueKey],
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
+          clickHandler = isDisabled ? _.noop : this._selectItemOnOptionClick.bind(null, dataOption),
           optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption, this.state.searchString) : dataOption[this.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': isCurrentlySelected
+            'r-ss-selected': isCurrentlySelected,
+            'r-ss-disabled': isDisabled
           });
 
       return (
         <li ref={(c) => {this._rssDOM[indexRef] = c }}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
             id={ariaDescendantId}
             tabIndex="0"
             data-option-index={index}
@@ -959,7 +964,7 @@ class ReactSuperSelect extends React.Component {
             aria-selected={isCurrentlySelected}
             key={itemKey}
             data-option-value={dataOption[this.state.valueKey]}
-            onClick={this._selectItemOnOptionClick.bind(null, dataOption)}
+            onClick={clickHandler}
             role="option">
           {optionMarkup}
         </li>);
@@ -1180,7 +1185,9 @@ class ReactSuperSelect extends React.Component {
 
     const optionsToSelect = _.reduce(this.state.data, (memo, opt) => {
           if (_.includes(valuePropsToSelect, opt[this.state.valueKey])) {
-            memo.push(opt);
+            if (!opt.disabled) {
+              memo.push(opt);
+            }
           }
           return memo;
         }, []);
@@ -1219,6 +1226,11 @@ class ReactSuperSelect extends React.Component {
     const focusedOptionKey = this._getFocusedOptionKey();
 
     if (this._rssDOM[focusedOptionKey]) {
+
+      if (this._rssDOM[focusedOptionKey].getAttribute("aria-disabled") === "true") {
+        return false;
+      }
+
       const optionValue = this._getOptionValueFromDataAttr(this._rssDOM[focusedOptionKey]);
 
       // store as last userSelected

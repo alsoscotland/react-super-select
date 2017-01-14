@@ -14,7 +14,10 @@ describe('ReactSuperSelect', function() {
           {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three', 'type': 'thingamajig'},
           {'id': 4, 'name': 'option four', 'blah': 'blah four', 'fancyprop': 'I am a fancy four', 'type': 'whatzit'},
           {'id': 5, 'name': 'option five', 'blah': 'blah five', 'fancyprop': 'I am a fancy five', 'type': 'widget'}
-        ];
+      ],
+      mockDataWithDisabledOption = _.clone(mockData);
+
+  mockDataWithDisabledOption[1] = _.extend({}, mockDataWithDisabledOption[1], {disabled: true});
 
   var renderComponent = function(userProps) {
     var props = _.extend({}, {
@@ -792,6 +795,94 @@ describe('ReactSuperSelect', function() {
 
       TestUtils.Simulate.keyDown(el._rssDOM.searchClear);
       expect(el.state.searchString).toBe("");
+    });
+  });
+
+  describe('disabled option behavior', function() {
+    it('can focus a disabled option', function() {
+      var el = renderComponent({
+        searchable: false,
+        dataSource: mockDataWithDisabledOption
+      });
+      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
+        which: el.keymap.down,
+        preventDefault: _.noop,
+        stopPropagation: _.noop
+      });
+
+      focusSpy.reset();
+
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
+        which: el.keymap.down,
+        preventDefault: _.noop,
+        stopPropagation: _.noop
+      });
+
+      expect(focusSpy).toHaveBeenCalled();
+      expect(el.state.focusedId).toBe(1);
+    });
+
+    it('will not select disabled option on enter key', function() {
+      var el = renderAndOpen({
+        dataSource: mockDataWithDisabledOption
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      el._updateFocusedId(1);
+
+      TestUtils.Simulate.keyDown(options[1], {
+        which: el.keymap.enter
+      });
+
+      expect(el.state.value[0]).toBeUndefined();
+    });
+
+    it('will not select disabled option on click', function() {
+      var el = renderAndOpen({
+        dataSource: mockDataWithDisabledOption
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[1], {
+        shiftKey: true,
+        currentTarget: {
+          attributes: {
+            'data-option-index': 1
+          }
+        }
+      }, options[1].id);
+
+      expect(el.state.value[0]).toBeUndefined();
+    });
+
+    it('does not select disabled options on shift-click multi-select operation', function() {
+      var el = renderAndOpen({
+        tags: true,
+        dataSource: mockDataWithDisabledOption
+      });
+
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+      TestUtils.Simulate.click(options[3], {
+        metaKey: true,
+        currentTarget: {
+          attributes: {
+            'data-option-index': 2
+          }
+        }
+      }, options[3].id);
+
+      TestUtils.Simulate.click(options[0], {
+        shiftKey: true,
+        currentTarget: {
+          attributes: {
+            'data-option-index': 0
+          }
+        }
+      }, options[0].id);
+
+      var tags = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag');
+      expect(tags.length).toBe(3);
     });
   });
 
