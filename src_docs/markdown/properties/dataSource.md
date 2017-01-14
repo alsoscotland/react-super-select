@@ -13,3 +13,6 @@ The parsing method supports dataSource values as:
 Each option in the resulting collection must have the following properties:
   - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of 'id'
   - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of 'name'
+
+Each Option may be disabled for selection by adding an optional boolean property "disabled" i.e. disabled: true
+
