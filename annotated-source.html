@@ -1945,16 +1945,21 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
 
       <span class="hljs-keyword">const</span> indexRef = <span class="hljs-string">'option_'</span> + index;
 
-      <span class="hljs-keyword">let</span> isCurrentlySelected = <span class="hljs-keyword">this</span>._isCurrentlySelected(dataOption),
+      <span class="hljs-keyword">let</span> isDisabled = !!dataOption.disabled,
+          isCurrentlySelected = <span class="hljs-keyword">this</span>._isCurrentlySelected(dataOption),
           itemKey = <span class="hljs-string">"drop_li_"</span> + dataOption[<span class="hljs-keyword">this</span>.state.valueKey],
           ariaDescendantId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_aria_'</span> + indexRef,
+          clickHandler = isDisabled ? _.noop : <span class="hljs-keyword">this</span>._selectItemOnOptionClick.bind(<span class="hljs-literal">null</span>, dataOption),
           optionMarkup = _.isFunction(<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) ? <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(dataOption, <span class="hljs-keyword">this</span>.state.searchString) : dataOption[<span class="hljs-keyword">this</span>.state.labelKey],
           classes = classNames(<span class="hljs-string">'r-ss-dropdown-option'</span>, {
-            <span class="hljs-string">'r-ss-selected'</span>: isCurrentlySelected
+            <span class="hljs-string">'r-ss-selected'</span>: isCurrentlySelected,
+            <span class="hljs-string">'r-ss-disabled'</span>: isDisabled
           });
 
       <span class="hljs-keyword">return</span> (
         <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{(c)</span> =&gt;</span> {this._rssDOM[indexRef] = c }}
+            disabled={isDisabled}
+            aria-disabled={isDisabled}
             id={ariaDescendantId}
             tabIndex="0"
             data-option-index={index}
@@ -1962,7 +1967,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
             aria-selected={isCurrentlySelected}
             key={itemKey}
             data-option-value={dataOption[this.state.valueKey]}
-            onClick={this._selectItemOnOptionClick.bind(null, dataOption)}
+            onClick={clickHandler}
             role="option"&gt;
           {optionMarkup}
         <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span>);
@@ -2414,7 +2419,9 @@ The <em>value</em> arg represents a full dataSource option object</p>
 
     <span class="hljs-keyword">const</span> optionsToSelect = _.reduce(<span class="hljs-keyword">this</span>.state.data, (memo, opt) =&gt; {
           <span class="hljs-keyword">if</span> (_.includes(valuePropsToSelect, opt[<span class="hljs-keyword">this</span>.state.valueKey])) {
-            memo.push(opt);
+            <span class="hljs-keyword">if</span> (!opt.disabled) {
+              memo.push(opt);
+            }
           }
           <span class="hljs-keyword">return</span> memo;
         }, []);
@@ -2502,6 +2509,11 @@ Will close the dropDown when keepControlOpen is falsy</p>
     <span class="hljs-keyword">const</span> focusedOptionKey = <span class="hljs-keyword">this</span>._getFocusedOptionKey();
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM[focusedOptionKey]) {
+
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM[focusedOptionKey].getAttribute(<span class="hljs-string">"aria-disabled"</span>) === <span class="hljs-string">"true"</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+
       <span class="hljs-keyword">const</span> optionValue = <span class="hljs-keyword">this</span>._getOptionValueFromDataAttr(<span class="hljs-keyword">this</span>._rssDOM[focusedOptionKey]);</pre></div></div>
             
         </li>

@@ -35243,12 +35243,15 @@ var ReactSuperSelect = function (_React$Component) {
 
       var indexRef = 'option_' + index;
 
-      var isCurrentlySelected = _this16._isCurrentlySelected(dataOption),
+      var isDisabled = !!dataOption.disabled,
+          isCurrentlySelected = _this16._isCurrentlySelected(dataOption),
           itemKey = "drop_li_" + dataOption[_this16.state.valueKey],
           ariaDescendantId = _this16.state.controlId + '_aria_' + indexRef,
+          clickHandler = isDisabled ? _lodash2.default.noop : _this16._selectItemOnOptionClick.bind(null, dataOption),
           optionMarkup = _lodash2.default.isFunction(_this16.props.customOptionTemplateFunction) ? _this16.props.customOptionTemplateFunction(dataOption, _this16.state.searchString) : dataOption[_this16.state.labelKey],
           classes = (0, _classnames2.default)('r-ss-dropdown-option', {
-        'r-ss-selected': isCurrentlySelected
+        'r-ss-selected': isCurrentlySelected,
+        'r-ss-disabled': isDisabled
       });
 
       return _react2.default.createElement(
@@ -35256,6 +35259,8 @@ var ReactSuperSelect = function (_React$Component) {
         { ref: function ref(c) {
             _this16._rssDOM[indexRef] = c;
           },
+          disabled: isDisabled,
+          'aria-disabled': isDisabled,
           id: ariaDescendantId,
           tabIndex: '0',
           'data-option-index': index,
@@ -35263,7 +35268,7 @@ var ReactSuperSelect = function (_React$Component) {
           'aria-selected': isCurrentlySelected,
           key: itemKey,
           'data-option-value': dataOption[_this16.state.valueKey],
-          onClick: _this16._selectItemOnOptionClick.bind(null, dataOption),
+          onClick: clickHandler,
           role: 'option' },
         optionMarkup
       );
@@ -35524,7 +35529,9 @@ var ReactSuperSelect = function (_React$Component) {
 
     var optionsToSelect = _lodash2.default.reduce(this.state.data, function (memo, opt) {
       if (_lodash2.default.includes(valuePropsToSelect, opt[_this19.state.valueKey])) {
-        memo.push(opt);
+        if (!opt.disabled) {
+          memo.push(opt);
+        }
       }
       return memo;
     }, []);
@@ -35567,6 +35574,11 @@ var ReactSuperSelect = function (_React$Component) {
     var focusedOptionKey = this._getFocusedOptionKey();
 
     if (this._rssDOM[focusedOptionKey]) {
+
+      if (this._rssDOM[focusedOptionKey].getAttribute("aria-disabled") === "true") {
+        return false;
+      }
+
       var optionValue = this._getOptionValueFromDataAttr(this._rssDOM[focusedOptionKey]);
 
       // store as last userSelected
@@ -36027,7 +36039,8 @@ var testData = [{
 }, {
   "id": "5507c0526305bceb0c0e2c7a",
   "name": "dolor nulla velit",
-  "size": "Medium"
+  "size": "Medium",
+  "disabled": true
 }, {
   "id": "5507c052467f171e4e2f460e",
   "name": "consequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelitconsequatcommodoelit",
