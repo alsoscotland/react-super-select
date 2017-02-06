@@ -34292,10 +34292,6 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
     var newState = {};
 
-    if (!_lodash2.default.isEqual(nextProps.initialValue, this.props.initialValue)) {
-      newState.value = this._buildInitialValue(nextProps);
-    }
-
     if (!_lodash2.default.isUndefined(nextProps.optionLabelKey) && nextProps.optionLabelKey !== this.props.optionLabelKey) {
       newState.labelKey = nextProps.optionLabelKey;
     }
@@ -34305,7 +34301,6 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     if (!_lodash2.default.isEqual(this.props.dataSource, nextProps.dataSource)) {
-
       this.lastUserSelectedOption = undefined;
 
       var newValue = this.props.clearSelectedValueOnDataSourceChange ? [] : this.state.value;
@@ -34317,6 +34312,10 @@ var ReactSuperSelect = function (_React$Component) {
         value: newValue,
         lastOptionId: _lodash2.default.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
       });
+    }
+
+    if (!_lodash2.default.isEqual(nextProps.initialValue, this.props.initialValue)) {
+      newState.value = this._buildInitialValue(nextProps);
     }
 
     if (!_lodash2.default.isEmpty(newState)) {
