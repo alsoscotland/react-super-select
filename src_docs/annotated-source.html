@@ -571,10 +571,6 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
             <div class="content"><div class='highlight'><pre>  componentWillReceiveProps(nextProps) {
     <span class="hljs-keyword">let</span> newState = {};
 
-    <span class="hljs-keyword">if</span> (!_.isEqual(nextProps.initialValue, <span class="hljs-keyword">this</span>.props.initialValue)) {
-      newState.value = <span class="hljs-keyword">this</span>._buildInitialValue(nextProps);
-    }
-
     <span class="hljs-keyword">if</span> (!_.isUndefined(nextProps.optionLabelKey) &amp;&amp; (nextProps.optionLabelKey !== <span class="hljs-keyword">this</span>.props.optionLabelKey)) {
       newState.labelKey = nextProps.optionLabelKey;
     }
@@ -584,7 +580,6 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
     }
 
     <span class="hljs-keyword">if</span> (!_.isEqual(<span class="hljs-keyword">this</span>.props.dataSource, nextProps.dataSource)) {
-
       <span class="hljs-keyword">this</span>.lastUserSelectedOption = <span class="hljs-literal">undefined</span>;
 
       <span class="hljs-keyword">const</span> newValue = <span class="hljs-keyword">this</span>.props.clearSelectedValueOnDataSourceChange ? [] : <span class="hljs-keyword">this</span>.state.value;
@@ -596,7 +591,10 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
         value: newValue,
         lastOptionId: (_.isArray(nextProps.dataSource) &amp;&amp; (nextProps.dataSource.length &gt; <span class="hljs-number">0</span>)) ? nextProps.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>
       });
+    }
 
+    <span class="hljs-keyword">if</span> (!_.isEqual(nextProps.initialValue, <span class="hljs-keyword">this</span>.props.initialValue)) {
+      newState.value = <span class="hljs-keyword">this</span>._buildInitialValue(nextProps);
     }
 
     <span class="hljs-keyword">if</span> (!_.isEmpty(newState)) {

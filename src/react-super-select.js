@@ -194,10 +194,6 @@ class ReactSuperSelect extends React.Component {
   componentWillReceiveProps(nextProps) {
     let newState = {};
 
-    if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
-      newState.value = this._buildInitialValue(nextProps);
-    }
-
     if (!_.isUndefined(nextProps.optionLabelKey) && (nextProps.optionLabelKey !== this.props.optionLabelKey)) {
       newState.labelKey = nextProps.optionLabelKey;
     }
@@ -207,7 +203,6 @@ class ReactSuperSelect extends React.Component {
     }
 
     if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
-
       this.lastUserSelectedOption = undefined;
 
       const newValue = this.props.clearSelectedValueOnDataSourceChange ? [] : this.state.value;
@@ -219,7 +214,10 @@ class ReactSuperSelect extends React.Component {
         value: newValue,
         lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined
       });
+    }
 
+    if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
+      newState.value = this._buildInitialValue(nextProps);
     }
 
     if (!_.isEmpty(newState)) {
