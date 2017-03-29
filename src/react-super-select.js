@@ -102,6 +102,7 @@ class ReactSuperSelect extends React.Component {
       '_closeOnKeypress',
       '_configureDataSource',
       '_defaultSearchFilter',
+      '_deselectAction',
       '_fetchDataViaAjax',
       '_fetchNextPage',
       '_filterDataBySearchString',
@@ -444,6 +445,18 @@ class ReactSuperSelect extends React.Component {
     }
 
     return [];
+  }
+
+  _deselectAction(value, keepControlOpen = false) {
+    const shouldClose = (this.props.closeOnSelectedOptionClick && !keepControlOpen);
+    if (!this.props.deselectOnSelectedOptionClick) {
+      if (shouldClose) {
+        this._closeOnKeypress();
+      }
+      return false;
+    }
+    const callback = shouldClose ? this._closeOnKeypress : _.noop;
+    this._removeSelectedOptionByValue(value, callback);
   }
 
   // Used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control.
@@ -1239,10 +1252,7 @@ class ReactSuperSelect extends React.Component {
 
       if (this.SELECTED_OPTION_REGEX.test(this._rssDOM[focusedOptionKey].className)) {
         const optionFullFromValueProp = _.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
-        if (!this.props.deselectOnSelectedOptionClick) {
-          return false;
-        }
-        this._removeSelectedOptionByValue(optionFullFromValueProp);
+        this._deselectAction(optionFullFromValueProp, keepControlOpen);
       } else {
         keepControlOpen = keepControlOpen || false;
         this._selectItemByValues(optionValue, keepControlOpen);
@@ -1297,10 +1307,7 @@ class ReactSuperSelect extends React.Component {
     this.lastUserSelectedOption = event.currentTarget;
 
     if (alreadySelected) {
-      if (!this.props.deselectOnSelectedOptionClick) {
-        return false;
-      }
-      this._removeSelectedOptionByValue(value);
+      this._deselectAction(value, keepControlOpen);
     } else {
       this._selectItemByValues(value[this.state.valueKey], keepControlOpen);
     }
@@ -1352,6 +1359,7 @@ class ReactSuperSelect extends React.Component {
 ReactSuperSelect.defaultProps = {
   clearable: true,
   clearSelectedValueOnDataSourceChange: false,
+  closeOnSelectedOptionClick: true,
   deselectOnSelectedOptionClick: true,
   disabled: false,
   keepOpenOnSelection: false,
@@ -1386,6 +1394,9 @@ ReactSuperSelect.propTypes = {
 
   // **clearSelectedValueOnDataSourceChange** *optional* - (default - false) whether or not to clear selected options if passing a new dataSource value to the control
   clearSelectedValueOnDataSourceChange: React.PropTypes.bool,
+
+  // **closeOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will close the dropdown
+  closeOnSelectedOptionClick: React.PropTypes.bool,
 
   // **deselectOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will deselect it
   deselectOnSelectedOptionClick: React.PropTypes.bool,
