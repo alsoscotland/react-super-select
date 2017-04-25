@@ -66,7 +66,28 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> _ <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { bindAll,
+         extend,
+         filter,
+         find,
+         forIn,
+         groupBy,
+         head,
+         includes,
+         isArray,
+         isEmpty,
+         isEqual,
+         isFunction,
+         isNumber,
+         isObject,
+         isString,
+         isUndefined,
+         map,
+         noop,
+         reduce,
+         reject,
+         uniqueId,
+         values } <span class="hljs-keyword">from</span> <span class="hljs-string">'lodash'</span>;
 <span class="hljs-keyword">import</span> classNames <span class="hljs-keyword">from</span> <span class="hljs-string">'classnames'</span>;
 <span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;</pre></div></div>
             
@@ -181,7 +202,7 @@
       up: <span class="hljs-number">38</span>
     };
 
-    <span class="hljs-keyword">this</span>.ariaRelevantKeydownCodes = _.values(<span class="hljs-keyword">this</span>.keymap);</pre></div></div>
+    <span class="hljs-keyword">this</span>.ariaRelevantKeydownCodes = values(<span class="hljs-keyword">this</span>.keymap);</pre></div></div>
             
         </li>
         
@@ -281,7 +302,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      controlId: <span class="hljs-keyword">this</span>.props.controlId || _.uniqueId(<span class="hljs-string">'rss_'</span>),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      controlId: <span class="hljs-keyword">this</span>.props.controlId || uniqueId(<span class="hljs-string">'rss_'</span>),</pre></div></div>
             
         </li>
         
@@ -371,7 +392,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      lastOptionId: (_.isArray(<span class="hljs-keyword">this</span>.props.dataSource) &amp;&amp; (<span class="hljs-keyword">this</span>.props.dataSource.length &gt; <span class="hljs-number">0</span>)) ? <span class="hljs-keyword">this</span>.props.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      lastOptionId: (isArray(<span class="hljs-keyword">this</span>.props.dataSource) &amp;&amp; (<span class="hljs-keyword">this</span>.props.dataSource.length &gt; <span class="hljs-number">0</span>)) ? <span class="hljs-keyword">this</span>.props.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>,</pre></div></div>
             
         </li>
         
@@ -432,7 +453,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    _.bindAll(<span class="hljs-keyword">this</span>, [
+            <div class="content"><div class='highlight'><pre>    bindAll(<span class="hljs-keyword">this</span>, [
       <span class="hljs-string">'toggleDropdown'</span>,
       <span class="hljs-string">'_ariaGetActiveDescendentId'</span>,
       <span class="hljs-string">'_ariaGetListId'</span>,
@@ -530,7 +551,7 @@
       <span class="hljs-keyword">this</span>.setState({
         isOpen: <span class="hljs-literal">true</span>
       }, () =&gt; {
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.focusOnMount &amp;&amp; !_.isFunction(<span class="hljs-keyword">this</span>.props.ajaxDataFetch)) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.focusOnMount &amp;&amp; !isFunction(<span class="hljs-keyword">this</span>.props.ajaxDataFetch)) {
           <span class="hljs-keyword">this</span>._moveFocusDown();
         }
       });
@@ -572,33 +593,33 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
             <div class="content"><div class='highlight'><pre>  componentWillReceiveProps(nextProps) {
     <span class="hljs-keyword">let</span> newState = {};
 
-    <span class="hljs-keyword">if</span> (!_.isUndefined(nextProps.optionLabelKey) &amp;&amp; (nextProps.optionLabelKey !== <span class="hljs-keyword">this</span>.props.optionLabelKey)) {
+    <span class="hljs-keyword">if</span> (!isUndefined(nextProps.optionLabelKey) &amp;&amp; (nextProps.optionLabelKey !== <span class="hljs-keyword">this</span>.props.optionLabelKey)) {
       newState.labelKey = nextProps.optionLabelKey;
     }
 
-    <span class="hljs-keyword">if</span> (!_.isUndefined(nextProps.optionValueKey) &amp;&amp; (nextProps.optionValueKey !== <span class="hljs-keyword">this</span>.props.optionValueKey)) {
+    <span class="hljs-keyword">if</span> (!isUndefined(nextProps.optionValueKey) &amp;&amp; (nextProps.optionValueKey !== <span class="hljs-keyword">this</span>.props.optionValueKey)) {
       newState.valueKey = nextProps.optionValueKey;
     }
 
-    <span class="hljs-keyword">if</span> (!_.isEqual(<span class="hljs-keyword">this</span>.props.dataSource, nextProps.dataSource)) {
+    <span class="hljs-keyword">if</span> (!isEqual(<span class="hljs-keyword">this</span>.props.dataSource, nextProps.dataSource)) {
       <span class="hljs-keyword">this</span>.lastUserSelectedOption = <span class="hljs-literal">undefined</span>;
 
       <span class="hljs-keyword">const</span> newValue = <span class="hljs-keyword">this</span>.props.clearSelectedValueOnDataSourceChange ? [] : <span class="hljs-keyword">this</span>.state.value;
 
-      newState = _.extend(newState, {
+      newState = extend(newState, {
         data: <span class="hljs-keyword">this</span>._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: <span class="hljs-literal">undefined</span>,
         value: newValue,
-        lastOptionId: (_.isArray(nextProps.dataSource) &amp;&amp; (nextProps.dataSource.length &gt; <span class="hljs-number">0</span>)) ? nextProps.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>
+        lastOptionId: (isArray(nextProps.dataSource) &amp;&amp; (nextProps.dataSource.length &gt; <span class="hljs-number">0</span>)) ? nextProps.dataSource.length - <span class="hljs-number">1</span> : <span class="hljs-literal">undefined</span>
       });
     }
 
-    <span class="hljs-keyword">if</span> (!_.isEqual(nextProps.initialValue, <span class="hljs-keyword">this</span>.props.initialValue)) {
+    <span class="hljs-keyword">if</span> (!isEqual(nextProps.initialValue, <span class="hljs-keyword">this</span>.props.initialValue)) {
       newState.value = <span class="hljs-keyword">this</span>._buildInitialValue(nextProps);
     }
 
-    <span class="hljs-keyword">if</span> (!_.isEmpty(newState)) {
+    <span class="hljs-keyword">if</span> (!isEmpty(newState)) {
       <span class="hljs-keyword">this</span>.setState(newState);
     }
   }</pre></div></div>
@@ -664,7 +685,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
     placeholderString = <span class="hljs-keyword">this</span>.props.placeholder ? <span class="hljs-keyword">this</span>.props.placeholder : <span class="hljs-keyword">this</span>.props.placeholder;
     triggerDisplayContent = <span class="hljs-keyword">this</span>.state.value.length ? <span class="hljs-keyword">this</span>._generateValueDisplay() : placeholderString;
 
-    <span class="hljs-keyword">if</span> (!_.isEmpty(<span class="hljs-keyword">this</span>.state.value) &amp;&amp; (<span class="hljs-keyword">this</span>.props.clearable !== <span class="hljs-literal">false</span>)) {
+    <span class="hljs-keyword">if</span> (!isEmpty(<span class="hljs-keyword">this</span>.state.value) &amp;&amp; (<span class="hljs-keyword">this</span>.props.clearable !== <span class="hljs-literal">false</span>)) {
       clearSelectionButton = (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">aria-label</span>=<span class="hljs-string">{clearSelectionLabelString}</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{(c)</span> =&gt;</span> {this._rssDOM.selectionClear = c; }} name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}&gt;
                                 <span class="hljs-tag">&lt;<span class="hljs-name">span</span> /&gt;</span>
                              <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>);
@@ -718,7 +739,7 @@ sets focused option in callback after opening</p>
         };
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.isOpen) {
-      _.extend(newState, {
+      extend(newState, {
         focusedId: <span class="hljs-literal">undefined</span>
       });
     }
@@ -839,8 +860,8 @@ will call with undefined when no values are set</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _broadcastChange() {
-    <span class="hljs-keyword">let</span> outputValue = <span class="hljs-keyword">this</span>._isMultiSelect() ? <span class="hljs-keyword">this</span>.state.value : _.head(<span class="hljs-keyword">this</span>.state.value);
-    outputValue = _.isEmpty(outputValue) ? <span class="hljs-literal">undefined</span> : outputValue;
+    <span class="hljs-keyword">let</span> outputValue = <span class="hljs-keyword">this</span>._isMultiSelect() ? <span class="hljs-keyword">this</span>.state.value : head(<span class="hljs-keyword">this</span>.state.value);
+    outputValue = isEmpty(outputValue) ? <span class="hljs-literal">undefined</span> : outputValue;
     <span class="hljs-keyword">this</span>.props.onChange(outputValue);
   }</pre></div></div>
             
@@ -861,11 +882,11 @@ will call with undefined when no values are set</p>
     props = props || <span class="hljs-keyword">this</span>.props;
     <span class="hljs-keyword">let</span> initialValue = [];
 
-    <span class="hljs-keyword">if</span> (!_.isUndefined(props.initialValue)) {
-      initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
+    <span class="hljs-keyword">if</span> (!isUndefined(props.initialValue)) {
+      initialValue = isArray(props.initialValue) ? props.initialValue : [props.initialValue];
 
       <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._isMultiSelect()) {
-        initialValue = [_.head(initialValue)];
+        initialValue = [head(initialValue)];
       }
     }
 
@@ -962,18 +983,18 @@ case: (Array) - return the dataSource array for use as this.state.data</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _configureDataSource(dataSource) {
-    <span class="hljs-keyword">if</span> (_.isArray(dataSource)) {
+    <span class="hljs-keyword">if</span> (isArray(dataSource)) {
      <span class="hljs-keyword">return</span> dataSource;
     }
 
-    <span class="hljs-keyword">if</span> (_.isObject(dataSource)) {
-      <span class="hljs-keyword">if</span> (_.isArray(dataSource.collection)) {
+    <span class="hljs-keyword">if</span> (isObject(dataSource)) {
+      <span class="hljs-keyword">if</span> (isArray(dataSource.collection)) {
         <span class="hljs-keyword">return</span> dataSource.collection;
       }
 
-      <span class="hljs-keyword">if</span> (_.isFunction(dataSource.get)) {
+      <span class="hljs-keyword">if</span> (isFunction(dataSource.get)) {
         <span class="hljs-keyword">const</span> collection = dataSource.get(<span class="hljs-string">'collection'</span>);
-        <span class="hljs-keyword">if</span> (_.isArray(collection)) {
+        <span class="hljs-keyword">if</span> (isArray(collection)) {
           <span class="hljs-keyword">return</span> collection;
         }
       }
@@ -990,7 +1011,7 @@ case: (Array) - return the dataSource array for use as this.state.data</p>
       }
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
-    <span class="hljs-keyword">const</span> callback = shouldClose ? <span class="hljs-keyword">this</span>._closeOnKeypress : _.noop;
+    <span class="hljs-keyword">const</span> callback = shouldClose ? <span class="hljs-keyword">this</span>._closeOnKeypress : noop;
     <span class="hljs-keyword">this</span>._removeSelectedOptionByValue(value, callback);
   }</pre></div></div>
             
@@ -1010,7 +1031,7 @@ Runs a lowercase string comparison with the <strong>searchString</strong> and th
             
             <div class="content"><div class='highlight'><pre>  _defaultSearchFilter(option) {
     <span class="hljs-keyword">const</span> search = <span class="hljs-keyword">this</span>.state.searchString.toLowerCase();
-    <span class="hljs-keyword">if</span> (!_.isString(option[<span class="hljs-keyword">this</span>.state.labelKey])) {
+    <span class="hljs-keyword">if</span> (!isString(option[<span class="hljs-keyword">this</span>.state.labelKey])) {
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
     <span class="hljs-keyword">return</span> option[<span class="hljs-keyword">this</span>.state.labelKey].toLowerCase().indexOf(search) &gt; <span class="hljs-number">-1</span>;
@@ -1112,12 +1133,12 @@ Handles success and failure for ajax call</p>
     <span class="hljs-keyword">const</span> self = <span class="hljs-keyword">this</span>;
 
     <span class="hljs-keyword">let</span> filterFunction = <span class="hljs-keyword">this</span>._defaultSearchFilter;
-    <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>.props.customFilterFunction)) {
+    <span class="hljs-keyword">if</span> (isFunction(<span class="hljs-keyword">this</span>.props.customFilterFunction)) {
       filterFunction = (value, index, collection) =&gt; {
         <span class="hljs-keyword">return</span> self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
       };
     }
-    <span class="hljs-keyword">return</span> _.filter(data, filterFunction);
+    <span class="hljs-keyword">return</span> filter(data, filterFunction);
   }</pre></div></div>
             
         </li>
@@ -1134,9 +1155,9 @@ Handles success and failure for ajax call</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _findArrayOfOptionDataObjectsByValue(value) {
-    <span class="hljs-keyword">const</span> valuesArray = _.isArray(value) ? _.map(value, <span class="hljs-keyword">this</span>.state.valueKey) : [value];
-    <span class="hljs-keyword">return</span> _.reject(<span class="hljs-keyword">this</span>.state.data, (item) =&gt; {
-      <span class="hljs-keyword">return</span> !_.includes(valuesArray, item[<span class="hljs-keyword">this</span>.state.valueKey]);
+    <span class="hljs-keyword">const</span> valuesArray = isArray(value) ? map(value, <span class="hljs-keyword">this</span>.state.valueKey) : [value];
+    <span class="hljs-keyword">return</span> reject(<span class="hljs-keyword">this</span>.state.data, (item) =&gt; {
+      <span class="hljs-keyword">return</span> !includes(valuesArray, item[<span class="hljs-keyword">this</span>.state.valueKey]);
     });
   }</pre></div></div>
             
@@ -1178,7 +1199,7 @@ Handles success and failure for ajax call</p>
             <div class="content"><div class='highlight'><pre>  _focusDOMOption() {
     <span class="hljs-keyword">const</span> optionRef = <span class="hljs-keyword">this</span>._getFocusedOptionKey();
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM[optionRef]) {
-      <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>._rssDOM[optionRef].focus)) {
+      <span class="hljs-keyword">if</span> (isFunction(<span class="hljs-keyword">this</span>._rssDOM[optionRef].focus)) {
         <span class="hljs-keyword">this</span>._rssDOM[optionRef].focus();
       }
     }
@@ -1239,7 +1260,7 @@ for keyboard navigation and accessibility</p>
       buttons[nextButtonIndexToFocus].focus();
     } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(nextButtonIndexToFocus &amp;&amp; (nextButtonIndexToFocus &lt; <span class="hljs-number">0</span>)) {
       <span class="hljs-keyword">this</span>._focusTrigger();
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(buttons[<span class="hljs-number">0</span>] &amp;&amp; !_.isNumber(currentlyFocusedRemoveButtonIndex)) {
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(buttons[<span class="hljs-number">0</span>] &amp;&amp; !isNumber(currentlyFocusedRemoveButtonIndex)) {
       <span class="hljs-keyword">this</span>._arrestEvent(event);
       buttons[<span class="hljs-number">0</span>].focus();
     }
@@ -1322,13 +1343,13 @@ for keyboard navigation and accessibility</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _getDataSource() {
-    <span class="hljs-keyword">let</span> data = _.isArray(<span class="hljs-keyword">this</span>.state.data) ? <span class="hljs-keyword">this</span>.state.data : [];
-    <span class="hljs-keyword">if</span> (_.isString(<span class="hljs-keyword">this</span>.state.searchString)) {
+    <span class="hljs-keyword">let</span> data = isArray(<span class="hljs-keyword">this</span>.state.data) ? <span class="hljs-keyword">this</span>.state.data : [];
+    <span class="hljs-keyword">if</span> (isString(<span class="hljs-keyword">this</span>.state.searchString)) {
       data = <span class="hljs-keyword">this</span>._filterDataBySearchString(data);
     }
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.groupBy) {
-      data = _.groupBy(data, <span class="hljs-keyword">this</span>.props.groupBy);
+      data = groupBy(data, <span class="hljs-keyword">this</span>.props.groupBy);
     }
 
     <span class="hljs-keyword">return</span> data;
@@ -1472,7 +1493,7 @@ Choose whether to render using the default template or a provided <strong>custom
             </div>
             
             <div class="content"><div class='highlight'><pre>  _getNormalDisplayMarkup() {
-    <span class="hljs-keyword">return</span> _.map(<span class="hljs-keyword">this</span>.state.value, (value) =&gt; {
+    <span class="hljs-keyword">return</span> map(<span class="hljs-keyword">this</span>.state.value, (value) =&gt; {
       <span class="hljs-keyword">let</span> selectedKey = <span class="hljs-string">"r_ss_selected_"</span> + value[<span class="hljs-keyword">this</span>.state.labelKey];
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) {
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(value);
@@ -1552,8 +1573,8 @@ render ajaxError markup when state.ajaxError is true</p>
     <span class="hljs-keyword">let</span> options = [],
         optionsCount = <span class="hljs-number">0</span>;
 
-    <span class="hljs-keyword">if</span> (!_.isArray(data)) {
-      _.forIn(data, (groupedOptions, heading) =&gt; {
+    <span class="hljs-keyword">if</span> (!isArray(data)) {
+      forIn(data, (groupedOptions, heading) =&gt; {
         options.push(<span class="hljs-keyword">this</span>._getGroupHeadingMarkup(heading));
         options = options.concat(<span class="hljs-keyword">this</span>._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
@@ -1635,7 +1656,7 @@ the conversion does not alter the string representation’s value</p>
         searchAriaId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_search'</span>,
         searchAriaIdLabel = searchAriaId + <span class="hljs-string">'_label'</span>;
 
-    <span class="hljs-keyword">if</span> (_.isString(<span class="hljs-keyword">this</span>.state.searchString) &amp;&amp; !_.isEmpty(<span class="hljs-keyword">this</span>.state.searchString)) {
+    <span class="hljs-keyword">if</span> (isString(<span class="hljs-keyword">this</span>.state.searchString) &amp;&amp; !isEmpty(<span class="hljs-keyword">this</span>.state.searchString)) {
       clearSearch = (&lt;button aria-label={clearSearchLabelString} ref={(c) =&gt; {this._rssDOM.searchClear = c }} name="clearSearch" type="button" className="r-ss-search-clear" onClick={this._clearSearchString} onKeyDown={this._clearSearchString}&gt;
                        &lt;span /&gt;
                      &lt;/button&gt;);
@@ -1675,7 +1696,7 @@ the conversion does not alter the string representation’s value</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _getTagsDisplayMarkup() {
-    <span class="hljs-keyword">return</span> _.map(<span class="hljs-keyword">this</span>.state.value, (value) =&gt; {
+    <span class="hljs-keyword">return</span> map(<span class="hljs-keyword">this</span>.state.value, (value) =&gt; {
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._getTagMarkup(value);
     });
   }</pre></div></div>
@@ -1825,7 +1846,7 @@ verify event target node is still in the DOM and close if click did not originat
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (_.includes(<span class="hljs-keyword">this</span>.ariaRelevantKeydownCodes, event.which)) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (includes(<span class="hljs-keyword">this</span>.ariaRelevantKeydownCodes, event.which)) {
         <span class="hljs-keyword">this</span>._arrestEvent(event);
       }
     }
@@ -1896,10 +1917,10 @@ verify event target node is still in the DOM and close if click did not originat
             </div>
             
             <div class="content"><div class='highlight'><pre>  _isCurrentlySelected(dataItem) {
-    <span class="hljs-keyword">if</span> (!_.isArray(<span class="hljs-keyword">this</span>.state.value)) {
-      <span class="hljs-keyword">return</span> _.isEqual(<span class="hljs-keyword">this</span>.state.value, dataItem);
+    <span class="hljs-keyword">if</span> (!isArray(<span class="hljs-keyword">this</span>.state.value)) {
+      <span class="hljs-keyword">return</span> isEqual(<span class="hljs-keyword">this</span>.state.value, dataItem);
     }
-    <span class="hljs-keyword">return</span> !!(_.find(<span class="hljs-keyword">this</span>.state.value, dataItem));
+    <span class="hljs-keyword">return</span> !!(find(<span class="hljs-keyword">this</span>.state.value, dataItem));
   }</pre></div></div>
             
         </li>
@@ -1954,7 +1975,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
             </div>
             
             <div class="content"><div class='highlight'><pre>  _mapDataToOptionsMarkup(data, indexStart) {
-    <span class="hljs-keyword">return</span> _.map(data, (dataOption, index) =&gt; {
+    <span class="hljs-keyword">return</span> map(data, (dataOption, index) =&gt; {
       index = indexStart + index;
 
       <span class="hljs-keyword">const</span> indexRef = <span class="hljs-string">'option_'</span> + index;
@@ -1963,8 +1984,8 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
           isCurrentlySelected = <span class="hljs-keyword">this</span>._isCurrentlySelected(dataOption),
           itemKey = <span class="hljs-string">"drop_li_"</span> + dataOption[<span class="hljs-keyword">this</span>.state.valueKey],
           ariaDescendantId = <span class="hljs-keyword">this</span>.state.controlId + <span class="hljs-string">'_aria_'</span> + indexRef,
-          clickHandler = isDisabled ? _.noop : <span class="hljs-keyword">this</span>._selectItemOnOptionClick.bind(<span class="hljs-literal">null</span>, dataOption),
-          optionMarkup = _.isFunction(<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) ? <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(dataOption, <span class="hljs-keyword">this</span>.state.searchString) : dataOption[<span class="hljs-keyword">this</span>.state.labelKey],
+          clickHandler = isDisabled ? noop : <span class="hljs-keyword">this</span>._selectItemOnOptionClick.bind(<span class="hljs-literal">null</span>, dataOption),
+          optionMarkup = isFunction(<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) ? <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(dataOption, <span class="hljs-keyword">this</span>.state.searchString) : dataOption[<span class="hljs-keyword">this</span>.state.labelKey],
           classes = classNames(<span class="hljs-string">'r-ss-dropdown-option'</span>, {
             <span class="hljs-string">'r-ss-selected'</span>: isCurrentlySelected,
             <span class="hljs-string">'r-ss-disabled'</span>: isDisabled
@@ -2007,7 +2028,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
     }
     <span class="hljs-keyword">let</span> nextId;
 
-    <span class="hljs-keyword">if</span> (_.isUndefined(<span class="hljs-keyword">this</span>.state.focusedId)) {
+    <span class="hljs-keyword">if</span> (isUndefined(<span class="hljs-keyword">this</span>.state.focusedId)) {
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.searchable) {
         nextId = <span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID;
       } <span class="hljs-keyword">else</span> {
@@ -2036,7 +2057,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
             <div class="content"><div class='highlight'><pre>  _moveFocusUp() {
     <span class="hljs-keyword">let</span> previousId;
 
-    <span class="hljs-keyword">if</span> (!_.isUndefined(<span class="hljs-keyword">this</span>.state.focusedId) &amp;&amp; (<span class="hljs-keyword">this</span>.state.focusedId !== <span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID)) {
+    <span class="hljs-keyword">if</span> (!isUndefined(<span class="hljs-keyword">this</span>.state.focusedId) &amp;&amp; (<span class="hljs-keyword">this</span>.state.focusedId !== <span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID)) {
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.focusedId === <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.searchable) {
           previousId = <span class="hljs-keyword">this</span>.SEARCH_FOCUS_ID;
@@ -2062,7 +2083,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
             </div>
             
             <div class="content"><div class='highlight'><pre>  _needsAjaxFetch() {
-    <span class="hljs-keyword">return</span> (_.isUndefined(<span class="hljs-keyword">this</span>.state.rawDataSource) &amp;&amp; _.isFunction(<span class="hljs-keyword">this</span>.props.ajaxDataFetch));
+    <span class="hljs-keyword">return</span> (isUndefined(<span class="hljs-keyword">this</span>.state.rawDataSource) &amp;&amp; isFunction(<span class="hljs-keyword">this</span>.props.ajaxDataFetch));
   }</pre></div></div>
             
         </li>
@@ -2203,7 +2224,7 @@ Otherwise, makes selection</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM.loader || !_.isEmpty(<span class="hljs-keyword">this</span>.state.searchString) || !<span class="hljs-keyword">this</span>._pageFetchingComplete()) {
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._rssDOM.loader || !isEmpty(<span class="hljs-keyword">this</span>.state.searchString) || !<span class="hljs-keyword">this</span>._pageFetchingComplete()) {
       <span class="hljs-keyword">return</span>;
     }
 
@@ -2259,7 +2280,7 @@ Otherwise, returns false so page fetch will not occur</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  _pageFetchingComplete() {
-    <span class="hljs-keyword">if</span> (!_.isFunction(<span class="hljs-keyword">this</span>.props.hasMorePages)) {
+    <span class="hljs-keyword">if</span> (!isFunction(<span class="hljs-keyword">this</span>.props.hasMorePages)) {
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.hasMorePages(<span class="hljs-keyword">this</span>.state.rawDataSource);
@@ -2309,8 +2330,8 @@ Remove all options up to, but not including the option that raised the event.
       }
     }
 
-    <span class="hljs-keyword">const</span> remainingSelected = _.reject(<span class="hljs-keyword">this</span>.state.value, (opt) =&gt; {
-        <span class="hljs-keyword">return</span> _.includes(valuePropsToReject, opt[<span class="hljs-keyword">this</span>.state.valueKey]);
+    <span class="hljs-keyword">const</span> remainingSelected = reject(<span class="hljs-keyword">this</span>.state.value, (opt) =&gt; {
+        <span class="hljs-keyword">return</span> includes(valuePropsToReject, opt[<span class="hljs-keyword">this</span>.state.valueKey]);
       });
 
     <span class="hljs-keyword">this</span>.setState({
@@ -2332,7 +2353,7 @@ The <em>value</em> arg represents a full dataSource option object</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _removeSelectedOptionByValue(value, callback = _.noop) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  _removeSelectedOptionByValue(value, callback = noop) {</pre></div></div>
             
         </li>
         
@@ -2351,7 +2372,7 @@ The <em>value</em> arg represents a full dataSource option object</p>
       <span class="hljs-keyword">this</span>.lastUserSelectedOption = <span class="hljs-literal">undefined</span>;
     }
 
-    <span class="hljs-keyword">const</span> SelectedAfterRemoval = _.reject(<span class="hljs-keyword">this</span>.state.value, (option) =&gt; {
+    <span class="hljs-keyword">const</span> SelectedAfterRemoval = reject(<span class="hljs-keyword">this</span>.state.value, (option) =&gt; {
                                  <span class="hljs-keyword">return</span> option[<span class="hljs-keyword">this</span>.state.valueKey] === value[<span class="hljs-keyword">this</span>.state.valueKey];
                                });
 
@@ -2431,8 +2452,8 @@ The <em>value</em> arg represents a full dataSource option object</p>
       }
     }
 
-    <span class="hljs-keyword">const</span> optionsToSelect = _.reduce(<span class="hljs-keyword">this</span>.state.data, (memo, opt) =&gt; {
-          <span class="hljs-keyword">if</span> (_.includes(valuePropsToSelect, opt[<span class="hljs-keyword">this</span>.state.valueKey])) {
+    <span class="hljs-keyword">const</span> optionsToSelect = reduce(<span class="hljs-keyword">this</span>.state.data, (memo, opt) =&gt; {
+          <span class="hljs-keyword">if</span> (includes(valuePropsToSelect, opt[<span class="hljs-keyword">this</span>.state.valueKey])) {
             <span class="hljs-keyword">if</span> (!opt.disabled) {
               memo.push(opt);
             }
@@ -2546,7 +2567,7 @@ Will close the dropDown when keepControlOpen is falsy</p>
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.lastUserSelectedOption = eventTargetLi;
 
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.SELECTED_OPTION_REGEX.test(<span class="hljs-keyword">this</span>._rssDOM[focusedOptionKey].className)) {
-        <span class="hljs-keyword">const</span> optionFullFromValueProp = _.head(<span class="hljs-keyword">this</span>._findArrayOfOptionDataObjectsByValue(optionValue));
+        <span class="hljs-keyword">const</span> optionFullFromValueProp = head(<span class="hljs-keyword">this</span>._findArrayOfOptionDataObjectsByValue(optionValue));
         <span class="hljs-keyword">this</span>._deselectAction(optionFullFromValueProp, keepControlOpen);
       } <span class="hljs-keyword">else</span> {
         keepControlOpen = keepControlOpen || <span class="hljs-literal">false</span>;
@@ -2580,11 +2601,11 @@ Close dropdown on the setState callback if not a non control-closing selection</
     }
 
     <span class="hljs-keyword">const</span> newState = {
-      value: <span class="hljs-keyword">this</span>._isMultiSelect() ? objectValues : [_.head(objectValues)]
+      value: <span class="hljs-keyword">this</span>._isMultiSelect() ? objectValues : [head(objectValues)]
     };
 
     <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.searchable &amp;&amp; <span class="hljs-keyword">this</span>.props.clearSearchOnSelection) {
-      _.extend(newState, {
+      extend(newState, {
         searchString: <span class="hljs-string">""</span>
       });
     }
@@ -2701,11 +2722,11 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
 
-    <span class="hljs-keyword">const</span> firstValue = _.head(<span class="hljs-keyword">this</span>.state.value)[<span class="hljs-keyword">this</span>.state.valueKey],
+    <span class="hljs-keyword">const</span> firstValue = head(<span class="hljs-keyword">this</span>.state.value)[<span class="hljs-keyword">this</span>.state.valueKey],
           firstTag = <span class="hljs-keyword">this</span>._rssDOM[<span class="hljs-keyword">this</span>._getTagRemoveIndex(firstValue)];
 
     <span class="hljs-keyword">if</span> (firstTag) {
-      <span class="hljs-keyword">if</span> (_.isFunction(firstTag.focus)) {
+      <span class="hljs-keyword">if</span> (isFunction(firstTag.focus)) {
         firstTag.focus();
         <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
       }
@@ -2772,8 +2793,8 @@ After tag deletion via keyboard, this Keeps focus in context of tag removal as l
   searchable: <span class="hljs-literal">false</span>,
   tags: <span class="hljs-literal">false</span>,
   clearSearchOnSelection: <span class="hljs-literal">false</span>,
-  onCloseDropdown: _.noop,
-  onOpenDropdown: _.noop,
+  onCloseDropdown: noop,
+  onOpenDropdown: noop,
   optionLabelKey: <span class="hljs-string">'name'</span>,
   optionValueKey: <span class="hljs-string">'id'</span>, <span class="hljs-comment">// value this maps to should be unique in data source</span>
   ajaxErrorString: <span class="hljs-string">'An Error occured while fetching options'</span>,

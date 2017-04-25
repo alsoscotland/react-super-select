@@ -8,7 +8,28 @@
 //  - [Lodash](https://lodash.com/)
 //  - [classnames](https://www.npmjs.com/package/classnames)
 //  - [React](https://facebook.github.io/react/index.html)
-import _ from 'lodash';
+import { bindAll,
+         extend,
+         filter,
+         find,
+         forIn,
+         groupBy,
+         head,
+         includes,
+         isArray,
+         isEmpty,
+         isEqual,
+         isFunction,
+         isNumber,
+         isObject,
+         isString,
+         isUndefined,
+         map,
+         noop,
+         reduce,
+         reject,
+         uniqueId,
+         values } from 'lodash';
 import classNames from 'classnames';
 import React from 'react';
 
@@ -41,7 +62,7 @@ class ReactSuperSelect extends React.Component {
       up: 38
     };
 
-    this.ariaRelevantKeydownCodes = _.values(this.keymap);
+    this.ariaRelevantKeydownCodes = values(this.keymap);
 
     // NON-STATE VARS (no need to re-render based on these being set)
 
@@ -58,7 +79,7 @@ class ReactSuperSelect extends React.Component {
       ajaxError: false,
 
       // **controlId** (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels
-      controlId: this.props.controlId || _.uniqueId('rss_'),
+      controlId: this.props.controlId || uniqueId('rss_'),
 
       // **data** (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected
       data: this._configureDataSource(this.props.dataSource),
@@ -76,7 +97,7 @@ class ReactSuperSelect extends React.Component {
       labelKey: this.props.optionLabelKey,
 
       // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option in the dropdown
-      lastOptionId: (_.isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
+      lastOptionId: (isArray(this.props.dataSource) && (this.props.dataSource.length > 0)) ? this.props.dataSource.length - 1 : undefined,
 
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
       searchString: "",
@@ -90,7 +111,7 @@ class ReactSuperSelect extends React.Component {
 
 
     // force control instance context in all internal class functions
-    _.bindAll(this, [
+    bindAll(this, [
       'toggleDropdown',
       '_ariaGetActiveDescendentId',
       '_ariaGetListId',
@@ -177,7 +198,7 @@ class ReactSuperSelect extends React.Component {
       this.setState({
         isOpen: true
       }, () => {
-        if (this.props.focusOnMount && !_.isFunction(this.props.ajaxDataFetch)) {
+        if (this.props.focusOnMount && !isFunction(this.props.ajaxDataFetch)) {
           this._moveFocusDown();
         }
       });
@@ -195,33 +216,33 @@ class ReactSuperSelect extends React.Component {
   componentWillReceiveProps(nextProps) {
     let newState = {};
 
-    if (!_.isUndefined(nextProps.optionLabelKey) && (nextProps.optionLabelKey !== this.props.optionLabelKey)) {
+    if (!isUndefined(nextProps.optionLabelKey) && (nextProps.optionLabelKey !== this.props.optionLabelKey)) {
       newState.labelKey = nextProps.optionLabelKey;
     }
 
-    if (!_.isUndefined(nextProps.optionValueKey) && (nextProps.optionValueKey !== this.props.optionValueKey)) {
+    if (!isUndefined(nextProps.optionValueKey) && (nextProps.optionValueKey !== this.props.optionValueKey)) {
       newState.valueKey = nextProps.optionValueKey;
     }
 
-    if (!_.isEqual(this.props.dataSource, nextProps.dataSource)) {
+    if (!isEqual(this.props.dataSource, nextProps.dataSource)) {
       this.lastUserSelectedOption = undefined;
 
       const newValue = this.props.clearSelectedValueOnDataSourceChange ? [] : this.state.value;
 
-      newState = _.extend(newState, {
+      newState = extend(newState, {
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: undefined,
         value: newValue,
-        lastOptionId: (_.isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined
+        lastOptionId: (isArray(nextProps.dataSource) && (nextProps.dataSource.length > 0)) ? nextProps.dataSource.length - 1 : undefined
       });
     }
 
-    if (!_.isEqual(nextProps.initialValue, this.props.initialValue)) {
+    if (!isEqual(nextProps.initialValue, this.props.initialValue)) {
       newState.value = this._buildInitialValue(nextProps);
     }
 
-    if (!_.isEmpty(newState)) {
+    if (!isEmpty(newState)) {
       this.setState(newState);
     }
   }
@@ -263,7 +284,7 @@ class ReactSuperSelect extends React.Component {
     placeholderString = this.props.placeholder ? this.props.placeholder : this.props.placeholder;
     triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
 
-    if (!_.isEmpty(this.state.value) && (this.props.clearable !== false)) {
+    if (!isEmpty(this.state.value) && (this.props.clearable !== false)) {
       clearSelectionButton = (<button aria-label={clearSelectionLabelString} ref={(c) => {this._rssDOM.selectionClear = c; }} name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}>
                                 <span />
                              </button>);
@@ -303,7 +324,7 @@ class ReactSuperSelect extends React.Component {
         };
 
     if (this.state.isOpen) {
-      _.extend(newState, {
+      extend(newState, {
         focusedId: undefined
       });
     }
@@ -364,8 +385,8 @@ class ReactSuperSelect extends React.Component {
   // should be called as setState callback when changing state.value
   // will call with undefined when no values are set
   _broadcastChange() {
-    let outputValue = this._isMultiSelect() ? this.state.value : _.head(this.state.value);
-    outputValue = _.isEmpty(outputValue) ? undefined : outputValue;
+    let outputValue = this._isMultiSelect() ? this.state.value : head(this.state.value);
+    outputValue = isEmpty(outputValue) ? undefined : outputValue;
     this.props.onChange(outputValue);
   }
 
@@ -374,11 +395,11 @@ class ReactSuperSelect extends React.Component {
     props = props || this.props;
     let initialValue = [];
 
-    if (!_.isUndefined(props.initialValue)) {
-      initialValue = _.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
+    if (!isUndefined(props.initialValue)) {
+      initialValue = isArray(props.initialValue) ? props.initialValue : [props.initialValue];
 
       if (!this._isMultiSelect()) {
-        initialValue = [_.head(initialValue)];
+        initialValue = [head(initialValue)];
       }
     }
 
@@ -427,18 +448,18 @@ class ReactSuperSelect extends React.Component {
   // case: (object) - look for a collection property which is an array, or runs an existing 'get' function, get('collection'), and determines if the return value is an array
   // case: (Array) - return the dataSource array for use as this.state.data
   _configureDataSource(dataSource) {
-    if (_.isArray(dataSource)) {
+    if (isArray(dataSource)) {
      return dataSource;
     }
 
-    if (_.isObject(dataSource)) {
-      if (_.isArray(dataSource.collection)) {
+    if (isObject(dataSource)) {
+      if (isArray(dataSource.collection)) {
         return dataSource.collection;
       }
 
-      if (_.isFunction(dataSource.get)) {
+      if (isFunction(dataSource.get)) {
         const collection = dataSource.get('collection');
-        if (_.isArray(collection)) {
+        if (isArray(collection)) {
           return collection;
         }
       }
@@ -455,7 +476,7 @@ class ReactSuperSelect extends React.Component {
       }
       return false;
     }
-    const callback = shouldClose ? this._closeOnKeypress : _.noop;
+    const callback = shouldClose ? this._closeOnKeypress : noop;
     this._removeSelectedOptionByValue(value, callback);
   }
 
@@ -463,7 +484,7 @@ class ReactSuperSelect extends React.Component {
   // Runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
   _defaultSearchFilter(option) {
     const search = this.state.searchString.toLowerCase();
-    if (!_.isString(option[this.state.labelKey])) {
+    if (!isString(option[this.state.labelKey])) {
       return false;
     }
     return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
@@ -516,19 +537,19 @@ class ReactSuperSelect extends React.Component {
     const self = this;
 
     let filterFunction = this._defaultSearchFilter;
-    if (_.isFunction(this.props.customFilterFunction)) {
+    if (isFunction(this.props.customFilterFunction)) {
       filterFunction = (value, index, collection) => {
         return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
       };
     }
-    return _.filter(data, filterFunction);
+    return filter(data, filterFunction);
   }
 
   // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
   _findArrayOfOptionDataObjectsByValue(value) {
-    const valuesArray = _.isArray(value) ? _.map(value, this.state.valueKey) : [value];
-    return _.reject(this.state.data, (item) => {
-      return !_.includes(valuesArray, item[this.state.valueKey]);
+    const valuesArray = isArray(value) ? map(value, this.state.valueKey) : [value];
+    return reject(this.state.data, (item) => {
+      return !includes(valuesArray, item[this.state.valueKey]);
     });
   }
 
@@ -546,7 +567,7 @@ class ReactSuperSelect extends React.Component {
   _focusDOMOption() {
     const optionRef = this._getFocusedOptionKey();
     if (this._rssDOM[optionRef]) {
-      if (_.isFunction(this._rssDOM[optionRef].focus)) {
+      if (isFunction(this._rssDOM[optionRef].focus)) {
         this._rssDOM[optionRef].focus();
       }
     }
@@ -583,7 +604,7 @@ class ReactSuperSelect extends React.Component {
       buttons[nextButtonIndexToFocus].focus();
     } else if(nextButtonIndexToFocus && (nextButtonIndexToFocus < 0)) {
       this._focusTrigger();
-    } else if(buttons[0] && !_.isNumber(currentlyFocusedRemoveButtonIndex)) {
+    } else if(buttons[0] && !isNumber(currentlyFocusedRemoveButtonIndex)) {
       this._arrestEvent(event);
       buttons[0].focus();
     }
@@ -618,13 +639,13 @@ class ReactSuperSelect extends React.Component {
 
   // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
   _getDataSource() {
-    let data = _.isArray(this.state.data) ? this.state.data : [];
-    if (_.isString(this.state.searchString)) {
+    let data = isArray(this.state.data) ? this.state.data : [];
+    if (isString(this.state.searchString)) {
       data = this._filterDataBySearchString(data);
     }
 
     if (this.props.groupBy) {
-      data = _.groupBy(data, this.props.groupBy);
+      data = groupBy(data, this.props.groupBy);
     }
 
     return data;
@@ -696,7 +717,7 @@ class ReactSuperSelect extends React.Component {
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup() {
-    return _.map(this.state.value, (value) => {
+    return map(this.state.value, (value) => {
       let selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
@@ -738,8 +759,8 @@ class ReactSuperSelect extends React.Component {
     let options = [],
         optionsCount = 0;
 
-    if (!_.isArray(data)) {
-      _.forIn(data, (groupedOptions, heading) => {
+    if (!isArray(data)) {
+      forIn(data, (groupedOptions, heading) => {
         options.push(this._getGroupHeadingMarkup(heading));
         options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
@@ -783,7 +804,7 @@ class ReactSuperSelect extends React.Component {
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
 
-    if (_.isString(this.state.searchString) && !_.isEmpty(this.state.searchString)) {
+    if (isString(this.state.searchString) && !isEmpty(this.state.searchString)) {
       clearSearch = (<button aria-label={clearSearchLabelString} ref={(c) => {this._rssDOM.searchClear = c }} name="clearSearch" type="button" className="r-ss-search-clear" onClick={this._clearSearchString} onKeyDown={this._clearSearchString}>
                        <span />
                      </button>);
@@ -811,7 +832,7 @@ class ReactSuperSelect extends React.Component {
 
   // iterate over selected values and build tags markup for selected options display
   _getTagsDisplayMarkup() {
-    return _.map(this.state.value, (value) => {
+    return map(this.state.value, (value) => {
       return this._getTagMarkup(value);
     });
   }
@@ -882,7 +903,7 @@ class ReactSuperSelect extends React.Component {
     }
     if (this.state.isOpen) {
       // stop propagation of keyboard events relevant to an open super select
-      if (_.includes(this.ariaRelevantKeydownCodes, event.which)) {
+      if (includes(this.ariaRelevantKeydownCodes, event.which)) {
         this._arrestEvent(event);
       }
     }
@@ -929,10 +950,10 @@ class ReactSuperSelect extends React.Component {
 
   // return the boolean used to determine whether an option should have the 'r-ss-selected' class
   _isCurrentlySelected(dataItem) {
-    if (!_.isArray(this.state.value)) {
-      return _.isEqual(this.state.value, dataItem);
+    if (!isArray(this.state.value)) {
+      return isEqual(this.state.value, dataItem);
     }
-    return !!(_.find(this.state.value, dataItem));
+    return !!(find(this.state.value, dataItem));
   }
 
   // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
@@ -951,7 +972,7 @@ class ReactSuperSelect extends React.Component {
   // Render the option list-items.
   // Leverage the **customOptionTemplateFunction** function if provided
   _mapDataToOptionsMarkup(data, indexStart) {
-    return _.map(data, (dataOption, index) => {
+    return map(data, (dataOption, index) => {
       index = indexStart + index;
 
       const indexRef = 'option_' + index;
@@ -960,8 +981,8 @@ class ReactSuperSelect extends React.Component {
           isCurrentlySelected = this._isCurrentlySelected(dataOption),
           itemKey = "drop_li_" + dataOption[this.state.valueKey],
           ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
-          clickHandler = isDisabled ? _.noop : this._selectItemOnOptionClick.bind(null, dataOption),
-          optionMarkup = _.isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption, this.state.searchString) : dataOption[this.state.labelKey],
+          clickHandler = isDisabled ? noop : this._selectItemOnOptionClick.bind(null, dataOption),
+          optionMarkup = isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption, this.state.searchString) : dataOption[this.state.labelKey],
           classes = classNames('r-ss-dropdown-option', {
             'r-ss-selected': isCurrentlySelected,
             'r-ss-disabled': isDisabled
@@ -992,7 +1013,7 @@ class ReactSuperSelect extends React.Component {
     }
     let nextId;
 
-    if (_.isUndefined(this.state.focusedId)) {
+    if (isUndefined(this.state.focusedId)) {
       if (this.props.searchable) {
         nextId = this.SEARCH_FOCUS_ID;
       } else {
@@ -1009,7 +1030,7 @@ class ReactSuperSelect extends React.Component {
   _moveFocusUp() {
     let previousId;
 
-    if (!_.isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
+    if (!isUndefined(this.state.focusedId) && (this.state.focusedId !== this.SEARCH_FOCUS_ID)) {
       if (this.state.focusedId === 0) {
         if (this.props.searchable) {
           previousId = this.SEARCH_FOCUS_ID;
@@ -1023,7 +1044,7 @@ class ReactSuperSelect extends React.Component {
 
   // return boolean to determine if we have already received data from the **ajaxDataFetch** function
   _needsAjaxFetch() {
-    return (_.isUndefined(this.state.rawDataSource) && _.isFunction(this.props.ajaxDataFetch));
+    return (isUndefined(this.state.rawDataSource) && isFunction(this.props.ajaxDataFetch));
   }
 
   // down key handler
@@ -1079,7 +1100,7 @@ class ReactSuperSelect extends React.Component {
   // mouse move handler used when **pageDataFetch** is set. It will fire the pageDataFetch function if the user has scrolled sufficiently far in the dropdown
   _onMouseMove() {
     // do not fetch page if searching or already loading data
-    if (this._rssDOM.loader || !_.isEmpty(this.state.searchString) || !this._pageFetchingComplete()) {
+    if (this._rssDOM.loader || !isEmpty(this.state.searchString) || !this._pageFetchingComplete()) {
       return;
     }
 
@@ -1111,7 +1132,7 @@ class ReactSuperSelect extends React.Component {
   // If hasMorePages option (Function) present, returns the value of its call.
   // Otherwise, returns false so page fetch will not occur
   _pageFetchingComplete() {
-    if (!_.isFunction(this.props.hasMorePages)) {
+    if (!isFunction(this.props.hasMorePages)) {
       return false;
     }
     return this.props.hasMorePages(this.state.rawDataSource);
@@ -1136,8 +1157,8 @@ class ReactSuperSelect extends React.Component {
       }
     }
 
-    const remainingSelected = _.reject(this.state.value, (opt) => {
-        return _.includes(valuePropsToReject, opt[this.state.valueKey]);
+    const remainingSelected = reject(this.state.value, (opt) => {
+        return includes(valuePropsToReject, opt[this.state.valueKey]);
       });
 
     this.setState({
@@ -1147,13 +1168,13 @@ class ReactSuperSelect extends React.Component {
 
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
-  _removeSelectedOptionByValue(value, callback = _.noop) {
+  _removeSelectedOptionByValue(value, callback = noop) {
     // clear lastUserSelected if has been removed
     if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
       this.lastUserSelectedOption = undefined;
     }
 
-    const SelectedAfterRemoval = _.reject(this.state.value, (option) => {
+    const SelectedAfterRemoval = reject(this.state.value, (option) => {
                                  return option[this.state.valueKey] === value[this.state.valueKey];
                                });
 
@@ -1197,8 +1218,8 @@ class ReactSuperSelect extends React.Component {
       }
     }
 
-    const optionsToSelect = _.reduce(this.state.data, (memo, opt) => {
-          if (_.includes(valuePropsToSelect, opt[this.state.valueKey])) {
+    const optionsToSelect = reduce(this.state.data, (memo, opt) => {
+          if (includes(valuePropsToSelect, opt[this.state.valueKey])) {
             if (!opt.disabled) {
               memo.push(opt);
             }
@@ -1251,7 +1272,7 @@ class ReactSuperSelect extends React.Component {
       this.lastUserSelectedOption = eventTargetLi;
 
       if (this.SELECTED_OPTION_REGEX.test(this._rssDOM[focusedOptionKey].className)) {
-        const optionFullFromValueProp = _.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        const optionFullFromValueProp = head(this._findArrayOfOptionDataObjectsByValue(optionValue));
         this._deselectAction(optionFullFromValueProp, keepControlOpen);
       } else {
         keepControlOpen = keepControlOpen || false;
@@ -1273,11 +1294,11 @@ class ReactSuperSelect extends React.Component {
     }
 
     const newState = {
-      value: this._isMultiSelect() ? objectValues : [_.head(objectValues)]
+      value: this._isMultiSelect() ? objectValues : [head(objectValues)]
     };
 
     if (this.props.searchable && this.props.clearSearchOnSelection) {
-      _.extend(newState, {
+      extend(newState, {
         searchString: ""
       });
     }
@@ -1334,11 +1355,11 @@ class ReactSuperSelect extends React.Component {
       return false;
     }
 
-    const firstValue = _.head(this.state.value)[this.state.valueKey],
+    const firstValue = head(this.state.value)[this.state.valueKey],
           firstTag = this._rssDOM[this._getTagRemoveIndex(firstValue)];
 
     if (firstTag) {
-      if (_.isFunction(firstTag.focus)) {
+      if (isFunction(firstTag.focus)) {
         firstTag.focus();
         return true;
       }
@@ -1370,8 +1391,8 @@ ReactSuperSelect.defaultProps = {
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
-  onCloseDropdown: _.noop,
-  onOpenDropdown: _.noop,
+  onCloseDropdown: noop,
+  onOpenDropdown: noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
