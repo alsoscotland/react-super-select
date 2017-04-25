@@ -34134,8 +34134,6 @@ module.exports = require('./lib/React');
 
 var _lodash = require('lodash');
 
-var _lodash2 = _interopRequireDefault(_lodash);
-
 var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
@@ -34201,7 +34199,7 @@ var ReactSuperSelect = function (_React$Component) {
       up: 38
     };
 
-    _this.ariaRelevantKeydownCodes = _lodash2.default.values(_this.keymap);
+    _this.ariaRelevantKeydownCodes = (0, _lodash.values)(_this.keymap);
 
     // NON-STATE VARS (no need to re-render based on these being set)
 
@@ -34218,7 +34216,7 @@ var ReactSuperSelect = function (_React$Component) {
       ajaxError: false,
 
       // **controlId** (String) - A unique identifier for the rss control. This value is used to generate aria accessibility labels
-      controlId: _this.props.controlId || _lodash2.default.uniqueId('rss_'),
+      controlId: _this.props.controlId || (0, _lodash.uniqueId)('rss_'),
 
       // **data** (Array of Objects) the active dataSource collection used to map to option elements, with any search filtering results reflected
       data: _this._configureDataSource(_this.props.dataSource),
@@ -34236,7 +34234,7 @@ var ReactSuperSelect = function (_React$Component) {
       labelKey: _this.props.optionLabelKey,
 
       // **lastOptionId** (Number) - Used in keyboard navigation to focus the last available option in the dropdown
-      lastOptionId: _lodash2.default.isArray(_this.props.dataSource) && _this.props.dataSource.length > 0 ? _this.props.dataSource.length - 1 : undefined,
+      lastOptionId: (0, _lodash.isArray)(_this.props.dataSource) && _this.props.dataSource.length > 0 ? _this.props.dataSource.length - 1 : undefined,
 
       // **searchString** (String) - When the **searchable** option is true, this is the user-entered value in the search field. It is used for data filtering based on the label key's value
       searchString: "",
@@ -34249,7 +34247,7 @@ var ReactSuperSelect = function (_React$Component) {
     };
 
     // force control instance context in all internal class functions
-    _lodash2.default.bindAll(_this, ['toggleDropdown', '_ariaGetActiveDescendentId', '_ariaGetListId', '_arrestScroll', '_broadcastChange', '_buildInitialValue', '_clearSearchString', '_clearSelection', '_closeOnKeypress', '_configureDataSource', '_defaultSearchFilter', '_deselectAction', '_fetchDataViaAjax', '_fetchNextPage', '_filterDataBySearchString', '_findArrayOfOptionDataObjectsByValue', '_focusCurrentFocusedId', '_focusDOMOption', '_focusRemovalButtons', '_focusTrigger', '_generateValueDisplay', '_getAjaxErrorMarkup', '_getDataSource', '_getDropdownContent', '_getFocusedOptionKey', '_getGroupHeadingMarkup', '_getNoResultsMarkup', '_getNormalDisplayMarkup', '_getLoadingMarkup', '_getOptionIndexFromTarget', '_getOptionsMarkup', '_getOptionValueFromDataAttr', '_getPagingLi', '_getSearchContent', '_getTagsDisplayMarkup', '_getTagMarkup', '_getTagRemoveIndex', '_getTemplatedOptions', '_handleDocumentClick', '_handleKeyDown', '_handleSearch', '_isCurrentlySelected', '_isMultiSelect', '_isUserSearchTypingEvent', '_mapDataToOptionsMarkup', '_moveFocusDown', '_moveFocusUp', '_needsAjaxFetch', '_onDownKey', '_onEndKey', '_onEnterKey', '_onEscKey', '_onHomeKey', '_onMouseMove', '_onUpKey', '_pageFetchingComplete', '_removeAllOptionsInOptionIdRange', '_removeSelectedOptionByValue', '_removeTagKeyPress', '_removeTagClick', '_selectAllOptionsInOptionIdRange', '_selectAllOptionsToLastUserSelectedOption', '_selectFocusedOption', '_selectItemByValues', '_selectItemOnOptionClick', '_setFocusIdToSearch', '_setFocusOnOpen', '_setFocusToTagRemovalIfPresent', '_updateFocusedId']);
+    (0, _lodash.bindAll)(_this, ['toggleDropdown', '_ariaGetActiveDescendentId', '_ariaGetListId', '_arrestScroll', '_broadcastChange', '_buildInitialValue', '_clearSearchString', '_clearSelection', '_closeOnKeypress', '_configureDataSource', '_defaultSearchFilter', '_deselectAction', '_fetchDataViaAjax', '_fetchNextPage', '_filterDataBySearchString', '_findArrayOfOptionDataObjectsByValue', '_focusCurrentFocusedId', '_focusDOMOption', '_focusRemovalButtons', '_focusTrigger', '_generateValueDisplay', '_getAjaxErrorMarkup', '_getDataSource', '_getDropdownContent', '_getFocusedOptionKey', '_getGroupHeadingMarkup', '_getNoResultsMarkup', '_getNormalDisplayMarkup', '_getLoadingMarkup', '_getOptionIndexFromTarget', '_getOptionsMarkup', '_getOptionValueFromDataAttr', '_getPagingLi', '_getSearchContent', '_getTagsDisplayMarkup', '_getTagMarkup', '_getTagRemoveIndex', '_getTemplatedOptions', '_handleDocumentClick', '_handleKeyDown', '_handleSearch', '_isCurrentlySelected', '_isMultiSelect', '_isUserSearchTypingEvent', '_mapDataToOptionsMarkup', '_moveFocusDown', '_moveFocusUp', '_needsAjaxFetch', '_onDownKey', '_onEndKey', '_onEnterKey', '_onEscKey', '_onHomeKey', '_onMouseMove', '_onUpKey', '_pageFetchingComplete', '_removeAllOptionsInOptionIdRange', '_removeSelectedOptionByValue', '_removeTagKeyPress', '_removeTagClick', '_selectAllOptionsInOptionIdRange', '_selectAllOptionsToLastUserSelectedOption', '_selectFocusedOption', '_selectItemByValues', '_selectItemOnOptionClick', '_setFocusIdToSearch', '_setFocusOnOpen', '_setFocusToTagRemovalIfPresent', '_updateFocusedId']);
 
     return _this;
   }
@@ -34270,7 +34268,7 @@ var ReactSuperSelect = function (_React$Component) {
       this.setState({
         isOpen: true
       }, function () {
-        if (_this2.props.focusOnMount && !_lodash2.default.isFunction(_this2.props.ajaxDataFetch)) {
+        if (_this2.props.focusOnMount && !(0, _lodash.isFunction)(_this2.props.ajaxDataFetch)) {
           _this2._moveFocusDown();
         }
       });
@@ -34292,33 +34290,33 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
     var newState = {};
 
-    if (!_lodash2.default.isUndefined(nextProps.optionLabelKey) && nextProps.optionLabelKey !== this.props.optionLabelKey) {
+    if (!(0, _lodash.isUndefined)(nextProps.optionLabelKey) && nextProps.optionLabelKey !== this.props.optionLabelKey) {
       newState.labelKey = nextProps.optionLabelKey;
     }
 
-    if (!_lodash2.default.isUndefined(nextProps.optionValueKey) && nextProps.optionValueKey !== this.props.optionValueKey) {
+    if (!(0, _lodash.isUndefined)(nextProps.optionValueKey) && nextProps.optionValueKey !== this.props.optionValueKey) {
       newState.valueKey = nextProps.optionValueKey;
     }
 
-    if (!_lodash2.default.isEqual(this.props.dataSource, nextProps.dataSource)) {
+    if (!(0, _lodash.isEqual)(this.props.dataSource, nextProps.dataSource)) {
       this.lastUserSelectedOption = undefined;
 
       var newValue = this.props.clearSelectedValueOnDataSourceChange ? [] : this.state.value;
 
-      newState = _lodash2.default.extend(newState, {
+      newState = (0, _lodash.extend)(newState, {
         data: this._configureDataSource(nextProps.dataSource),
         rawDataSource: nextProps.dataSource,
         focusedId: undefined,
         value: newValue,
-        lastOptionId: _lodash2.default.isArray(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
+        lastOptionId: (0, _lodash.isArray)(nextProps.dataSource) && nextProps.dataSource.length > 0 ? nextProps.dataSource.length - 1 : undefined
       });
     }
 
-    if (!_lodash2.default.isEqual(nextProps.initialValue, this.props.initialValue)) {
+    if (!(0, _lodash.isEqual)(nextProps.initialValue, this.props.initialValue)) {
       newState.value = this._buildInitialValue(nextProps);
     }
 
-    if (!_lodash2.default.isEmpty(newState)) {
+    if (!(0, _lodash.isEmpty)(newState)) {
       this.setState(newState);
     }
   };
@@ -34366,7 +34364,7 @@ var ReactSuperSelect = function (_React$Component) {
     placeholderString = this.props.placeholder ? this.props.placeholder : this.props.placeholder;
     triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
 
-    if (!_lodash2.default.isEmpty(this.state.value) && this.props.clearable !== false) {
+    if (!(0, _lodash.isEmpty)(this.state.value) && this.props.clearable !== false) {
       clearSelectionButton = _react2.default.createElement(
         'button',
         { 'aria-label': clearSelectionLabelString, ref: function ref(c) {
@@ -34427,7 +34425,7 @@ var ReactSuperSelect = function (_React$Component) {
     };
 
     if (this.state.isOpen) {
-      _lodash2.default.extend(newState, {
+      (0, _lodash.extend)(newState, {
         focusedId: undefined
       });
     }
@@ -34498,8 +34496,8 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._broadcastChange = function _broadcastChange() {
-    var outputValue = this._isMultiSelect() ? this.state.value : _lodash2.default.head(this.state.value);
-    outputValue = _lodash2.default.isEmpty(outputValue) ? undefined : outputValue;
+    var outputValue = this._isMultiSelect() ? this.state.value : (0, _lodash.head)(this.state.value);
+    outputValue = (0, _lodash.isEmpty)(outputValue) ? undefined : outputValue;
     this.props.onChange(outputValue);
   };
 
@@ -34510,11 +34508,11 @@ var ReactSuperSelect = function (_React$Component) {
     props = props || this.props;
     var initialValue = [];
 
-    if (!_lodash2.default.isUndefined(props.initialValue)) {
-      initialValue = _lodash2.default.isArray(props.initialValue) ? props.initialValue : [props.initialValue];
+    if (!(0, _lodash.isUndefined)(props.initialValue)) {
+      initialValue = (0, _lodash.isArray)(props.initialValue) ? props.initialValue : [props.initialValue];
 
       if (!this._isMultiSelect()) {
-        initialValue = [_lodash2.default.head(initialValue)];
+        initialValue = [(0, _lodash.head)(initialValue)];
       }
     }
 
@@ -34573,18 +34571,18 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._configureDataSource = function _configureDataSource(dataSource) {
-    if (_lodash2.default.isArray(dataSource)) {
+    if ((0, _lodash.isArray)(dataSource)) {
       return dataSource;
     }
 
-    if (_lodash2.default.isObject(dataSource)) {
-      if (_lodash2.default.isArray(dataSource.collection)) {
+    if ((0, _lodash.isObject)(dataSource)) {
+      if ((0, _lodash.isArray)(dataSource.collection)) {
         return dataSource.collection;
       }
 
-      if (_lodash2.default.isFunction(dataSource.get)) {
+      if ((0, _lodash.isFunction)(dataSource.get)) {
         var collection = dataSource.get('collection');
-        if (_lodash2.default.isArray(collection)) {
+        if ((0, _lodash.isArray)(collection)) {
           return collection;
         }
       }
@@ -34603,7 +34601,7 @@ var ReactSuperSelect = function (_React$Component) {
       }
       return false;
     }
-    var callback = shouldClose ? this._closeOnKeypress : _lodash2.default.noop;
+    var callback = shouldClose ? this._closeOnKeypress : _lodash.noop;
     this._removeSelectedOptionByValue(value, callback);
   };
 
@@ -34613,7 +34611,7 @@ var ReactSuperSelect = function (_React$Component) {
 
   ReactSuperSelect.prototype._defaultSearchFilter = function _defaultSearchFilter(option) {
     var search = this.state.searchString.toLowerCase();
-    if (!_lodash2.default.isString(option[this.state.labelKey])) {
+    if (!(0, _lodash.isString)(option[this.state.labelKey])) {
       return false;
     }
     return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
@@ -34672,12 +34670,12 @@ var ReactSuperSelect = function (_React$Component) {
     var self = this;
 
     var filterFunction = this._defaultSearchFilter;
-    if (_lodash2.default.isFunction(this.props.customFilterFunction)) {
+    if ((0, _lodash.isFunction)(this.props.customFilterFunction)) {
       filterFunction = function filterFunction(value, index, collection) {
         return self.props.customFilterFunction.apply(self, [value, index, collection, self.state.searchString.toLowerCase()]);
       };
     }
-    return _lodash2.default.filter(data, filterFunction);
+    return (0, _lodash.filter)(data, filterFunction);
   };
 
   // used when selecting values, returns an array of full option-data objects which contain any single value, or any one of an array of values passed in
@@ -34686,9 +34684,9 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._findArrayOfOptionDataObjectsByValue = function _findArrayOfOptionDataObjectsByValue(value) {
     var _this6 = this;
 
-    var valuesArray = _lodash2.default.isArray(value) ? _lodash2.default.map(value, this.state.valueKey) : [value];
-    return _lodash2.default.reject(this.state.data, function (item) {
-      return !_lodash2.default.includes(valuesArray, item[_this6.state.valueKey]);
+    var valuesArray = (0, _lodash.isArray)(value) ? (0, _lodash.map)(value, this.state.valueKey) : [value];
+    return (0, _lodash.reject)(this.state.data, function (item) {
+      return !(0, _lodash.includes)(valuesArray, item[_this6.state.valueKey]);
     });
   };
 
@@ -34710,7 +34708,7 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._focusDOMOption = function _focusDOMOption() {
     var optionRef = this._getFocusedOptionKey();
     if (this._rssDOM[optionRef]) {
-      if (_lodash2.default.isFunction(this._rssDOM[optionRef].focus)) {
+      if ((0, _lodash.isFunction)(this._rssDOM[optionRef].focus)) {
         this._rssDOM[optionRef].focus();
       }
     }
@@ -34751,7 +34749,7 @@ var ReactSuperSelect = function (_React$Component) {
       buttons[nextButtonIndexToFocus].focus();
     } else if (nextButtonIndexToFocus && nextButtonIndexToFocus < 0) {
       this._focusTrigger();
-    } else if (buttons[0] && !_lodash2.default.isNumber(currentlyFocusedRemoveButtonIndex)) {
+    } else if (buttons[0] && !(0, _lodash.isNumber)(currentlyFocusedRemoveButtonIndex)) {
       this._arrestEvent(event);
       buttons[0].focus();
     }
@@ -34802,13 +34800,13 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getDataSource = function _getDataSource() {
-    var data = _lodash2.default.isArray(this.state.data) ? this.state.data : [];
-    if (_lodash2.default.isString(this.state.searchString)) {
+    var data = (0, _lodash.isArray)(this.state.data) ? this.state.data : [];
+    if ((0, _lodash.isString)(this.state.searchString)) {
       data = this._filterDataBySearchString(data);
     }
 
     if (this.props.groupBy) {
-      data = _lodash2.default.groupBy(data, this.props.groupBy);
+      data = (0, _lodash.groupBy)(data, this.props.groupBy);
     }
 
     return data;
@@ -34917,7 +34915,7 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._getNormalDisplayMarkup = function _getNormalDisplayMarkup() {
     var _this10 = this;
 
-    return _lodash2.default.map(this.state.value, function (value) {
+    return (0, _lodash.map)(this.state.value, function (value) {
       var selectedKey = "r_ss_selected_" + value[_this10.state.labelKey];
       if (_this10.props.customOptionTemplateFunction) {
         return _this10.props.customOptionTemplateFunction(value);
@@ -34975,8 +34973,8 @@ var ReactSuperSelect = function (_React$Component) {
     var options = [],
         optionsCount = 0;
 
-    if (!_lodash2.default.isArray(data)) {
-      _lodash2.default.forIn(data, function (groupedOptions, heading) {
+    if (!(0, _lodash.isArray)(data)) {
+      (0, _lodash.forIn)(data, function (groupedOptions, heading) {
         options.push(_this12._getGroupHeadingMarkup(heading));
         options = options.concat(_this12._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
@@ -35030,7 +35028,7 @@ var ReactSuperSelect = function (_React$Component) {
         searchAriaId = this.state.controlId + '_search',
         searchAriaIdLabel = searchAriaId + '_label';
 
-    if (_lodash2.default.isString(this.state.searchString) && !_lodash2.default.isEmpty(this.state.searchString)) {
+    if ((0, _lodash.isString)(this.state.searchString) && !(0, _lodash.isEmpty)(this.state.searchString)) {
       clearSearch = _react2.default.createElement(
         'button',
         { 'aria-label': clearSearchLabelString, ref: function ref(c) {
@@ -35080,7 +35078,7 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._getTagsDisplayMarkup = function _getTagsDisplayMarkup() {
     var _this14 = this;
 
-    return _lodash2.default.map(this.state.value, function (value) {
+    return (0, _lodash.map)(this.state.value, function (value) {
       return _this14._getTagMarkup(value);
     });
   };
@@ -35172,7 +35170,7 @@ var ReactSuperSelect = function (_React$Component) {
     }
     if (this.state.isOpen) {
       // stop propagation of keyboard events relevant to an open super select
-      if (_lodash2.default.includes(this.ariaRelevantKeydownCodes, event.which)) {
+      if ((0, _lodash.includes)(this.ariaRelevantKeydownCodes, event.which)) {
         this._arrestEvent(event);
       }
     }
@@ -35224,10 +35222,10 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._isCurrentlySelected = function _isCurrentlySelected(dataItem) {
-    if (!_lodash2.default.isArray(this.state.value)) {
-      return _lodash2.default.isEqual(this.state.value, dataItem);
+    if (!(0, _lodash.isArray)(this.state.value)) {
+      return (0, _lodash.isEqual)(this.state.value, dataItem);
     }
-    return !!_lodash2.default.find(this.state.value, dataItem);
+    return !!(0, _lodash.find)(this.state.value, dataItem);
   };
 
   // tags and mutiple both provide multi-select behavior.  Returns true if either is set to true
@@ -35254,7 +35252,7 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._mapDataToOptionsMarkup = function _mapDataToOptionsMarkup(data, indexStart) {
     var _this16 = this;
 
-    return _lodash2.default.map(data, function (dataOption, index) {
+    return (0, _lodash.map)(data, function (dataOption, index) {
       index = indexStart + index;
 
       var indexRef = 'option_' + index;
@@ -35263,8 +35261,8 @@ var ReactSuperSelect = function (_React$Component) {
           isCurrentlySelected = _this16._isCurrentlySelected(dataOption),
           itemKey = "drop_li_" + dataOption[_this16.state.valueKey],
           ariaDescendantId = _this16.state.controlId + '_aria_' + indexRef,
-          clickHandler = isDisabled ? _lodash2.default.noop : _this16._selectItemOnOptionClick.bind(null, dataOption),
-          optionMarkup = _lodash2.default.isFunction(_this16.props.customOptionTemplateFunction) ? _this16.props.customOptionTemplateFunction(dataOption, _this16.state.searchString) : dataOption[_this16.state.labelKey],
+          clickHandler = isDisabled ? _lodash.noop : _this16._selectItemOnOptionClick.bind(null, dataOption),
+          optionMarkup = (0, _lodash.isFunction)(_this16.props.customOptionTemplateFunction) ? _this16.props.customOptionTemplateFunction(dataOption, _this16.state.searchString) : dataOption[_this16.state.labelKey],
           classes = (0, _classnames2.default)('r-ss-dropdown-option', {
         'r-ss-selected': isCurrentlySelected,
         'r-ss-disabled': isDisabled
@@ -35300,7 +35298,7 @@ var ReactSuperSelect = function (_React$Component) {
     }
     var nextId = void 0;
 
-    if (_lodash2.default.isUndefined(this.state.focusedId)) {
+    if ((0, _lodash.isUndefined)(this.state.focusedId)) {
       if (this.props.searchable) {
         nextId = this.SEARCH_FOCUS_ID;
       } else {
@@ -35319,7 +35317,7 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._moveFocusUp = function _moveFocusUp() {
     var previousId = void 0;
 
-    if (!_lodash2.default.isUndefined(this.state.focusedId) && this.state.focusedId !== this.SEARCH_FOCUS_ID) {
+    if (!(0, _lodash.isUndefined)(this.state.focusedId) && this.state.focusedId !== this.SEARCH_FOCUS_ID) {
       if (this.state.focusedId === 0) {
         if (this.props.searchable) {
           previousId = this.SEARCH_FOCUS_ID;
@@ -35335,7 +35333,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._needsAjaxFetch = function _needsAjaxFetch() {
-    return _lodash2.default.isUndefined(this.state.rawDataSource) && _lodash2.default.isFunction(this.props.ajaxDataFetch);
+    return (0, _lodash.isUndefined)(this.state.rawDataSource) && (0, _lodash.isFunction)(this.props.ajaxDataFetch);
   };
 
   // down key handler
@@ -35403,7 +35401,7 @@ var ReactSuperSelect = function (_React$Component) {
 
   ReactSuperSelect.prototype._onMouseMove = function _onMouseMove() {
     // do not fetch page if searching or already loading data
-    if (this._rssDOM.loader || !_lodash2.default.isEmpty(this.state.searchString) || !this._pageFetchingComplete()) {
+    if (this._rssDOM.loader || !(0, _lodash.isEmpty)(this.state.searchString) || !this._pageFetchingComplete()) {
       return;
     }
 
@@ -35439,7 +35437,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._pageFetchingComplete = function _pageFetchingComplete() {
-    if (!_lodash2.default.isFunction(this.props.hasMorePages)) {
+    if (!(0, _lodash.isFunction)(this.props.hasMorePages)) {
       return false;
     }
     return this.props.hasMorePages(this.state.rawDataSource);
@@ -35468,8 +35466,8 @@ var ReactSuperSelect = function (_React$Component) {
       }
     }
 
-    var remainingSelected = _lodash2.default.reject(this.state.value, function (opt) {
-      return _lodash2.default.includes(valuePropsToReject, opt[_this17.state.valueKey]);
+    var remainingSelected = (0, _lodash.reject)(this.state.value, function (opt) {
+      return (0, _lodash.includes)(valuePropsToReject, opt[_this17.state.valueKey]);
     });
 
     this.setState({
@@ -35484,14 +35482,14 @@ var ReactSuperSelect = function (_React$Component) {
   ReactSuperSelect.prototype._removeSelectedOptionByValue = function _removeSelectedOptionByValue(value) {
     var _this18 = this;
 
-    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _lodash2.default.noop;
+    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _lodash.noop;
 
     // clear lastUserSelected if has been removed
     if (this.lastUserSelectedOption && this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey]) {
       this.lastUserSelectedOption = undefined;
     }
 
-    var SelectedAfterRemoval = _lodash2.default.reject(this.state.value, function (option) {
+    var SelectedAfterRemoval = (0, _lodash.reject)(this.state.value, function (option) {
       return option[_this18.state.valueKey] === value[_this18.state.valueKey];
     });
 
@@ -35543,8 +35541,8 @@ var ReactSuperSelect = function (_React$Component) {
       }
     }
 
-    var optionsToSelect = _lodash2.default.reduce(this.state.data, function (memo, opt) {
-      if (_lodash2.default.includes(valuePropsToSelect, opt[_this19.state.valueKey])) {
+    var optionsToSelect = (0, _lodash.reduce)(this.state.data, function (memo, opt) {
+      if ((0, _lodash.includes)(valuePropsToSelect, opt[_this19.state.valueKey])) {
         if (!opt.disabled) {
           memo.push(opt);
         }
@@ -35601,7 +35599,7 @@ var ReactSuperSelect = function (_React$Component) {
       this.lastUserSelectedOption = eventTargetLi;
 
       if (this.SELECTED_OPTION_REGEX.test(this._rssDOM[focusedOptionKey].className)) {
-        var optionFullFromValueProp = _lodash2.default.head(this._findArrayOfOptionDataObjectsByValue(optionValue));
+        var optionFullFromValueProp = (0, _lodash.head)(this._findArrayOfOptionDataObjectsByValue(optionValue));
         this._deselectAction(optionFullFromValueProp, keepControlOpen);
       } else {
         keepControlOpen = keepControlOpen || false;
@@ -35627,11 +35625,11 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     var newState = {
-      value: this._isMultiSelect() ? objectValues : [_lodash2.default.head(objectValues)]
+      value: this._isMultiSelect() ? objectValues : [(0, _lodash.head)(objectValues)]
     };
 
     if (this.props.searchable && this.props.clearSearchOnSelection) {
-      _lodash2.default.extend(newState, {
+      (0, _lodash.extend)(newState, {
         searchString: ""
       });
     }
@@ -35696,11 +35694,11 @@ var ReactSuperSelect = function (_React$Component) {
       return false;
     }
 
-    var firstValue = _lodash2.default.head(this.state.value)[this.state.valueKey],
+    var firstValue = (0, _lodash.head)(this.state.value)[this.state.valueKey],
         firstTag = this._rssDOM[this._getTagRemoveIndex(firstValue)];
 
     if (firstTag) {
-      if (_lodash2.default.isFunction(firstTag.focus)) {
+      if ((0, _lodash.isFunction)(firstTag.focus)) {
         firstTag.focus();
         return true;
       }
@@ -35738,8 +35736,8 @@ ReactSuperSelect.defaultProps = {
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
-  onCloseDropdown: _lodash2.default.noop,
-  onOpenDropdown: _lodash2.default.noop,
+  onCloseDropdown: _lodash.noop,
+  onOpenDropdown: _lodash.noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
