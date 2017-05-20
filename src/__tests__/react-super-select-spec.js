@@ -1,14 +1,39 @@
 jest.dontMock('lodash');
 jest.dontMock('../react-super-select.js');
 
-describe('ReactSuperSelect', function() {
-  var _ = require('lodash'),
-      React = require('react'),
-      ReactDOM = require('react-dom'),
-      ReactSuperSelect = require('../react-super-select.js'),
-      TestUtils = require('react-addons-test-utils');
+import _ from "lodash";
+import React from "react";
+import ReactDOM from "react-dom";
+import ReactSuperSelect from "../react-super-select.js";
+import TestUtils from "react-dom/test-utils";
 
-  var mockData = [
+class TestHelperComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clearSelectedValueOnDataSourceChange: false,
+      dataSource: [this.props.optOne, this.props.optTwo],
+      initialValue: this.props.optOne,
+      optionLabelKey: undefined,
+      optionValueKey: undefined
+    };
+  }
+
+  render() {
+    return React.createElement(ReactSuperSelect, {
+              ref: (c) => {this.rss = c },
+              onChange: _.noop,
+              clearSelectedValueOnDataSourceChange: this.state.clearSelectedValueOnDataSourceChange,
+              dataSource: this.state.dataSource,
+              initialValue: this.state.initialValue,
+              optionLabelKey: this.state.optionLabelKey,
+              optionValueKey: this.state.optionValueKey
+            });
+  }
+};
+
+describe('ReactSuperSelect', function() {
+  const mockData = [
           {'id': 1, 'name': 'option one', 'blah': 'blah one', 'fancyprop': 'I am a fancy one', 'type': 'widget'},
           {'id': 2, 'name': 'option two', 'blah': 'blah two', 'fancyprop': 'I am a fancy two', 'type': 'whatzit'},
           {'id': 3, 'name': 'option three', 'blah': 'blah three', 'fancyprop': 'I am a fancy three', 'type': 'thingamajig'},
@@ -19,17 +44,17 @@ describe('ReactSuperSelect', function() {
 
   mockDataWithDisabledOption[1] = _.extend({}, mockDataWithDisabledOption[1], {disabled: true});
 
-  var renderComponent = function(userProps) {
-    var props = _.extend({}, {
+  const renderComponent = function(userProps) {
+    const props = _.extend({}, {
       onChange: jest.genMockFunction(),
       dataSource: mockData
     }, userProps);
-    var reactComponent = React.createElement(ReactSuperSelect, props);
+    const reactComponent = React.createElement(ReactSuperSelect, props);
     return TestUtils.renderIntoDocument(reactComponent);
   };
 
-  var renderAndOpen = function(props) {
-    var el = renderComponent(props);
+  const renderAndOpen = function(props) {
+    const el = renderComponent(props);
     el.setState({
       isOpen: true
     });
@@ -79,7 +104,7 @@ describe('ReactSuperSelect', function() {
 
     it('trigger value display will show placeholder if provided', function() {
       var triggerDiv = el._rssDOM.triggerDiv;
-      expect(triggerDiv.childNodes[0].textContent).toBe('I am a placeholder');
+      expect(triggerDiv.childNodes[1].textContent).toBe('I am a placeholder');
     });
 
     it('adds placeholder display class when value unset', function() {
@@ -319,7 +344,7 @@ describe('ReactSuperSelect', function() {
 
       el.toggleDropdown();
 
-      var setFocusSpy = spyOn(el, '_setFocusOnOpen').andCallThrough();
+      var setFocusSpy = spyOn(el, '_setFocusOnOpen').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.selectionClear, {
         which: el.keymap.space
@@ -499,7 +524,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('calls _setFocusOnOpen after opening', function() {
-      var setFocusSpy = spyOn(el, '_setFocusOnOpen').andCallThrough();
+      var setFocusSpy = spyOn(el, '_setFocusOnOpen').and.callThrough();
 
       el.toggleDropdown();
 
@@ -533,7 +558,7 @@ describe('ReactSuperSelect', function() {
       var el = renderComponent({
         searchable: false
       });
-      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.down,
@@ -547,7 +572,7 @@ describe('ReactSuperSelect', function() {
 
     it('focuses first option on home key keypress', function() {
       var el = renderComponent();
-      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.home,
@@ -561,7 +586,7 @@ describe('ReactSuperSelect', function() {
 
     it('focuses last option on end key keypress', function() {
       var el = renderComponent();
-      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.end,
@@ -579,7 +604,7 @@ describe('ReactSuperSelect', function() {
 
       TestUtils.Simulate.click(options[3]);
 
-      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
       el.toggleDropdown();
 
       expect(focusSpy).toHaveBeenCalled();
@@ -722,7 +747,7 @@ describe('ReactSuperSelect', function() {
       });
       el.setState({
         isOpen: true,
-        searchString: undefined
+        searchString: ""
       });
 
       expect(el._rssDOM.searchClear).toBeUndefined();
@@ -804,7 +829,8 @@ describe('ReactSuperSelect', function() {
         searchable: false,
         dataSource: mockDataWithDisabledOption
       });
-      var focusSpy = spyOn(el, '_focusDOMOption').andCallThrough();
+
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.down,
@@ -812,7 +838,7 @@ describe('ReactSuperSelect', function() {
         stopPropagation: _.noop
       });
 
-      focusSpy.reset();
+      focusSpy.calls.reset();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
         which: el.keymap.down,
@@ -1232,13 +1258,14 @@ describe('ReactSuperSelect', function() {
 
       var removeTagButtons = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-tag-remove');
       var tagFocusSpy = spyOn(el, '_setFocusToTagRemovalIfPresent');
+
       TestUtils.Simulate.keyDown(removeTagButtons[0], {
         which: el.keymap.enter,
         preventDefault: jest.genMockFunction(),
         stopPropagation: jest.genMockFunction()
       });
 
-      expect(tagFocusSpy.calls.length).toBe(1);
+      expect(tagFocusSpy.calls.count()).toBe(1);
     });
 
     it('tag deletion works via enter key', function() {
@@ -1637,9 +1664,9 @@ describe('ReactSuperSelect', function() {
         })
       });
       scrollNode = el._rssDOM.scrollWrap;
-      scrollNode.scrollHeight = 100;
-      scrollNode.offsetHeight = 55;
-      scrollNode.scrollTop = 50;
+      scrollNode.setAttribute("scrollHeight", 100);
+      scrollNode.setAttribute("offsetHeight", 55);
+      scrollNode.setAttribute("scrollTop", 50);
     });
 
     it('calls the pageDataFetch handler after scroll threshold is reached', function() {
@@ -1738,11 +1765,14 @@ describe('ReactSuperSelect', function() {
 
     it('will stop Propagation of scroll down events in an open dropdown when scrollHeight is reached', function() {
       var el = renderAndOpen({});
-      el._rssDOM.scrollWrap.scrollTop = 0;
-      el._rssDOM.scrollWrap.clientHeight = 11;
-      el._rssDOM.scrollWrap.scrollHeight = 10;
 
-      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+      el._rssDOM.scrollWrap = {
+        scrollTop: 0,
+        clientHeight: 11,
+        scrollHeight: 10
+      };
+
+      var arrestSpy = spyOn(el, '_arrestEvent').and.returnValue(undefined);
 
       el._arrestScroll({
         deltaY: 11
@@ -1753,11 +1783,14 @@ describe('ReactSuperSelect', function() {
 
     it('will not stop Propagation of scroll down events in an open dropdown when scrollHeight is not yet reached', function() {
       var el = renderAndOpen({});
-      el._rssDOM.scrollWrap.scrollTop = 0;
-      el._rssDOM.scrollWrap.clientHeight = 5;
-      el._rssDOM.scrollWrap.scrollHeight = 10;
 
-      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+      el._rssDOM.scrollWrap = {
+        scrollTop: 0,
+        clientHeight: 5,
+        scrollHeight: 10
+      };
+
+      var arrestSpy = spyOn(el, '_arrestEvent').and.callFake(_.noop);
 
       el._arrestScroll({
         deltaY: 4
@@ -1768,10 +1801,13 @@ describe('ReactSuperSelect', function() {
 
     it('will stop Propagation of scroll up events in an open dropdown when top is reached', function() {
       var el = renderAndOpen({});
-      el._rssDOM.scrollWrap.scrollTop = 0;
-      el._rssDOM.scrollWrap.clientHeight = 11;
 
-      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+      el._rssDOM.scrollWrap = {
+        scrollTop: 0,
+        clientHeight: 11
+      };
+
+      var arrestSpy = spyOn(el, '_arrestEvent').and.returnValue(undefined);
 
       el._arrestScroll({
         deltaY: -1
@@ -1785,7 +1821,7 @@ describe('ReactSuperSelect', function() {
         forceDefaultBrowserScrolling: true
       });
 
-      var arrestSpy = spyOn(el, '_arrestEvent').andReturn();
+      var arrestSpy = spyOn(el, '_arrestEvent').and.returnValue(undefined);
 
       el._arrestScroll({});
 
@@ -1804,7 +1840,7 @@ describe('ReactSuperSelect', function() {
   });
 
   describe('componentWillReceiveProps', function() {
-    var optOne = {
+    const optOne = {
           id: 1,
           name: "Test Option 1",
           foo: "Foo1",
@@ -1815,69 +1851,51 @@ describe('ReactSuperSelect', function() {
           name: "Test Option 2",
           foo: "Foo2",
           bar: "Bar2"
-        },
-        parent,
-        testParentComponent;
+        };
+
+    let parent;
 
     beforeEach(function() {
-      testParentComponent = React.createFactory(React.createClass({
-        getInitialState: function() {
-          return {
-            clearSelectedValueOnDataSourceChange: false,
-            dataSource: [optOne, optTwo],
-            initialValue: optOne,
-            optionLabelKey: undefined,
-            optionValueKey: undefined
-          };
-        },
-        render: function() {
-          return React.createElement(ReactSuperSelect, {
-                    ref: "rss",
-                    onChange: _.noop,
-                    clearSelectedValueOnDataSourceChange: this.state.clearSelectedValueOnDataSourceChange,
-                    dataSource: this.state.dataSource,
-                    initialValue: this.state.initialValue,
-                    optionLabelKey: this.state.optionLabelKey,
-                    optionValueKey: this.state.optionValueKey
-                  });
-        }
+      // parent = TestUtils.renderIntoDocument(React.createElement(TestHelperComponent));
+      parent =TestUtils.renderIntoDocument(React.createElement(TestHelperComponent, {
+        optOne: optOne,
+        optTwo: optTwo
       }));
-      parent = TestUtils.renderIntoDocument(testParentComponent());
     });
 
     it('resets to new initial value on initial value prop change', function() {
-      expect(parent.refs.rss.props.initialValue).toBe(optOne);
-      expect(_.isEqual(parent.refs.rss.state.value, [optOne])).toBe(true);
+      expect(parent.rss.props.initialValue).toBe(optOne);
+      expect(_.isEqual(parent.rss.state.value, [optOne])).toBe(true);
       parent.setState({
         initialValue: optTwo
       });
-      expect(_.isEqual(parent.refs.rss.state.value, [optTwo])).toBe(true);
+      expect(_.isEqual(parent.rss.state.value, [optTwo])).toBe(true);
     });
 
     it('will update the optionLabel Key', function() {
-      expect(parent.refs.rss.state.labelKey).toBe("name");
+      expect(parent.rss.state.labelKey).toBe("name");
       parent.setState({
         optionLabelKey: "foo"
       });
-      expect(parent.refs.rss.state.labelKey).toBe("foo");
+      expect(parent.rss.state.labelKey).toBe("foo");
     });
 
     it('will update the optionValue Key', function() {
-      expect(parent.refs.rss.state.valueKey).toBe("id");
+      expect(parent.rss.state.valueKey).toBe("id");
       parent.setState({
         optionValueKey: "bar"
       });
-      expect(parent.refs.rss.state.valueKey).toBe("bar");
+      expect(parent.rss.state.valueKey).toBe("bar");
     });
 
     it('will update on dataSource change', function() {
-      var lastData = parent.refs.rss.state.data;
+      var lastData = parent.rss.state.data;
       parent.setState({
         dataSource: [optTwo]
       });
-      expect(_.isEqual(parent.refs.rss.state.data, lastData)).toBeFalsy();
-      expect(_.isEqual(parent.refs.rss.state.rawDataSource, [optTwo])).toBeTruthy();
-      expect(parent.refs.rss.state.lastOptionId).toBe(0);
+      expect(_.isEqual(parent.rss.state.data, lastData)).toBeFalsy();
+      expect(_.isEqual(parent.rss.state.rawDataSource, [optTwo])).toBeTruthy();
+      expect(parent.rss.state.lastOptionId).toBe(0);
     });
 
     it('will clear selected value dataSource change if clearSelectedValueOnDataSourceChange true', function() {
@@ -1887,7 +1905,7 @@ describe('ReactSuperSelect', function() {
       parent.setState({
         dataSource: [optTwo]
       });
-      expect(_.isEqual(parent.refs.rss.state.value, [])).toBe(true);
+      expect(_.isEqual(parent.rss.state.value, [])).toBe(true);
     });
   });
 });
