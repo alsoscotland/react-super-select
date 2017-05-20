@@ -81,6 +81,9 @@ var ReactSuperSelect = require('react-super-select');
 ### include css
 copy the css file from the lib/ folder of `node_modules/react-super-select` (react-super-select.css) into your app's css directory
 
+### Changelog
+v1.0.0 - Stable release version one:  Upgrade for React v15.5.4 support
+
 ### License
 
 MIT License
