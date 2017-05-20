@@ -4,6 +4,7 @@ var babelify = require('babelify'),
     exec = require('child_process').exec,
     gutil = require('gulp-util'),
     less = require('gulp-less'),
+    marked = require('marked');
     markdownToJson = require('gulp-markdown-to-json'),
     minifyCss = require('gulp-minify-css'),
     rename = require("gulp-rename"),
@@ -129,7 +130,7 @@ module.exports = function(gulp, config) {
 
   gulp.task('docs_markdown', function() {
     var stream = gulp.src(config.documentation.markdown.files);
-    stream.pipe(markdownToJson({
+    stream.pipe(markdownToJson(marked, {
       pedantic: true,
       smartypants: true,
       gfm: true

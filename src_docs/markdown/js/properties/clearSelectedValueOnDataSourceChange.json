@@ -1,1 +1,1 @@
-{"body":"<!-- clearSelectedValueOnDataSourceChange property -->\n<p>(<strong>Boolean</strong>) <strong>(Default: false)</strong> <em>optional</em></p>\n<p>Whether or not the control’s selected value will be cleared if the dataSource prop’s value is changed</p>\n"}
+{"body":"<!-- clearSelectedValueOnDataSourceChange property -->\n<p>(<strong>Boolean</strong>) <strong>(Default: false)</strong> <em>optional</em></p>\n<p>Whether or not the control&#39;s selected value will be cleared if the dataSource prop&#39;s value is changed</p>\n","updatedAt":"2017-01-14T18:05:25.000Z"}

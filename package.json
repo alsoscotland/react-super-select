@@ -20,8 +20,12 @@
       "./node_modules/react",
       "./node_modules/react-dom"
     ],
-    "roots": ["./src/"],
-    "transform": {".*": "./node_modules/babel-jest"},
+    "roots": [
+      "./src/"
+    ],
+    "transform": {
+      ".*": "./node_modules/babel-jest"
+    },
     "moduleFileExtensions": [
       "js",
       "json",
@@ -67,6 +71,7 @@
     "gulp-util": "^3.0.6",
     "jest-cli": "^20.0.3",
     "less": "^2.5.3",
+    "marked": "^0.3.6",
     "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": ">=0.14.0",

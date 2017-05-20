@@ -3,17 +3,30 @@ jest.dontMock('../react-super-select.js');
 
 import _ from "lodash";
 import React from "react";
-import ReactDOM from "react-dom";
 import ReactSuperSelect from "../react-super-select.js";
 import TestUtils from "react-dom/test-utils";
+
+const optOne = {
+      id: 1,
+      name: "Test Option 1",
+      foo: "Foo1",
+      bar: "Bar1"
+    },
+    optTwo = {
+      id: 2,
+      name: "Test Option 2",
+      foo: "Foo2",
+      bar: "Bar2"
+    };
 
 class TestHelperComponent extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       clearSelectedValueOnDataSourceChange: false,
-      dataSource: [this.props.optOne, this.props.optTwo],
-      initialValue: this.props.optOne,
+      dataSource: [optOne, optTwo],
+      initialValue: optOne,
       optionLabelKey: undefined,
       optionValueKey: undefined
     };
@@ -30,7 +43,7 @@ class TestHelperComponent extends React.Component {
               optionValueKey: this.state.optionValueKey
             });
   }
-};
+}
 
 describe('ReactSuperSelect', function() {
   const mockData = [
@@ -71,7 +84,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('will render', function() {
-      expect(ReactDOM.findDOMNode(el)).toBeTruthy();
+      expect(el).toBeTruthy();
     });
 
     it('will render the trigger div', function() {
@@ -1840,27 +1853,11 @@ describe('ReactSuperSelect', function() {
   });
 
   describe('componentWillReceiveProps', function() {
-    const optOne = {
-          id: 1,
-          name: "Test Option 1",
-          foo: "Foo1",
-          bar: "Bar1"
-        },
-        optTwo = {
-          id: 2,
-          name: "Test Option 2",
-          foo: "Foo2",
-          bar: "Bar2"
-        };
-
     let parent;
 
     beforeEach(function() {
       // parent = TestUtils.renderIntoDocument(React.createElement(TestHelperComponent));
-      parent =TestUtils.renderIntoDocument(React.createElement(TestHelperComponent, {
-        optOne: optOne,
-        optTwo: optTwo
-      }));
+      parent =TestUtils.renderIntoDocument(React.createElement(TestHelperComponent));
     });
 
     it('resets to new initial value on initial value prop change', function() {

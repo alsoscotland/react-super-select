@@ -85,7 +85,7 @@
     "prefer-const": 1,
     "react/display-name": 0,
     "react/no-danger": 1,
-    "react/no-did-update-set-state": [2, "allow-in-func"],
+    "react/no-did-update-set-state": [1],
     "react/no-is-mounted": 1,
     "react/no-render-return-value": 1,
     "react/prop-types": 1,
