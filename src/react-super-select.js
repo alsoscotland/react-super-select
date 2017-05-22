@@ -31,6 +31,7 @@ import { bindAll,
          uniqueId,
          values } from 'lodash';
 import classNames from 'classnames';
+import PropTypes from 'prop-types'
 import React from 'react';
 
 // PROPS and DEFAULT PROPS are declared at Bottom of File
@@ -1411,42 +1412,42 @@ ReactSuperSelect.propTypes = {
   // ---------------
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
-  clearable: React.PropTypes.bool,
+  clearable: PropTypes.bool,
 
   // **clearSelectedValueOnDataSourceChange** *optional* - (default - false) whether or not to clear selected options if passing a new dataSource value to the control
-  clearSelectedValueOnDataSourceChange: React.PropTypes.bool,
+  clearSelectedValueOnDataSourceChange: PropTypes.bool,
 
   // **closeOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will close the dropdown
-  closeOnSelectedOptionClick: React.PropTypes.bool,
+  closeOnSelectedOptionClick: PropTypes.bool,
 
   // **deselectOnSelectedOptionClick** *optional* - (default - true) whether or not clicking an already-selected option will deselect it
-  deselectOnSelectedOptionClick: React.PropTypes.bool,
+  deselectOnSelectedOptionClick: PropTypes.bool,
 
   // **disabled** *optional* - (default - false) whether the control is disabled
-  disabled: React.PropTypes.bool,
+  disabled: PropTypes.bool,
 
   // **keepOpenOnSelection** (Boolean) *optional* - Whether to keep the control open when selections are made
-  keepOpenOnSelection: React.PropTypes.bool,
+  keepOpenOnSelection: PropTypes.bool,
 
   // **multiple** (Boolean) *optional*  - Whether or not the control supports multi-selection. When using the **tags** display option, this option is redundant
-  multiple: React.PropTypes.bool,
+  multiple: PropTypes.bool,
 
   // **openOnMount** (Boolean) *optional* - Whether or not to render the control open when it initially mounts
-  openOnMount: React.PropTypes.bool,
+  openOnMount: PropTypes.bool,
 
   // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
-  focusOnMount: React.PropTypes.bool,
+  focusOnMount: PropTypes.bool,
 
   // **forceDefaultBrowserScrolling** *optional* - (default - false) - Whether to override the default behavior of arresting mouse wheel events in an open select dropdown
-  forceDefaultBrowserScrolling: React.PropTypes.bool,
+  forceDefaultBrowserScrolling: PropTypes.bool,
 
   // **searchable** (Boolean) *optional* - Whether or not to show a search bar in the dropdown area which offers text-based filtering of the **dataSource** options (by label key)
-  searchable: React.PropTypes.bool,
+  searchable: PropTypes.bool,
   // **tags** (Boolean) *optional* - Whether or not to display your chosen multi-select values as tags.  (When set, there is no need to set the **multiple** option)
-  tags: React.PropTypes.bool,
+  tags: PropTypes.bool,
 
   // **clearSearchOnSelection** (Boolean) *optional* (Used in conjunction with the **searchable** option) whether to auto-clear search field when a selection is made
-  clearSearchOnSelection: React.PropTypes.bool,
+  clearSearchOnSelection: PropTypes.bool,
 
   // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
   // -----------------------------------
@@ -1455,45 +1456,45 @@ ReactSuperSelect.propTypes = {
   // ```css
   // .r-ss-wrap.{customClass}
   // ```
-  customClass: React.PropTypes.string,
+  customClass: PropTypes.string,
 
   // **customGroupHeadingClass** (String) *optional* - Used in conjunction with the **groupBy** option.  The string value will be added as a custom css class to the group headings which are rendered into the dropdown
-  customGroupHeadingClass: React.PropTypes.string,
+  customGroupHeadingClass: PropTypes.string,
 
   // **customSearchIconClass** (String) *optional* - This value will be added as a css class to the icon element in the search-filtering bar (when **searchable** is true).  Allowing you to override the default search icon (default: a magnifying glass)
-  customSearchIconClass: React.PropTypes.string,
+  customSearchIconClass: PropTypes.string,
 
   // **customLoaderClass** (String) *optional* - Used in conjunction with the **ajaxDataFetch** option.  This string value will be added as a css class to the loading icon (default: an animated gif spinner as base64 background image in css) allowing css overrides.
-  customLoaderClass: React.PropTypes.string,
+  customLoaderClass: PropTypes.string,
 
   // **customTagClass** (String) *optional* - Used in conjunction with the **tags** option.  This value will be added as a css class to the wrapper of a selection displayed as a tag. You should be able to overide all tag styling by leading your css rules with
   // ```css
   //  .r-ss-tag.{customTagClass}
   //  ```
-  customTagClass: React.PropTypes.string,
+  customTagClass: PropTypes.string,
 
   // MAIN CHANGE HANDLER
   // -------------------
 
   // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
-  onChange: React.PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
 
   // ON OPEN / ON CLOSE HANDLERS
   // **onCloseDropdown** (Function) - a callback which will be called when the control closes
-  onCloseDropdown: React.PropTypes.func,
+  onCloseDropdown: PropTypes.func,
 
   // **onOpenDropdown** (Function) - a callback which will be called when the control opens
-  onOpenDropdown: React.PropTypes.func,
+  onOpenDropdown: PropTypes.func,
 
   // OPTION DATA-RELATED PROPS
   // -------------------------
 
   // **ajaxDataFetch** (Function) (*optional - but **dataSource** must be supplied if undefined*) - Your select dropdown's data may be fetched via ajax if you provide a function as the value for this option.
   // The function takes no arguments, but it must return a **promise** object. (i.e. an object with a then function).  The promise must resolve with a value meeting the description of the **dataSource** option documentation. The **dataSource** option should be left undefined when using this option.
-  ajaxDataFetch: React.PropTypes.func,
+  ajaxDataFetch: PropTypes.func,
 
   // **controlId** (String) *optional* - used to generate aria accessibility labels. The control will generate a default value when this prop is left undefined but this prop should be used for apps with isomorphic rendering
-  controlId: React.PropTypes.string,
+  controlId: PropTypes.string,
 
   // **dataSource** (Array|Object|Collection Object) (*optional - but **ajaxDataFetch** must be supplied if undefined*) - The dataSource option provides the data for your options dropdown.
   // The value provided will go to an internal parser (_configureDataSource), which will return a collection (array of option objects) found based on argument type
@@ -1506,48 +1507,48 @@ ReactSuperSelect.propTypes = {
   //  Each option in the resulting collection must have the following properties:
   //  - a unique value corresponding to the key set by the **optionValueKey** or the default optionValueKey of **id**
   //  - a defined value corresponding to the key set by the **optionLabelKey** or the default optionLabelKey of **name**
-  dataSource: React.PropTypes.oneOfType([
-            React.PropTypes.arrayOf(React.PropTypes.object),
-            React.PropTypes.object
+  dataSource: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.object),
+            PropTypes.object
           ]),
 
   // **initialValue** (Array|Object) *optional*
   // The selected value the control will be initialized with
   // must be an array of option items or a single option item from your dataSource collection
-  initialValue: React.PropTypes.oneOfType([
-            React.PropTypes.arrayOf(React.PropTypes.object),
-            React.PropTypes.object
+  initialValue: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.object),
+            PropTypes.object
           ]),
 
   // **optionLabelKey** (String) (*optional - defaults to using 'name' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value you would like displayed for each option.
-  optionLabelKey: React.PropTypes.string,
+  optionLabelKey: PropTypes.string,
 
   // **optionValueKey** (String) (*optional - defaults to using 'id' as the key if undefined*) - This value represents the key in each option object (from the **dataSource** collection), which represents the value that **uniquely identifies** that option across the **dataSource** collection.  Think of it in terms of the value attribute of a traditional html `<select>` element
-  optionValueKey: React.PropTypes.string, // value this maps to should be unique in data source
+  optionValueKey: PropTypes.string, // value this maps to should be unique in data source
 
   // **pageDataFetch** (Function) *optional* (A *hasMorePages* function should be provided when using this option) - Additional pages of data can be fetched  via ajax if you provide a function as the value for this option.
   // The function takes one argument, the value provided as the **dataSource** (or the return value of the **ajaxDataSource** function).
   // It must return a **promise** object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the **dataSource** option documentation.
   // The pageDataFetch function will be called based upon the user's scroll position in the dropdown.
   // *It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when **hasMorePages** evaluates to false
-  pageDataFetch: React.PropTypes.func,
+  pageDataFetch: PropTypes.func,
 
   // **hasMorePages** (Function) *optional* (should be provided when using the *pageDataFetch* option) - A function that accepts one argument, a value as described by the *dataSource* option documentation, and returns a Boolean value.
   // The value should indicate whether the option data collection has any more pages available for fetching
-  hasMorePages: React.PropTypes.func,
+  hasMorePages: PropTypes.func,
 
   // GROUPING FUNCTIONALITY
   // ----------------------
 
   // **groupBy** (String|Object|Function) *optional* - Allows you to sort your dropdown options into groups by leveraging Lodash's groupBy function.  Please reference the [Lodash](https://lodash.com/docs#groupBy) documentation for behavior of *groupBy* when passed different argument types
-  groupBy: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.func,
-            React.PropTypes.object
+  groupBy: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.func,
+            PropTypes.object
           ]),
 
   // **customGroupHeadingTemplateFunction** (Function) *optional* (Used in conjunction with the **groupBy** option) - This function provides custom templating capability for your dropdown heading options.  The function should accept the value returned as each group's object key (returned by the call of Lodash's groupBy when passed the value of your **groupBy** option)
-  customGroupHeadingTemplateFunction: React.PropTypes.func,
+  customGroupHeadingTemplateFunction: PropTypes.func,
 
   // RENDERING (OPTION ITERATOR) FUNCTIONS
   // -------------------------------------
@@ -1561,37 +1562,37 @@ ReactSuperSelect.propTypes = {
 
   // When left undefined the default filter function will be used.
   //(Defaults To: A lowercase string comparison for text.  Matches the **optionLabelKey** value to the text entered into the dropdown's search field).  The function is leveraged by [Lodash's filter function](https://lodash.com/docs#filter) with your **dataSource** collection as its first argument.
-  customFilterFunction: React.PropTypes.func,
+  customFilterFunction: PropTypes.func,
 
   // **customOptionTemplateFunction** (Function) *optional* - This function provides custom templating capability for your dropdown options and the display of selected values.  The function should accept a single option object from your **dataSource** collection and return your desired markup based on that object's properties.
-  customOptionTemplateFunction: React.PropTypes.func,
+  customOptionTemplateFunction: PropTypes.func,
 
   // **customValueTemplateFunction** (Function) *optional* - This function provides custom templating capability for your control's selected value display.  The function should accept the selected options from your **dataSource** collection and return your desired markup.
-  customSelectedValueTemplateFunction: React.PropTypes.func,
+  customSelectedValueTemplateFunction: PropTypes.func,
 
   // LOCALIZATION STRINGS
   // --------------------
 
   // **ajaxErrorString** (String) *optional* - (Used in conjunction with the **ajaxDataFetch** & **pageDataFetch** options) This string will be shown in the dropdown area when an ajax request fails
-  ajaxErrorString: React.PropTypes.string,
+  ajaxErrorString: PropTypes.string,
 
   // **clearSearchLabelString** (String) *optional* - (Used in conjunction with the **clearable** option) This string will be used as an aria-label for the clear selection button
-  clearSelectionLabelString: React.PropTypes.string,
+  clearSelectionLabelString: PropTypes.string,
 
   // **clearSelectionsLabelString** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be used as an aria-label for the clear search button
-  clearSearchLabelString: React.PropTypes.string,
+  clearSearchLabelString: PropTypes.string,
 
   // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
-  noResultsString: React.PropTypes.string,
+  noResultsString: PropTypes.string,
 
   // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control when the user has no selected values
-  placeholder: React.PropTypes.string,
+  placeholder: PropTypes.string,
 
   // **searchPlaceholder** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be shown in the dropdown area's search input field when a user has not entered any characters.
-  searchPlaceholder: React.PropTypes.string,
+  searchPlaceholder: PropTypes.string,
 
   // **tagRemoveLabelString** (String) *optional* - (Used in conjunction with the **tags** option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).
-  tagRemoveLabelString: React.PropTypes.string
+  tagRemoveLabelString: PropTypes.string
 };
 
 module.exports = ReactSuperSelect;
