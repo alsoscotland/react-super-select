@@ -760,7 +760,7 @@ class ReactSuperSelect extends React.Component {
     let options = [],
         optionsCount = 0;
 
-    if (!isArray(data)) {
+    if (!isArray(data) && !isEmpty(data)) {
       forIn(data, (groupedOptions, heading) => {
         options.push(this._getGroupHeadingMarkup(heading));
         options = options.concat(this._getTemplatedOptions(groupedOptions, optionsCount));

@@ -1574,7 +1574,7 @@ render ajaxError markup when state.ajaxError is true</p>
     <span class="hljs-keyword">let</span> options = [],
         optionsCount = <span class="hljs-number">0</span>;
 
-    <span class="hljs-keyword">if</span> (!isArray(data)) {
+    <span class="hljs-keyword">if</span> (!isArray(data) &amp;&amp; !isEmpty(data)) {
       forIn(data, (groupedOptions, heading) =&gt; {
         options.push(<span class="hljs-keyword">this</span>._getGroupHeadingMarkup(heading));
         options = options.concat(<span class="hljs-keyword">this</span>._getTemplatedOptions(groupedOptions, optionsCount));
