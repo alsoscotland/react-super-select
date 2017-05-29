@@ -36743,7 +36743,7 @@ var ReactSuperSelect = function (_React$Component) {
     var options = [],
         optionsCount = 0;
 
-    if (!(0, _lodash.isArray)(data)) {
+    if (!(0, _lodash.isArray)(data) && !(0, _lodash.isEmpty)(data)) {
       (0, _lodash.forIn)(data, function (groupedOptions, heading) {
         options.push(_this12._getGroupHeadingMarkup(heading));
         options = options.concat(_this12._getTemplatedOptions(groupedOptions, optionsCount));
@@ -37702,50 +37702,111 @@ ReactSuperSelect.propTypes = {
 module.exports = ReactSuperSelect;
 
 },{"classnames":1,"lodash":26,"prop-types":32,"react":185}],187:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom'),
-    ReactSuperSelect = require('../src/react-super-select'),
-    TestPageExampleOptionTemplate = require('./super-selects/support/test-page-example-option-template');
+var _lodash = require("lodash");
 
-var testData = require('./super-selects/support/test-data.js'),
-    mockAjaxPerPage = 10,
-    lastPage = 0;
+var _lodash2 = _interopRequireDefault(_lodash);
 
-var _ref = React.createElement(
-  'h1',
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require("react-dom");
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _reactSuperSelect = require("../src/react-super-select");
+
+var _reactSuperSelect2 = _interopRequireDefault(_reactSuperSelect);
+
+var _testData = require("./super-selects/support/test-data.js");
+
+var _testData2 = _interopRequireDefault(_testData);
+
+var _testPageExampleOptionTemplate = require("./super-selects/support/test-page-example-option-template");
+
+var _testPageExampleOptionTemplate2 = _interopRequireDefault(_testPageExampleOptionTemplate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var mockAjaxPerPage = 10;
+var lastPage = 0;
+
+var _ref = _react2.default.createElement(
+  "h1",
   null,
-  'Basic Example'
+  "Basic Example"
 );
 
-var _ref2 = React.createElement(
-  'h1',
+var _ref2 = _react2.default.createElement(
+  "h1",
   null,
-  'Custom Template Example'
+  "Custom Template Example"
 );
 
-var _ref3 = React.createElement(
-  'h1',
+var _ref3 = _react2.default.createElement(
+  "h1",
   null,
-  'Ajax Example'
+  "Ajax Example"
 );
 
-var RSSTestPageApp = React.createClass({
-  displayName: 'RSSTestPageApp',
+var RSSTestPageApp = function (_React$Component) {
+  _inherits(RSSTestPageApp, _React$Component);
 
+  function RSSTestPageApp(props) {
+    _classCallCheck(this, RSSTestPageApp);
 
-  handlerExample: function handlerExample(newValue) {
-    console.log(newValue);
-  },
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
-  _customMarkupMapper: function _customMarkupMapper(item) {
-    return React.createElement(TestPageExampleOptionTemplate, { key: item.id, option: item });
-  },
+    _lodash2.default.bindAll(_this, ["_renderPropsLinks", "_renderProps"]);
 
-  _simulatedAjaxFetch: function _simulatedAjaxFetch() {
-    var data = _.take(testData, mockAjaxPerPage);
+    _this._groupBy = 'size';
+
+    return _this;
+  }
+
+  RSSTestPageApp.prototype.render = function render() {
+    return _react2.default.createElement(
+      "div",
+      null,
+      _react2.default.createElement(
+        "section",
+        null,
+        _ref,
+        _react2.default.createElement(_reactSuperSelect2.default, { placeholder: "Make a Selection", searchable: true, searchPlaceholder: "search", dataSource: _testData2.default, onChange: this.handlerExample })
+      ),
+      _react2.default.createElement(
+        "section",
+        null,
+        _ref2,
+        _react2.default.createElement(_reactSuperSelect2.default, { groupBy: this._groupBy, placeholder: "Make a Selection", customClassName: "your-custom-wrapper-class", tags: true, initialValue: [_testData2.default[0], _testData2.default[4]], searchable: true, searchPlaceholder: "search", onChange: this.handlerExample, customOptionTemplateFunction: this._customMarkupMapper, dataSource: _testData2.default })
+      ),
+      _react2.default.createElement(
+        "section",
+        null,
+        _ref3,
+        _react2.default.createElement(_reactSuperSelect2.default, { placeholder: "Make a Selection", tags: true, searchable: true, searchPlaceholder: "filter", onChange: this.handlerExample, ajaxDataFetch: this._simulatedAjaxFetch, pageDataFetch: this._simulatedPageFetch, hasMorePages: this._hasMorePages })
+      )
+    );
+  };
+
+  RSSTestPageApp.prototype.handlerExample = function handlerExample(newValue) {
+    console.info(newValue);
+  };
+
+  RSSTestPageApp.prototype._customMarkupMapper = function _customMarkupMapper(item) {
+    return _react2.default.createElement(_testPageExampleOptionTemplate2.default, { key: item.id, option: item });
+  };
+
+  RSSTestPageApp.prototype._simulatedAjaxFetch = function _simulatedAjaxFetch() {
+    var data = _lodash2.default.take(_testData2.default, mockAjaxPerPage);
     // simulate a 2.5 second ajax fetch for collection data
     return {
       then: function then(callback) {
@@ -37754,24 +37815,24 @@ var RSSTestPageApp = React.createClass({
         }, 2500);
       }
     };
-  },
+  };
 
-  _groupBy: 'size',
-
-  _simulatedPageFetch: function _simulatedPageFetch(collection) {
+  RSSTestPageApp.prototype._simulatedPageFetch = function _simulatedPageFetch(collection) {
     lastPage = lastPage + 1;
-    var sliceLocation = lastPage * mockAjaxPerPage,
-        data;
-    if (sliceLocation < testData.length) {
+    var sliceLocation = lastPage * mockAjaxPerPage;
+
+    var data = void 0;
+
+    if (sliceLocation < _testData2.default.length) {
       data = [];
 
       for (var i = sliceLocation; i < sliceLocation + mockAjaxPerPage; i++) {
-        if (testData[i]) {
-          data.push(testData[i]);
+        if (_testData2.default[i]) {
+          data.push(_testData2.default[i]);
         }
       }
     } else {
-      data = testData;
+      data = _testData2.default;
     }
 
     return {
@@ -37781,39 +37842,16 @@ var RSSTestPageApp = React.createClass({
         }, 1500);
       }
     };
-  },
+  };
 
-  _hasMorePages: function _hasMorePages(collection) {
-    return collection.length < testData.length;
-  },
+  RSSTestPageApp.prototype._hasMorePages = function _hasMorePages(collection) {
+    return collection.length < _testData2.default.length;
+  };
 
-  render: function render() {
-    return React.createElement(
-      'div',
-      null,
-      React.createElement(
-        'section',
-        null,
-        _ref,
-        React.createElement(ReactSuperSelect, { placeholder: 'Make a Selection', searchable: true, searchPlaceholder: 'search', dataSource: testData, onChange: this.handlerExample })
-      ),
-      React.createElement(
-        'section',
-        null,
-        _ref2,
-        React.createElement(ReactSuperSelect, { groupBy: this._groupBy, placeholder: 'Make a Selection', customClassName: 'your-custom-wrapper-class', tags: true, initialValue: [testData[0], testData[4]], searchable: true, searchPlaceholder: 'search', onChange: this.handlerExample, customOptionTemplateFunction: this._customMarkupMapper, dataSource: testData })
-      ),
-      React.createElement(
-        'section',
-        null,
-        _ref3,
-        React.createElement(ReactSuperSelect, { placeholder: 'Make a Selection', tags: true, searchable: true, searchPlaceholder: 'filter', onChange: this.handlerExample, ajaxDataFetch: this._simulatedAjaxFetch, pageDataFetch: this._simulatedPageFetch, hasMorePages: this._hasMorePages })
-      )
-    );
-  }
-});
+  return RSSTestPageApp;
+}(_react2.default.Component);
 
-ReactDOM.render(React.createElement(RSSTestPageApp, null), document.getElementById('test_page_app'));
+_reactDom2.default.render(_react2.default.createElement(RSSTestPageApp, null), document.getElementById('test_page_app'));
 
 },{"../src/react-super-select":186,"./super-selects/support/test-data.js":188,"./super-selects/support/test-page-example-option-template":189,"lodash":26,"react":185,"react-dom":34}],188:[function(require,module,exports){
 "use strict";

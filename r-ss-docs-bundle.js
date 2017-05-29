@@ -35823,122 +35823,148 @@ require('./keyboard-navigation-app');
 require('./version-printer');
 
 },{"./keyboard-navigation-app":186,"./props-app":285,"./version-printer":286}],186:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom');
+var _lodash = require("lodash");
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require("react-dom");
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var allKeys = require('./all-keys');
 
-var _ref = React.createElement(
-  'a',
-  { className: 'top-return', href: '#index_top' },
-  'Back to Top'
+var _ref = _react2.default.createElement(
+  "a",
+  { name: "keyboard" },
+  " "
 );
 
-var _ref2 = React.createElement(
-  'a',
-  { className: 'top-return', href: '#keys_top' },
-  'Back to Keys Links'
+var _ref2 = _react2.default.createElement(
+  "h3",
+  { className: "feature-heading" },
+  "Keyboard Navigation:"
 );
 
-var _ref3 = React.createElement(
-  'a',
-  { name: 'keyboard' },
-  ' '
+var _ref3 = _react2.default.createElement(
+  "a",
+  { name: "keys_top" },
+  " "
 );
 
-var _ref4 = React.createElement(
-  'h3',
-  { className: 'feature-heading' },
-  'Keyboard Navigation:'
-);
-
-var _ref5 = React.createElement(
-  'a',
-  { name: 'keys_top' },
-  ' '
-);
-
-var _ref6 = React.createElement(
-  'h5',
+var _ref4 = _react2.default.createElement(
+  "h5",
   null,
-  'Keyboard Navigation Links By Key:'
+  "Keyboard Navigation Links By Key:"
 );
 
-var KeyboardNavigationApp = React.createClass({
-  displayName: 'KeyboardNavigationApp',
+var _ref5 = _react2.default.createElement(
+  "a",
+  { className: "top-return", href: "#index_top" },
+  "Back to Top"
+);
 
+var _ref6 = _react2.default.createElement(
+  "a",
+  { className: "top-return", href: "#keys_top" },
+  "Back to Keys Links"
+);
 
-  _renderKeysLinks: function _renderKeysLinks() {
-    var propsLinks = _.map(allKeys, function (key, index) {
-      var href = '#' + key.nameAttr;
-      var reactKey = 'key_link_' + index;
-      return React.createElement(
-        'li',
-        { key: reactKey },
-        React.createElement(
-          'a',
-          { href: href },
-          ' ',
-          key.nameAttr,
-          ' '
-        )
-      );
-    });
+var KeyboardNavigationApp = function (_React$Component) {
+  _inherits(KeyboardNavigationApp, _React$Component);
 
-    return propsLinks;
-  },
+  function KeyboardNavigationApp(props) {
+    _classCallCheck(this, KeyboardNavigationApp);
 
-  _renderKeys: function _renderKeys() {
-    var articles = _.map(allKeys, function (key, index) {
-      var reactKey = "keyboard_" + index;
-      return React.createElement(
-        'article',
-        { key: reactKey, className: 'api-item' },
-        React.createElement(
-          'h5',
-          { className: 'api-link' },
-          React.createElement(
-            'a',
-            { name: key.nameAttr },
-            key.displayName
-          )
-        ),
-        React.createElement('p', { dangerouslySetInnerHTML: { __html: key.renderString } }),
-        _ref,
-        _ref2
-      );
-    });
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
-    return articles;
-  },
+    _lodash2.default.bindAll(_this, ["_renderKeysLinks", "_renderKeys"]);
+    return _this;
+  }
 
-  render: function render() {
-    return React.createElement(
-      'section',
-      { className: 'api-docs-section' },
+  KeyboardNavigationApp.prototype.render = function render() {
+    return _react2.default.createElement(
+      "section",
+      { className: "api-docs-section" },
+      _ref,
+      _ref2,
       _ref3,
       _ref4,
-      _ref5,
-      _ref6,
-      React.createElement(
-        'nav',
-        { className: 'api' },
-        React.createElement(
-          'ul',
+      _react2.default.createElement(
+        "nav",
+        { className: "api" },
+        _react2.default.createElement(
+          "ul",
           null,
           this._renderKeysLinks()
         )
       ),
       this._renderKeys()
     );
-  }
-});
+  };
+
+  KeyboardNavigationApp.prototype._renderKeysLinks = function _renderKeysLinks() {
+    var propsLinks = _lodash2.default.map(allKeys, function (key, index) {
+      var href = '#' + key.nameAttr,
+          reactKey = 'key_link_' + index;
+      return _react2.default.createElement(
+        "li",
+        { key: reactKey },
+        _react2.default.createElement(
+          "a",
+          { href: href },
+          " ",
+          key.nameAttr,
+          " "
+        )
+      );
+    });
+
+    return propsLinks;
+  };
+
+  KeyboardNavigationApp.prototype._renderKeys = function _renderKeys() {
+    var articles = _lodash2.default.map(allKeys, function (key, index) {
+      var reactKey = "keyboard_" + index;
+      return _react2.default.createElement(
+        "article",
+        { key: reactKey, className: "api-item" },
+        _react2.default.createElement(
+          "h5",
+          { className: "api-link" },
+          _react2.default.createElement(
+            "a",
+            { name: key.nameAttr },
+            key.displayName
+          )
+        ),
+        _react2.default.createElement("p", { dangerouslySetInnerHTML: { __html: key.renderString } }),
+        _ref5,
+        _ref6
+      );
+    });
+
+    return articles;
+  };
+
+  return KeyboardNavigationApp;
+}(_react2.default.Component);
 
 module.exports = KeyboardNavigationApp;
-ReactDOM.render(React.createElement(KeyboardNavigationApp, null), document.getElementById('keyboard_docs'));
+_reactDom2.default.render(_react2.default.createElement(KeyboardNavigationApp, null), document.getElementById('keyboard_docs'));
 
 },{"./all-keys":183,"lodash":25,"react":182,"react-dom":31}],187:[function(require,module,exports){
 "use strict";
@@ -36782,156 +36808,206 @@ var tagsProp = {
 module.exports = tagsProp;
 
 },{"../markdown/js/properties/tags":243}],285:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom');
+var _lodash = require("lodash");
 
-var allProps = require('./all-props');
+var _lodash2 = _interopRequireDefault(_lodash);
 
-var _ref = React.createElement(
-  'a',
-  { className: 'top-return', href: '#index_top' },
-  'Back to Top'
+var _allProps = require("./all-props");
+
+var _allProps2 = _interopRequireDefault(_allProps);
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require("react-dom");
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _ref = _react2.default.createElement(
+  "a",
+  { name: "apiDocs" },
+  " "
 );
 
-var _ref2 = React.createElement(
-  'a',
-  { className: 'top-return', href: '#properties_top' },
-  'Back to API Documentation Links'
+var _ref2 = _react2.default.createElement(
+  "h3",
+  { className: "feature-heading" },
+  "API documentation"
 );
 
-var _ref3 = React.createElement(
-  'a',
-  { name: 'apiDocs' },
-  ' '
+var _ref3 = _react2.default.createElement(
+  "a",
+  { href: "annotated-source.html" },
+  " Annotated Source Code "
 );
 
-var _ref4 = React.createElement(
-  'h3',
-  { className: 'feature-heading' },
-  'API documentation'
+var _ref4 = _react2.default.createElement(
+  "a",
+  { name: "properties_top" },
+  " "
 );
 
-var _ref5 = React.createElement(
-  'a',
-  { href: 'annotated-source.html' },
-  ' Annotated Source Code '
-);
-
-var _ref6 = React.createElement(
-  'a',
-  { name: 'properties_top' },
-  ' '
-);
-
-var _ref7 = React.createElement(
-  'h5',
+var _ref5 = _react2.default.createElement(
+  "h5",
   null,
-  'Component Property API Documentation Links:'
+  "Component Property API Documentation Links:"
 );
 
-var PropsApp = React.createClass({
-  displayName: 'PropsApp',
+var _ref6 = _react2.default.createElement(
+  "a",
+  { className: "top-return", href: "#index_top" },
+  "Back to Top"
+);
 
+var _ref7 = _react2.default.createElement(
+  "a",
+  { className: "top-return", href: "#properties_top" },
+  "Back to API Documentation Links"
+);
 
-  _renderPropsLinks: function _renderPropsLinks() {
-    var sortedProps = allProps.sort(function (propA, propB) {
-      return propA.nameAttr >= propB.nameAttr ? 1 : -1;
-    });
-    var propsLinks = _.map(sortedProps, function (prop, index) {
-      var href = '#' + prop.nameAttr;
-      var key = 'prop_link_' + index;
-      return React.createElement(
-        'li',
-        { key: key },
-        React.createElement(
-          'a',
-          { href: href },
-          ' ',
-          prop.nameAttr,
-          ' '
-        )
-      );
-    });
+var PropsApp = function (_React$Component) {
+  _inherits(PropsApp, _React$Component);
 
-    return propsLinks;
-  },
+  function PropsApp(props) {
+    _classCallCheck(this, PropsApp);
 
-  _renderProps: function _renderProps() {
-    var articles = _.map(allProps, function (prop, index) {
-      var key = "api_prop_" + index;
-      return React.createElement(
-        'article',
-        { key: key, className: 'api-item' },
-        React.createElement(
-          'h4',
-          { className: 'api-link' },
-          React.createElement(
-            'a',
-            { name: prop.nameAttr },
-            prop.nameAttr
-          )
-        ),
-        React.createElement('p', { dangerouslySetInnerHTML: { __html: prop.renderString } }),
-        _ref,
-        _ref2
-      );
-    });
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
-    return articles;
-  },
+    _lodash2.default.bindAll(_this, ["_renderPropsLinks", "_renderProps"]);
+    return _this;
+  }
 
-  render: function render() {
-    return React.createElement(
-      'section',
-      { className: 'api-docs-section' },
+  PropsApp.prototype.render = function render() {
+    return _react2.default.createElement(
+      "section",
+      { className: "api-docs-section" },
+      _ref,
+      _ref2,
+      "you can also view the",
       _ref3,
       _ref4,
-      'you can also view the',
       _ref5,
-      _ref6,
-      _ref7,
-      React.createElement(
-        'nav',
-        { className: 'api' },
-        React.createElement(
-          'ul',
+      _react2.default.createElement(
+        "nav",
+        { className: "api" },
+        _react2.default.createElement(
+          "ul",
           null,
           this._renderPropsLinks()
         )
       ),
       this._renderProps()
     );
-  }
-});
+  };
+
+  PropsApp.prototype._renderPropsLinks = function _renderPropsLinks() {
+    var sortedProps = _allProps2.default.sort(function (propA, propB) {
+      return propA.nameAttr >= propB.nameAttr ? 1 : -1;
+    });
+    var propsLinks = _lodash2.default.map(sortedProps, function (prop, index) {
+      var href = '#' + prop.nameAttr,
+          key = 'prop_link_' + index;
+      return _react2.default.createElement(
+        "li",
+        { key: key },
+        _react2.default.createElement(
+          "a",
+          { href: href },
+          " ",
+          prop.nameAttr,
+          " "
+        )
+      );
+    });
+
+    return propsLinks;
+  };
+
+  PropsApp.prototype._renderProps = function _renderProps() {
+    var articles = _lodash2.default.map(_allProps2.default, function (prop, index) {
+      var key = "api_prop_" + index;
+      return _react2.default.createElement(
+        "article",
+        { key: key, className: "api-item" },
+        _react2.default.createElement(
+          "h4",
+          { className: "api-link" },
+          _react2.default.createElement(
+            "a",
+            { name: prop.nameAttr },
+            prop.nameAttr
+          )
+        ),
+        _react2.default.createElement("p", { dangerouslySetInnerHTML: { __html: prop.renderString } }),
+        _ref6,
+        _ref7
+      );
+    });
+
+    return articles;
+  };
+
+  return PropsApp;
+}(_react2.default.Component);
 
 module.exports = PropsApp;
-ReactDOM.render(React.createElement(PropsApp, null), document.getElementById('props_docs'));
+_reactDom2.default.render(_react2.default.createElement(PropsApp, null), document.getElementById('props_docs'));
 
 },{"./all-props":184,"lodash":25,"react":182,"react-dom":31}],286:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var RSS_VERSION = "1.0.0";
-var React = require('react'),
-    ReactDOM = require('react-dom');
+var _react = require("react");
 
-var _ref = React.createElement(
-  'span',
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require("react-dom");
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var RSS_VERSION = "1.0.1";
+
+var _ref = _react2.default.createElement(
+  "span",
   null,
   RSS_VERSION
 );
 
-var VersionPrinter = React.createClass({
-  displayName: 'VersionPrinter',
+var VersionPrinter = function (_React$Component) {
+  _inherits(VersionPrinter, _React$Component);
 
-  render: function render() {
-    return _ref;
+  function VersionPrinter() {
+    _classCallCheck(this, VersionPrinter);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
   }
-});
+
+  VersionPrinter.prototype.render = function render() {
+    return _ref;
+  };
+
+  return VersionPrinter;
+}(_react2.default.Component);
 
 module.exports = VersionPrinter;
-ReactDOM.render(React.createElement(VersionPrinter, null), document.getElementById('r_ss_version'));
+_reactDom2.default.render(_react2.default.createElement(VersionPrinter, null), document.getElementById('r_ss_version'));
 
 },{"react":182,"react-dom":31}]},{},[185])

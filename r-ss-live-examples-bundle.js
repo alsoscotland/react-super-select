@@ -36743,7 +36743,7 @@ var ReactSuperSelect = function (_React$Component) {
     var options = [],
         optionsCount = 0;
 
-    if (!(0, _lodash.isArray)(data)) {
+    if (!(0, _lodash.isArray)(data) && !(0, _lodash.isEmpty)(data)) {
       (0, _lodash.forIn)(data, function (groupedOptions, heading) {
         options.push(_this12._getGroupHeadingMarkup(heading));
         options = options.concat(_this12._getTemplatedOptions(groupedOptions, optionsCount));
@@ -37724,140 +37724,171 @@ var allExamples = [basicExample, basicAjaxExample, basicSearchable, customFilter
 module.exports = allExamples;
 
 },{"./super-selects/basic-ajax":203,"./super-selects/basic-example":204,"./super-selects/basic-searchable":205,"./super-selects/custom-filter-function":206,"./super-selects/custom-selected-value-template":207,"./super-selects/custom-template":208,"./super-selects/disabled":209,"./super-selects/group-by":210,"./super-selects/localized":211,"./super-selects/multiselect":212,"./super-selects/on-open-callback":213,"./super-selects/open-on-mount":214,"./super-selects/paging":215,"./super-selects/tags-example":219}],188:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom'),
-    ReactSuperSelect = require('../src/react-super-select');
+var _lodash = require("lodash");
 
-var allExamples = require('./all-examples');
+var _lodash2 = _interopRequireDefault(_lodash);
 
-var _ref = React.createElement(
-  'h1',
+var _allExamples = require("./all-examples");
+
+var _allExamples2 = _interopRequireDefault(_allExamples);
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require("react-dom");
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _reactSuperSelect = require("../src/react-super-select");
+
+var _reactSuperSelect2 = _interopRequireDefault(_reactSuperSelect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _ref = _react2.default.createElement(
+  "a",
+  { name: "top" },
+  " "
+);
+
+var _ref2 = _react2.default.createElement(
+  "h1",
   null,
-  'React-Super-Select Live Examples'
+  "React-Super-Select Live Examples"
 );
 
-var _ref2 = React.createElement(
-  'h2',
+var _ref3 = _react2.default.createElement(
+  "h2",
   null,
-  ' Quick Links: '
+  " Quick Links: "
 );
 
-var _ref3 = React.createElement(
-  'div',
-  { className: 'rss-output-example' },
-  'onChange Output'
+var _ref4 = _react2.default.createElement(
+  "div",
+  { className: "rss-output-example" },
+  "onChange Output"
 );
 
-var _ref4 = React.createElement(
-  'a',
-  { className: 'top-return', href: '#top' },
-  'Back to Top'
+var _ref5 = _react2.default.createElement(
+  "a",
+  { className: "top-return", href: "#top" },
+  "Back to Top"
 );
 
-var _ref5 = React.createElement(
-  'a',
-  { name: 'top' },
-  ' '
-);
+var RSSExamples = function (_React$Component) {
+  _inherits(RSSExamples, _React$Component);
 
-var RSSExamples = React.createClass({
-  displayName: 'RSSExamples',
+  function RSSExamples(props) {
+    _classCallCheck(this, RSSExamples);
 
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
-  _renderExampleLinks: function _renderExampleLinks() {
-    var exampleLinks = _.map(allExamples, function (example, index) {
+    _lodash2.default.bindAll(_this, ["_renderExampleLinks", "_renderExampleSections"]);
+    return _this;
+  }
+
+  RSSExamples.prototype.render = function render() {
+    return _react2.default.createElement(
+      "div",
+      null,
+      _ref,
+      this._renderExampleLinks(),
+      this._renderExampleSections()
+    );
+  };
+
+  RSSExamples.prototype._renderExampleLinks = function _renderExampleLinks() {
+    var exampleLinks = _lodash2.default.map(_allExamples2.default, function (example, index) {
       var href = '#' + example.nameAttr;
-      return React.createElement(
-        'li',
+      return _react2.default.createElement(
+        "li",
         { key: index },
-        React.createElement(
-          'a',
+        _react2.default.createElement(
+          "a",
           { href: href },
-          ' ',
+          " ",
           example.displayName,
-          ' '
+          " "
         )
       );
     });
 
-    return React.createElement(
-      'div',
-      { className: 'example-links' },
-      _ref,
+    return _react2.default.createElement(
+      "div",
+      { className: "example-links" },
       _ref2,
-      React.createElement(
-        'nav',
-        { className: 'api' },
-        React.createElement(
-          'ul',
+      _ref3,
+      _react2.default.createElement(
+        "nav",
+        { className: "api" },
+        _react2.default.createElement(
+          "ul",
           null,
           exampleLinks
         )
       )
     );
-  },
+  };
 
-  _renderExampleSections: function _renderExampleSections() {
-    var exampleSections = _.map(allExamples, function (example, index) {
-      var superSelect = React.createElement(ReactSuperSelect, example.props),
+  RSSExamples.prototype._renderExampleSections = function _renderExampleSections() {
+    var exampleSections = _lodash2.default.map(_allExamples2.default, function (example, index) {
+      var superSelect = _react2.default.createElement(_reactSuperSelect2.default, example.props),
           outputId = example.nameAttr + '_output';
 
-      return React.createElement(
-        'li',
-        { key: index, className: 'example-sections' },
-        React.createElement(
-          'article',
-          { className: 'api-item' },
-          React.createElement(
-            'h3',
-            { className: 'api-link' },
-            React.createElement(
-              'a',
+      return _react2.default.createElement(
+        "li",
+        { key: index, className: "example-sections" },
+        _react2.default.createElement(
+          "article",
+          { className: "api-item" },
+          _react2.default.createElement(
+            "h3",
+            { className: "api-link" },
+            _react2.default.createElement(
+              "a",
               { name: example.nameAttr },
-              ' ',
+              " ",
               example.displayName,
-              ' '
+              " "
             )
           ),
-          React.createElement(
-            'div',
-            { className: 'rss-live-example' },
+          _react2.default.createElement(
+            "div",
+            { className: "rss-live-example" },
             superSelect
           ),
-          _ref3,
-          React.createElement('pre', { className: 'example-output', id: outputId }),
-          React.createElement(
-            'div',
+          _ref4,
+          _react2.default.createElement("pre", { className: "example-output", id: outputId }),
+          _react2.default.createElement(
+            "div",
             null,
-            React.createElement('aside', { className: 'rss-example-markdown', dangerouslySetInnerHTML: { __html: example.renderString } })
+            _react2.default.createElement("aside", { className: "rss-example-markdown", dangerouslySetInnerHTML: { __html: example.renderString } })
           ),
-          _ref4
+          _ref5
         )
       );
     });
 
-    return React.createElement(
-      'ul',
-      { className: 'live-examples-list' },
+    return _react2.default.createElement(
+      "ul",
+      { className: "live-examples-list" },
       exampleSections
     );
-  },
+  };
 
-  render: function render() {
-    return React.createElement(
-      'div',
-      null,
-      _ref5,
-      this._renderExampleLinks(),
-      this._renderExampleSections()
-    );
-  }
-});
+  return RSSExamples;
+}(_react2.default.Component);
 
-ReactDOM.render(React.createElement(RSSExamples, null), document.getElementById('examples'));
+_reactDom2.default.render(_react2.default.createElement(RSSExamples, null), document.getElementById('examples'));
 
 },{"../src/react-super-select":186,"./all-examples":187,"lodash":26,"react":185,"react-dom":34}],189:[function(require,module,exports){
 module.exports={"body":"<h3 id=\"jsx-markup\">JSX Markup</h3>\n<pre><code class=\"lang-html\">&lt;ReactSuperSelect placeholder=&quot;Make Your Selections&quot; \n                  ajaxDataFetch={simulatedAjaxFetch} \n                  onChange={handlerExample} \n                  searchable={true} /&gt;\n</code></pre>\n<h3 id=\"properties\">Properties</h3>\n<h4 id=\"ajaxdatafetch\">ajaxDataFetch</h4>\n<p><em>note</em> this is a function that simulates an ajax-call delay.  In an actual use-case you would use a real XHR function which returns a promise object</p>\n<pre><code class=\"lang-jsx\">var simulatedAjaxFetch= function() {\n  // simulate a 2 second ajax fetch for collection data\n  return {\n    then: function(callback) {\n      setTimeout(function() {\n        callback(testData);\n      }, 2000);\n    }\n  };\n};\n</code></pre>\n<h4 id=\"onchange\">onChange</h4>\n<pre><code class=\"lang-js\">var handlerExample = function(option) {\n  var output = [\n    &#39;Option Item Chosen = {\\n&#39;,\n    &#39;\\tid: &#39;, option.id, &#39;\\n&#39;,\n    &#39;\\tname: &#39;, option.name, &#39;\\n&#39;,\n    &#39;\\tsize: &#39;, option.size, &#39;\\n\\t};&#39;];\n  console.log(output.join(&#39;&#39;));\n};\n</code></pre>\n<h4 id=\"datasource-sample-\">dataSource (sample)</h4>\n<pre><code class=\"lang-js\">var testData = [\n{\n  &quot;id&quot;: &quot;5507c0528152e61f3c348d56&quot;,\n  &quot;name&quot;: &quot;elit laborum et&quot;,\n  &quot;size&quot;: &quot;Large&quot;\n},\n{\n  &quot;id&quot;: &quot;5507c0526305bceb0c0e2c7a&quot;,\n  &quot;name&quot;: &quot;dolor nulla velit&quot;,\n  &quot;size&quot;: &quot;Medium&quot;\n}, ...\n];\n</code></pre>\n","updatedAt":"2016-06-10T13:55:55.000Z"}
