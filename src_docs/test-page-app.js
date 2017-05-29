@@ -1,26 +1,56 @@
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom'),
-    ReactSuperSelect = require('../src/react-super-select'),
-    TestPageExampleOptionTemplate = require('./super-selects/support/test-page-example-option-template');
+import _ from "lodash";
+import React from "react";
+import ReactDOM from "react-dom";
+import ReactSuperSelect from "../src/react-super-select";
+import testData from "./super-selects/support/test-data.js";
+import TestPageExampleOptionTemplate from "./super-selects/support/test-page-example-option-template";
 
-var testData = require('./super-selects/support/test-data.js'),
-    mockAjaxPerPage = 10,
-    lastPage = 0;
+const mockAjaxPerPage = 10;
+let lastPage = 0;
 
-var RSSTestPageApp = React.createClass({
+class RSSTestPageApp extends React.Component{
+  constructor(props) {
+    super(props);
 
-  handlerExample: function(newValue) {
-    console.log(newValue);
-  },
+    _.bindAll(this, [
+      "_renderPropsLinks",
+      "_renderProps"
+    ]);
 
-  _customMarkupMapper: function(item) {
+    this._groupBy = 'size';
+
+  }
+
+  render() {
+    return (
+      <div>
+        <section>
+          <h1>Basic Example</h1>
+          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" dataSource={testData} onChange={this.handlerExample} />
+        </section>
+        <section>
+          <h1>Custom Template Example</h1>
+          <ReactSuperSelect groupBy={this._groupBy} placeholder="Make a Selection" customClassName="your-custom-wrapper-class" tags={true} initialValue={[testData[0], testData[4]]} searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionTemplateFunction={this._customMarkupMapper} dataSource={testData} />
+        </section>
+        <section>
+          <h1>Ajax Example</h1>
+          <ReactSuperSelect placeholder="Make a Selection" tags={true} searchable={true} searchPlaceholder="filter" onChange={this.handlerExample} ajaxDataFetch={this._simulatedAjaxFetch} pageDataFetch={this._simulatedPageFetch} hasMorePages={this._hasMorePages} />
+        </section>
+      </div>
+    );
+  }
+
+  handlerExample(newValue) {
+    console.info(newValue);
+  }
+
+  _customMarkupMapper(item) {
     return(
     <TestPageExampleOptionTemplate key={item.id} option={item} />);
-  },
+  }
 
-  _simulatedAjaxFetch: function() {
-    var data = _.take(testData, mockAjaxPerPage);
+  _simulatedAjaxFetch() {
+    const data = _.take(testData, mockAjaxPerPage);
     // simulate a 2.5 second ajax fetch for collection data
     return {
       then: function(callback) {
@@ -29,14 +59,14 @@ var RSSTestPageApp = React.createClass({
         }, 2500);
       }
     };
-  },
+  }
 
-  _groupBy: 'size',
-
-  _simulatedPageFetch: function(collection) {
+  _simulatedPageFetch(collection) {
     lastPage = lastPage + 1;
-    var sliceLocation = lastPage * mockAjaxPerPage,
-        data;
+    const sliceLocation = lastPage * mockAjaxPerPage;
+
+    let data;
+
     if (sliceLocation < testData.length) {
       data = [];
 
@@ -56,30 +86,11 @@ var RSSTestPageApp = React.createClass({
         }, 1500);
       }
     };
-  },
-
-  _hasMorePages: function(collection) {
-    return collection.length < testData.length;
-  },
-
-  render: function() {
-    return (
-      <div>
-        <section>
-          <h1>Basic Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" searchable={true} searchPlaceholder="search" dataSource={testData} onChange={this.handlerExample} />
-        </section>
-        <section>
-          <h1>Custom Template Example</h1>
-          <ReactSuperSelect groupBy={this._groupBy} placeholder="Make a Selection" customClassName="your-custom-wrapper-class" tags={true} initialValue={[testData[0], testData[4]]} searchable={true} searchPlaceholder="search" onChange={this.handlerExample} customOptionTemplateFunction={this._customMarkupMapper} dataSource={testData} />
-        </section>
-        <section>
-          <h1>Ajax Example</h1>
-          <ReactSuperSelect placeholder="Make a Selection" tags={true} searchable={true} searchPlaceholder="filter" onChange={this.handlerExample} ajaxDataFetch={this._simulatedAjaxFetch} pageDataFetch={this._simulatedPageFetch} hasMorePages={this._hasMorePages} />
-        </section>
-      </div>
-    );
   }
-});
+
+  _hasMorePages(collection) {
+    return collection.length < testData.length;
+  }
+}
 
 ReactDOM.render(<RSSTestPageApp />, document.getElementById('test_page_app'));

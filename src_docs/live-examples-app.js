@@ -1,15 +1,30 @@
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom'),
-    ReactSuperSelect = require('../src/react-super-select');
+import _ from "lodash";
+import allExamples from "./all-examples";
+import React from "react";
+import ReactDOM from "react-dom";
+import ReactSuperSelect from "../src/react-super-select";
 
-var allExamples = require('./all-examples');
+class RSSExamples extends React.Component {
+  constructor(props) {
+    super(props);
 
-var RSSExamples = React.createClass({
+    _.bindAll(this, [
+      "_renderExampleLinks",
+      "_renderExampleSections"
+    ]);
+  }
 
-  _renderExampleLinks: function() {
-    var exampleLinks = _.map(allExamples, function(example, index) {
-      var href = '#' + example.nameAttr;
+  render() {
+    return (<div>
+      <a name="top"> </a>
+      {this._renderExampleLinks()}
+      {this._renderExampleSections()}
+    </div>);
+  }
+
+  _renderExampleLinks() {
+    const exampleLinks = _.map(allExamples, function(example, index) {
+      const href = '#' + example.nameAttr;
       return (<li key={index}><a href={href}> {example.displayName} </a></li>);
     });
 
@@ -22,12 +37,12 @@ var RSSExamples = React.createClass({
                </ul>
               </nav>
             </div>);
-  },
+  }
 
-  _renderExampleSections: function() {
-    var exampleSections = _.map(allExamples, function(example, index) {
-      var superSelect = React.createElement(ReactSuperSelect, example.props),
-          outputId = example.nameAttr + '_output';
+  _renderExampleSections() {
+    const exampleSections = _.map(allExamples, function(example, index) {
+      const superSelect = React.createElement(ReactSuperSelect, example.props),
+            outputId = example.nameAttr + '_output';
 
       return( <li key={index} className="example-sections">
               <article className="api-item">
@@ -51,15 +66,7 @@ var RSSExamples = React.createClass({
     return(<ul className="live-examples-list">
         {exampleSections}
       </ul>);
-  },
-
-  render: function() {
-    return (<div>
-      <a name="top"> </a>
-      {this._renderExampleLinks()}
-      {this._renderExampleSections()}
-    </div>);
   }
-});
+}
 
 ReactDOM.render(<RSSExamples />, document.getElementById('examples'));

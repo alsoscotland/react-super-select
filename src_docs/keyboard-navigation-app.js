@@ -1,38 +1,20 @@
-var _ = require('lodash'),
-    React = require('react'),
-    ReactDOM = require('react-dom');
+import _ from "lodash";
+import React from "react";
+import ReactDOM from "react-dom";
 
-var allKeys = require('./all-keys');
+const allKeys = require('./all-keys');
 
-var KeyboardNavigationApp = React.createClass({
+class KeyboardNavigationApp extends React.Component {
+  constructor(props) {
+    super(props);
 
-  _renderKeysLinks: function() {
-    var propsLinks = _.map(allKeys, function(key, index) {
-      var href = '#' + key.nameAttr;
-      var reactKey = 'key_link_' + index;
-      return (<li key={reactKey}><a href={href}> {key.nameAttr} </a></li>);
-    });
+    _.bindAll(this, [
+      "_renderKeysLinks",
+      "_renderKeys"
+    ]);
+  }
 
-    return propsLinks;
-  },
-
-  _renderKeys: function() {
-    var articles = _.map(allKeys, function(key, index) {
-      var reactKey = "keyboard_" + index;
-      return( <article key={reactKey} className="api-item">
-                <h5 className="api-link">
-                  <a name={key.nameAttr}>{key.displayName}</a>
-                </h5>
-                <p dangerouslySetInnerHTML={{__html: key.renderString}} />
-                <a className="top-return" href="#index_top">Back to Top</a>
-                <a className="top-return" href="#keys_top">Back to Keys Links</a>
-              </article>);
-    });
-
-    return articles;
-  },
-
-  render: function() {
+  render() {
     return( <section className="api-docs-section">
               <a name="keyboard"> </a>
               <h3 className="feature-heading">Keyboard Navigation:</h3>
@@ -46,7 +28,33 @@ var KeyboardNavigationApp = React.createClass({
               {this._renderKeys()}
             </section>);
   }
-});
+
+  _renderKeysLinks() {
+    const propsLinks = _.map(allKeys, function(key, index) {
+      const href = '#' + key.nameAttr,
+            reactKey = 'key_link_' + index;
+      return (<li key={reactKey}><a href={href}> {key.nameAttr} </a></li>);
+    });
+
+    return propsLinks;
+  }
+
+  _renderKeys() {
+    const articles = _.map(allKeys, function(key, index) {
+      const reactKey = "keyboard_" + index;
+      return( <article key={reactKey} className="api-item">
+                <h5 className="api-link">
+                  <a name={key.nameAttr}>{key.displayName}</a>
+                </h5>
+                <p dangerouslySetInnerHTML={{__html: key.renderString}} />
+                <a className="top-return" href="#index_top">Back to Top</a>
+                <a className="top-return" href="#keys_top">Back to Keys Links</a>
+              </article>);
+    });
+
+    return articles;
+  }
+}
 
 module.exports = KeyboardNavigationApp;
 ReactDOM.render(<KeyboardNavigationApp />, document.getElementById('keyboard_docs'));

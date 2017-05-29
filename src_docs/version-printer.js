@@ -1,12 +1,12 @@
-var RSS_VERSION = "1.0.0";
-var React = require('react'),
-    ReactDOM = require('react-dom');
+var RSS_VERSION = "1.0.1";
+import React from "react";
+import ReactDOM from "react-dom";
 
-var VersionPrinter = React.createClass({
-  render: function() {
+class VersionPrinter extends React.Component {
+  render() {
     return(<span>{RSS_VERSION}</span>);
   }
-});
+}
 
 module.exports = VersionPrinter;
 ReactDOM.render(<VersionPrinter />, document.getElementById('r_ss_version'));
