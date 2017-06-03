@@ -1031,11 +1031,10 @@ Runs a lowercase string comparison with the <strong>searchString</strong> and th
             </div>
             
             <div class="content"><div class='highlight'><pre>  _defaultSearchFilter(option) {
-    <span class="hljs-keyword">const</span> search = <span class="hljs-keyword">this</span>.state.searchString.toLowerCase();
-    <span class="hljs-keyword">if</span> (!isString(option[<span class="hljs-keyword">this</span>.state.labelKey])) {
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-    }
-    <span class="hljs-keyword">return</span> option[<span class="hljs-keyword">this</span>.state.labelKey].toLowerCase().indexOf(search) &gt; <span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">const</span> search = <span class="hljs-keyword">this</span>.state.searchString.toLowerCase(),
+          labelAsString = isString(option[<span class="hljs-keyword">this</span>.state.labelKey]) ? option[<span class="hljs-keyword">this</span>.state.labelKey] : option[<span class="hljs-keyword">this</span>.state.labelKey].toString();
+
+    <span class="hljs-keyword">return</span> labelAsString.toLowerCase().indexOf(search) &gt; <span class="hljs-number">-1</span>;
   }</pre></div></div>
             
         </li>
@@ -1345,7 +1344,7 @@ for keyboard navigation and accessibility</p>
             
             <div class="content"><div class='highlight'><pre>  _getDataSource() {
     <span class="hljs-keyword">let</span> data = isArray(<span class="hljs-keyword">this</span>.state.data) ? <span class="hljs-keyword">this</span>.state.data : [];
-    <span class="hljs-keyword">if</span> (isString(<span class="hljs-keyword">this</span>.state.searchString)) {
+    <span class="hljs-keyword">if</span> (isString(<span class="hljs-keyword">this</span>.state.searchString) &amp;&amp; !isEmpty(<span class="hljs-keyword">this</span>.state.searchString)) {
       data = <span class="hljs-keyword">this</span>._filterDataBySearchString(data);
     }
 
