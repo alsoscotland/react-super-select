@@ -484,12 +484,12 @@ class ReactSuperSelect extends React.Component {
   // Used if no **customFilterFunction** provided for filtering the data options shown in a **searchable** control.
   // Runs a lowercase string comparison with the **searchString** and the value corresponding to an option's **optionLabelKey**
   _defaultSearchFilter(option) {
-    const search = this.state.searchString.toLowerCase();
-    if (!isString(option[this.state.labelKey])) {
-      return false;
-    }
-    return option[this.state.labelKey].toLowerCase().indexOf(search) > -1;
+    const search = this.state.searchString.toLowerCase(),
+          labelAsString = isString(option[this.state.labelKey]) ? option[this.state.labelKey] : option[this.state.labelKey].toString();
+
+    return labelAsString.toLowerCase().indexOf(search) > -1;
   }
+
 
   // fetch data source via ajax if **ajaxDataFetch** function provided
   // handles success and failure for ajax call
@@ -641,7 +641,7 @@ class ReactSuperSelect extends React.Component {
   // calculate and return the renderable data source object or array, factoring in the search filtering, and any grouping functionality
   _getDataSource() {
     let data = isArray(this.state.data) ? this.state.data : [];
-    if (isString(this.state.searchString)) {
+    if (isString(this.state.searchString) && !isEmpty(this.state.searchString)) {
       data = this._filterDataBySearchString(data);
     }
 
