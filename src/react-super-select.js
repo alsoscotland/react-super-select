@@ -244,7 +244,7 @@ class ReactSuperSelect extends React.Component {
     }
 
     if (!isEmpty(newState)) {
-      this.setState(newState);
+      this.setState(newState, this._broadcastChange);
     }
   }
 
