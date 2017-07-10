@@ -36087,7 +36087,7 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     if (!(0, _lodash.isEmpty)(newState)) {
-      this.setState(newState);
+      this.setState(newState, this._broadcastChange);
     }
   };
 
