@@ -621,7 +621,7 @@ Reset some state defaults and dataSource related fields if dataSource changed.</
     }
 
     <span class="hljs-keyword">if</span> (!isEmpty(newState)) {
-      <span class="hljs-keyword">this</span>.setState(newState);
+      <span class="hljs-keyword">this</span>.setState(newState, <span class="hljs-keyword">this</span>._broadcastChange);
     }
   }</pre></div></div>
             
