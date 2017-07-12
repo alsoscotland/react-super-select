@@ -35787,6 +35787,7 @@ var multiple = require('./properties/multiple'),
     deselectOnSelectedOptionClick = require('./properties/deselectOnSelectedOptionClick'),
     disabled = require('./properties/disabled'),
     onChange = require('./properties/onChange'),
+    onClear = require('./properties/onClear'),
     onCloseDropdown = require('./properties/onCloseDropdown'),
     onOpenDropdown = require('./properties/onOpenDropdown'),
     openOnMount = require('./properties/openOnMount'),
@@ -35811,18 +35812,18 @@ var multiple = require('./properties/multiple'),
     searchPlaceholder = require('./properties/searchPlaceholder'),
     tagRemoveLabelString = require('./properties/tagRemoveLabelString');
 
-var allProps = [multiple, searchable, tags, clearable, controlId, deselectOnSelectedOptionClick, clearSearchLabelString, clearSearchOnSelection, clearSelectedValueOnDataSourceChange, clearSelectionLabelString, closeOnSelectedOptionClick, customClass, customGroupHeadingClass, customSearchIconClass, customLoaderClass, customTagClass, disabled, onChange, onCloseDropdown, onOpenDropdown, ajaxDataFetch, dataSource, initialValue, keepOpenOnSelection, openOnMount, focusOnMount, forceDefaultBrowserScrolling, optionLabelKey, optionValueKey, pageDataFetch, hasMorePages, groupBy, customGroupHeadingTemplateFunction, customFilterFunction, customOptionTemplateFunction, customSelectedValueTemplateFunction, ajaxErrorString, noResultsString, placeholder, searchPlaceholder, tagRemoveLabelString];
+var allProps = [multiple, searchable, tags, clearable, controlId, deselectOnSelectedOptionClick, clearSearchLabelString, clearSearchOnSelection, clearSelectedValueOnDataSourceChange, clearSelectionLabelString, closeOnSelectedOptionClick, customClass, customGroupHeadingClass, customSearchIconClass, customLoaderClass, customTagClass, disabled, onChange, onClear, onCloseDropdown, onOpenDropdown, ajaxDataFetch, dataSource, initialValue, keepOpenOnSelection, openOnMount, focusOnMount, forceDefaultBrowserScrolling, optionLabelKey, optionValueKey, pageDataFetch, hasMorePages, groupBy, customGroupHeadingTemplateFunction, customFilterFunction, customOptionTemplateFunction, customSelectedValueTemplateFunction, ajaxErrorString, noResultsString, placeholder, searchPlaceholder, tagRemoveLabelString];
 
 module.exports = allProps;
 
-},{"./properties/ajaxDataFetch":244,"./properties/ajaxErrorString":245,"./properties/clearSearchLabelString":246,"./properties/clearSearchonSelection":247,"./properties/clearSelectedValueOnDataSourceChange":248,"./properties/clearSelectionLabelString":249,"./properties/clearable":250,"./properties/closeOnSelectedOptionClick":251,"./properties/controlId":252,"./properties/customClass":253,"./properties/customFilterFunction":254,"./properties/customGroupHeadingClass":255,"./properties/customGroupHeadingTemplateFunction":256,"./properties/customLoaderClass":257,"./properties/customOptionTemplateFunction":258,"./properties/customSearchIconClass":259,"./properties/customSelectedValueTemplateFunction":260,"./properties/customTagClass":261,"./properties/dataSource":262,"./properties/deselectOnSelectedOptionClick":263,"./properties/disabled":264,"./properties/focusOnMount":265,"./properties/forceDefaultBrowserScrolling":266,"./properties/groupBy":267,"./properties/hasMorePages":268,"./properties/initialValue":269,"./properties/keepOpenOnSelection":270,"./properties/multiple":271,"./properties/noResultsString":272,"./properties/onChange":273,"./properties/onCloseDropdown":274,"./properties/onOpenDropdown":275,"./properties/openOnMount":276,"./properties/optionLabelKey":277,"./properties/optionValueKey":278,"./properties/pageDataFetch":279,"./properties/placeholder":280,"./properties/searchPlaceholder":281,"./properties/searchable":282,"./properties/tagRemoveLabelString":283,"./properties/tags":284}],185:[function(require,module,exports){
+},{"./properties/ajaxDataFetch":245,"./properties/ajaxErrorString":246,"./properties/clearSearchLabelString":247,"./properties/clearSearchonSelection":248,"./properties/clearSelectedValueOnDataSourceChange":249,"./properties/clearSelectionLabelString":250,"./properties/clearable":251,"./properties/closeOnSelectedOptionClick":252,"./properties/controlId":253,"./properties/customClass":254,"./properties/customFilterFunction":255,"./properties/customGroupHeadingClass":256,"./properties/customGroupHeadingTemplateFunction":257,"./properties/customLoaderClass":258,"./properties/customOptionTemplateFunction":259,"./properties/customSearchIconClass":260,"./properties/customSelectedValueTemplateFunction":261,"./properties/customTagClass":262,"./properties/dataSource":263,"./properties/deselectOnSelectedOptionClick":264,"./properties/disabled":265,"./properties/focusOnMount":266,"./properties/forceDefaultBrowserScrolling":267,"./properties/groupBy":268,"./properties/hasMorePages":269,"./properties/initialValue":270,"./properties/keepOpenOnSelection":271,"./properties/multiple":272,"./properties/noResultsString":273,"./properties/onChange":274,"./properties/onClear":275,"./properties/onCloseDropdown":276,"./properties/onOpenDropdown":277,"./properties/openOnMount":278,"./properties/optionLabelKey":279,"./properties/optionValueKey":280,"./properties/pageDataFetch":281,"./properties/placeholder":282,"./properties/searchPlaceholder":283,"./properties/searchable":284,"./properties/tagRemoveLabelString":285,"./properties/tags":286}],185:[function(require,module,exports){
 'use strict';
 
 require('./props-app');
 require('./keyboard-navigation-app');
 require('./version-printer');
 
-},{"./keyboard-navigation-app":186,"./props-app":285,"./version-printer":286}],186:[function(require,module,exports){
+},{"./keyboard-navigation-app":186,"./props-app":287,"./version-printer":288}],186:[function(require,module,exports){
 "use strict";
 
 var _lodash = require("lodash");
@@ -36171,28 +36172,30 @@ module.exports={"body":"<!-- noResultsString -->\n<p>(<strong>String</strong>) <
 },{}],232:[function(require,module,exports){
 module.exports={"body":"<!-- onChange -->\n<p>(<strong>Function</strong>) <em>required</em></p>\n<p>This is the main callback handler for the control. </p>\n<p>When a user makes selection(s), this handler will be called, the selected option (or when multiple or tags an array of selected values) will be passed to the handler as an argument. </p>\n<p>(The values passed are option objects from the dataSource collection)</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],233:[function(require,module,exports){
-module.exports={"body":"<!-- onCloseDropdown -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>A callback which will be fired every time the react super select dropdown is closed.</p>\n","updatedAt":"2016-07-06T02:21:33.000Z"}
+module.exports={"body":"<!-- onClear -->\n<p>(<strong>Function</strong>)</p>\n<p>A callback which will be fired when a user manaually clears the selection(s).</p>\n","updatedAt":"2017-07-12T14:21:55.000Z"}
 },{}],234:[function(require,module,exports){
-module.exports={"body":"<!-- onOpenDropdown -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>A callback which will be fired every time the react super select dropdown is opened.</p>\n","updatedAt":"2016-07-06T02:21:33.000Z"}
+module.exports={"body":"<!-- onCloseDropdown -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>A callback which will be fired every time the react super select dropdown is closed.</p>\n","updatedAt":"2016-07-06T02:21:33.000Z"}
 },{}],235:[function(require,module,exports){
-module.exports={"body":"<!-- openOnMount -->\n<p>(<strong>openOnMount</strong>) (<strong>Boolean</strong>) <em>optional</em></p>\n<p>When set to true, The component will render with the dropdown open on initial render.</p>\n","updatedAt":"2016-06-11T01:30:48.000Z"}
+module.exports={"body":"<!-- onOpenDropdown -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>A callback which will be fired every time the react super select dropdown is opened.</p>\n","updatedAt":"2016-07-06T02:21:33.000Z"}
 },{}],236:[function(require,module,exports){
-module.exports={"body":"<!-- optionLabelKey -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(defaults to using ‘name’ as the key if left undefined)</p>\n<p>This value represents the key in each option object (from the <strong>dataSource</strong> collection) </p>\n<p>This key should map to the value you would like displayed as a label for each option.</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- openOnMount -->\n<p>(<strong>openOnMount</strong>) (<strong>Boolean</strong>) <em>optional</em></p>\n<p>When set to true, The component will render with the dropdown open on initial render.</p>\n","updatedAt":"2016-06-11T01:30:48.000Z"}
 },{}],237:[function(require,module,exports){
-module.exports={"body":"<!-- optionValueKey -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> (defaults to using ‘id’ as the key if left undefined)</p>\n<p>  This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that uniquely identifies that option across the dataSource collection. </p>\n<p>  Think of it in terms of the value attribute of the html option tag (inside a select)</p>\n<pre><code class=\"lang-html\">  &lt;select&gt;\n    &lt;option value=&quot;?&quot;&gt;\n</code></pre>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- optionLabelKey -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(defaults to using ‘name’ as the key if left undefined)</p>\n<p>This value represents the key in each option object (from the <strong>dataSource</strong> collection) </p>\n<p>This key should map to the value you would like displayed as a label for each option.</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],238:[function(require,module,exports){
-module.exports={"body":"<!-- pageDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(A <strong>hasMorePages</strong> function should be provided when using this option)</p>\n<p>Additional pages of data can be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function takes one argument, the value provided as the dataSource (or the return value of the ajaxDataSource function). </p>\n<p>It must return a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The pageDataFetch function will be called based upon the user’s scroll position in the dropdown (reaching a threshold close enough to the end of the dropdown&#39;s results list). </p>\n<p>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <strong>hasMorePages</strong> evaluates to false</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- optionValueKey -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> (defaults to using ‘id’ as the key if left undefined)</p>\n<p>  This value represents the key in each option object (from the <strong>dataSource</strong> collection), which represents the value that uniquely identifies that option across the dataSource collection. </p>\n<p>  Think of it in terms of the value attribute of the html option tag (inside a select)</p>\n<pre><code class=\"lang-html\">  &lt;select&gt;\n    &lt;option value=&quot;?&quot;&gt;\n</code></pre>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],239:[function(require,module,exports){
-module.exports={"body":"<!-- placeholder -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> This string value will be displayed in the main display area of your control when the user has no selected values</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- pageDataFetch -->\n<p>(<strong>Function</strong>) <em>optional</em></p>\n<p>(A <strong>hasMorePages</strong> function should be provided when using this option)</p>\n<p>Additional pages of data can be fetched via ajax if you provide a function as the value for this option. </p>\n<p>The function takes one argument, the value provided as the dataSource (or the return value of the ajaxDataSource function). </p>\n<p>It must return a promise object. (i.e. an object with a then function). The promise must resolve with a value meeting the description of the <strong>dataSource</strong> option documentation. </p>\n<p>The pageDataFetch function will be called based upon the user’s scroll position in the dropdown (reaching a threshold close enough to the end of the dropdown&#39;s results list). </p>\n<p>It will not be called when loading ajax data, or when filtering results in a searchable dropdown, or when <strong>hasMorePages</strong> evaluates to false</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],240:[function(require,module,exports){
-module.exports={"body":"<!-- searchPlaceholder -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option)</p>\n<p>This string will be shown in the dropdown area’s search input field when a user has not entered any characters</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- placeholder -->\n<p> (<strong>String</strong>) <em>optional</em></p>\n<p> This string value will be displayed in the main display area of your control when the user has no selected values</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],241:[function(require,module,exports){
-module.exports={"body":"<!-- searchable -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to show a search bar in the dropdown area which offers text-based filtering of the dataSource options (by label <strong>optionLabelKey</strong>)</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- searchPlaceholder -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>searchable</strong> option)</p>\n<p>This string will be shown in the dropdown area’s search input field when a user has not entered any characters</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],242:[function(require,module,exports){
-module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>tagRemoveLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>\n","updatedAt":"2015-10-29T13:37:18.000Z"}
+module.exports={"body":"<!-- searchable -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to show a search bar in the dropdown area which offers text-based filtering of the dataSource options (by label <strong>optionLabelKey</strong>)</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
 },{}],243:[function(require,module,exports){
-module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+module.exports={"body":"<!-- ajaxErrorString -->\n<p>(<strong>tagRemoveLabelString</strong>) <em>optional</em></p>\n<p>(Used in conjunction with the <strong>tags</strong> option)</p>\n<p>This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).</p>\n","updatedAt":"2015-10-29T13:37:18.000Z"}
 },{}],244:[function(require,module,exports){
+module.exports={"body":"<!-- tags -->\n<p>(<strong>Boolean</strong>) <em>optional</em> </p>\n<p>Whether or not to display your chosen multi-select values as tags. </p>\n<p>(When set, there is no need to set the <strong>multiple</strong> option)</p>\n","updatedAt":"2015-09-09T04:33:41.000Z"}
+},{}],245:[function(require,module,exports){
 "use strict";
 
 var ajaxDataFetchMarkdown = require('../markdown/js/properties/ajaxDataFetch').body;
@@ -36207,7 +36210,7 @@ var ajaxDataFetchProp = {
 
 module.exports = ajaxDataFetchProp;
 
-},{"../markdown/js/properties/ajaxDataFetch":203}],245:[function(require,module,exports){
+},{"../markdown/js/properties/ajaxDataFetch":203}],246:[function(require,module,exports){
 "use strict";
 
 var ajaxErrorStringMarkdown = require('../markdown/js/properties/ajaxErrorString').body;
@@ -36222,7 +36225,7 @@ var ajaxErrorStringProp = {
 
 module.exports = ajaxErrorStringProp;
 
-},{"../markdown/js/properties/ajaxErrorString":204}],246:[function(require,module,exports){
+},{"../markdown/js/properties/ajaxErrorString":204}],247:[function(require,module,exports){
 "use strict";
 
 var clearSearchLabelStringMarkdown = require('../markdown/js/properties/clearSearchLabelString').body;
@@ -36237,7 +36240,7 @@ var clearSearchLabelStringProp = {
 
 module.exports = clearSearchLabelStringProp;
 
-},{"../markdown/js/properties/clearSearchLabelString":205}],247:[function(require,module,exports){
+},{"../markdown/js/properties/clearSearchLabelString":205}],248:[function(require,module,exports){
 "use strict";
 
 var clearSearchOnSelectionMarkdown = require('../markdown/js/properties/clearSearchOnSelection').body;
@@ -36252,7 +36255,7 @@ var clearSearchOnSelectionProp = {
 
 module.exports = clearSearchOnSelectionProp;
 
-},{"../markdown/js/properties/clearSearchOnSelection":206}],248:[function(require,module,exports){
+},{"../markdown/js/properties/clearSearchOnSelection":206}],249:[function(require,module,exports){
 "use strict";
 
 var clearSelectedValueOnDataSourceChangeMarkdown = require('../markdown/js/properties/clearSelectedValueOnDataSourceChange').body;
@@ -36267,7 +36270,7 @@ var clearSelectedValueOnDataSourceChangeProp = {
 
 module.exports = clearSelectedValueOnDataSourceChangeProp;
 
-},{"../markdown/js/properties/clearSelectedValueOnDataSourceChange":207}],249:[function(require,module,exports){
+},{"../markdown/js/properties/clearSelectedValueOnDataSourceChange":207}],250:[function(require,module,exports){
 "use strict";
 
 var clearSelectionLabelStringMarkdown = require('../markdown/js/properties/clearSelectionLabelString').body;
@@ -36282,7 +36285,7 @@ var clearSelectionLabelStringProp = {
 
 module.exports = clearSelectionLabelStringProp;
 
-},{"../markdown/js/properties/clearSelectionLabelString":208}],250:[function(require,module,exports){
+},{"../markdown/js/properties/clearSelectionLabelString":208}],251:[function(require,module,exports){
 "use strict";
 
 var clearableMarkdown = require('../markdown/js/properties/clearable').body;
@@ -36297,7 +36300,7 @@ var clearableProp = {
 
 module.exports = clearableProp;
 
-},{"../markdown/js/properties/clearable":209}],251:[function(require,module,exports){
+},{"../markdown/js/properties/clearable":209}],252:[function(require,module,exports){
 "use strict";
 
 var closeOnSelectedOptionClickMarkdown = require('../markdown/js/properties/closeOnSelectedOptionClick').body;
@@ -36312,7 +36315,7 @@ var closeOnSelectedOptionClickProp = {
 
 module.exports = closeOnSelectedOptionClickProp;
 
-},{"../markdown/js/properties/closeOnSelectedOptionClick":210}],252:[function(require,module,exports){
+},{"../markdown/js/properties/closeOnSelectedOptionClick":210}],253:[function(require,module,exports){
 "use strict";
 
 var controlIdMarkdown = require('../markdown/js/properties/controlId').body;
@@ -36327,7 +36330,7 @@ var controlIdProp = {
 
 module.exports = controlIdProp;
 
-},{"../markdown/js/properties/controlId":211}],253:[function(require,module,exports){
+},{"../markdown/js/properties/controlId":211}],254:[function(require,module,exports){
 "use strict";
 
 var customClassMarkdown = require('../markdown/js/properties/customClass').body;
@@ -36342,7 +36345,7 @@ var customClassProp = {
 
 module.exports = customClassProp;
 
-},{"../markdown/js/properties/customClass":212}],254:[function(require,module,exports){
+},{"../markdown/js/properties/customClass":212}],255:[function(require,module,exports){
 "use strict";
 
 var customFilterFunctionMarkdown = require('../markdown/js/properties/customFilterFunction').body;
@@ -36357,7 +36360,7 @@ var customFilterFunctionProp = {
 
 module.exports = customFilterFunctionProp;
 
-},{"../markdown/js/properties/customFilterFunction":213}],255:[function(require,module,exports){
+},{"../markdown/js/properties/customFilterFunction":213}],256:[function(require,module,exports){
 "use strict";
 
 var customGroupHeadingClassMarkdown = require('../markdown/js/properties/customGroupHeadingClass').body;
@@ -36372,7 +36375,7 @@ var customGroupHeadingClassProp = {
 
 module.exports = customGroupHeadingClassProp;
 
-},{"../markdown/js/properties/customGroupHeadingClass":214}],256:[function(require,module,exports){
+},{"../markdown/js/properties/customGroupHeadingClass":214}],257:[function(require,module,exports){
 "use strict";
 
 var customGroupHeadingTemplateFunctionMarkdown = require('../markdown/js/properties/customGroupHeadingTemplateFunction').body;
@@ -36387,7 +36390,7 @@ var customGroupHeadingTemplateFunctionProp = {
 
 module.exports = customGroupHeadingTemplateFunctionProp;
 
-},{"../markdown/js/properties/customGroupHeadingTemplateFunction":215}],257:[function(require,module,exports){
+},{"../markdown/js/properties/customGroupHeadingTemplateFunction":215}],258:[function(require,module,exports){
 "use strict";
 
 var customLoaderClassMarkdown = require('../markdown/js/properties/customLoaderClass').body;
@@ -36402,7 +36405,7 @@ var customLoaderClassProp = {
 
 module.exports = customLoaderClassProp;
 
-},{"../markdown/js/properties/customLoaderClass":216}],258:[function(require,module,exports){
+},{"../markdown/js/properties/customLoaderClass":216}],259:[function(require,module,exports){
 "use strict";
 
 var customOptionTemplateFunctionMarkdown = require('../markdown/js/properties/customOptionTemplateFunction').body;
@@ -36417,7 +36420,7 @@ var customOptionTemplateFunctionProp = {
 
 module.exports = customOptionTemplateFunctionProp;
 
-},{"../markdown/js/properties/customOptionTemplateFunction":217}],259:[function(require,module,exports){
+},{"../markdown/js/properties/customOptionTemplateFunction":217}],260:[function(require,module,exports){
 "use strict";
 
 var customSearchIconClassMarkdown = require('../markdown/js/properties/customSearchIconClass').body;
@@ -36432,7 +36435,7 @@ var customSearchIconClassProp = {
 
 module.exports = customSearchIconClassProp;
 
-},{"../markdown/js/properties/customSearchIconClass":218}],260:[function(require,module,exports){
+},{"../markdown/js/properties/customSearchIconClass":218}],261:[function(require,module,exports){
 "use strict";
 
 var customSelectedValueTemplateFunctionMarkdown = require('../markdown/js/properties/customSelectedValueTemplateFunction').body;
@@ -36447,7 +36450,7 @@ var customSelectedValueTemplateFunctionProp = {
 
 module.exports = customSelectedValueTemplateFunctionProp;
 
-},{"../markdown/js/properties/customSelectedValueTemplateFunction":219}],261:[function(require,module,exports){
+},{"../markdown/js/properties/customSelectedValueTemplateFunction":219}],262:[function(require,module,exports){
 "use strict";
 
 var customTagClassMarkdown = require('../markdown/js/properties/customTagClass').body;
@@ -36462,7 +36465,7 @@ var customTagClassProp = {
 
 module.exports = customTagClassProp;
 
-},{"../markdown/js/properties/customTagClass":220}],262:[function(require,module,exports){
+},{"../markdown/js/properties/customTagClass":220}],263:[function(require,module,exports){
 "use strict";
 
 var dataSourceMarkdown = require('../markdown/js/properties/dataSource').body;
@@ -36477,7 +36480,7 @@ var dataSourceProp = {
 
 module.exports = dataSourceProp;
 
-},{"../markdown/js/properties/dataSource":221}],263:[function(require,module,exports){
+},{"../markdown/js/properties/dataSource":221}],264:[function(require,module,exports){
 "use strict";
 
 var deselectOnSelectedOptionClickMarkdown = require('../markdown/js/properties/deselectOnSelectedOptionClick').body;
@@ -36492,7 +36495,7 @@ var deselectOnSelectedOptionClickProp = {
 
 module.exports = deselectOnSelectedOptionClickProp;
 
-},{"../markdown/js/properties/deselectOnSelectedOptionClick":222}],264:[function(require,module,exports){
+},{"../markdown/js/properties/deselectOnSelectedOptionClick":222}],265:[function(require,module,exports){
 "use strict";
 
 var disabledMarkdown = require('../markdown/js/properties/disabled').body;
@@ -36507,7 +36510,7 @@ var disabledProp = {
 
 module.exports = disabledProp;
 
-},{"../markdown/js/properties/disabled":223}],265:[function(require,module,exports){
+},{"../markdown/js/properties/disabled":223}],266:[function(require,module,exports){
 "use strict";
 
 var focusOnMountMarkdown = require('../markdown/js/properties/focusOnMount').body;
@@ -36522,7 +36525,7 @@ var focusOnMountProp = {
 
 module.exports = focusOnMountProp;
 
-},{"../markdown/js/properties/focusOnMount":224}],266:[function(require,module,exports){
+},{"../markdown/js/properties/focusOnMount":224}],267:[function(require,module,exports){
 "use strict";
 
 var forceDefaultBrowserScrollingMarkdown = require('../markdown/js/properties/forceDefaultBrowserScrolling').body;
@@ -36537,7 +36540,7 @@ var forceDefaultBrowserScrollingProp = {
 
 module.exports = forceDefaultBrowserScrollingProp;
 
-},{"../markdown/js/properties/forceDefaultBrowserScrolling":225}],267:[function(require,module,exports){
+},{"../markdown/js/properties/forceDefaultBrowserScrolling":225}],268:[function(require,module,exports){
 "use strict";
 
 var groupByMarkdown = require('../markdown/js/properties/groupBy').body;
@@ -36552,7 +36555,7 @@ var groupByProp = {
 
 module.exports = groupByProp;
 
-},{"../markdown/js/properties/groupBy":226}],268:[function(require,module,exports){
+},{"../markdown/js/properties/groupBy":226}],269:[function(require,module,exports){
 "use strict";
 
 var hasMorePagesMarkdown = require('../markdown/js/properties/hasMorePages').body;
@@ -36567,7 +36570,7 @@ var hasMorePagesProp = {
 
 module.exports = hasMorePagesProp;
 
-},{"../markdown/js/properties/hasMorePages":227}],269:[function(require,module,exports){
+},{"../markdown/js/properties/hasMorePages":227}],270:[function(require,module,exports){
 "use strict";
 
 var initialValueMarkdown = require('../markdown/js/properties/initialValue').body;
@@ -36582,7 +36585,7 @@ var initialValueProp = {
 
 module.exports = initialValueProp;
 
-},{"../markdown/js/properties/initialValue":228}],270:[function(require,module,exports){
+},{"../markdown/js/properties/initialValue":228}],271:[function(require,module,exports){
 "use strict";
 
 var keepOpenOnSelectionMarkdown = require('../markdown/js/properties/keepOpenOnSelection').body;
@@ -36597,7 +36600,7 @@ var keepOpenOnSelectionProp = {
 
 module.exports = keepOpenOnSelectionProp;
 
-},{"../markdown/js/properties/keepOpenOnSelection":229}],271:[function(require,module,exports){
+},{"../markdown/js/properties/keepOpenOnSelection":229}],272:[function(require,module,exports){
 "use strict";
 
 var multipleMarkdown = require('../markdown/js/properties/multiple').body;
@@ -36612,7 +36615,7 @@ var multipleProp = {
 
 module.exports = multipleProp;
 
-},{"../markdown/js/properties/multiple":230}],272:[function(require,module,exports){
+},{"../markdown/js/properties/multiple":230}],273:[function(require,module,exports){
 "use strict";
 
 var noResultsStringMarkdown = require('../markdown/js/properties/noResultsString').body;
@@ -36627,7 +36630,7 @@ var noResultsStringProp = {
 
 module.exports = noResultsStringProp;
 
-},{"../markdown/js/properties/noResultsString":231}],273:[function(require,module,exports){
+},{"../markdown/js/properties/noResultsString":231}],274:[function(require,module,exports){
 "use strict";
 
 var onChangeMarkdown = require('../markdown/js/properties/onChange').body;
@@ -36642,7 +36645,22 @@ var onChangeProp = {
 
 module.exports = onChangeProp;
 
-},{"../markdown/js/properties/onChange":232}],274:[function(require,module,exports){
+},{"../markdown/js/properties/onChange":232}],275:[function(require,module,exports){
+"use strict";
+
+var onClearMarkdown = require('../markdown/js/properties/onClear').body;
+
+var onClearProp = {
+
+  nameAttr: "onClear",
+
+  renderString: onClearMarkdown
+
+};
+
+module.exports = onClearProp;
+
+},{"../markdown/js/properties/onClear":233}],276:[function(require,module,exports){
 "use strict";
 
 var onCloseDropdownMarkdown = require('../markdown/js/properties/onCloseDropdown').body;
@@ -36657,7 +36675,7 @@ var onCloseDropdownProp = {
 
 module.exports = onCloseDropdownProp;
 
-},{"../markdown/js/properties/onCloseDropdown":233}],275:[function(require,module,exports){
+},{"../markdown/js/properties/onCloseDropdown":234}],277:[function(require,module,exports){
 "use strict";
 
 var onOpenDropdownMarkdown = require('../markdown/js/properties/onOpenDropdown').body;
@@ -36672,7 +36690,7 @@ var onOpenDropdownProp = {
 
 module.exports = onOpenDropdownProp;
 
-},{"../markdown/js/properties/onOpenDropdown":234}],276:[function(require,module,exports){
+},{"../markdown/js/properties/onOpenDropdown":235}],278:[function(require,module,exports){
 "use strict";
 
 var openOnMountMarkdown = require('../markdown/js/properties/openOnMount').body;
@@ -36687,7 +36705,7 @@ var openOnMountProp = {
 
 module.exports = openOnMountProp;
 
-},{"../markdown/js/properties/openOnMount":235}],277:[function(require,module,exports){
+},{"../markdown/js/properties/openOnMount":236}],279:[function(require,module,exports){
 "use strict";
 
 var optionLabelKeyMarkdown = require('../markdown/js/properties/optionLabelKey').body;
@@ -36702,7 +36720,7 @@ var optionLabelKeyProp = {
 
 module.exports = optionLabelKeyProp;
 
-},{"../markdown/js/properties/optionLabelKey":236}],278:[function(require,module,exports){
+},{"../markdown/js/properties/optionLabelKey":237}],280:[function(require,module,exports){
 "use strict";
 
 var optionValueKeyMarkdown = require('../markdown/js/properties/optionValueKey').body;
@@ -36717,7 +36735,7 @@ var optionValueKeyProp = {
 
 module.exports = optionValueKeyProp;
 
-},{"../markdown/js/properties/optionValueKey":237}],279:[function(require,module,exports){
+},{"../markdown/js/properties/optionValueKey":238}],281:[function(require,module,exports){
 "use strict";
 
 var pageDataFetchMarkdown = require('../markdown/js/properties/pageDataFetch').body;
@@ -36732,7 +36750,7 @@ var pageDataFetchProp = {
 
 module.exports = pageDataFetchProp;
 
-},{"../markdown/js/properties/pageDataFetch":238}],280:[function(require,module,exports){
+},{"../markdown/js/properties/pageDataFetch":239}],282:[function(require,module,exports){
 "use strict";
 
 var placeholderMarkdown = require('../markdown/js/properties/placeholder').body;
@@ -36747,7 +36765,7 @@ var placeholderProp = {
 
 module.exports = placeholderProp;
 
-},{"../markdown/js/properties/placeholder":239}],281:[function(require,module,exports){
+},{"../markdown/js/properties/placeholder":240}],283:[function(require,module,exports){
 "use strict";
 
 var searchPlaceholderMarkdown = require('../markdown/js/properties/searchPlaceholder').body;
@@ -36762,7 +36780,7 @@ var searchPlaceholderProp = {
 
 module.exports = searchPlaceholderProp;
 
-},{"../markdown/js/properties/searchPlaceholder":240}],282:[function(require,module,exports){
+},{"../markdown/js/properties/searchPlaceholder":241}],284:[function(require,module,exports){
 "use strict";
 
 var searchableMarkdown = require('../markdown/js/properties/searchable').body;
@@ -36777,7 +36795,7 @@ var searchableProp = {
 
 module.exports = searchableProp;
 
-},{"../markdown/js/properties/searchable":241}],283:[function(require,module,exports){
+},{"../markdown/js/properties/searchable":242}],285:[function(require,module,exports){
 "use strict";
 
 var tagRemoveLabelStringMarkdown = require('../markdown/js/properties/tagRemoveLabelString').body;
@@ -36792,7 +36810,7 @@ var tagRemoveLabelStringProp = {
 
 module.exports = tagRemoveLabelStringProp;
 
-},{"../markdown/js/properties/tagRemoveLabelString":242}],284:[function(require,module,exports){
+},{"../markdown/js/properties/tagRemoveLabelString":243}],286:[function(require,module,exports){
 "use strict";
 
 var tagsMarkdown = require('../markdown/js/properties/tags').body;
@@ -36807,7 +36825,7 @@ var tagsProp = {
 
 module.exports = tagsProp;
 
-},{"../markdown/js/properties/tags":243}],285:[function(require,module,exports){
+},{"../markdown/js/properties/tags":244}],287:[function(require,module,exports){
 "use strict";
 
 var _lodash = require("lodash");
@@ -36964,7 +36982,7 @@ var PropsApp = function (_React$Component) {
 module.exports = PropsApp;
 _reactDom2.default.render(_react2.default.createElement(PropsApp, null), document.getElementById('props_docs'));
 
-},{"./all-props":184,"lodash":25,"react":182,"react-dom":31}],286:[function(require,module,exports){
+},{"./all-props":184,"lodash":25,"react":182,"react-dom":31}],288:[function(require,module,exports){
 "use strict";
 
 var _react = require("react");
@@ -36983,7 +37001,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var RSS_VERSION = "1.0.3";
+var RSS_VERSION = "1.0.4";
 
 var _ref = _react2.default.createElement(
   "span",
