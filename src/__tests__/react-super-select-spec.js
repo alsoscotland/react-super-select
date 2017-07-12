@@ -316,6 +316,22 @@ describe('ReactSuperSelect', function() {
       expect(_.isEmpty(el.state.value)).toBe(true);
     });
 
+    it('triggers an onClear handler when clear selection occurs', function() {
+      const onClearMock = jest.genMockFunction();
+
+      var el = renderComponent({
+          dataSource: {
+            collection: mockData
+          },
+          onClear: onClearMock,
+          multiple: true,
+          initialValue: [mockData[2], mockData[4]]
+        });
+
+      TestUtils.Simulate.click(el._rssDOM.selectionClear, {type: 'click'});
+      expect(onClearMock).toHaveBeenCalled();
+    });
+
     it('clears selection when clear selection button receives space-bar keyDown', function() {
       var el = renderComponent({
           dataSource: {

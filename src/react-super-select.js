@@ -31,7 +31,7 @@ import { bindAll,
          uniqueId,
          values } from 'lodash';
 import classNames from 'classnames';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import React from 'react';
 
 // PROPS and DEFAULT PROPS are declared at Bottom of File
@@ -183,9 +183,7 @@ class ReactSuperSelect extends React.Component {
       '_setFocusToTagRemovalIfPresent',
       '_updateFocusedId'
     ]);
-
   }
-
 
   // wire document click close control handler
   componentDidMount() {
@@ -260,33 +258,26 @@ class ReactSuperSelect extends React.Component {
 
   // main render method
   render() {
-    let caratClass = classNames('carat', {
-          'down': !this.state.isOpen,
-          'up': this.state.isOpen
-        }),
-        clearSelectionButton = null,
-        clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.props.clearSelectionLabelString,
-        dropdownContent = this._getDropdownContent(),
-        placeholderString,
-        triggerClasses,
-        triggerDisplayContent,
-        wrapClasses;
+    const caratClass = classNames('carat', {
+            'down': !this.state.isOpen,
+            'up': this.state.isOpen
+          }),
+          clearSelectionLabelString = this.props.clearSelectionLabelString ? this.props.clearSelectionLabelString : this.props.clearSelectionLabelString,
+          dropdownContent = this._getDropdownContent(),
+          placeholderString = this.props.placeholder ? this.props.placeholder : this.props.placeholder,
+          triggerClasses = classNames('r-ss-trigger', {
+            'r-ss-open': this.state.isOpen,
+            'r-ss-disabled': this.props.disabled,
+            'r-ss-placeholder': this.state.value.length < 1
+          }),
+          triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString,
+          wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
+            'r-ss-expanded': this.state.isOpen
+          });
 
-    wrapClasses = classNames("r-ss-wrap", this.props.customClass, {
-      'r-ss-expanded': this.state.isOpen
-    });
-
-    triggerClasses = classNames('r-ss-trigger', {
-      'r-ss-open': this.state.isOpen,
-      'r-ss-disabled': this.props.disabled,
-      'r-ss-placeholder': this.state.value.length < 1
-    });
-
-    placeholderString = this.props.placeholder ? this.props.placeholder : this.props.placeholder;
-    triggerDisplayContent = this.state.value.length ? this._generateValueDisplay() : placeholderString;
-
+    let clearSelectionButton = null;
     if (!isEmpty(this.state.value) && (this.props.clearable !== false)) {
-      clearSelectionButton = (<button aria-label={clearSelectionLabelString} ref={(c) => {this._rssDOM.selectionClear = c; }} name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}>
+      clearSelectionButton = (<button aria-label={clearSelectionLabelString} ref={(c) => {this._rssDOM.selectionClear = c }} name="clearSelection" type="button" className="r-ss-selection-clear" onClick={this._clearSelection} onKeyDown={this._clearSelection}>
                                 <span />
                              </button>);
     }
@@ -429,6 +420,7 @@ class ReactSuperSelect extends React.Component {
         this.lastUserSelectedOption = undefined;
         this._focusTrigger();
         this._broadcastChange();
+        this.props.onClear();
       });
     }
   }
@@ -584,9 +576,8 @@ class ReactSuperSelect extends React.Component {
   // shift focus from dropdown trigger to any removal/clear buttons
   // for keyboard navigation and accessibility
   _focusRemovalButtons(event) {
-    const triggerContainer = this._rssDOM.triggerDiv;
-
-    const buttons = triggerContainer.getElementsByTagName('button');
+    const triggerContainer = this._rssDOM.triggerDiv,
+          buttons = triggerContainer.getElementsByTagName('button');
 
     let currentlyFocusedRemoveButtonIndex,
         nextButtonIndexToFocus;
@@ -630,7 +621,7 @@ class ReactSuperSelect extends React.Component {
 
   // render the content shown if an ajax error occurs
   _getAjaxErrorMarkup() {
-    let errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.ajaxErrorString;
+    const errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.ajaxErrorString;
     return (<li className="r-ss-dropdown-option error">
               <i ref={(c) => {this._rssDOM.errorDisplay = c }}>
                 {errorString}
@@ -659,12 +650,9 @@ class ReactSuperSelect extends React.Component {
       return null;
     }
 
-    let mouseMoveHandler,
-        pagingLi,
-        searchContent = this._getSearchContent();
-
-    mouseMoveHandler = (this.props.pageDataFetch) ? this._onMouseMove : null;
-    pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
+    const searchContent = this._getSearchContent(),
+          mouseMoveHandler = (this.props.pageDataFetch) ? this._onMouseMove : null,
+          pagingLi = this.state.isFetchingPage ? this._getPagingLi() : null;
 
     return(
       <div ref={(c) => {this._rssDOM.dropdownContent = c }} className="r-ss-dropdown" onKeyDown={this._handleKeyDown}>
@@ -697,9 +685,9 @@ class ReactSuperSelect extends React.Component {
       return null;
     }
 
-    let headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
-        headingKey = "heading_" + heading,
-        headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
+    const headingClasses = classNames("r-ss-option-group-heading", this.props.customGroupHeadingClass),
+          headingKey = "heading_" + heading,
+          headingMarkup = this.props.customGroupHeadingTemplateFunction ? this.props.customGroupHeadingTemplateFunction(heading) : heading;
 
     // currently, group headings are aria-hidden so they will not throw off the options count in voiceover
     // in search of a better solution for announcing/navigating grouped listbox items as subgroups
@@ -711,7 +699,7 @@ class ReactSuperSelect extends React.Component {
 
   // render the content shown when no options are available
   _getNoResultsMarkup() {
-    let noResultsString = this.props.noResultsString ? this.props.noResultsString : this.props.noResultsString;
+    const noResultsString = this.props.noResultsString ? this.props.noResultsString : this.props.noResultsString;
     return (<li className="r-ss-dropdown-option" tabIndex="-1"><i ref={(c) => {this._rssDOM.noResults = c; }}>{noResultsString}</i></li>);
   }
 
@@ -719,7 +707,7 @@ class ReactSuperSelect extends React.Component {
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup() {
     return map(this.state.value, (value) => {
-      let selectedKey = "r_ss_selected_" + value[this.state.labelKey];
+      const selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
         return this.props.customOptionTemplateFunction(value);
       }
@@ -729,7 +717,7 @@ class ReactSuperSelect extends React.Component {
 
   // render a loading span (spinner gif), with **customLoaderClass** if provided
   _getLoadingMarkup() {
-    let loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
+    const loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
     return (<span ref={(c) => {this._rssDOM.loader = c }} className={loaderClasses}></span>);
   }
 
@@ -798,13 +786,13 @@ class ReactSuperSelect extends React.Component {
       return null;
     }
 
-    let clearSearch = null,
-        clearSearchLabelString = this.props.clearSearchLabelString ? this.props.clearSearchLabelString : this.props.clearSearchLabelString,
-        magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
-        searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.props.searchPlaceholder,
-        searchAriaId = this.state.controlId + '_search',
-        searchAriaIdLabel = searchAriaId + '_label';
+    const clearSearchLabelString = this.props.clearSearchLabelString ? this.props.clearSearchLabelString : this.props.clearSearchLabelString,
+          magnifierClass = this.props.customSearchIconClass ? this.props.customSearchIconClass : "r-ss-magnifier",
+          searchPlaceholderString = this.props.searchPlaceholder ? this.props.searchPlaceholder : this.props.searchPlaceholder,
+          searchAriaId = this.state.controlId + '_search',
+          searchAriaIdLabel = searchAriaId + '_label';
 
+    let clearSearch = null;
     if (isString(this.state.searchString) && !isEmpty(this.state.searchString)) {
       clearSearch = (<button aria-label={clearSearchLabelString} ref={(c) => {this._rssDOM.searchClear = c }} name="clearSearch" type="button" className="r-ss-search-clear" onClick={this._clearSearchString} onKeyDown={this._clearSearchString}>
                        <span />
@@ -844,12 +832,12 @@ class ReactSuperSelect extends React.Component {
     const displayValue = value[this.state.valueKey],
           tagRemoveIndex = this._getTagRemoveIndex(displayValue);
 
-    let label = value[this.state.labelKey],
-        tagKey = 'tag_' + displayValue,
-        buttonName = "RemoveTag_" + displayValue,
-        tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.props.tagRemoveLabelString,
-        tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
+    const label = value[this.state.labelKey],
+          tagKey = 'tag_' + displayValue,
+          buttonName = "RemoveTag_" + displayValue,
+          tagWrapClass = this.props.customTagClass ? "r-ss-tag " + this.props.customTagClass : "r-ss-tag";
 
+    let tagRemoveButtonLabelString = this.props.tagRemoveLabelString ? this.props.tagRemoveLabelString : this.props.tagRemoveLabelString;
     tagRemoveButtonLabelString = tagRemoveButtonLabelString + " " + label;
 
     return (
@@ -976,18 +964,17 @@ class ReactSuperSelect extends React.Component {
     return map(data, (dataOption, index) => {
       index = indexStart + index;
 
-      const indexRef = 'option_' + index;
-
-      let isDisabled = !!dataOption.disabled,
-          isCurrentlySelected = this._isCurrentlySelected(dataOption),
-          itemKey = "drop_li_" + dataOption[this.state.valueKey],
-          ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
-          clickHandler = isDisabled ? noop : this._selectItemOnOptionClick.bind(null, dataOption),
-          optionMarkup = isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption, this.state.searchString) : dataOption[this.state.labelKey],
-          classes = classNames('r-ss-dropdown-option', {
-            'r-ss-selected': isCurrentlySelected,
-            'r-ss-disabled': isDisabled
-          });
+      const indexRef = 'option_' + index,
+            isDisabled = !!dataOption.disabled,
+            isCurrentlySelected = this._isCurrentlySelected(dataOption),
+            itemKey = "drop_li_" + dataOption[this.state.valueKey],
+            ariaDescendantId = this.state.controlId + '_aria_' + indexRef,
+            clickHandler = isDisabled ? noop : this._selectItemOnOptionClick.bind(null, dataOption),
+            optionMarkup = isFunction(this.props.customOptionTemplateFunction) ? this.props.customOptionTemplateFunction(dataOption, this.state.searchString) : dataOption[this.state.labelKey],
+            classes = classNames('r-ss-dropdown-option', {
+              'r-ss-selected': isCurrentlySelected,
+              'r-ss-disabled': isDisabled
+            });
 
       return (
         <li ref={(c) => {this._rssDOM[indexRef] = c }}
@@ -1392,6 +1379,7 @@ ReactSuperSelect.defaultProps = {
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
+  onClear: noop,
   onCloseDropdown: noop,
   onOpenDropdown: noop,
   optionLabelKey: 'name',
@@ -1478,6 +1466,9 @@ ReactSuperSelect.propTypes = {
 
   // **onChange** (Function) *required* - This is the main callback handler for the control.  When a user makes selection(s), this handler will be called, the selected option (or when **multiple** or **tags** an array of selected values) will be passed to the handler as an argument.  (The values passed are option objects from the dataSource collection)
   onChange: PropTypes.func.isRequired,
+
+  // **onClear** (Function) - This callback will be called when a user manually clears the selection value
+  onClear: PropTypes.func,
 
   // ON OPEN / ON CLOSE HANDLERS
   // **onCloseDropdown** (Function) - a callback which will be called when the control closes
