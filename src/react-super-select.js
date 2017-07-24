@@ -24,6 +24,7 @@ import { bindAll,
          isObject,
          isString,
          isUndefined,
+         last,
          map,
          noop,
          reduce,
@@ -403,7 +404,10 @@ class ReactSuperSelect extends React.Component {
   _clearSearchString() {
     this.setState({
       searchString: ""
-    }, this._setFocusIdToSearch);
+    }, () => {
+      this.props.onSearchInputChange(this.state.searchString);
+      this._setFocusIdToSearch();
+    });
   }
 
   // clear the selected options
@@ -934,6 +938,8 @@ class ReactSuperSelect extends React.Component {
     this._arrestEvent(event);
     this.setState({
       searchString: event.target.value
+    }, () => {
+      this.props.onSearchInputChange(this.state.searchString);
     });
   }
 
@@ -1282,7 +1288,7 @@ class ReactSuperSelect extends React.Component {
     }
 
     const newState = {
-      value: this._isMultiSelect() ? objectValues : [head(objectValues)]
+      value: this._isMultiSelect() ? objectValues : [last(objectValues)]
     };
 
     if (this.props.searchable && this.props.clearSearchOnSelection) {
@@ -1382,6 +1388,7 @@ ReactSuperSelect.defaultProps = {
   onClear: noop,
   onCloseDropdown: noop,
   onOpenDropdown: noop,
+  onSearchInputChange: noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
@@ -1473,6 +1480,9 @@ ReactSuperSelect.propTypes = {
   // ON OPEN / ON CLOSE HANDLERS
   // **onCloseDropdown** (Function) - a callback which will be called when the control closes
   onCloseDropdown: PropTypes.func,
+
+  // **onSearchInputChange** (Function) - a callback which will be called when the search input field value changes
+  onSearchInputChange: PropTypes.func,
 
   // **onOpenDropdown** (Function) - a callback which will be called when the control opens
   onOpenDropdown: PropTypes.func,

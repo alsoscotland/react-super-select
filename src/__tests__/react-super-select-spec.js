@@ -802,7 +802,6 @@ describe('ReactSuperSelect', function() {
       });
       var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
 
-
       el.setState({
         searchString: 'option'
       });
@@ -836,6 +835,21 @@ describe('ReactSuperSelect', function() {
 
       TestUtils.Simulate.click(el._rssDOM.searchClear);
       expect(el.state.searchString).toBe("");
+    });
+
+    it('broadcasts the search term to a supplied onSearchInputChange callback', function() {
+      var el = renderAndOpen({
+        searchable: true,
+        onSearchInputChange: jest.genMockFunction()
+      });
+
+      el._handleSearch({
+        stopPropagation: _.noop,
+        preventDefault: _.noop,
+        target: { value: "two"}
+      });
+
+      expect(el.props.onSearchInputChange.mock.calls[0][0]).toBe("two");
     });
 
     it('clears search value when clearSearch handles a keyDown event', function() {
