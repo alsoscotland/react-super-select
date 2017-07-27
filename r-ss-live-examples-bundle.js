@@ -36286,9 +36286,14 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._clearSearchString = function _clearSearchString() {
+    var _this5 = this;
+
     this.setState({
       searchString: ""
-    }, this._setFocusIdToSearch);
+    }, function () {
+      _this5.props.onSearchInputChange(_this5.state.searchString);
+      _this5._setFocusIdToSearch();
+    });
   };
 
   // clear the selected options
@@ -36296,20 +36301,20 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._clearSelection = function _clearSelection(event) {
-    var _this5 = this;
+    var _this6 = this;
 
     if (event.which === this.keymap.enter || event.which === this.keymap.space || event.type === "click") {
       event.stopPropagation();
       this.setState({
         value: []
       }, function () {
-        if (_this5.state.isOpen) {
-          _this5._setFocusOnOpen();
+        if (_this6.state.isOpen) {
+          _this6._setFocusOnOpen();
         }
-        _this5.lastUserSelectedOption = undefined;
-        _this5._focusTrigger();
-        _this5._broadcastChange();
-        _this5.props.onClear();
+        _this6.lastUserSelectedOption = undefined;
+        _this6._focusTrigger();
+        _this6._broadcastChange();
+        _this6.props.onClear();
       });
     }
   };
@@ -36444,11 +36449,11 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._findArrayOfOptionDataObjectsByValue = function _findArrayOfOptionDataObjectsByValue(value) {
-    var _this6 = this;
+    var _this7 = this;
 
     var valuesArray = (0, _lodash.isArray)(value) ? (0, _lodash.map)(value, this.state.valueKey) : [value];
     return (0, _lodash.reject)(this.state.data, function (item) {
-      return !(0, _lodash.includes)(valuesArray, item[_this6.state.valueKey]);
+      return !(0, _lodash.includes)(valuesArray, item[_this7.state.valueKey]);
     });
   };
 
@@ -36541,7 +36546,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getAjaxErrorMarkup = function _getAjaxErrorMarkup() {
-    var _this7 = this;
+    var _this8 = this;
 
     var errorString = this.props.ajaxErrorString ? this.props.ajaxErrorString : this.ajaxErrorString;
     return _react2.default.createElement(
@@ -36550,7 +36555,7 @@ var ReactSuperSelect = function (_React$Component) {
       _react2.default.createElement(
         'i',
         { ref: function ref(c) {
-            _this7._rssDOM.errorDisplay = c;
+            _this8._rssDOM.errorDisplay = c;
           } },
         errorString
       )
@@ -36578,7 +36583,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getDropdownContent = function _getDropdownContent() {
-    var _this8 = this;
+    var _this9 = this;
 
     if (!this.state.isOpen) {
       return null;
@@ -36591,19 +36596,19 @@ var ReactSuperSelect = function (_React$Component) {
     return _react2.default.createElement(
       'div',
       { ref: function ref(c) {
-          _this8._rssDOM.dropdownContent = c;
+          _this9._rssDOM.dropdownContent = c;
         }, className: 'r-ss-dropdown', onKeyDown: this._handleKeyDown },
       searchContent,
       _react2.default.createElement(
         'div',
         { ref: function ref(c) {
-            _this8._rssDOM.scrollWrap = c;
+            _this9._rssDOM.scrollWrap = c;
           }, className: 'r-ss-options-wrap', onMouseMove: mouseMoveHandler },
         _react2.default.createElement(
           'ul',
           { className: 'r-ss-dropdown-options',
             ref: function ref(c) {
-              _this8._rssDOM.dropdownOptionsList = c;
+              _this9._rssDOM.dropdownOptionsList = c;
             },
             tabIndex: '-1',
             id: this._ariaGetListId(),
@@ -36650,7 +36655,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getNoResultsMarkup = function _getNoResultsMarkup() {
-    var _this9 = this;
+    var _this10 = this;
 
     var noResultsString = this.props.noResultsString ? this.props.noResultsString : this.props.noResultsString;
     return _react2.default.createElement(
@@ -36659,7 +36664,7 @@ var ReactSuperSelect = function (_React$Component) {
       _react2.default.createElement(
         'i',
         { ref: function ref(c) {
-            _this9._rssDOM.noResults = c;
+            _this10._rssDOM.noResults = c;
           } },
         noResultsString
       )
@@ -36671,17 +36676,17 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getNormalDisplayMarkup = function _getNormalDisplayMarkup() {
-    var _this10 = this;
+    var _this11 = this;
 
     return (0, _lodash.map)(this.state.value, function (value) {
-      var selectedKey = "r_ss_selected_" + value[_this10.state.labelKey];
-      if (_this10.props.customOptionTemplateFunction) {
-        return _this10.props.customOptionTemplateFunction(value);
+      var selectedKey = "r_ss_selected_" + value[_this11.state.labelKey];
+      if (_this11.props.customOptionTemplateFunction) {
+        return _this11.props.customOptionTemplateFunction(value);
       }
       return _react2.default.createElement(
         'span',
         { key: selectedKey, className: 'r-ss-selected-label' },
-        value[_this10.state.labelKey]
+        value[_this11.state.labelKey]
       );
     });
   };
@@ -36690,11 +36695,11 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getLoadingMarkup = function _getLoadingMarkup() {
-    var _this11 = this;
+    var _this12 = this;
 
     var loaderClasses = this.props.customLoaderClass ? "r-ss-loader " + this.props.customLoaderClass : "r-ss-loader";
     return _react2.default.createElement('span', { ref: function ref(c) {
-        _this11._rssDOM.loader = c;
+        _this12._rssDOM.loader = c;
       }, className: loaderClasses });
   };
 
@@ -36715,7 +36720,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getOptionsMarkup = function _getOptionsMarkup() {
-    var _this12 = this;
+    var _this13 = this;
 
     if (this._needsAjaxFetch()) {
       this._fetchDataViaAjax();
@@ -36733,8 +36738,8 @@ var ReactSuperSelect = function (_React$Component) {
 
     if (!(0, _lodash.isArray)(data) && !(0, _lodash.isEmpty)(data)) {
       (0, _lodash.forIn)(data, function (groupedOptions, heading) {
-        options.push(_this12._getGroupHeadingMarkup(heading));
-        options = options.concat(_this12._getTemplatedOptions(groupedOptions, optionsCount));
+        options.push(_this13._getGroupHeadingMarkup(heading));
+        options = options.concat(_this13._getTemplatedOptions(groupedOptions, optionsCount));
         optionsCount = optionsCount + groupedOptions.length;
       });
     } else {
@@ -36773,7 +36778,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getSearchContent = function _getSearchContent() {
-    var _this13 = this;
+    var _this14 = this;
 
     if (!this.props.searchable) {
       return null;
@@ -36790,7 +36795,7 @@ var ReactSuperSelect = function (_React$Component) {
       clearSearch = _react2.default.createElement(
         'button',
         { 'aria-label': clearSearchLabelString, ref: function ref(c) {
-            _this13._rssDOM.searchClear = c;
+            _this14._rssDOM.searchClear = c;
           }, name: 'clearSearch', type: 'button', className: 'r-ss-search-clear', onClick: this._clearSearchString, onKeyDown: this._clearSearchString },
         _ref2
       );
@@ -36805,12 +36810,12 @@ var ReactSuperSelect = function (_React$Component) {
         _react2.default.createElement(
           'label',
           { ref: function ref(c) {
-              _this13._rssDOM.searchInputLabel = c;
+              _this14._rssDOM.searchInputLabel = c;
             }, id: searchAriaIdLabel, className: 'r-ss-search-aria-label', htmlFor: searchAriaId },
           searchPlaceholderString
         ),
         _react2.default.createElement('input', { ref: function ref(c) {
-            _this13._rssDOM.searchInput = c;
+            _this14._rssDOM.searchInput = c;
           },
           placeholder: searchPlaceholderString,
           onClick: this._setFocusIdToSearch,
@@ -36834,10 +36839,10 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getTagsDisplayMarkup = function _getTagsDisplayMarkup() {
-    var _this14 = this;
+    var _this15 = this;
 
     return (0, _lodash.map)(this.state.value, function (value) {
-      return _this14._getTagMarkup(value);
+      return _this15._getTagMarkup(value);
     });
   };
 
@@ -36846,7 +36851,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._getTagMarkup = function _getTagMarkup(value) {
-    var _this15 = this;
+    var _this16 = this;
 
     var displayValue = value[this.state.valueKey],
         tagRemoveIndex = this._getTagRemoveIndex(displayValue);
@@ -36870,7 +36875,7 @@ var ReactSuperSelect = function (_React$Component) {
       _react2.default.createElement(
         'button',
         { 'aria-label': tagRemoveButtonLabelString, ref: function ref(c) {
-            _this15._rssDOM[tagRemoveIndex] = c;
+            _this16._rssDOM[tagRemoveIndex] = c;
           }, name: buttonName, type: 'button', className: 'r-ss-tag-remove', onClick: this._removeTagClick.bind(null, value), onKeyDown: this._removeTagKeyPress.bind(null, value) },
         _ref3
       )
@@ -36970,9 +36975,13 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._handleSearch = function _handleSearch(event) {
+    var _this17 = this;
+
     this._arrestEvent(event);
     this.setState({
       searchString: event.target.value
+    }, function () {
+      _this17.props.onSearchInputChange(_this17.state.searchString);
     });
   };
 
@@ -37008,18 +37017,18 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._mapDataToOptionsMarkup = function _mapDataToOptionsMarkup(data, indexStart) {
-    var _this16 = this;
+    var _this18 = this;
 
     return (0, _lodash.map)(data, function (dataOption, index) {
       index = indexStart + index;
 
       var indexRef = 'option_' + index,
           isDisabled = !!dataOption.disabled,
-          isCurrentlySelected = _this16._isCurrentlySelected(dataOption),
-          itemKey = "drop_li_" + dataOption[_this16.state.valueKey],
-          ariaDescendantId = _this16.state.controlId + '_aria_' + indexRef,
-          clickHandler = isDisabled ? _lodash.noop : _this16._selectItemOnOptionClick.bind(null, dataOption),
-          optionMarkup = (0, _lodash.isFunction)(_this16.props.customOptionTemplateFunction) ? _this16.props.customOptionTemplateFunction(dataOption, _this16.state.searchString) : dataOption[_this16.state.labelKey],
+          isCurrentlySelected = _this18._isCurrentlySelected(dataOption),
+          itemKey = "drop_li_" + dataOption[_this18.state.valueKey],
+          ariaDescendantId = _this18.state.controlId + '_aria_' + indexRef,
+          clickHandler = isDisabled ? _lodash.noop : _this18._selectItemOnOptionClick.bind(null, dataOption),
+          optionMarkup = (0, _lodash.isFunction)(_this18.props.customOptionTemplateFunction) ? _this18.props.customOptionTemplateFunction(dataOption, _this18.state.searchString) : dataOption[_this18.state.labelKey],
           classes = (0, _classnames2.default)('r-ss-dropdown-option', {
         'r-ss-selected': isCurrentlySelected,
         'r-ss-disabled': isDisabled
@@ -37028,7 +37037,7 @@ var ReactSuperSelect = function (_React$Component) {
       return _react2.default.createElement(
         'li',
         { ref: function ref(c) {
-            _this16._rssDOM[indexRef] = c;
+            _this18._rssDOM[indexRef] = c;
           },
           disabled: isDisabled,
           'aria-disabled': isDisabled,
@@ -37038,7 +37047,7 @@ var ReactSuperSelect = function (_React$Component) {
           className: classes,
           'aria-selected': isCurrentlySelected,
           key: itemKey,
-          'data-option-value': dataOption[_this16.state.valueKey],
+          'data-option-value': dataOption[_this18.state.valueKey],
           onClick: clickHandler,
           role: 'option' },
         optionMarkup
@@ -37206,7 +37215,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._removeAllOptionsInOptionIdRange = function _removeAllOptionsInOptionIdRange(from, to) {
-    var _this17 = this;
+    var _this19 = this;
 
     var valuePropsToReject = [],
         start = from <= to ? from : to,
@@ -37224,7 +37233,7 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     var remainingSelected = (0, _lodash.reject)(this.state.value, function (opt) {
-      return (0, _lodash.includes)(valuePropsToReject, opt[_this17.state.valueKey]);
+      return (0, _lodash.includes)(valuePropsToReject, opt[_this19.state.valueKey]);
     });
 
     this.setState({
@@ -37237,7 +37246,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._removeSelectedOptionByValue = function _removeSelectedOptionByValue(value) {
-    var _this18 = this;
+    var _this20 = this;
 
     var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _lodash.noop;
 
@@ -37247,14 +37256,14 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     var SelectedAfterRemoval = (0, _lodash.reject)(this.state.value, function (option) {
-      return option[_this18.state.valueKey] === value[_this18.state.valueKey];
+      return option[_this20.state.valueKey] === value[_this20.state.valueKey];
     });
 
     this.setState({
       value: SelectedAfterRemoval
     }, function () {
       callback();
-      _this18._broadcastChange();
+      _this20._broadcastChange();
     });
   };
 
@@ -37284,7 +37293,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._selectAllOptionsInOptionIdRange = function _selectAllOptionsInOptionIdRange(from, to) {
-    var _this19 = this;
+    var _this21 = this;
 
     var valuePropsToSelect = [],
         start = from <= to ? from : to,
@@ -37299,7 +37308,7 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     var optionsToSelect = (0, _lodash.reduce)(this.state.data, function (memo, opt) {
-      if ((0, _lodash.includes)(valuePropsToSelect, opt[_this19.state.valueKey])) {
+      if ((0, _lodash.includes)(valuePropsToSelect, opt[_this21.state.valueKey])) {
         if (!opt.disabled) {
           memo.push(opt);
         }
@@ -37371,7 +37380,7 @@ var ReactSuperSelect = function (_React$Component) {
 
 
   ReactSuperSelect.prototype._selectItemByValues = function _selectItemByValues(value, keepControlOpen) {
-    var _this20 = this;
+    var _this22 = this;
 
     var objectValues = this._findArrayOfOptionDataObjectsByValue(value);
 
@@ -37382,7 +37391,7 @@ var ReactSuperSelect = function (_React$Component) {
     }
 
     var newState = {
-      value: this._isMultiSelect() ? objectValues : [(0, _lodash.head)(objectValues)]
+      value: this._isMultiSelect() ? objectValues : [(0, _lodash.last)(objectValues)]
     };
 
     if (this.props.searchable && this.props.clearSearchOnSelection) {
@@ -37393,11 +37402,11 @@ var ReactSuperSelect = function (_React$Component) {
 
     this.setState(newState, function () {
       if (!remainOpenAfterSelection) {
-        _this20._closeOnKeypress();
+        _this22._closeOnKeypress();
       } else {
-        _this20._updateFocusedId(parseInt(_this20.lastUserSelectedOption.getAttribute('data-option-index'), 10));
+        _this22._updateFocusedId(parseInt(_this22.lastUserSelectedOption.getAttribute('data-option-index'), 10));
       }
-      _this20._broadcastChange();
+      _this22._broadcastChange();
     });
   };
 
@@ -37496,6 +37505,7 @@ ReactSuperSelect.defaultProps = {
   onClear: _lodash.noop,
   onCloseDropdown: _lodash.noop,
   onOpenDropdown: _lodash.noop,
+  onSearchInputChange: _lodash.noop,
   optionLabelKey: 'name',
   optionValueKey: 'id', // value this maps to should be unique in data source
   ajaxErrorString: 'An Error occured while fetching options',
@@ -37587,6 +37597,9 @@ ReactSuperSelect.propTypes = {
   // ON OPEN / ON CLOSE HANDLERS
   // **onCloseDropdown** (Function) - a callback which will be called when the control closes
   onCloseDropdown: _propTypes2.default.func,
+
+  // **onSearchInputChange** (Function) - a callback which will be called when the search input field value changes
+  onSearchInputChange: _propTypes2.default.func,
 
   // **onOpenDropdown** (Function) - a callback which will be called when the control opens
   onOpenDropdown: _propTypes2.default.func,
