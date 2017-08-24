@@ -704,8 +704,17 @@ class ReactSuperSelect extends React.Component {
 
   // render the content shown when no options are available
   _getNoResultsMarkup() {
-    const noResultsString = this.props.noResultsString ? this.props.noResultsString : this.props.noResultsString;
-    return (<li className="r-ss-dropdown-option" tabIndex="-1"><i ref={(c) => {this._rssDOM.noResults = c; }}>{noResultsString}</i></li>);
+    let noResultsMarkup = (<i ref={(c) => {this._rssDOM.noResults = c; }}>{this.props.noResultsString}</i>);
+
+    if (!isString(this.props.noResultsString)) {
+      noResultsMarkup = (
+        <div ref={(c) => {this._rssDOM.noResults = c; }}>
+          {this.props.noResultsString}
+        </div>
+      );
+    }
+
+    return (<li className="r-ss-dropdown-option" tabIndex="-1">{noResultsMarkup}</li>);
   }
 
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
@@ -1587,8 +1596,11 @@ ReactSuperSelect.propTypes = {
   // **clearSelectionsLabelString** (String) *optional* - (Used in conjunction with the **searchable** option) This string will be used as an aria-label for the clear search button
   clearSearchLabelString: PropTypes.string,
 
-  // **noResultsString** (String) *optional* - A string value which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
-  noResultsString: PropTypes.string,
+  // **noResultsString** (String | Element) *optional* - A string or react element which will be displayed when your dropdown shows no results.  (i.e. dataSource is an empty collection, or ajaxDataFetch returns an empty collection)
+  noResultsString: PropTypes.oneOfType([        // any
+                      PropTypes.string,
+                      PropTypes.element
+                   ]),
 
   // **placeholder** (String) *optional* - This string value will be displayed in the main display area of your control when the user has no selected values
   placeholder: PropTypes.string,
