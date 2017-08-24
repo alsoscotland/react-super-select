@@ -33461,7 +33461,7 @@ module.exports = allProps;
 require('./props-app');
 require('./keyboard-navigation-app');
 require('./version-printer');
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImZha2VfZjc0ZTYyMy5qcyJdLCJuYW1lcyI6WyJyZXF1aXJlIl0sIm1hcHBpbmdzIjoiOztBQUFBQSxRQUFRLGFBQVI7QUFDQUEsUUFBUSwyQkFBUjtBQUNBQSxRQUFRLG1CQUFSIiwiZmlsZSI6ImZha2VfZjc0ZTYyMy5qcyIsInNvdXJjZXNDb250ZW50IjpbInJlcXVpcmUoJy4vcHJvcHMtYXBwJyk7XG5yZXF1aXJlKCcuL2tleWJvYXJkLW5hdmlnYXRpb24tYXBwJyk7XG5yZXF1aXJlKCcuL3ZlcnNpb24tcHJpbnRlcicpO1xuIl19
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImZha2VfOGZlNjM1ZmIuanMiXSwibmFtZXMiOlsicmVxdWlyZSJdLCJtYXBwaW5ncyI6Ijs7QUFBQUEsUUFBUSxhQUFSO0FBQ0FBLFFBQVEsMkJBQVI7QUFDQUEsUUFBUSxtQkFBUiIsImZpbGUiOiJmYWtlXzhmZTYzNWZiLmpzIiwic291cmNlc0NvbnRlbnQiOlsicmVxdWlyZSgnLi9wcm9wcy1hcHAnKTtcbnJlcXVpcmUoJy4va2V5Ym9hcmQtbmF2aWdhdGlvbi1hcHAnKTtcbnJlcXVpcmUoJy4vdmVyc2lvbi1wcmludGVyJyk7XG4iXX0=
 },{"./keyboard-navigation-app":188,"./props-app":291,"./version-printer":292}],188:[function(require,module,exports){
 "use strict";
 
@@ -33807,7 +33807,7 @@ module.exports={"body":"<!-- keepOpenOnSelection property -->\n<p>(<strong>Boole
 },{}],232:[function(require,module,exports){
 module.exports={"body":"<!-- multiple property -->\n<p>(<strong>Boolean</strong>) <em>optional</em></p>\n<p>Whether or not the control supports multi-selection.</p>\n<p>When using the <strong>tags</strong> display option, this option is redundant</p>\n","updatedAt":"2017-08-07T19:42:41.000Z"}
 },{}],233:[function(require,module,exports){
-module.exports={"body":"<!-- noResultsString -->\n<p>(<strong>String</strong>) <em>optional</em></p>\n<p>A string value which will be displayed when your dropdown shows no results. (i.e. <strong>dataSource</strong> collection is empty , or <strong>ajaxDataFetch</strong> returns an empty collection)</p>\n","updatedAt":"2017-08-07T19:42:41.000Z"}
+module.exports={"body":"<!-- noResultsString -->\n<p>(<strong>String</strong> or <strong>React Element</strong>) <em>optional</em></p>\n<p>A string or React Element value which will be displayed when your dropdown shows no results. (i.e. <strong>dataSource</strong> collection is empty , or <strong>ajaxDataFetch</strong> returns an empty collection)</p>\n","updatedAt":"2017-08-24T13:30:40.000Z"}
 },{}],234:[function(require,module,exports){
 module.exports={"body":"<!-- onChange -->\n<p>(<strong>Function</strong>) <em>required</em></p>\n<p>This is the main callback handler for the control. </p>\n<p>When a user makes selection(s), this handler will be called, the selected option (or when multiple or tags an array of selected values) will be passed to the handler as an argument. </p>\n<p>(The values passed are option objects from the dataSource collection)</p>\n","updatedAt":"2017-08-07T19:42:41.000Z"}
 },{}],235:[function(require,module,exports){
@@ -34657,7 +34657,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var RSS_VERSION = "1.0.6";
+var RSS_VERSION = "1.0.7";
 
 var _ref = _react2.default.createElement(
   "span",
@@ -34683,5 +34683,5 @@ var VersionPrinter = function (_React$Component) {
 
 module.exports = VersionPrinter;
 _reactDom2.default.render(_react2.default.createElement(VersionPrinter, null), document.getElementById('r_ss_version'));
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInZlcnNpb24tcHJpbnRlci5qcyJdLCJuYW1lcyI6WyJSU1NfVkVSU0lPTiIsIlZlcnNpb25QcmludGVyIiwicmVuZGVyIiwiQ29tcG9uZW50IiwibW9kdWxlIiwiZXhwb3J0cyIsImRvY3VtZW50IiwiZ2V0RWxlbWVudEJ5SWQiXSwibWFwcGluZ3MiOiI7O0FBQ0E7Ozs7QUFDQTs7Ozs7Ozs7Ozs7O0FBRkEsSUFBSUEsY0FBYyxPQUFsQjs7V0FNVztBQUFBO0FBQUE7QUFBT0E7QUFBUCxDOztJQUZMQyxjOzs7Ozs7Ozs7MkJBQ0pDLE0scUJBQVM7QUFDUDtBQUNELEc7OztFQUgwQixnQkFBTUMsUzs7QUFNbkNDLE9BQU9DLE9BQVAsR0FBaUJKLGNBQWpCO0FBQ0EsbUJBQVNDLE1BQVQsQ0FBZ0IsOEJBQUMsY0FBRCxPQUFoQixFQUFvQ0ksU0FBU0MsY0FBVCxDQUF3QixjQUF4QixDQUFwQyIsImZpbGUiOiJ2ZXJzaW9uLXByaW50ZXIuanMiLCJzb3VyY2VzQ29udGVudCI6WyJ2YXIgUlNTX1ZFUlNJT04gPSBcIjEuMC42XCI7XG5pbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5pbXBvcnQgUmVhY3RET00gZnJvbSBcInJlYWN0LWRvbVwiO1xuXG5jbGFzcyBWZXJzaW9uUHJpbnRlciBleHRlbmRzIFJlYWN0LkNvbXBvbmVudCB7XG4gIHJlbmRlcigpIHtcbiAgICByZXR1cm4oPHNwYW4+e1JTU19WRVJTSU9OfTwvc3Bhbj4pO1xuICB9XG59XG5cbm1vZHVsZS5leHBvcnRzID0gVmVyc2lvblByaW50ZXI7XG5SZWFjdERPTS5yZW5kZXIoPFZlcnNpb25QcmludGVyIC8+LCBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncl9zc192ZXJzaW9uJykpO1xuIl19
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInZlcnNpb24tcHJpbnRlci5qcyJdLCJuYW1lcyI6WyJSU1NfVkVSU0lPTiIsIlZlcnNpb25QcmludGVyIiwicmVuZGVyIiwiQ29tcG9uZW50IiwibW9kdWxlIiwiZXhwb3J0cyIsImRvY3VtZW50IiwiZ2V0RWxlbWVudEJ5SWQiXSwibWFwcGluZ3MiOiI7O0FBQ0E7Ozs7QUFDQTs7Ozs7Ozs7Ozs7O0FBRkEsSUFBSUEsY0FBYyxPQUFsQjs7V0FNVztBQUFBO0FBQUE7QUFBT0E7QUFBUCxDOztJQUZMQyxjOzs7Ozs7Ozs7MkJBQ0pDLE0scUJBQVM7QUFDUDtBQUNELEc7OztFQUgwQixnQkFBTUMsUzs7QUFNbkNDLE9BQU9DLE9BQVAsR0FBaUJKLGNBQWpCO0FBQ0EsbUJBQVNDLE1BQVQsQ0FBZ0IsOEJBQUMsY0FBRCxPQUFoQixFQUFvQ0ksU0FBU0MsY0FBVCxDQUF3QixjQUF4QixDQUFwQyIsImZpbGUiOiJ2ZXJzaW9uLXByaW50ZXIuanMiLCJzb3VyY2VzQ29udGVudCI6WyJ2YXIgUlNTX1ZFUlNJT04gPSBcIjEuMC43XCI7XG5pbXBvcnQgUmVhY3QgZnJvbSBcInJlYWN0XCI7XG5pbXBvcnQgUmVhY3RET00gZnJvbSBcInJlYWN0LWRvbVwiO1xuXG5jbGFzcyBWZXJzaW9uUHJpbnRlciBleHRlbmRzIFJlYWN0LkNvbXBvbmVudCB7XG4gIHJlbmRlcigpIHtcbiAgICByZXR1cm4oPHNwYW4+e1JTU19WRVJTSU9OfTwvc3Bhbj4pO1xuICB9XG59XG5cbm1vZHVsZS5leHBvcnRzID0gVmVyc2lvblByaW50ZXI7XG5SZWFjdERPTS5yZW5kZXIoPFZlcnNpb25QcmludGVyIC8+LCBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncl9zc192ZXJzaW9uJykpO1xuIl19
 },{"react":184,"react-dom":32}]},{},[187])
