@@ -152,6 +152,7 @@ class ReactSuperSelect extends React.Component {
       '_getTagMarkup',
       '_getTagRemoveIndex',
       '_getTemplatedOptions',
+      '_getTypeSafeOptionValue',
       '_handleDocumentClick',
       '_handleKeyDown',
       '_handleSearch',
@@ -766,13 +767,10 @@ class ReactSuperSelect extends React.Component {
   }
 
   // get the data-option-value attribute for an option node
-  // convert to numeric (data-attrs cast to strings) if:
-  // the conversion does not alter the string representation's value
   _getOptionValueFromDataAttr(optionNode) {
     let optionValue = optionNode.getAttribute('data-option-value');
 
-    optionValue = (+optionValue + "" === optionValue) ? +optionValue : optionValue;
-    return optionValue;
+    return this._getTypeSafeOptionValue(optionValue);
   }
 
   // render a list item with a loading indicator.  Shown while **pageDataFetch** or **ajaxDataFetch** functions run
@@ -870,6 +868,12 @@ class ReactSuperSelect extends React.Component {
     }
 
     return options;
+  }
+
+  // convert to numeric (data-attrs cast to strings) if
+  // the conversion does not alter the string representation's value
+  _getTypeSafeOptionValue(optionValue) {
+    return (+optionValue + "" === optionValue) ? +optionValue : optionValue;
   }
 
   // close control on document click outside of the control itself
@@ -1213,7 +1217,7 @@ class ReactSuperSelect extends React.Component {
     }
 
     const optionsToSelect = reduce(this.state.data, (memo, opt) => {
-          if (includes(valuePropsToSelect, opt[this.state.valueKey])) {
+          if (includes(valuePropsToSelect, this._getTypeSafeOptionValue(opt[this.state.valueKey]))) {
             if (!opt.disabled) {
               memo.push(opt);
             }

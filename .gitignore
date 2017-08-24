@@ -34,4 +34,6 @@ tmp/
 .idea/
 tmp/
 *.DS_Store
+package-lock.json
+.npmrc
 
