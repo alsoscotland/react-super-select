@@ -1015,7 +1015,7 @@ class ReactSuperSelect extends React.Component {
 
   // determines next focusedId prior to updateFocusedId call
   _moveFocusDown() {
-    if (this._needsAjaxFetch()) {
+    if (this._needsAjaxFetch() && !this.props.searchable) {
       return;
     }
     let nextId;

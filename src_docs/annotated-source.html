@@ -2040,7 +2040,7 @@ Leverage the <strong>customOptionTemplateFunction</strong> function if provided<
             </div>
             
             <div class="content"><div class='highlight'><pre>  _moveFocusDown() {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._needsAjaxFetch()) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._needsAjaxFetch() &amp;&amp; !<span class="hljs-keyword">this</span>.props.searchable) {
       <span class="hljs-keyword">return</span>;
     }
     <span class="hljs-keyword">let</span> nextId;
