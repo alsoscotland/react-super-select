@@ -1,4 +1,4 @@
-var RSS_VERSION = "1.0.7";
+var RSS_VERSION = "1.0.8";
 import React from "react";
 import ReactDOM from "react-dom";
 
