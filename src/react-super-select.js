@@ -260,6 +260,12 @@ class ReactSuperSelect extends React.Component {
 
   // main render method
   render() {
+    if ( clearSelectionByExternalControl ) {
+       this._clearSelection();
+
+       return;
+    }
+
     const caratClass = classNames('carat', {
             'down': !this.state.isOpen,
             'up': this.state.isOpen
@@ -1610,6 +1616,9 @@ ReactSuperSelect.propTypes = {
 
   // **tagRemoveLabelString** (String) *optional* - (Used in conjunction with the **tags** option) This string will be used as an aria-label for the remove-tag button on each tag (for accesibility).
   tagRemoveLabelString: PropTypes.string
+
+  // **clearSelectionByExternalControl** (boolean) *optional* - Used to clear the selected items by external control
+  clearSelectionByExternalControl: PropTypes.boolean
 };
 
 module.exports = ReactSuperSelect;
