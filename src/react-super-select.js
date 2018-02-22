@@ -288,6 +288,7 @@ class ReactSuperSelect extends React.Component {
       <div ref={(c) => {this._rssDOM.rssControl = c }} id={this.state.controlId} className={wrapClasses}>
         <div ref={(c) => {this._rssDOM.triggerDiv = c }}
            className={triggerClasses}
+           onBlur={this.props.onBlur}
            onClick={this.toggleDropdown}
            onKeyDown={this._handleKeyDown}
            role="combobox"
@@ -817,6 +818,7 @@ class ReactSuperSelect extends React.Component {
           <input ref={(c) => {this._rssDOM.searchInput = c }}
                  placeholder={searchPlaceholderString}
                  onClick={this._setFocusIdToSearch}
+                 onBlur={this.props.onSearchInputBlur}
                  onChange={this._handleSearch}
                  value={this.state.searchString}
                  name={searchAriaId}
@@ -1398,6 +1400,8 @@ ReactSuperSelect.defaultProps = {
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
+  onBlur: noop,
+  onSearchInputBlur: noop,
   onClear: noop,
   onCloseDropdown: noop,
   onOpenDropdown: noop,
@@ -1499,6 +1503,12 @@ ReactSuperSelect.propTypes = {
 
   // **onOpenDropdown** (Function) - a callback which will be called when the control opens
   onOpenDropdown: PropTypes.func,
+
+  // **onBlur** (Function) - a callback which will be called when the main input fires a blur event
+  onBlur: PropTypes.func,
+
+  // **onSearchInputBlur** (Function) - a callback which will be called when the search input fires a blur event
+  onSearchInputBlur: PropTypes.func,
 
   // OPTION DATA-RELATED PROPS
   // -------------------------

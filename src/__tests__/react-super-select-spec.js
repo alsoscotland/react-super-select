@@ -570,6 +570,34 @@ describe('ReactSuperSelect', function() {
     });
   });
 
+  describe('blur handling', function () {
+    it('triggers blur callback on search input blur', function() {
+      var mockBlur = jest.fn();
+      var el = renderComponent({
+        searchable: true,
+        onSearchInputBlur: mockBlur
+      });
+      el.toggleDropdown();
+
+      TestUtils.Simulate.blur(el._rssDOM.searchInput, {});
+
+      expect(mockBlur.mock.calls.length).toEqual(1);
+    });
+
+    it('triggers blur callback on trigger blur', function() {
+      var mockBlur = jest.fn();
+      var el = renderComponent({
+        searchable: true,
+        onBlur: mockBlur
+      });
+
+      TestUtils.Simulate.blur(el._rssDOM.triggerDiv, {});
+
+      expect(mockBlur.mock.calls.length).toEqual(1);
+    });
+
+  });
+
   describe('focus handling', function() {
     it('focuses searchbox when searchable and expanded by keypress', function() {
       var el = renderComponent({
