@@ -1318,6 +1318,9 @@ class ReactSuperSelect extends React.Component {
       } else {
         this._updateFocusedId(parseInt(this.lastUserSelectedOption.getAttribute('data-option-index'), 10));
       }
+      if (this.props.searchable && this.props.clearSearchOnSelection) {
+        this.props.onSearchInputChange(this.state.searchString);
+      }
       this._broadcastChange();
     });
   }
