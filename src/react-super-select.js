@@ -516,6 +516,9 @@ class ReactSuperSelect extends React.Component {
   // Called onMouseMove if scroll position in dropdown exceeds threshold.
   // Handles success and failure for ajax call
   _fetchNextPage() {
+    if (this._needsAjaxFetch()) {
+        return;
+    }
     const self = this;
     this.props.pageDataFetch(this.state.rawDataSource).then((dataSourceFromPageFetch) => {
       self.setState({
