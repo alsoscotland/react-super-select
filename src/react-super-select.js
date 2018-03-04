@@ -493,7 +493,13 @@ class ReactSuperSelect extends React.Component {
   // handles success and failure for ajax call
   _fetchDataViaAjax() {
     const self = this;
+    // IS_FETCHING_AJAX, boolean used to prevent repeated fetch calls during async fetch
+    if (this.IS_FETCHING_AJAX) {
+        return;
+    }
+    this.IS_FETCHING_AJAX = true;
     this.props.ajaxDataFetch(this.state.rawDataSource).then((dataSourceFromAjax) => {
+      this.IS_FETCHING_AJAX = false;
       self.setState({
         ajaxError: false,
         data: self._configureDataSource(dataSourceFromAjax),
@@ -504,6 +510,7 @@ class ReactSuperSelect extends React.Component {
         }
       });
     }, () => {
+      this.IS_FETCHING_AJAX = false;
       self.setState({
         ajaxError: true,
         // define as empty array on error so that _needsAjaxFetch will evaluate to false
