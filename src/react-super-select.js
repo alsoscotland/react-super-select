@@ -111,7 +111,6 @@ class ReactSuperSelect extends React.Component {
       valueKey: this.props.optionValueKey
     };
 
-
     // force control instance context in all internal class functions
     bindAll(this, [
       'toggleDropdown',
@@ -487,7 +486,6 @@ class ReactSuperSelect extends React.Component {
 
     return labelAsString.toLowerCase().indexOf(search) > -1;
   }
-
 
   // fetch data source via ajax if **ajaxDataFetch** function provided
   // handles success and failure for ajax call
@@ -902,7 +900,7 @@ class ReactSuperSelect extends React.Component {
   // verify event target node is still in the DOM and close if click did not originate in RSS control
   _handleDocumentClick() {
     const event = Array.prototype.slice.call(arguments)[0],
-          isTargetStillInDOM = document.body.contains(event.target);
+          isTargetStillInDOM = document.contains(event.target);
 
     if (!this._rssDOM.rssControl || (isTargetStillInDOM && !this._rssDOM.rssControl.contains(event.target))) {
       if (this.state.isOpen) {
