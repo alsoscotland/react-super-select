@@ -1843,7 +1843,7 @@ verify event target node is still in the DOM and close if click did not originat
             
             <div class="content"><div class='highlight'><pre>  _handleDocumentClick() {
     <span class="hljs-keyword">const</span> event = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>)[<span class="hljs-number">0</span>],
-          isTargetStillInDOM = <span class="hljs-built_in">document</span>.body.contains(event.target);
+          isTargetStillInDOM = <span class="hljs-built_in">document</span>.contains(event.target);
 
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._rssDOM.rssControl || (isTargetStillInDOM &amp;&amp; !<span class="hljs-keyword">this</span>._rssDOM.rssControl.contains(event.target))) {
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.isOpen) {
