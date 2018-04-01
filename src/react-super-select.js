@@ -20,6 +20,7 @@ import { bindAll,
          isEmpty,
          isEqual,
          isFunction,
+         isNull,
          isNumber,
          isObject,
          isString,
@@ -389,7 +390,7 @@ class ReactSuperSelect extends React.Component {
     props = props || this.props;
     let initialValue = [];
 
-    if (!isUndefined(props.initialValue)) {
+    if (!isNull(props.initialValue) && !isUndefined(props.initialValue)) {
       initialValue = isArray(props.initialValue) ? props.initialValue : [props.initialValue];
 
       if (!this._isMultiSelect()) {
