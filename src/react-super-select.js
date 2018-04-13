@@ -1187,11 +1187,6 @@ class ReactSuperSelect extends React.Component {
   // Remove an item from the state.value selected items array.
   // The *value* arg represents a full dataSource option object
   _removeSelectedOptionByValue(value, callback = noop) {
-    // clear lastUserSelected if has been removed
-    if (this.lastUserSelectedOption && (this.lastUserSelectedOption.getAttribute('data-option-value') === value[this.state.valueKey])) {
-      this.lastUserSelectedOption = undefined;
-    }
-
     const SelectedAfterRemoval = reject(this.state.value, (option) => {
                                  return option[this.state.valueKey] === value[this.state.valueKey];
                                });
