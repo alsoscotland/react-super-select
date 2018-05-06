@@ -1,6 +1,6 @@
 {
   "name": "react-super-select",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "A flexible replacement for the html select control built with React",
   "main": "./lib/react-super-select.js",
   "author": "Scotland Stephenson",

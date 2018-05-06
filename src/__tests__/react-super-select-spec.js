@@ -1083,6 +1083,34 @@ describe('ReactSuperSelect', function() {
       expect(el.state.value[0]).toBe(mockData[0]);
       expect(el.props.onChange.mock.calls[0][0]).toBe(mockData[0]);
     });
+
+    it('selects items with int/string type ambiguity when space bar is clicked (issue 151)', function() {
+        const testData = [
+          {
+            id: "0",
+            name: "elit laborum et",
+            size: "Large"
+          },
+          {
+            id: "1",
+            name: "dolor nulla velit",
+            size: "Medium"
+          }
+        ];
+        var el = renderAndOpen({
+            dataSource: testData
+        });
+        var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+        el._updateFocusedId(1);
+
+        TestUtils.Simulate.keyDown(options[1], {
+          which: el.keymap.space
+        });
+
+        expect(el.state.value[0]).toBe(testData[1]);
+        expect(el.props.onChange.mock.calls[0][0]).toBe(testData[1]);
+    });
   });
 
   describe('multiple item selection', function() {

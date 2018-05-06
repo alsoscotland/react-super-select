@@ -1178,7 +1178,7 @@ Handles success and failure for ajax call</p>
             <div class="content"><div class='highlight'><pre>  _findArrayOfOptionDataObjectsByValue(value) {
     <span class="hljs-keyword">const</span> valuesArray = isArray(value) ? map(value, <span class="hljs-keyword">this</span>.state.valueKey) : [value];
     <span class="hljs-keyword">return</span> reject(<span class="hljs-keyword">this</span>.state.data, (item) =&gt; {
-      <span class="hljs-keyword">return</span> !includes(valuesArray, item[<span class="hljs-keyword">this</span>.state.valueKey]);
+      <span class="hljs-keyword">return</span> !includes(valuesArray, item[<span class="hljs-keyword">this</span>.state.valueKey]) &amp;&amp; !includes(valuesArray, <span class="hljs-built_in">parseInt</span>(item[<span class="hljs-keyword">this</span>.state.valueKey],<span class="hljs-number">10</span>));
     });
   }</pre></div></div>
             
