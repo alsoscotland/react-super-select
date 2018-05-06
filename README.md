@@ -11,10 +11,9 @@ A flexible replacement for the html select control built with React and Lodash
   - grouped options under headings
   - easy style customization
   - localization support
-
+  - extensible default css (must copy css file into your application)
 
 ## Demo & Examples
-
 Live demo and API docs: [alsoscotland.github.io/react-super-select](http://alsoscotland.github.io/react-super-select/)
 
 To build and run the examples locally, run:

@@ -557,7 +557,7 @@ class ReactSuperSelect extends React.Component {
   _findArrayOfOptionDataObjectsByValue(value) {
     const valuesArray = isArray(value) ? map(value, this.state.valueKey) : [value];
     return reject(this.state.data, (item) => {
-      return !includes(valuesArray, item[this.state.valueKey]);
+      return !includes(valuesArray, item[this.state.valueKey]) && !includes(valuesArray, parseInt(item[this.state.valueKey],10));
     });
   }
 
