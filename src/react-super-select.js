@@ -189,13 +189,10 @@ class ReactSuperSelect extends React.Component {
 
   // wire document click close control handler
   componentDidMount() {
-    if (this.props.disabled) {
-      return;
-    }
     document.addEventListener('click', this._handleDocumentClick);
     document.addEventListener('touchstart', this._handleDocumentClick);
 
-    if (this.props.openOnMount) {
+    if (!this.props.disabled && this.props.openOnMount) {
       this.setState({
         isOpen: true
       }, () => {

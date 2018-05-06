@@ -544,13 +544,10 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  componentDidMount() {
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.disabled) {
-      <span class="hljs-keyword">return</span>;
-    }
     <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'click'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
     <span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'touchstart'</span>, <span class="hljs-keyword">this</span>._handleDocumentClick);
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.openOnMount) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.props.disabled &amp;&amp; <span class="hljs-keyword">this</span>.props.openOnMount) {
       <span class="hljs-keyword">this</span>.setState({
         <span class="hljs-attr">isOpen</span>: <span class="hljs-literal">true</span>
       }, () =&gt; {
