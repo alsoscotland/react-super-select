@@ -28,6 +28,7 @@ import { bindAll,
          last,
          map,
          noop,
+         omit,
          reduce,
          reject,
          uniqueId,
@@ -281,10 +282,24 @@ class ReactSuperSelect extends React.Component {
                              </button>);
     }
 
+    // Prevent overriding props the control needs to own
+    const overridableInputProps = omit(this.props.inputProps, [
+      "className",
+      "onBlur",
+      "onKeyDown",
+      "role",
+      "aria-activedescendant",
+      "aria-disabled",
+      "aria-haspopup",
+      "aria-controls",
+      "aria-multiselectable",
+      "tabIndex"
+    ]);
+
     return (
       <div ref={(c) => {this._rssDOM.rssControl = c }} id={this.state.controlId} className={wrapClasses}>
         <div ref={(c) => {this._rssDOM.triggerDiv = c }}
-           className={triggerClasses}
+           className={classNames(triggerClasses, this.props.inputProps.className)}
            onBlur={this.props.onBlur}
            onClick={this.toggleDropdown}
            onKeyDown={this._handleKeyDown}
@@ -295,7 +310,8 @@ class ReactSuperSelect extends React.Component {
            aria-controls={this._ariaGetListId()}
            aria-label={placeholderString}
            aria-multiselectable={this._isMultiSelect()}
-           tabIndex="0">
+           tabIndex="0"
+           {...overridableInputProps}>
             {triggerDisplayContent}
             {clearSelectionButton}
             <span ref={(c) => {this._rssDOM.carat = c }} className={caratClass}> </span>
@@ -1404,6 +1420,7 @@ ReactSuperSelect.defaultProps = {
   searchable: false,
   tags: false,
   clearSearchOnSelection: false,
+  inputProps: {},
   onBlur: noop,
   onSearchInputBlur: noop,
   onClear: noop,
@@ -1465,6 +1482,8 @@ ReactSuperSelect.propTypes = {
   // **clearSearchOnSelection** (Boolean) *optional* (Used in conjunction with the **searchable** option) whether to auto-clear search field when a selection is made
   clearSearchOnSelection: PropTypes.bool,
 
+  // **inputProps** (Object) *optional* - Custom props to be applied directly to the input component.
+  inputProps: PropTypes.object,
   // CSS CLASS / CUSTOM STYLING SUPPORT OPTIONS
   // -----------------------------------
 

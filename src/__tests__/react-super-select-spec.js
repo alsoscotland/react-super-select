@@ -161,6 +161,26 @@ describe('ReactSuperSelect', function() {
       expect(el._rssDOM.triggerDiv.getAttribute("tabIndex")).toBe('0');
     });
 
+    it('overrides aria-label when a custom input prop is passed', function() {
+      var el = renderComponent({
+        inputProps: {
+          "aria-label": "custom"
+        }
+      });
+
+      expect(el._rssDOM.triggerDiv.getAttribute("aria-label")).toBe("custom");
+    });
+
+    it('does not override protected props', function() {
+      var el = renderComponent({
+        inputProps: {
+          "role": "custom"
+        }
+      });
+
+      expect(el._rssDOM.triggerDiv.getAttribute("role")).toBe("combobox");
+    });
+
     it('triggerDiv tracks focused option as aria-active-descendant', function() {
       var el = renderAndOpen({
         dataSource: mockData
