@@ -247,7 +247,7 @@ class ReactSuperSelect extends React.Component {
 
   // Update focused element after re-render
   componentDidUpdate(prevProps, prevState) {
-	if (this.props.disabled) {
+	if (this.props.focusToSelectedValue) {
 		this._focusCurrentFocusedId();
 	}
 
