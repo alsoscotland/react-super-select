@@ -247,7 +247,9 @@ class ReactSuperSelect extends React.Component {
 
   // Update focused element after re-render
   componentDidUpdate(prevProps, prevState) {
-    this._focusCurrentFocusedId();
+	if (this.props.disabled) {
+		this._focusCurrentFocusedId();
+	}
 
     if (this.state.isOpen !== prevState.isOpen) {
       var openStateCallback = this.state.isOpen ? this.props.onOpenDropdown : this.props.onCloseDropdown;
@@ -1391,6 +1393,7 @@ class ReactSuperSelect extends React.Component {
 // Default Property Values
 // ------
 ReactSuperSelect.defaultProps = {
+  focusToSelectedValue: true,
   clearable: true,
   clearSelectedValueOnDataSourceChange: false,
   closeOnSelectedOptionClick: true,
@@ -1426,6 +1429,9 @@ ReactSuperSelect.defaultProps = {
 ReactSuperSelect.propTypes = {
   // BOOLEAN OPTIONS
   // ---------------
+
+  // **focusToSelectedValue** *optional* - (default - true) whether or not the dropdown list should scroll to the recently clicked value
+  focusToSelectedValue: PropTypes.bool,
 
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: PropTypes.bool,
