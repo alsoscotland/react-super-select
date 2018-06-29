@@ -248,7 +248,7 @@ class ReactSuperSelect extends React.Component {
 
   // Update focused element after re-render
   componentDidUpdate(prevProps, prevState) {
-	if (this.props.focusToSelectedValue) {
+	if (this.props.focusToSelectedValue && this.state.isOpen) {
 		this._focusCurrentFocusedId();
 	}
 
@@ -1409,7 +1409,6 @@ class ReactSuperSelect extends React.Component {
 // Default Property Values
 // ------
 ReactSuperSelect.defaultProps = {
-  focusToSelectedValue: true,
   clearable: true,
   clearSelectedValueOnDataSourceChange: false,
   closeOnSelectedOptionClick: true,
@@ -1419,6 +1418,7 @@ ReactSuperSelect.defaultProps = {
   multiple: false,
   openOnMount: false,
   focusOnMount: false,
+  focusToSelectedValue: true,
   forceDefaultBrowserScrolling: false,
   searchable: false,
   tags: false,
@@ -1447,9 +1447,6 @@ ReactSuperSelect.propTypes = {
   // BOOLEAN OPTIONS
   // ---------------
 
-  // **focusToSelectedValue** *optional* - (default - true) whether or not the dropdown list should scroll to the recently clicked value
-  focusToSelectedValue: PropTypes.bool,
-
   // **clearable** *optional* - (default - true) whether or not to show a button to clear selected options
   clearable: PropTypes.bool,
 
@@ -1476,6 +1473,10 @@ ReactSuperSelect.propTypes = {
 
   // **focusOnMount** (Boolean) *optional* (Used in conjunction with the **openOnMount** option) Whether or not to focus control after opening in componentDidMount lifecycle function
   focusOnMount: PropTypes.bool,
+
+  // **focusToSelectedValue** *optional* - (default - true) whether or not the dropdown list should scroll to (focus) the most recently clicked value
+  focusToSelectedValue: PropTypes.bool,
+
 
   // **forceDefaultBrowserScrolling** *optional* - (default - false) - Whether to override the default behavior of arresting mouse wheel events in an open select dropdown
   forceDefaultBrowserScrolling: PropTypes.bool,
