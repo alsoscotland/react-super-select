@@ -648,7 +648,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('focuses first option on home key keypress', function() {
-      var el = renderComponent();
+      var el = renderAndOpen();
       var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
@@ -662,7 +662,7 @@ describe('ReactSuperSelect', function() {
     });
 
     it('focuses last option on end key keypress', function() {
-      var el = renderComponent();
+      var el = renderAndOpen();
       var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
 
       TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
@@ -673,6 +673,19 @@ describe('ReactSuperSelect', function() {
 
       expect(focusSpy).toHaveBeenCalled();
       expect(el.state.focusedId).toBe(mockData.length - 1);
+    });
+
+    it('does not focus lastUserSelectedOption when dropdown is not open', function() {
+      var el = renderComponent();
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
+
+      TestUtils.Simulate.keyDown(el._rssDOM.triggerDiv, {
+        which: el.keymap.end,
+        preventDefault: _.noop,
+        stopPropagation: _.noop
+      });
+
+      expect(focusSpy).not.toHaveBeenCalled();
     });
 
     it('focuses lastUserSelectedOption when set', function() {
@@ -688,6 +701,20 @@ describe('ReactSuperSelect', function() {
       // also verifying that lastUserSelectedOption is set to the correct option
       expect(options[3].getAttribute('data-option-value')).toBe(el.lastUserSelectedOption.getAttribute('data-option-value'));
       expect(el.state.focusedId).toBe(3);
+    });
+
+    it('does not focus lastUserSelectedOption when focusToSelectedValue set to false', function() {
+      var el = renderAndOpen({
+        focusToSelectedValue: false
+      });
+      var options = TestUtils.scryRenderedDOMComponentsWithClass(el, 'r-ss-dropdown-option');
+
+      TestUtils.Simulate.click(options[3]);
+
+      var focusSpy = spyOn(el, '_focusDOMOption').and.callThrough();
+      el.toggleDropdown();
+
+      expect(focusSpy).not.toHaveBeenCalled();
     });
   });
 
