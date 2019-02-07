@@ -745,10 +745,15 @@ class ReactSuperSelect extends React.Component {
   // Render the selected options into the trigger element using the normal (i.e. non-tags) behavior.
   // Choose whether to render using the default template or a provided **customOptionTemplateFunction**
   _getNormalDisplayMarkup() {
-    return map(this.state.value, (value) => {
+    return map(this.state.value, (value, index) => {
       const selectedKey = "r_ss_selected_" + value[this.state.labelKey];
       if (this.props.customOptionTemplateFunction) {
-        return this.props.customOptionTemplateFunction(value);
+        const valueDisplayKey = "value_display_" + index;
+        return (
+            <span key={valueDisplayKey}>
+                {this.props.customOptionTemplateFunction(value)}
+            </span>
+        );
       }
       return (<span key={selectedKey} className="r-ss-selected-label">{value[this.state.labelKey]}</span>);
     });
