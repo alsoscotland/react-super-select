@@ -1546,10 +1546,15 @@ Choose whether to render using the default template or a provided <strong>custom
             </div>
             
             <div class="content"><div class='highlight'><pre>  _getNormalDisplayMarkup() {
-    <span class="hljs-keyword">return</span> map(<span class="hljs-keyword">this</span>.state.value, (value) =&gt; {
+    <span class="hljs-keyword">return</span> map(<span class="hljs-keyword">this</span>.state.value, (value, index) =&gt; {
       <span class="hljs-keyword">const</span> selectedKey = <span class="hljs-string">"r_ss_selected_"</span> + value[<span class="hljs-keyword">this</span>.state.labelKey];
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.props.customOptionTemplateFunction) {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.customOptionTemplateFunction(value);
+        <span class="hljs-keyword">const</span> valueDisplayKey = <span class="hljs-string">"value_display_"</span> + index;
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{valueDisplayKey}</span>&gt;</span>
+                {this.props.customOptionTemplateFunction(value)}
+            <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+        );
       }
       <span class="hljs-keyword">return</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{selectedKey}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"r-ss-selected-label"</span>&gt;</span>{value[this.state.labelKey]}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>);
     });
