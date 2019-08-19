@@ -921,7 +921,7 @@ class ReactSuperSelect extends React.Component {
   // verify event target node is still in the DOM and close if click did not originate in RSS control
   _handleDocumentClick() {
     const event = Array.prototype.slice.call(arguments)[0],
-          isTargetStillInDOM = document.contains(event.target);
+          isTargetStillInDOM = document.body.contains(event.target);
 
     if (!this._rssDOM.rssControl || (isTargetStillInDOM && !this._rssDOM.rssControl.contains(event.target))) {
       if (this.state.isOpen) {
