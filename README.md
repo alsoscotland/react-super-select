@@ -20,8 +20,14 @@ To build and run the examples locally, run:
 
 ```
 npm install
-gulp build
+npm run build
 gulp dev
+```
+
+You may also have to create a tmp directory manually.
+
+```
+mkdir tmp
 ```
 
 Then open [`localhost:8000`](http://localhost:8000) in a browser.

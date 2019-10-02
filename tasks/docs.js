@@ -62,7 +62,9 @@ module.exports = function(gulp, config) {
   gulp.task('docs_js_bundled', function() {
     return gulp.src(config.documentation.docs_bundle)
           .pipe(browserify({
-            transform: [babelify]
+            transform: [babelify.configure({
+		      presets: ['es2015']
+		    })]
           }))
           .on('error', gutil.log)
           .pipe(rename('r-ss-docs-bundle.js'))
@@ -72,7 +74,9 @@ module.exports = function(gulp, config) {
   gulp.task('live_examples_js_bundled', function() {
     return gulp.src(config.documentation.live_examples_bundle)
           .pipe(browserify({
-            transform: [babelify]
+            transform: [babelify.configure({
+		      presets: ['es2015']
+		    })]
           }))
           .on('error', gutil.log)
           .pipe(rename('r-ss-live-examples-bundle.js'))
@@ -82,7 +86,9 @@ module.exports = function(gulp, config) {
   gulp.task('test_page_js_bundled', function() {
     return gulp.src(config.documentation.test_page_bundle)
           .pipe(browserify({
-            transform: [babelify]
+            transform: [babelify.configure({
+		      presets: ['es2015']
+		    })]
           }))
           .on('error', gutil.log)
           .pipe(rename('test-page-app.js'))
