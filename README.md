@@ -1,4 +1,4 @@
-# react-super-select
+# react-super-select (This component is not currently being maintained)
 
 A flexible replacement for the html select control built with React and Lodash
 
